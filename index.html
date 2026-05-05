@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FF Tournament Lobby</title>
+    <title>FF Tournament Arena</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Teko:wght@400;600;700&family=Oswald:wght@500;700&display=swap');
 
@@ -18,156 +18,159 @@
             background-size: cover; background-position: center; background-attachment: fixed;
         }
 
+        /* হেডার - আগের প্রফেশনাল ডিজাইন */
         .header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #fecb00; padding-bottom: 10px; }
-        .header h2 { font-family: 'Teko', sans-serif; font-size: 38px; color: #fff; text-transform: uppercase; letter-spacing: 1px; }
+        .header h2 { font-family: 'Teko', sans-serif; font-size: 38px; color: #fff; text-transform: uppercase; line-height: 1; letter-spacing: 1px; text-shadow: 2px 2px #ec1c24; }
         .header h2 span { color: #fecb00; }
+        .sub-header { color: #fecb00; font-size: 14px; text-transform: uppercase; font-weight: bold; letter-spacing: 1px; }
 
-        /* Tournament List Card */
-        .t-card { 
-            background: rgba(30, 30, 30, 0.9); 
+        /* LOBBY CARD DESIGN */
+        .lobby-card { 
+            background: rgba(26, 26, 26, 0.95); 
             border-radius: 15px; 
-            margin-bottom: 20px; 
-            border: 1px solid #333; 
+            margin-bottom: 15px; 
+            border: 1px solid #444; 
             overflow: hidden;
-            transition: 0.3s;
+            box-shadow: 0 5px 15px rgba(236, 28, 36, 0.2);
         }
-        .t-banner { width: 100%; height: 140px; background: #222; object-fit: cover; }
-        .t-content { padding: 15px; }
-        .t-title { font-family: 'Teko', sans-serif; font-size: 26px; color: #fecb00; text-transform: uppercase; line-height: 1.2; }
-        .t-meta { display: flex; justify-content: space-between; font-size: 13px; color: #aaa; margin: 10px 0; border-top: 1px solid #444; padding-top: 10px; }
-        .t-meta span { font-weight: bold; color: #fff; }
+        .lobby-banner { width: 100%; height: 150px; background: #111; object-fit: cover; border-bottom: 3px solid #ec1c24; }
+        .lobby-info { padding: 15px; }
+        .lobby-title { font-family: 'Teko', sans-serif; font-size: 28px; color: #fecb00; text-transform: uppercase; margin-bottom: 5px; }
+        .lobby-stats { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 15px; background: rgba(50,50,50,0.5); padding: 8px; border-radius: 5px;}
+        .lobby-stats span { color: #fecb00; font-weight: bold; }
 
-        .btn-view { 
-            display: block; width: 100%; background: #ec1c24; color: #fff; text-align: center; 
-            padding: 10px; border-radius: 8px; text-decoration: none; font-weight: bold; text-transform: uppercase;
+        /* BUTTONS */
+        .btn-red { 
+            display: block; width: 100%; background: linear-gradient(180deg, #ec1c24 0%, #a01015 100%); 
+            color: #fff; text-align: center; padding: 12px; border-radius: 8px; text-decoration: none; 
+            font-family: 'Teko', sans-serif; font-size: 20px; text-transform: uppercase; border: none; cursor: pointer;
         }
 
-        /* Detail & Registration Page (Hidden initially) */
+        /* TOURNAMENT DETAILS & FORM (Initially Hidden) */
         #detailsPage, #registrationPage { display: none; padding-bottom: 80px; }
-        
-        /* reuse old styles for sections */
+
         .section-card { background: rgba(26, 26, 26, 0.9); border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid #333; }
-        .info-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-        .info-item { background: rgba(50, 50, 50, 0.6); padding: 10px; border-radius: 8px; text-align: center; }
-        .info-label { font-size: 11px; color: #aaa; display: block; }
         
+        /* আগের সেই প্রাইজ পুডিয়াম */
+        .prize-title { font-family: 'Teko', sans-serif; font-size: 30px; color: #fecb00; text-align: center; text-transform: uppercase; }
         .prize-podium { display: flex; justify-content: center; align-items: flex-end; margin: 15px 0; }
         .prize-rank { width: 30%; padding: 10px; border-radius: 8px 8px 0 0; text-align: center; border: 1px solid #444; }
-        .rank-1 { background: #fecb00; color: #000; height: 100px; transform: scale(1.1); font-weight: bold; }
+        .rank-1 { background: linear-gradient(180deg, #fecb00 0%, #a28300 100%); color: #000; height: 110px; transform: scale(1.1); font-weight: bold; box-shadow: 0 0 20px rgba(254, 203, 0, 0.4); }
 
-        .back-btn { background: #444; color: #fff; padding: 5px 15px; border-radius: 5px; margin-bottom: 15px; display: inline-block; cursor: pointer; font-size: 14px; }
+        .info-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .info-item { background: rgba(50, 50, 50, 0.6); padding: 10px; border-radius: 8px; text-align: center; border: 1px solid #444; }
+        .info-label { font-size: 11px; color: #aaa; text-transform: uppercase; display: block; }
+        .info-value { font-size: 16px; font-weight: bold; }
 
-        .input-group { margin-bottom: 12px; }
-        .input-field { width: 100%; background: #222; border: 1px solid #444; padding: 12px; border-radius: 8px; color: #fff; }
+        .back-btn { color: #fecb00; margin-bottom: 15px; display: inline-block; cursor: pointer; font-weight: bold; text-transform: uppercase; font-size: 14px; border: 1px solid #fecb00; padding: 5px 10px; border-radius: 5px; }
 
-        .btn-fixed { position: fixed; bottom: 10px; left: 10px; right: 10px; background: #ec1c24; color: #fff; padding: 15px; border-radius: 10px; text-align: center; font-family: 'Teko', sans-serif; font-size: 22px; font-weight: bold; border: none; z-index: 100; text-transform: uppercase;}
+        .input-field { width: 100%; background: rgba(20,20,20,0.8); border: 1px solid #444; padding: 12px; border-radius: 8px; color: #fff; margin-bottom: 10px; font-family: 'Oswald', sans-serif; }
+        
+        .btn-fixed { position: fixed; bottom: 10px; left: 10px; right: 10px; z-index: 100; }
+
+        #successPopup {
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: #111; color: #fff; padding: 25px; border-radius: 15px; border: 2px solid #fecb00;
+            text-align: center; z-index: 200; width: 85%; box-shadow: 0 0 30px rgba(254,203,0,0.5);
+        }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h2>FF <span>Arena</span> Lobby</h2>
+        <div class="sub-header">Squad Battle to be the Champion</div>
+        <h2>FF <span>Tournament</span></h2>
     </div>
 
     <div id="lobbyPage">
-        <div class="t-card">
-            <img src="https://via.placeholder.com/400x200?text=Squad+Battle+May+24" class="t-banner">
-            <div class="t-content">
-                <div class="t-title">Squad Battle - Season 10</div>
-                <div class="t-meta">
-                    <div>Entry: <span>50 TK</span></div>
-                    <div>Prize: <span>1500 TK</span></div>
-                    <div>Mode: <span>Squad</span></div>
+        <div class="lobby-card">
+            <img src="https://img.freepik.com/free-vector/free-fire-tournament-banner-template_23-2149206144.jpg" class="lobby-banner">
+            <div class="lobby-info">
+                <div class="lobby-title">Squad Battle Royale</div>
+                <div class="lobby-stats">
+                    <div>ENTRY: <span>50 TK</span></div>
+                    <div>PRIZE: <span>1500 TK</span></div>
+                    <div>MAP: <span>Bermuda</span></div>
                 </div>
-                <button class="btn-view" onclick="showDetails('Squad Battle Season 10', '1500 TK', '50 TK')">View & Join</button>
+                <button class="btn-red" onclick="showDetails()">View Details & Join</button>
             </div>
         </div>
 
-        <div class="t-card">
-            <img src="https://via.placeholder.com/400x200?text=Solo+Diamond+Rush" class="t-banner">
-            <div class="t-content">
-                <div class="t-title">Solo Diamond Rush</div>
-                <div class="t-meta">
-                    <div>Entry: <span>FREE</span></div>
-                    <div>Prize: <span>500💎</span></div>
-                    <div>Mode: <span>Solo</span></div>
-                </div>
-                <button class="btn-view" style="background: #555;">Details Soon</button>
-            </div>
+        <div class="lobby-card" style="opacity: 0.6;">
+            <div style="padding: 40px; text-align: center; font-family: 'Teko', sans-serif; font-size: 24px;">Next Tournament Coming Soon...</div>
         </div>
     </div>
 
     <div id="detailsPage">
         <div class="back-btn" onclick="showLobby()">← Back to Lobby</div>
-        <h2 id="detTitle" style="color: #fecb00; font-family: 'Teko', sans-serif; font-size: 30px; margin-bottom: 10px;"></h2>
         
         <div class="section-card info-grid">
-            <div class="info-item"><span class="info-label">Mode</span> <span>Squad (4P)</span></div>
-            <div class="info-item"><span class="info-label">Map</span> <span>Bermuda</span></div>
-            <div class="info-item"><span class="info-label">Entry Fee</span> <span id="detEntry"></span></div>
-            <div class="info-item"><span class="info-label">Date</span> <span>24 May 2024</span></div>
+            <div class="info-item"><span class="info-label">Mode</span> <span class="info-value">Squad (4P)</span></div>
+            <div class="info-item"><span class="info-label">Map</span> <span class="info-value">Bermuda</span></div>
+            <div class="info-item"><span class="info-label">Entry Fee</span> <span class="info-value">50 TK</span></div>
+            <div class="info-item"><span class="info-label">Time</span> <span class="info-value">08:00 PM</span></div>
         </div>
 
-        <div class="section-card" style="text-align: center;">
+        <div class="section-card">
+            <h3 class="prize-title">Prize Pool</h3>
             <div class="prize-podium">
-                <div class="prize-rank" style="height: 70px;">🥈<br>800 TK</div>
+                <div class="prize-rank" style="height: 80px; background: #555;">🥈<br>800 TK</div>
                 <div class="prize-rank rank-1">🏆<br>1500 TK</div>
-                <div class="prize-rank" style="height: 60px;">🥉<br>400 TK</div>
+                <div class="prize-rank" style="height: 70px; background: #8b4513;">🥉<br>400 TK</div>
             </div>
         </div>
 
-        <button class="btn-fixed" onclick="showRegistration()">Join Tournament Now</button>
+        <div class="btn-fixed">
+            <button class="btn-red" style="font-size: 24px; padding: 15px;" onclick="showRegistration()">Join Tournament</button>
+        </div>
     </div>
 
     <div id="registrationPage">
         <div class="back-btn" onclick="backToDetails()">← Back</div>
         <div class="section-card">
-            <h2 style="color: #ec1c24; font-family: 'Teko', sans-serif; margin-bottom: 15px;">Team Registration</h2>
-            <div class="input-group"><input type="text" id="teamName" class="input-field" placeholder="Team Name"></div>
-            <div class="input-group"><input type="text" id="leaderDetails" class="input-field" placeholder="Leader Name & UID"></div>
-            <div class="input-group"><input type="text" id="whatsapp" class="input-field" placeholder="WhatsApp Number"></div>
-            <div class="input-group"><input type="text" id="p2" class="input-field" placeholder="Player 2 UID"></div>
-            <div class="input-group"><input type="text" id="p3" class="input-field" placeholder="Player 3 UID"></div>
-            <div class="input-group"><input type="text" id="p4" class="input-field" placeholder="Player 4 UID"></div>
-            <div class="input-group"><input type="text" id="payment" class="input-field" placeholder="Payment Last 4 Digits"></div>
+            <h2 style="font-family: 'Teko', sans-serif; color: #ec1c24; font-size: 28px; margin-bottom: 15px; text-transform: uppercase;">Team Details</h2>
+            <input type="text" id="teamName" class="input-field" placeholder="Team Name">
+            <input type="text" id="leader" class="input-field" placeholder="Leader Name & UID">
+            <input type="text" id="p2" class="input-field" placeholder="Player 2 UID">
+            <input type="text" id="p3" class="input-field" placeholder="Player 3 UID">
+            <input type="text" id="p4" class="input-field" placeholder="Player 4 UID">
+            <input type="text" id="whatsapp" class="input-field" placeholder="WhatsApp Number">
+            <input type="text" id="pay" class="input-field" placeholder="Payment TxID / Last 4 Digits">
         </div>
-        <button class="btn-fixed" onclick="submitFinal()">Confirm Registration</button>
+        <div class="btn-fixed">
+            <button class="btn-red" style="font-size: 24px; padding: 15px;" onclick="submitData()">Confirm Registration</button>
+        </div>
+    </div>
+
+    <div id="successPopup">
+        <div style="font-size: 50px; color: #fecb00;">✓</div>
+        <h3 style="font-family: 'Teko', sans-serif; font-size: 30px; text-transform: uppercase;">Submitted!</h3>
+        <p style="font-size: 14px; color: #ccc; margin: 10px 0;">Wait for admin confirmation on WhatsApp.</p>
+        <button class="btn-red" onclick="location.reload()" style="margin-top: 10px;">Back Home</button>
     </div>
 
     <script>
-        const lobby = document.getElementById('lobbyPage');
-        const details = document.getElementById('detailsPage');
-        const registration = document.getElementById('registrationPage');
-
-        function showDetails(title, prize, entry) {
-            document.getElementById('detTitle').innerText = title;
-            document.getElementById('detEntry').innerText = entry;
-            lobby.style.display = 'none';
-            details.style.display = 'block';
+        function showDetails() {
+            document.getElementById('lobbyPage').style.display = 'none';
+            document.getElementById('detailsPage').style.display = 'block';
             window.scrollTo(0,0);
         }
-
         function showLobby() {
-            details.style.display = 'none';
-            lobby.style.display = 'block';
+            document.getElementById('detailsPage').style.display = 'none';
+            document.getElementById('lobbyPage').style.display = 'block';
         }
-
         function showRegistration() {
-            details.style.display = 'none';
-            registration.style.display = 'block';
+            document.getElementById('detailsPage').style.display = 'none';
+            document.getElementById('registrationPage').style.display = 'block';
             window.scrollTo(0,0);
         }
-
         function backToDetails() {
-            registration.style.display = 'none';
-            details.style.display = 'block';
+            document.getElementById('registrationPage').style.display = 'none';
+            document.getElementById('detailsPage').style.display = 'block';
         }
-
-        function submitFinal() {
-            alert('Sending Data to Admin...');
-            // এখানে পরবর্তীতে Google Sheet এর fetch কোড বসবে
+        function submitData() {
+            document.getElementById('successPopup').style.display = 'block';
         }
     </script>
-
 </body>
 </html>
