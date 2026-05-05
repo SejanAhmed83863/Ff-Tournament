@@ -226,70 +226,85 @@
             showPage('detailsPage');
         }
 
+                // রেজিস্ট্রেশন পেজ ওপেন করার ফাংশন (Solo/Duo/Squad লজিক সহ)
         function openReg() {
             const container = document.getElementById('uidInputs');
             container.innerHTML = '';
-            const count = (currentMode === 'Solo') ? 1 : 4;
+            
+            // Duo মোডের জন্য ২ জন প্লেয়ারের UID বক্স যোগ করা হয়েছে
+            let count;
+            if (currentMode === 'Solo') {
+                count = 1;
+            } else if (currentMode === 'Duo') {
+                count = 2;
+            } else {
+                count = 4; // Squad
+            }
+
             for(let i=1; i<=count; i++) {
                 container.innerHTML += `<input type="text" class="input-field uid-val" placeholder="Player ${i} Player ID (UID)">`;
             }
             showPage('regPage');
         }
 
-        function openGateway(method) {
-            const bg = document.getElementById('gatewayBg');
-            const logo = document.getElementById('gatewayLogo');
-            const mName = document.getElementById('methodName');
-            const amounts = document.querySelectorAll('.payAmount');
-            const currentEntry = document.getElementById('detEntry').innerText.replace(' TK', '');
-            
-            amounts.forEach(el => el.innerText = currentEntry);
-
-            if (method === 'bkash') {
-                bg.style.backgroundColor = '#e2136e';
-                logo.src = 'https://itbd.com.bd/wp-content/uploads/2020/06/bkash-logo.png';
-                mName.innerText = 'bKash';
-            } else {
-                bg.style.backgroundColor = '#f7941d';
-                logo.src = 'https://1000logos.net/wp-content/uploads/2023/10/Nagad-Logo.png';
-                mName.innerText = 'Nagad';
-            }
-            
-            bg.style.display = 'block';
-        }
-
-        function closeGateway() {
-            document.getElementById('gatewayBg').style.display = 'none';
-        }
-
+        // ফাইনাল সাবমিশন ফাংশন (Validation সহ)
         function submitData() {
-            const txid = document.getElementById('finalTxid').value;
-            if (txid.length < 4) {
-                alert('অনুগ্রহ করে সঠিক Transaction ID দিন');
+            // ১. রেজিস্ট্রেশন ফর্মের ডেটা চেক (Validation)
+            const teamNameInp = document.getElementById('teamName').value.trim();
+            const whatsappInp = document.getElementById('whatsapp').value.trim();
+            const txidInp = document.getElementById('finalTxid').value.trim();
+            const uidInps = Array.from(document.querySelectorAll('.uid-val')).map(i => i.value.trim());
+
+            // টিম নাম চেক (সোলোর জন্য 'N/A' দেওয়া থাকলে সেটিও ভ্যালিড)
+            if (teamNameInp === "") {
+                alert('অনুগ্রহ করে টিমের নাম দিন। সোলো হলে N/A দিন।');
                 return;
             }
 
+            // প্লেয়ারের UID চেক (কোনো একটিও ফাঁকা থাকলে আটকাবে)
+            if (uidInps.some(uid => uid === "")) {
+                alert('অনুগ্রহ করে সব প্লেয়ারের UID সঠিকভবে দিন।');
+                return;
+            }
+
+            // হোয়াটস অ্যাপ নম্বর চেক
+            if (whatsappInp === "") {
+                alert('অনুগ্রহ করে আপনার WhatsApp নম্বর দিন।');
+                return;
+            }
+
+            // ট্রানজ্যাকশন আইডি চেক
+            if (txidInp === "") {
+                alert('অনুগ্রহ করে সঠিক Transaction ID দিন।');
+                return;
+            }
+
+            // ২. ডেটা সংগ্রহের অবজেক্ট
             const btn = document.getElementById('verifyBtn');
             btn.innerText = "Processing...";
             btn.disabled = true;
 
-            // ডেটা সংগ্রহের অবজেক্ট
-            const uids = Array.from(document.querySelectorAll('.uid-val')).map(i => i.value).join(', ');
+            const uids = uidInps.join(', ');
             const formData = {
-                team: document.getElementById('teamName').value || 'Solo',
+                team: teamNameInp,
                 uids: uids,
-                whatsapp: document.getElementById('whatsapp').value,
-                payment: txid,
+                whatsapp: whatsappInp,
+                payment: txidInp,
                 mode: currentMode
             };
 
-            // কাল লিঙ্ক বসালে নিচের অংশটি আনকমেন্ট করবেন
+            // কাল এখানে fetch() কোডটি যোগ করবেন (Apps Script URL সহ)
             /*
             fetch(scriptURL, { method: 'POST', body: JSON.stringify(formData) })
             .then(res => {
+                btn.innerText = "Verified ✔️";
                 document.getElementById('successPopup').style.display = 'block';
             })
-            .catch(err => alert('Error sending data!'));
+            .catch(err => {
+                alert('ডেটা পাঠাতে সমস্যা হয়েছে! পরে চেষ্টা করুন।');
+                btn.innerText = "VERIFY";
+                btn.disabled = false;
+            });
             */
 
             // আপাতত ডেমো সাকসেস দেখাচ্ছি
@@ -297,6 +312,7 @@
                 document.getElementById('successPopup').style.display = 'block';
             }, 2000);
         }
+
     </script>
 </body>
 </html>
