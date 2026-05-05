@@ -2,94 +2,282 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FF Tournament Pro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FF Tournament Arena</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0f172a; color: white; padding: 15px; }
+        /* পোস্টার ভিত্তিক কালার এবং গেমিং ফন্ট */
+        @import url('https://fonts.googleapis.com/css2?family=Teko:wght@400;600;700&family=Oswald:wght@500;700&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
-        .header { text-align: center; padding: 20px 0; }
-        .header h1 { color: #f59e0b; font-size: 24px; text-transform: uppercase; letter-spacing: 2px; }
-        
-        .tournament-card { 
-            background: #1e293b; 
-            border-radius: 20px; 
-            overflow: hidden; 
-            margin-bottom: 25px; 
-            border: 1px solid #334155;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        body { 
+            font-family: 'Oswald', sans-serif; 
+            background: #000; /* একদম কালো ব্যাকগ্রাউন্ড */
+            color: #fff; 
+            padding: 10px; 
+            background-image: linear-gradient(to bottom, rgba(0,0,0,0.7), rgba(0,0,0,1)), url('https://w0.peakpx.com/wallpaper/701/320/wallpaper-free-fire-logo-esports.jpg'); /* ব্যাকগ্রাউন্ডে ফ্রি ফায়ার লোগো */
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
         }
-        
-        .banner { width: 100%; height: 180px; background: linear-gradient(45deg, #f59e0b, #ef4444); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px; }
-        
-        .details { padding: 20px; }
-        .title { font-size: 20px; margin-bottom: 10px; color: #fff; }
-        
-        .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-        .stat-box { background: #334155; padding: 10px; border-radius: 10px; text-align: center; }
-        .stat-label { font-size: 12px; color: #94a3b8; display: block; }
-        .stat-value { font-size: 16px; font-weight: bold; color: #f59e0b; }
-        
-        .btn-join { 
-            display: block; 
-            background: #f59e0b; 
-            color: #000; 
-            text-align: center; 
-            padding: 15px; 
+
+        /* হেডার - পোস্টার স্টাইল */
+        .header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #fecb00; padding-bottom: 10px; }
+        .header h2 { font-family: 'Teko', sans-serif; font-size: 38px; color: #fff; text-transform: uppercase; line-height: 1; letter-spacing: 1px; text-shadow: 2px 2px #ec1c24; }
+        .header h2 span { color: #fecb00; } /* গোল্ডেন কালার */
+        .sub-header { color: #fecb00; font-size: 14px; text-transform: uppercase; font-weight: bold; }
+
+        /* প্রধান সেকশন */
+        .section-card { 
+            background: rgba(26, 26, 26, 0.9); /* হালকা স্বচ্ছ কালো */
             border-radius: 12px; 
+            padding: 15px; 
+            margin-bottom: 15px; 
+            border: 1px solid #333; 
+            box-shadow: 0 0 15px rgba(236, 28, 36, 0.2); /* লাল আগুনের আভা */
+        }
+
+        /* তথ্য গ্রিড */
+        .info-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 10px; }
+        .info-item { background: rgba(50, 50, 50, 0.6); padding: 10px; border-radius: 8px; text-align: center; border: 1px solid #444; }
+        .info-item i { color: #ec1c24; font-size: 18px; margin-bottom: 5px; display: block; }
+        .info-label { font-size: 11px; color: #aaa; text-transform: uppercase; }
+        .info-value { font-size: 16px; font-weight: bold; color: #fff; }
+
+        /* প্রাইজ পুল - পোস্টার স্টাইল */
+        .prize-section { text-align: center; }
+        .prize-title { font-family: 'Teko', sans-serif; font-size: 30px; color: #fecb00; text-transform: uppercase; }
+        
+        .prize-podium { display: flex; justify-content: center; align-items: flex-end; margin: 15px 0; }
+        
+        .prize-rank { width: 30%; padding: 10px; border-radius: 8px 8px 0 0; text-align: center; position: relative; border: 1px solid #444; }
+        
+        /* 1st Place (Champion) */
+        .rank-1 { background: linear-gradient(180deg, #fecb00 0%, #a28300 100%); color: #000; height: 110px; z-index: 2; transform: scale(1.1); box-shadow: 0 0 20px rgba(254, 203, 0, 0.5); }
+        .rank-1 .prize-value { color: #000; font-size: 24px; font-weight: bold; }
+        .rank-1 .medal { color: #000; font-size: 30px; }
+
+        /* 2nd Place */
+        .rank-2 { background: #555; color: #fff; height: 90px; }
+        .rank-2 .prize-value { color: #fff; font-size: 20px; }
+        .rank-2 .medal { color: #aaa; font-size: 24px; }
+
+        /* 3rd Place */
+        .rank-3 { background: #8b4513; color: #fff; height: 80px; }
+        .rank-3 .prize-value { color: #fff; font-size: 18px; }
+        .rank-3 .medal { color: #cd7f32; font-size: 24px; }
+
+        .medal { font-weight: bold; margin-bottom: 5px; display: block; }
+        .prize-value { display: block; font-weight: bold; }
+
+        /* রেজিস্ট্রেশন ও পেমেন্ট */
+        .req-title { color: #ec1c24; font-size: 18px; text-transform: uppercase; border-left: 4px solid #ec1c24; padding-left: 10px; margin-bottom: 10px; }
+        .req-list { list-style: none; font-size: 14px; color: #ddd; padding-left: 5px; }
+        .req-list li { margin-bottom: 5px; position: relative; padding-left: 20px; }
+        .req-list li::before { content: '✓'; position: absolute; left: 0; color: #fecb00; font-weight: bold; }
+
+        /* বাটন - একদম পোস্টারের 'Join Now' এর মতো */
+        .btn-join-main { 
+            display: block; 
+            background: linear-gradient(180deg, #ec1c24 0%, #a01015 100%); /* গাঢ় লাল গ্রেডিয়েন্ট */
+            color: #fff; 
+            text-align: center; 
+            padding: 16px; 
+            border-radius: 8px; 
             text-decoration: none; 
+            font-family: 'Teko', sans-serif;
+            font-size: 24px; 
             font-weight: bold; 
-            font-size: 18px;
-            transition: 0.3s;
+            text-transform: uppercase; 
+            letter-spacing: 1px;
+            box-shadow: 0 5px 0 #7b0d10, 0 10px 15px rgba(236, 28, 36, 0.4);
+            transition: 0.2s;
+            width: 100%;
+            border: none;
+            cursor: pointer;
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            right: 10px;
+            width: calc(100% - 20px);
+            z-index: 10;
         }
         
-        .btn-join:active { transform: scale(0.98); background: #d97706; }
-        
-        .status-badge { background: #22c55e; color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px; display: inline-block; margin-bottom: 10px; }
+        .btn-join-main:active { transform: translateY(3px); box-shadow: 0 2px 0 #7b0d10; }
+
+        /* রেজিস্ট্রেশন কন্টেইনার (লুকানো থাকবে প্রথমে) */
+        #registrationContainer { display: none; padding-bottom: 80px; }
+        #mainAppContainer { padding-bottom: 80px; }
+
+        /* ইনপুট ফিল্ড স্টাইল */
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; font-size: 13px; color: #aaa; text-transform: uppercase; margin-bottom: 5px; }
+        .input-field { 
+            width: 100%; 
+            background: rgba(26, 26, 26, 0.8); 
+            border: 1px solid #444; 
+            padding: 12px; 
+            border-radius: 8px; 
+            color: #fff; 
+            font-family: 'Oswald', sans-serif; 
+            font-size: 15px; 
+        }
+        .input-field:focus { border-color: #ec1c24; outline: none; }
+
+        /* পেমেন্ট মেথড আইকন */
+        .payment-icons { display: flex; gap: 10px; margin-bottom: 15px; justify-content: center;}
+        .payment-icon { width: 60px; height: auto; border-radius: 5px;}
+
+        /* সফল মেসেজ পপআপ */
+        #successPopup {
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9); color: #fff; padding: 20px; border-radius: 12px;
+            border: 2px solid #fecb00; text-align: center; z-index: 100; width: 80%;
+            box-shadow: 0 0 30px rgba(254, 203, 0, 0.5);
+        }
+
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h1>FF Battle Arena</h1>
+        <div class="sub-header">Squad Battle to be the Champion</div>
+        <h2>Free Fire <span>Tournament</span></h2>
+        <div class="sub-header">"Play Fair, Play Hard, Win Glory"</div>
     </div>
 
-    <div class="tournament-card">
-        <div class="banner">FREE FIRE SOLO</div>
-        <div class="details">
-            <span class="status-badge">Registration Open</span>
-            <h2 class="title">Solo Battle Royale - Season 1</h2>
-            
-            <div class="stats">
-                <div class="stat-box">
-                    <span class="stat-label">Entry Fee</span>
-                    <span class="stat-value">FREE</span>
-                </div>
-                <div class="stat-box">
-                    <span class="stat-label">Prize Pool</span>
-                    <span class="stat-value">500💎</span>
-                </div>
-                <div class="stat-box">
-                    <span class="stat-label">Map</span>
-                    <span class="stat-value">Bermuda</span>
-                </div>
-                <div class="stat-box">
-                    <span class="stat-label">Time</span>
-                    <span class="stat-value">08:00 PM</span>
-                </div>
+    <div id="mainAppContainer">
+        <div class="section-card info-grid">
+            <div class="info-item"><i>👥</i> <span class="info-label">Mode</span> <span class="info-value">Squad (4P)</span></div>
+            <div class="info-item"><i>🗺️</i> <span class="info-label">Map</span> <span class="info-value">Bermuda</span></div>
+            <div class="info-item"><i>💵</i> <span class="info-label">Entry Fee</span> <span class="info-value">50 TK (Per P)</span></div>
+            <div class="info-item"><i>📅</i> <span class="info-label">Date</span> <span class="info-value">24 May 2024</span></div>
+        </div>
+
+        <div class="section-card prize-section">
+            <h3 class="prize-title">Prize Pool</h3>
+            <div class="prize-podium">
+                <div class="prize-rank rank-2"><span class="medal">🥈</span> <span class="prize-value">800 TK</span></div>
+                <div class="prize-rank rank-1"><span class="medal">🏆</span> <span class="prize-value">1500 TK</span></div>
+                <div class="prize-rank rank-3"><span class="medal">🥉</span> <span class="prize-value">400 TK</span></div>
             </div>
+            <div style="color: #fecb00; font-size: 12px;">★ More Surprises Inside! ★</div>
+        </div>
 
-            <a href="https://docs.google.com/forms/d/e/1FAIpQLSfM_qWxi5HdaDCIAxAheQjpKN4SHiq77ARUayaZYOyhu4EhUQ/viewform" class="btn-join">JOIN NOW</a>
+        <div class="section-card">
+            <h4 class="req-title">Payment Method</h4>
+            <div class="payment-icons">
+                <img src="https://itbd.com.bd/wp-content/uploads/2020/06/bkash-logo.png" alt="Bkash" class="payment-icon">
+                <img src="https://1000logos.net/wp-content/uploads/2023/10/Nagad-Logo.png" alt="Nagad" class="payment-icon">
+            </div>
+            <p style="color: #ec1c24; text-align: center; font-size: 12px; margin-bottom: 10px;">Send Money Only (No Cash Out)</p>
+            
+            <h4 class="req-title">Registration Rules</h4>
+            <ul class="req-list">
+                <li>100% Fair Play Promise</li>
+                <li>No Hack / No Mod Allowed ❌</li>
+                <li>Live Support During Match</li>
+                <li>Admin Decision Final</li>
+            </ul>
         </div>
     </div>
 
-    <div class="tournament-card" style="opacity: 0.7;">
-        <div class="banner" style="background: #475569;">SQUAD MATCH</div>
-        <div class="details">
-            <h2 class="title">Squad Showdown</h2>
-            <p style="text-align: center; color: #94a3b8;">Coming next week...</p>
+    <div id="registrationContainer" class="section-card">
+        <h2 class="req-title">Enter Team Details</h2>
+        
+        <div class="input-group">
+            <label>Team Name</label>
+            <input type="text" id="teamName" class="input-field" placeholder="Enter Team Name">
         </div>
+
+        <div class="input-group">
+            <label>Leader Name & UID</label>
+            <input type="text" id="leaderDetails" class="input-field" placeholder="Leader Name (UID)">
+        </div>
+
+        <div class="input-group">
+            <label>Player 2 UID</label>
+            <input type="text" id="player2Uid" class="input-field" placeholder="Player 2 UID">
+        </div>
+
+        <div class="input-group">
+            <label>Player 3 UID</label>
+            <input type="text" id="player3Uid" class="input-field" placeholder="Player 3 UID">
+        </div>
+
+        <div class="input-group">
+            <label>Player 4 UID</label>
+            <input type="text" id="player4Uid" class="input-field" placeholder="Player 4 UID">
+        </div>
+
+        <div class="input-group">
+            <label>WhatsApp Number</label>
+            <input type="tel" id="whatsapp" class="input-field" placeholder="WhatsApp Number">
+        </div>
+
+        <div class="input-group">
+            <label>Transaction ID / Last 4 Digits</label>
+            <input type="text" id="paymentDetails" class="input-field" placeholder="Last 4 Digits / TxID">
+        </div>
+
     </div>
+
+    <button id="mainActionBtn" class="btn-join-main" onclick="handleBtnClick()">Join Tournament</button>
+
+    <div id="successPopup">
+        <span style="font-size: 40px; color: #fecb00; margin-bottom: 10px; display: block;">✓</span>
+        <h3 style="font-family: 'Teko', sans-serif; font-size: 28px;">Registration Successful!</h3>
+        <p style="color: #ddd; font-size: 14px; margin-top: 10px;">Wait for admin approval on WhatsApp.</p>
+        <button onclick="closePopup()" class="btn-join-main" style="position: static; width: auto; margin-top: 15px; font-size: 18px; padding: 10px 20px;">Okay</button>
+    </div>
+
+    <script>
+        // বাটন ও কন্টেইনারগুলোর স্টেট ম্যানেজমেন্ট
+        let isFormOpen = false;
+
+        function handleBtnClick() {
+            const mainApp = document.getElementById('mainAppContainer');
+            const regForm = document.getElementById('registrationContainer');
+            const btn = document.getElementById('mainActionBtn');
+
+            if (!isFormOpen) {
+                // ১. 'Join Tournament' ক্লিক করলে ফর্ম খুলবে
+                mainApp.style.display = 'none';
+                regForm.style.display = 'block';
+                btn.innerText = "Submit Registration";
+                isFormOpen = true;
+                window.scrollTo(0, 0); // স্ক্রল করে উপরে নিয়ে যাবে
+            } else {
+                // ২. 'Submit Registration' ক্লিক করলে ডেটা সেভ হবে (পরবর্তীতে Web App URL বসাবো)
+                submitData();
+            }
+        }
+
+        // ডেটা সাবমিট করার ফাংশন (আপাতত পপআপ দেখাবে)
+        function submitData() {
+            const btn = document.getElementById('mainActionBtn');
+            btn.innerText = "Sending Data...";
+            btn.disabled = true;
+
+            // (পরবর্তীতে এখানে fetch() ফাংশন ব্যবহার করে Google Sheet-এ ডেটা পাঠাবো)
+            
+            // আপাতত ১ সেকেন্ড লোডিং দেখানোর পর সফল পপআপ দেখাবো
+            setTimeout(() => {
+                showSuccessPopup();
+            }, 1000);
+        }
+
+        function showSuccessPopup() {
+            const popup = document.getElementById('successPopup');
+            popup.style.display = 'block';
+        }
+
+        function closePopup() {
+            const popup = document.getElementById('successPopup');
+            popup.style.display = 'none';
+            // অ্যাপ রিলোড বা বন্ধ করা যেতে পারে এখানে
+        }
+    </script>
 
 </body>
 </html>
