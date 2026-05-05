@@ -3,92 +3,177 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FF Tournament Arena</title>
+    <title>FF Arena Pro</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Teko:wght@400;600;700&family=Oswald:wght@500;700&display=swap');
+
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Oswald', sans-serif; background: #000; color: #fff; padding: 10px; background-image: linear-gradient(to bottom, rgba(0,0,0,0.8), rgba(0,0,0,1)), url('https://w0.peakpx.com/wallpaper/701/320/wallpaper-free-fire-logo-esports.jpg'); background-size: cover; background-position: center; background-attachment: fixed; }
-        .page { display: none; padding-bottom: 90px; }
+        
+        body { 
+            font-family: 'Oswald', sans-serif; 
+            background: #000; 
+            color: #fff; 
+            background-image: linear-gradient(to bottom, rgba(0,0,0,0.85), rgba(0,0,0,1)), url('https://w0.peakpx.com/wallpaper/701/320/wallpaper-free-fire-logo-esports.jpg');
+            background-size: cover; background-position: center; background-attachment: fixed;
+            min-height: 100vh;
+        }
+
+        .page { display: none; padding: 15px; padding-bottom: 100px; }
         .active { display: block; }
+
+        /* হেডার */
         .header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #fecb00; padding-bottom: 10px; }
         .header h2 { font-family: 'Teko', sans-serif; font-size: 38px; color: #fff; text-transform: uppercase; text-shadow: 2px 2px #ec1c24; }
         .header h2 span { color: #fecb00; }
-        .card { background: rgba(26, 26, 26, 0.95); border-radius: 15px; margin-bottom: 15px; border: 1px solid #444; overflow: hidden; }
-        .btn-red { display: block; width: 100%; background: linear-gradient(180deg, #ec1c24 0%, #a01015 100%); color: #fff; text-align: center; padding: 15px; border-radius: 8px; font-family: 'Teko', sans-serif; font-size: 22px; text-transform: uppercase; border: none; cursor: pointer; }
-        .back-btn { color: #fecb00; cursor: pointer; text-transform: uppercase; font-size: 14px; border: 1px solid #fecb00; padding: 5px 10px; border-radius: 5px; display: inline-block; margin-bottom: 15px; }
-        .input-field { width: 100%; background: #111; border: 1px solid #444; padding: 12px; border-radius: 8px; color: #fff; margin-bottom: 12px; font-family: 'Oswald'; }
-        .btn-fixed { position: fixed; bottom: 10px; left: 10px; right: 10px; z-index: 100; }
-        .prize-grid { display: flex; justify-content: space-around; text-align: center; margin: 15px 0; }
-        .rank { padding: 10px; border-radius: 8px; border: 1px solid #444; width: 30%; }
-        .rank-1 { background: #fecb00; color: #000; transform: scale(1.1); font-weight: bold; }
+
+        /* কার্ড ডিজাইন */
+        .card { background: rgba(26, 26, 26, 0.95); border-radius: 15px; margin-bottom: 15px; border: 1px solid #444; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        .padding { padding: 15px; }
+
+        /* বাটন */
+        .btn-red { 
+            display: block; width: 100%; background: linear-gradient(180deg, #ec1c24 0%, #a01015 100%); 
+            color: #fff; text-align: center; padding: 15px; border-radius: 8px; border: none;
+            font-family: 'Teko', sans-serif; font-size: 22px; text-transform: uppercase; cursor: pointer; font-weight: bold;
+        }
+        .btn-fixed { position: fixed; bottom: 15px; left: 15px; right: 15px; z-index: 100; }
+        .back-btn { color: #fecb00; cursor: pointer; text-transform: uppercase; font-size: 13px; border: 1px solid #fecb00; padding: 6px 12px; border-radius: 5px; display: inline-block; margin-bottom: 15px; background: rgba(0,0,0,0.3); }
+
+        /* ইনপুট */
+        .input-field { width: 100%; background: #111; border: 1px solid #444; padding: 14px; border-radius: 8px; color: #fff; margin-bottom: 12px; font-family: 'Oswald'; font-size: 15px; }
+        .input-field:focus { border-color: #fecb00; outline: none; }
+
+        /* প্রাইজ পুডিয়াম */
+        .prize-grid { display: flex; justify-content: space-around; text-align: center; margin: 20px 0; align-items: flex-end; }
+        .rank { padding: 12px; border-radius: 10px; border: 1px solid #444; width: 30%; background: rgba(50,50,50,0.3); }
+        .rank-1 { background: linear-gradient(180deg, #fecb00 0%, #b8860b 100%); color: #000; height: 110px; transform: scale(1.1); font-weight: bold; border: none; }
+        .rank-2 { height: 90px; }
+        .rank-3 { height: 80px; }
+
+        /* পেমেন্ট গেটওয়ে স্পেশাল */
+        #gatewayBg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000; display: none; overflow-y: auto; padding: 20px; transition: 0.4s; }
+        .pay-card { background: #fff; color: #333; border-radius: 20px; padding: 25px; margin-top: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .method-box { background: #fff; padding: 15px; border-radius: 12px; cursor: pointer; width: 45%; border: 2px solid transparent; transition: 0.2s; }
+        .method-box:active { transform: scale(0.95); }
+
+        /* সাকসেস পপআপ */
+        #successPopup {
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: #111; color: #fff; padding: 30px; border-radius: 20px; border: 2px solid #fecb00;
+            text-align: center; z-index: 2000; width: 85%; box-shadow: 0 0 50px rgba(0,0,0,0.8);
+        }
     </style>
 </head>
 <body>
 
-    <div class="header"><h2>FF <span>Arena</span></h2></div>
+    <div class="header" id="mainHeader">
+        <h2>FF <span>Battle</span> Arena</h2>
+    </div>
 
     <div id="lobbyPage" class="page active">
         <div class="card">
             <img src="https://img.freepik.com/free-vector/free-fire-tournament-banner-template_23-2149206144.jpg" style="width: 100%;">
-            <div style="padding:15px;">
-                <h2 style="font-family:'Teko'; color:#fecb00; font-size:28px;">SQUAD BATTLE ROYALE</h2>
-                <p>Entry: 50 TK | Total Prize: 2700 TK</p>
-                <button class="btn-red" onclick="openDetails('Squad', '1500', '800', '400', '50', 'Bermuda', '08:00 PM')">View Details</button>
+            <div class="padding">
+                <h2 style="font-family:'Teko'; color:#fecb00; font-size:30px; text-transform:uppercase;">Squad Battle Royale</h2>
+                <p style="color:#bbb;">Entry: 50 TK | Total Prize: 2700 TK</p>
+                <button class="btn-red" style="margin-top:10px;" onclick="openDetails('Squad', '1500', '800', '400', '50', 'Bermuda', '08:00 PM')">View & Join</button>
             </div>
         </div>
+
         <div class="card">
-            <div style="padding:15px;">
-                <h2 style="font-family:'Teko'; color:#fecb00; font-size:28px;">SOLO DIAMOND RUSH</h2>
-                <p>Entry: 20 TK | Prize: 500💎</p>
-                <button class="btn-red" onclick="openDetails('Solo', '300', '150', '50', '20', 'Purgatory', '09:00 PM')">View Details</button>
+            <div class="padding">
+                <h2 style="font-family:'Teko'; color:#fecb00; font-size:30px; text-transform:uppercase;">Solo Diamond Rush</h2>
+                <p style="color:#bbb;">Entry: 20 TK | Prize: 500💎</p>
+                <button class="btn-red" style="margin-top:10px;" onclick="openDetails('Solo', '300', '150', '50', '20', 'Purgatory', '09:00 PM')">View & Join</button>
             </div>
         </div>
     </div>
 
     <div id="detailsPage" class="page">
         <div class="back-btn" onclick="showPage('lobbyPage')">← Back to Lobby</div>
-        <div class="card" style="padding:15px;">
-            <h2 id="detTitle" style="font-family:'Teko'; color:#fecb00; font-size:30px;"></h2>
+        <div class="card padding">
+            <h2 id="detTitle" style="font-family:'Teko'; color:#fecb00; font-size:32px; text-transform:uppercase; margin-bottom:10px;"></h2>
+            
             <div class="prize-grid">
-                <div class="rank">🥈 <br> <span id="p2"></span></div>
+                <div class="rank rank-2">🥈 <br> <span id="p2"></span></div>
                 <div class="rank rank-1">🏆 <br> <span id="p1"></span></div>
-                <div class="rank">🥉 <br> <span id="p3"></span></div>
+                <div class="rank rank-3">🥉 <br> <span id="p3"></span></div>
             </div>
-            <p>🗺️ Map: <span id="detMap"></span></p>
-            <p>⏰ Time: <span id="detTime"></span></p>
-            <p>💵 Entry: <span id="detEntry"></span></p>
+
+            <div style="background:rgba(255,255,255,0.05); padding:15px; border-radius:10px; font-size:15px;">
+                <p style="margin-bottom:8px;">🗺️ <b>Map:</b> <span id="detMap" style="color:#fecb00;"></span></p>
+                <p style="margin-bottom:8px;">⏰ <b>Time:</b> <span id="detTime" style="color:#fecb00;"></span></p>
+                <p>💵 <b>Entry Fee:</b> <span id="detEntry" style="color:#fecb00;"></span></p>
+            </div>
         </div>
         <div class="btn-fixed"><button class="btn-red" onclick="openReg()">Join Tournament</button></div>
     </div>
 
     <div id="regPage" class="page">
         <div class="back-btn" onclick="showPage('detailsPage')">← Back</div>
-        <div class="card" style="padding:15px;">
-            <h3 style="font-family:'Teko'; color:#ec1c24; font-size:26px; margin-bottom:10px;">Player Info</h3>
+        <div class="card padding">
+            <h3 style="font-family:'Teko'; color:#ec1c24; font-size:28px; margin-bottom:15px; text-transform:uppercase; border-left:4px solid #ec1c24; padding-left:10px;">Player Info</h3>
             <input type="text" id="teamName" class="input-field" placeholder="Team Name (N/A for Solo)">
             <div id="uidInputs"></div>
             <input type="tel" id="whatsapp" class="input-field" placeholder="WhatsApp Number">
         </div>
-        <div class="btn-fixed"><button class="btn-red" onclick="showPage('payPage')">Next: Payment</button></div>
+        <div class="btn-fixed"><button class="btn-red" onclick="showPage('payMethodPage')">Next: Payment</button></div>
     </div>
 
-    <div id="payPage" class="page">
+    <div id="payMethodPage" class="page">
         <div class="back-btn" onclick="showPage('regPage')">← Back</div>
-        <div class="card" style="padding:15px; text-align:center;">
-            <h3 style="font-family:'Teko'; color:#fecb00; font-size:26px;">Payment Method</h3>
-            <p>bKash/Nagad (Send Money):</p>
-            <h2 style="color:#ec1c24; margin:10px 0;">01301516532</h2>
-            <input type="text" id="txid" class="input-field" placeholder="Transaction ID / Last 4 Digits">
+        <div class="card padding" style="text-align:center;">
+            <h3 style="font-family:'Teko'; color:#fecb00; font-size:28px; margin-bottom:20px; text-transform:uppercase;">Choose Payment</h3>
+            <div style="display: flex; gap: 15px; justify-content: center;">
+                <div class="method-box" onclick="openGateway('bkash')">
+                    <img src="https://itbd.com.bd/wp-content/uploads/2020/06/bkash-logo.png" style="width:100%;">
+                </div>
+                <div class="method-box" onclick="openGateway('nagad')">
+                    <img src="https://1000logos.net/wp-content/uploads/2023/10/Nagad-Logo.png" style="width:100%;">
+                </div>
+            </div>
         </div>
-        <div class="btn-fixed"><button class="btn-red" onclick="submitData()">Confirm Registration</button></div>
+    </div>
+
+    <div id="gatewayBg">
+        <div class="back-btn" onclick="closeGateway()" style="background: rgba(0,0,0,0.5); border-color:#fff; color:#fff;">← Cancel</div>
+        
+        <div class="pay-card">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <img id="gatewayLogo" src="" style="height: 45px;">
+                <h1 style="font-size: 38px; margin: 10px 0; color: #000; font-family:'Oswald';">৳ <span class="payAmount"></span></h1>
+            </div>
+
+            <div style="background: #f8f8f8; padding: 15px; border-radius: 12px; font-size: 14px; line-height: 1.7; color:#444; border:1px solid #eee;">
+                <p>১. <span id="methodName"></span> অ্যাপ বা মেনুতে যান।</p>
+                <p>২. <b>"Send Money"</b> অপশনটি বেছে নিন।</p>
+                <p>৩. প্রাপক নম্বর: <b id="payNumber" style="color:#d81b60; font-size:18px;">01336951706</b></p>
+                <p>৪. টাকার পরিমাণ: <b class="payAmount"></b></p>
+                <p>৫. লেনদেন শেষে <b>Transaction ID</b> কপি করুন।</p>
+            </div>
+
+            <div style="margin-top: 25px;">
+                <label style="display:block; font-weight:bold; margin-bottom:8px; color:#555;">ট্রান্সজেকশন আইডি দিন</label>
+                <input type="text" id="finalTxid" placeholder="Enter Transaction ID" style="width:100%; padding:16px; border:2px solid #ddd; border-radius:10px; font-size:16px; outline:none;">
+                <button id="verifyBtn" class="btn-red" style="width:100%; margin-top:15px; border-radius:10px; box-shadow: 0 4px 10px rgba(0,0,0,0.2);" onclick="submitData()">VERIFY</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="successPopup">
+        <div style="font-size: 60px; color: #fecb00; margin-bottom:10px;">✓</div>
+        <h2 style="font-family:'Teko'; font-size:35px; text-transform:uppercase;">Registration Submitted!</h2>
+        <p style="color: #bbb; margin-top: 10px; font-size:14px;">Please wait for admin verification. You will be notified via WhatsApp.</p>
+        <button class="btn-red" onclick="location.reload()" style="margin-top: 25px; background:#333;">Close App</button>
     </div>
 
     <script>
         let currentMode = '';
-        const scriptURL = 'কাল_আপনার_লিঙ্ক_এখানে_বসবে'; 
+        const scriptURL = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE'; // কাল এখানে লিঙ্ক বসাবেন
 
         function showPage(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('gatewayBg').style.display = 'none';
             document.getElementById(id).classList.add('active');
             window.scrollTo(0,0);
         }
@@ -96,9 +181,9 @@
         function openDetails(mode, pr1, pr2, pr3, ent, map, time) {
             currentMode = mode;
             document.getElementById('detTitle').innerText = mode + " Tournament";
-            document.getElementById('p1').innerText = pr1 + " TK";
-            document.getElementById('p2').innerText = pr2 + " TK";
-            document.getElementById('p3').innerText = pr3 + " TK";
+            document.getElementById('p1').innerText = pr1;
+            document.getElementById('p2').innerText = pr2;
+            document.getElementById('p3').innerText = pr3;
             document.getElementById('detMap').innerText = map;
             document.getElementById('detTime').innerText = time;
             document.getElementById('detEntry').innerText = ent + " TK";
@@ -110,14 +195,71 @@
             container.innerHTML = '';
             const count = (currentMode === 'Solo') ? 1 : 4;
             for(let i=1; i<=count; i++) {
-                container.innerHTML += `<input type="text" class="input-field uid-in" placeholder="Player ${i} UID">`;
+                container.innerHTML += `<input type="text" class="input-field uid-val" placeholder="Player ${i} Player ID (UID)">`;
             }
             showPage('regPage');
         }
 
+        function openGateway(method) {
+            const bg = document.getElementById('gatewayBg');
+            const logo = document.getElementById('gatewayLogo');
+            const mName = document.getElementById('methodName');
+            const amounts = document.querySelectorAll('.payAmount');
+            const currentEntry = document.getElementById('detEntry').innerText.replace(' TK', '');
+            
+            amounts.forEach(el => el.innerText = currentEntry);
+
+            if (method === 'bkash') {
+                bg.style.backgroundColor = '#e2136e';
+                logo.src = 'https://itbd.com.bd/wp-content/uploads/2020/06/bkash-logo.png';
+                mName.innerText = 'bKash';
+            } else {
+                bg.style.backgroundColor = '#f7941d';
+                logo.src = 'https://1000logos.net/wp-content/uploads/2023/10/Nagad-Logo.png';
+                mName.innerText = 'Nagad';
+            }
+            
+            bg.style.display = 'block';
+        }
+
+        function closeGateway() {
+            document.getElementById('gatewayBg').style.display = 'none';
+        }
+
         function submitData() {
-            // কাল এখানে fetch() কোডটি যোগ করবো
-            alert('কাল লিঙ্ক বসালে এটি কাজ করবে!');
+            const txid = document.getElementById('finalTxid').value;
+            if (txid.length < 4) {
+                alert('অনুগ্রহ করে সঠিক Transaction ID দিন');
+                return;
+            }
+
+            const btn = document.getElementById('verifyBtn');
+            btn.innerText = "Processing...";
+            btn.disabled = true;
+
+            // ডেটা সংগ্রহের অবজেক্ট
+            const uids = Array.from(document.querySelectorAll('.uid-val')).map(i => i.value).join(', ');
+            const formData = {
+                team: document.getElementById('teamName').value || 'Solo',
+                uids: uids,
+                whatsapp: document.getElementById('whatsapp').value,
+                payment: txid,
+                mode: currentMode
+            };
+
+            // কাল লিঙ্ক বসালে নিচের অংশটি আনকমেন্ট করবেন
+            /*
+            fetch(scriptURL, { method: 'POST', body: JSON.stringify(formData) })
+            .then(res => {
+                document.getElementById('successPopup').style.display = 'block';
+            })
+            .catch(err => alert('Error sending data!'));
+            */
+
+            // আপাতত ডেমো সাকসেস দেখাচ্ছি
+            setTimeout(() => {
+                document.getElementById('successPopup').style.display = 'block';
+            }, 2000);
         }
     </script>
 </body>
