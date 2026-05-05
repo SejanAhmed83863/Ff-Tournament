@@ -53,9 +53,25 @@
         /* পেমেন্ট গেটওয়ে স্পেশাল */
         #gatewayBg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000; display: none; overflow-y: auto; padding: 20px; transition: 0.4s; }
         .pay-card { background: #fff; color: #333; border-radius: 20px; padding: 25px; margin-top: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-        .method-box { background: #fff; padding: 15px; border-radius: 12px; cursor: pointer; width: 45%; border: 2px solid transparent; transition: 0.2s; }
-        .method-box:active { transform: scale(0.95); }
-
+        .method-box { 
+    background: #fff; 
+    padding: 15px; 
+    border-radius: 12px; 
+    cursor: pointer; 
+    width: 140px; /* বক্সের সাইজ একটু বাড়াতে পারেন */
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #eee;
+    transition: 0.2s;
+}
+.method-box img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+.method-box:active { transform: scale(0.95); border-color: #fecb00; }
         /* সাকসেস পপআপ */
         #successPopup {
             display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
@@ -121,18 +137,22 @@
     </div>
 
     <div id="payMethodPage" class="page">
-        <div class="back-btn" onclick="showPage('regPage')">← Back</div>
-        <div class="card padding" style="text-align:center;">
-            <h3 style="font-family:'Teko'; color:#fecb00; font-size:28px; margin-bottom:20px; text-transform:uppercase;">Choose Payment</h3>
-            <div style="display: flex; gap: 15px; justify-content: center;">
-                <div class="method-box" onclick="openGateway('bkash')">
-                    <img src="https://itbd.com.bd/wp-content/uploads/2020/06/bkash-logo.png" style="width:100%;">
-                </div>
-                <div class="method-box" onclick="openGateway('nagad')">
-                    <img src="https://1000logos.net/wp-content/uploads/2023/10/Nagad-Logo.png" style="width:100%;">
-                </div>
+    <div class="back-btn" onclick="showPage('regPage')">← Back</div>
+    <div class="card padding" style="text-align:center;">
+        <h3 style="font-family:'Teko'; color:#fecb00; font-size:28px; margin-bottom:20px; text-transform:uppercase;">Choose Payment</h3>
+        
+        <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+            <div class="method-box" onclick="openGateway('bkash')">
+                <img src="https://www.logo.wine/a/logo/BKash/BKash-Logo.wine.svg" alt="bKash">
+            </div>
+            
+            <div class="method-box" onclick="openGateway('nagad')">
+                <img src="https://download.logo.wine/logo/Nagad/Nagad-Logo.wine.png" alt="Nagad">
             </div>
         </div>
+        
+        <p style="margin-top: 20px; color: #aaa; font-size: 12px;">পেমেন্ট মেথড সিলেক্ট করুন</p>
+    </div>
     </div>
 
     <div id="gatewayBg">
@@ -147,7 +167,7 @@
             <div style="background: #f8f8f8; padding: 15px; border-radius: 12px; font-size: 14px; line-height: 1.7; color:#444; border:1px solid #eee;">
                 <p>১. <span id="methodName"></span> অ্যাপ বা মেনুতে যান।</p>
                 <p>২. <b>"Send Money"</b> অপশনটি বেছে নিন।</p>
-                <p>৩. প্রাপক নম্বর: <b id="payNumber" style="color:#d81b60; font-size:18px;">01336951706</b></p>
+                <p>৩. প্রাপক নম্বর: <b id="payNumber" style="color:#d81b60; font-size:18px;">01301516532</b></p>
                 <p>৪. টাকার পরিমাণ: <b class="payAmount"></b></p>
                 <p>৫. লেনদেন শেষে <b>Transaction ID</b> কপি করুন।</p>
             </div>
