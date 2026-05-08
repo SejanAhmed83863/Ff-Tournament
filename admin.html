@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+  <title>Admin Panel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--gold:#FFD700;--orange:#FF6B00;--dark:#0A0A0F;--card:#12121A;--border:#2A2A3A;--text:#E8E8F0;--muted:#6B6B80;--green:#5CFF8A;--red:#FF6B6B}
+    body{background:var(--dark);color:var(--text);font-family:'Rajdhani',sans-serif;min-height:100vh;padding-bottom:60px}
+    .header{background:var(--card);padding:14px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100}
+    .header-left{display:flex;align-items:center;gap:12px}
+    .header-icon{width:36px;height:36px;background:linear-gradient(135deg,#FF6B00,#FFD700);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px}
+    .header h1{font-family:'Bebas Neue',sans-serif;color:var(--orange);letter-spacing:2px;font-size:20px;line-height:1}
+    .header-sub{font-size:11px;color:var(--muted);letter-spacing:1px}
+    .live-dot{display:flex;align-items:center;gap:6px}
+    .live-dot span:first-child{width:8px;height:8px;background:var(--green);border-radius:50%;box-shadow:0 0 6px var(--green);display:inline-block}
+    .live-dot span:last-child{font-size:12px;color:var(--green);font-weight:600}
+    .tabs{display:flex;background:var(--card);border-bottom:1px solid var(--border)}
+    .tab{flex:1;padding:13px 4px;text-align:center;cursor:pointer;font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1.5px;color:var(--muted);border-bottom:2px solid transparent;transition:0.2s;position:relative;background:none;border-top:none;border-left:none;border-right:none}
+    .tab.active{color:var(--orange);border-bottom:2px solid var(--orange)}
+    .tab-icon{font-size:16px;display:block;margin-bottom:1px}
+    .badge{position:absolute;top:8px;right:50%;transform:translateX(14px);background:var(--red);color:white;border-radius:50%;width:18px;height:18px;font-size:11px;display:flex;align-items:center;justify-content:center;font-family:'Rajdhani',sans-serif;font-weight:700}
+    .tab-content{display:none;padding:16px;max-width:600px;margin:0 auto}
+    .tab-content.active{display:block}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px}
+    .card-title{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+    .card-title-bar{width:4px;height:22px;border-radius:2px}
+    .card-title span{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px}
+    .stats-row{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+    .stat-box{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 16px;text-align:center;flex:1;min-width:70px}
+    .stat-val{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px}
+    .stat-lbl{font-size:11px;color:var(--muted);font-weight:600;letter-spacing:1px}
+    .req-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 16px 16px 20px;margin-bottom:12px;position:relative;overflow:hidden}
+    .req-strip{position:absolute;top:0;left:0;width:4px;height:100%;border-radius:12px 0 0 12px}
+    .req-type{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:1px;display:inline-block;margin-bottom:8px}
+    .req-amount{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--gold);letter-spacing:1px}
+    .req-email{font-weight:600;margin-bottom:2px}
+    .req-meta{color:var(--muted);font-size:13px}
+    .req-actions{display:flex;gap:10px;margin-top:12px}
+    .btn-approve{flex:1;padding:10px;background:var(--green);color:#0A0A0F;border:none;border-radius:7px;font-weight:700;cursor:pointer;font-family:'Rajdhani',sans-serif;font-size:14px;letter-spacing:1px}
+    .btn-reject{flex:1;padding:10px;background:transparent;color:var(--red);border:1px solid var(--red);border-radius:7px;font-weight:700;cursor:pointer;font-family:'Rajdhani',sans-serif;font-size:14px;letter-spacing:1px}
+    .empty-state{text-align:center;padding:60px 0;color:var(--muted)}
+    .empty-state .tick{font-size:48px;margin-bottom:8px}
+    input,select{width:100%;padding:11px 13px;background:#0A0A0F;border:1px solid var(--border);color:var(--text);border-radius:7px;margin-bottom:10px;font-family:'Rajdhani',sans-serif;font-size:14px;outline:none}
+    input:focus,select:focus{border-color:var(--orange)}
+    .row{display:flex;gap:8px}
+    .row input,.row select{flex:1}
+    .btn-main{width:100%;padding:13px;background:linear-gradient(90deg,#FF6B00,#FF9500);border:none;color:white;font-weight:700;font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;border-radius:8px;cursor:pointer;margin-top:4px}
+    .btn-gold{width:100%;padding:13px;background:linear-gradient(90deg,#FFD700,#FF9500);border:none;color:#0A0A0F;font-weight:700;font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;border-radius:8px;cursor:pointer;margin-top:4px}
+    .t-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px}
+    .t-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+    .t-title{font-weight:700;font-size:16px;margin-bottom:4px}
+    .t-badge{padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:1px;display:inline-block}
+    .btn-delete{background:none;border:1px solid #FF6B6B44;color:var(--red);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:700;font-family:'Rajdhani',sans-serif}
+    .t-prizes{display:flex;gap:16px;margin-bottom:10px}
+    .t-prize-lbl{color:var(--muted);font-size:11px;font-weight:600;letter-spacing:1px}
+    .t-prize-val{font-weight:700}
+    .fill-label{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:5px}
+    .fill-bar-bg{background:#0A0A0F;border-radius:4px;height:6px;overflow:hidden}
+    .fill-bar{height:100%;border-radius:4px;transition:width 0.6s ease}
+    .section-label{font-family:'Bebas Neue',sans-serif;font-size:15px;color:var(--muted);letter-spacing:2px;margin-bottom:10px}
+    .w-uid-wrap{position:relative;margin-bottom:10px}
+    .w-uid-wrap input{padding-left:40px}
+    .w-uid-num{position:absolute;left:14px;top:50%;transform:translateY(-60%);font-weight:700;font-size:14px}
+    .prize-preview{background:#0A0A0F;border-radius:8px;padding:12px;margin-bottom:14px;display:flex;gap:20px}
+    .pp-item{text-align:center}
+    .pp-val{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px}
+    .pp-lbl{color:var(--muted);font-size:11px}
+    .log-entry{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+    .log-uid{font-weight:700;font-size:14px}
+    .log-meta{color:var(--muted);font-size:12px}
+    .log-prize{color:var(--green);font-family:'Bebas Neue',sans-serif;font-size:20px}
+    #toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);padding:11px 26px;border-radius:8px;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.5);display:none;white-space:nowrap}
+  </style>
+</head>
+<body>
+<div id="toast"></div>
+<div class="header">
+  <div class="header-left">
+    <div class="header-icon">⚡</div>
+    <div><h1>ADMIN PANEL</h1><div class="header-sub">TOURNAMENT MANAGER</div></div>
+  </div>
+  <div class="live-dot"><span></span><span>LIVE</span></div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('requests')" id="tab-btn-requests"><span class="tab-icon">📥</span>REQUESTS<span class="badge" id="pending-badge" style="display:none">0</span></button>
+  <button class="tab" onclick="switchTab('tournaments')" id="tab-btn-tournaments"><span class="tab-icon">🎮</span>MATCHES</button>
+  <button class="tab" onclick="switchTab('winners')" id="tab-btn-winners"><span class="tab-icon">🏆</span>WINNERS</button>
+</div>
+
+<!-- REQUESTS -->
+<div class="tab-content active" id="tab-requests">
+  <div class="stats-row">
+    <div class="stat-box"><div class="stat-val" id="stat-pending" style="color:#FFD700">0</div><div class="stat-lbl">PENDING</div></div>
+    <div class="stat-box"><div class="stat-val" id="stat-total" style="color:#FF6B00">0</div><div class="stat-lbl">TOTAL</div></div>
+    <div class="stat-box"><div class="stat-val" id="stat-approved" style="color:#5CFF8A">0</div><div class="stat-lbl">APPROVED</div></div>
+    <div class="stat-box"><div class="stat-val" id="stat-rejected" style="color:#FF6B6B">0</div><div class="stat-lbl">REJECTED</div></div>
+  </div>
+  <div id="requests-list"></div>
+</div>
+
+<!-- MATCHES -->
+<div class="tab-content" id="tab-tournaments">
+  <div class="card">
+    <div class="card-title"><div class="card-title-bar" style="background:#FF6B00"></div><span style="color:#FF6B00">CREATE TOURNAMENT</span></div>
+    <input type="text" id="t-title" placeholder="Match Title *">
+    <div class="row">
+      <input type="number" id="t-prize1" placeholder="1st Prize ৳">
+      <input type="number" id="t-prize2" placeholder="2nd Prize ৳">
+      <input type="number" id="t-prize3" placeholder="3rd Prize ৳">
+    </div>
+    <div class="row">
+      <input type="number" id="t-fee" placeholder="Entry Fee ৳ *">
+      <select id="t-type"><option value="1">Solo</option><option value="2">Duo</option><option value="4">Squad</option></select>
+    </div>
+    <div class="row">
+      <input type="number" id="t-max" placeholder="Max Players *">
+      <input type="datetime-local" id="t-time">
+    </div>
+    <button class="btn-main" onclick="createTournament()">ADD TOURNAMENT</button>
+  </div>
+  <div class="section-label" id="match-count-label">ACTIVE MATCHES (0)</div>
+  <div id="tournament-list"></div>
+</div>
+
+<!-- WINNERS -->
+<div class="tab-content" id="tab-winners">
+  <div class="card">
+    <div class="card-title"><div class="card-title-bar" style="background:#FFD700"></div><span style="color:#FFD700">DISTRIBUTE PRIZES</span></div>
+    <select id="winner-match-select" onchange="updatePrizePreview()"><option value="">— Select Match —</option></select>
+    <div id="prize-preview" style="display:none" class="prize-preview">
+      <div class="pp-item"><div class="pp-val" id="pp1" style="color:#FFD700">৳0</div><div class="pp-lbl">1ST</div></div>
+      <div class="pp-item"><div class="pp-val" id="pp2" style="color:#C0C0C0">৳0</div><div class="pp-lbl">2ND</div></div>
+      <div class="pp-item"><div class="pp-val" id="pp3" style="color:#CD7F32">৳0</div><div class="pp-lbl">3RD</div></div>
+    </div>
+    <p style="color:var(--muted);font-size:13px;margin-bottom:12px;">⚠️ Enter the Game UID that players registered with in their profile.</p>
+    <div class="w-uid-wrap"><span class="w-uid-num" style="color:#FFD700">#1</span><input type="text" id="w1" placeholder="1st Place Game UID 🥇"></div>
+    <div class="w-uid-wrap"><span class="w-uid-num" style="color:#C0C0C0">#2</span><input type="text" id="w2" placeholder="2nd Place Game UID 🥈"></div>
+    <div class="w-uid-wrap"><span class="w-uid-num" style="color:#CD7F32">#3</span><input type="text" id="w3" placeholder="3rd Place Game UID 🥉"></div>
+    <button class="btn-gold" onclick="distributePrizes()">DISTRIBUTE PRIZES & CLOSE MATCH</button>
+  </div>
+  <div id="dist-log-wrap" style="display:none">
+    <div class="section-label">DISTRIBUTION LOG</div>
+    <div id="dist-log"></div>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+  import { getFirestore, collection, addDoc, query, where, onSnapshot, doc, updateDoc, increment, getDoc, getDocs, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+
+  const ADMIN_EMAIL = "sejansasker@gmail.com"; // ← Your email
+
+  const firebaseConfig = { apiKey:"AIzaSyBgMroBilivfk7bJxoz93HjxSt6yU7Ura0", authDomain:"tournament-app-4a050.firebaseapp.com", projectId:"tournament-app-4a050", storageBucket:"tournament-app-4a050.appspot.com", messagingSenderId:"811957533858", appId:"1:811957533858:web:1d1f0f916c0aba5eccebfb" };
+
+  const app  = initializeApp(firebaseConfig);
+  const db   = getFirestore(app);
+  const auth = getAuth(app);
+
+  onAuthStateChanged(auth, (user) => {
+    if (!user) { window.location.href='index.html'; return; }
+    if (user.email !== ADMIN_EMAIL) { alert('Access Denied!'); window.location.href='home.html'; return; }
+    loadRequests();
+    loadTournaments();
+  });
+
+  function toast(msg, type="success") {
+    const el = document.getElementById("toast");
+    el.textContent = msg;
+    el.style.background = type==="success"?"#5CFF8A":type==="error"?"#FF6B6B":"#FFD700";
+    el.style.color = type==="error"?"#fff":"#0A0A0F";
+    el.style.display = "block";
+    clearTimeout(window._toastTimer);
+    window._toastTimer = setTimeout(()=>el.style.display="none",2600);
+  }
+
+  window.switchTab = (name) => {
+    document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    document.getElementById('tab-'+name).classList.add('active');
+    document.getElementById('tab-btn-'+name).classList.add('active');
+  };
+
+  // REQUESTS - listen real time
+  function loadRequests() {
+    onSnapshot(collection(db,'transactions'), (snap) => {
+      const all=[], pending=[], approved=[], rejected=[];
+      snap.forEach(d => {
+        const tx={id:d.id,...d.data()};
+        all.push(tx);
+        if(tx.status==='pending') pending.push(tx);
+        else if(tx.status==='approved') approved.push(tx);
+        else rejected.push(tx);
+      });
+      document.getElementById('stat-pending').textContent=pending.length;
+      document.getElementById('stat-total').textContent=all.length;
+      document.getElementById('stat-approved').textContent=approved.length;
+      document.getElementById('stat-rejected').textContent=rejected.length;
+      const badge=document.getElementById('pending-badge');
+      if(pending.length>0){badge.textContent=pending.length;badge.style.display='flex';}else badge.style.display='none';
+
+      const list=document.getElementById('requests-list');
+      if(pending.length===0){list.innerHTML=`<div class="empty-state"><div class="tick">✓</div><div>ALL REQUESTS HANDLED</div></div>`;return;}
+      list.innerHTML='';
+      pending.forEach(tx=>{
+        const isDeposit=tx.type==='deposit'||tx.type==='entry';
+        const stripColor=isDeposit?'#5CFF8A':'#FF6B6B';
+        const typeColor=isDeposit?'#5CFF8A22':'#FF6B6B22';
+        const typeText=isDeposit?'#5CFF8A':'#FF6B6B';
+        list.innerHTML+=`
+          <div class="req-card">
+            <div class="req-strip" style="background:${stripColor}"></div>
+            <div style="display:flex;justify-content:space-between;align-items:flex-start">
+              <span class="req-type" style="background:${typeColor};color:${typeText}">${tx.type.toUpperCase()}</span>
+              <span class="req-amount">৳${tx.amount}</span>
+            </div>
+            <div class="req-email">${tx.email}</div>
+            <div class="req-meta">
+              ${tx.txid?'TxID: '+tx.txid+'<br>':''}
+              ${tx.number?'📞 '+tx.number+'<br>':''}
+              ${tx.method?'📱 '+tx.method.toUpperCase():''}
+            </div>
+            <div class="req-actions">
+              <button class="btn-approve" onclick="handleTx('${tx.id}','${tx.uid}',${tx.amount},'${tx.type}','approve')">✓ APPROVE</button>
+              <button class="btn-reject" onclick="handleTx('${tx.id}','${tx.uid}',${tx.amount},'${tx.type}','reject')">✕ REJECT</button>
+            </div>
+          </div>`;
+      });
+    });
+  }
+
+  window.handleTx = async (id, uid, amt, type, action) => {
+    try {
+      if(action==='approve'){
+        await updateDoc(doc(db,'transactions',id),{status:'approved'});
+        if(type==='deposit') await updateDoc(doc(db,'users',uid),{balance:increment(amt)});
+        toast(`✅ Approved! ৳${amt} credited`);
+      } else {
+        await updateDoc(doc(db,'transactions',id),{status:'rejected'});
+        if(type==='withdraw') await updateDoc(doc(db,'users',uid),{balance:increment(amt)});
+        toast(`❌ Rejected${type==='withdraw'?' & ৳'+amt+' refunded':''}`, 'error');
+      }
+    } catch(e){toast(e.message,'error');}
+  };
+
+  // TOURNAMENTS
+  window.createTournament = async () => {
+    const title=document.getElementById('t-title').value.trim();
+    const fee=Number(document.getElementById('t-fee').value);
+    const time=document.getElementById('t-time').value;
+    const max=Number(document.getElementById('t-max').value);
+    if(!title||!fee||!time||!max) return toast('Fill all required fields!','error');
+    await addDoc(collection(db,'tournaments'),{
+      title, prize1:Number(document.getElementById('t-prize1').value)||0,
+      prize2:Number(document.getElementById('t-prize2').value)||0,
+      prize3:Number(document.getElementById('t-prize3').value)||0,
+      fee, teamType:Number(document.getElementById('t-type').value),
+      maxPlayers:max, joined:0, time, status:'open',
+      created_at:serverTimestamp()
+    });
+    ['t-title','t-prize1','t-prize2','t-prize3','t-fee','t-max','t-time'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('t-type').value='1';
+    toast('🏆 Tournament created!');
+  };
+
+  function teamLabel(t){return t==1?'SOLO':t==2?'DUO':'SQUAD';}
+  function teamColor(t){return t==1?'#FFD700':t==2?'#5CFF8A':'#FF6B00';}
+
+  function loadTournaments() {
+    onSnapshot(collection(db,'tournaments'),(snap)=>{
+      const list=document.getElementById('tournament-list');
+      const select=document.getElementById('winner-match-select');
+      list.innerHTML='';
+      select.innerHTML='<option value="">— Select Match —</option>';
+      document.getElementById('match-count-label').textContent=`ACTIVE MATCHES (${snap.size})`;
+      snap.forEach(d=>{
+        const t=d.data();
+        const tc=teamColor(t.teamType);
+        const fill=Math.min(Math.round((t.joined/t.maxPlayers)*100),100);
+        const barColor=fill>=100?'#FF6B6B':fill>70?'#FFD700':'#5CFF8A';
+        list.innerHTML+=`
+          <div class="t-card">
+            <div class="t-header">
+              <div><div class="t-title">${t.title}</div><span class="t-badge" style="background:${tc}22;color:${tc}">${teamLabel(t.teamType)}</span></div>
+              <button class="btn-delete" onclick="deleteTournament('${d.id}')">✕ DELETE</button>
+            </div>
+            <div class="t-prizes">
+              <div><div class="t-prize-lbl">ENTRY</div><div class="t-prize-val" style="color:#FFD700">৳${t.fee}</div></div>
+              <div><div class="t-prize-lbl">1ST</div><div class="t-prize-val" style="color:#5CFF8A">৳${t.prize1}</div></div>
+              <div><div class="t-prize-lbl">2ND</div><div class="t-prize-val">৳${t.prize2}</div></div>
+              <div><div class="t-prize-lbl">3RD</div><div class="t-prize-val" style="color:#CD7F32">৳${t.prize3}</div></div>
+            </div>
+            <div class="fill-label"><span>PLAYERS</span><span style="color:${barColor}">${t.joined}/${t.maxPlayers}</span></div>
+            <div class="fill-bar-bg"><div class="fill-bar" style="width:${fill}%;background:${barColor}"></div></div>
+          </div>`;
+        select.innerHTML+=`<option value="${d.id}">${t.title}</option>`;
+      });
+    });
+  }
+
+  window.deleteTournament = async (id) => {
+    if(!confirm('Delete this tournament?')) return;
+    await deleteDoc(doc(db,'tournaments',id));
+    toast('Match deleted','warn');
+  };
+
+  window.updatePrizePreview = async () => {
+    const mId=document.getElementById('winner-match-select').value;
+    const preview=document.getElementById('prize-preview');
+    if(!mId){preview.style.display='none';return;}
+    const snap=await getDoc(doc(db,'tournaments',mId));
+    if(!snap.exists()) return;
+    const t=snap.data();
+    document.getElementById('pp1').textContent='৳'+(t.prize1||0);
+    document.getElementById('pp2').textContent='৳'+(t.prize2||0);
+    document.getElementById('pp3').textContent='৳'+(t.prize3||0);
+    preview.style.display='flex';
+  };
+
+  // DISTRIBUTE PRIZES BY GAME UID
+  window.distributePrizes = async () => {
+    const mId=document.getElementById('winner-match-select').value;
+    if(!mId) return toast('Select a match first!','error');
+    const wUIDs=[
+      document.getElementById('w1').value.trim(),
+      document.getElementById('w2').value.trim(),
+      document.getElementById('w3').value.trim()
+    ];
+    if(!wUIDs[0]&&!wUIDs[1]&&!wUIDs[2]) return toast('Enter at least 1 winner Game UID!','error');
+
+    const tSnap=await getDoc(doc(db,'tournaments',mId));
+    if(!tSnap.exists()) return toast('Match not found!','error');
+    const t=tSnap.data();
+    const prizes=[t.prize1||0,t.prize2||0,t.prize3||0];
+    const positions=['🥇 1st','🥈 2nd','🥉 3rd'];
+    const logEntries=[];
+
+    // Get all users
+    const allUsers=await getDocs(collection(db,'users'));
+
+    for(let i=0;i<3;i++){
+      if(!wUIDs[i]||prizes[i]===0) continue;
+      let found=false;
+      // Match by uid_game field
+      allUsers.forEach(async (uDoc)=>{
+        const uData=uDoc.data();
+        if(uData.uid_game && uData.uid_game.trim()===wUIDs[i].trim()){
+          found=true;
+          // Add prize money
+          await updateDoc(doc(db,'users',uDoc.id),{
+            balance:increment(prizes[i]),
+            total_earned:increment(prizes[i]),
+            wins:increment(i===0?1:0)
+          });
+          // Add transaction record
+          await addDoc(collection(db,'transactions'),{
+            uid:uDoc.id, email:uData.email,
+            amount:prizes[i], type:'prize',
+            status:'approved',
+            reason:t.title+' - '+positions[i],
+            created_at:serverTimestamp()
+          });
+        }
+      });
+      logEntries.push({uid:wUIDs[i],prize:prizes[i],position:positions[i],match:t.title});
+    }
+
+    // Close the tournament
+    await deleteDoc(doc(db,'tournaments',mId));
+
+    // Show log
+    const logWrap=document.getElementById('dist-log-wrap');
+    const logDiv=document.getElementById('dist-log');
+    logWrap.style.display='block';
+    logEntries.forEach(e=>{
+      const now=new Date().toLocaleTimeString();
+      logDiv.innerHTML=`
+        <div class="log-entry">
+          <div><div class="log-uid">UID: ${e.uid}</div><div class="log-meta">${e.match} · ${e.position} · ${now}</div></div>
+          <div class="log-prize">+৳${e.prize}</div>
+        </div>`+logDiv.innerHTML;
+    });
+
+    ['w1','w2','w3'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('winner-match-select').value='';
+    document.getElementById('prize-preview').style.display='none';
+    toast(`🏆 Prizes distributed to ${logEntries.length} winner(s)!`);
+  };
+</script>
+</body>
+</html>
