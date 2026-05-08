@@ -99,20 +99,17 @@
 
 <div class="content">
 
-  <!-- WELCOME (banner removed) -->
   <div class="welcome">
     <div>Hello, <span id="welcome-name">Player</span> 👋</div>
     <div class="sub">Play Fair · Play Hard · Win Glory</div>
   </div>
 
-  <!-- QUICK STATS -->
   <div class="stats-row">
     <div class="qs"><div class="qs-val" id="t-count">0</div><div class="qs-label">🔥 Live</div></div>
     <div class="qs"><div class="qs-val" id="p-count">0</div><div class="qs-label">👥 Players</div></div>
     <div class="qs"><div class="qs-val" id="my-played">0</div><div class="qs-label">🎮 My Plays</div></div>
   </div>
 
-  <!-- LIVE TOURNAMENTS -->
   <div class="sec-head">
     <div class="sec-title">🔥 Live Tournaments</div>
     <a class="sec-link" href="tournaments.html">See All →</a>
@@ -122,7 +119,6 @@
   <div class="tagline">PLAY HARD • STAY PRO • <span>BOOYAH!</span></div>
 </div>
 
-<!-- BOTTOM NAV -->
 <nav class="bottom-nav">
   <button class="nav-item active" onclick="window.location.href='home.html'">
     <span class="nav-icon">🏆</span>Tournaments
@@ -177,7 +173,10 @@
     list.innerHTML='';
     active.slice(0,4).forEach(t=>{
       const mode=t.teamType==1?'Solo':t.teamType==2?'Duo':'Squad';
-      const timeStr=t.time?new Date(t.time).toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):'';
+      
+      // 12 HOUR FORMAT FIX
+      const timeStr=t.time?new Date(t.time).toLocaleString('en-US',{day:'2-digit',month:'short',hour:'numeric',minute:'2-digit',hour12:true}):'';
+      
       list.innerHTML+=`
         <a class="mini-card" href="tournaments.html">
           <div class="mini-left">
