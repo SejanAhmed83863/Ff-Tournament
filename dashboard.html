@@ -114,7 +114,9 @@
     .pay-info.show{display:block}
     .pay-number{color:var(--gold);font-family:'Teko';font-size:20px;font-weight:700}
     .m-btn{width:100%;padding:13px;border:1px solid var(--gold);border-radius:7px;background:linear-gradient(180deg,var(--amber),var(--amber-deep));color:var(--gold);font-family:'Teko';font-size:20px;letter-spacing:2px;cursor:pointer;margin-bottom:10px;text-transform:uppercase}
+    .m-btn:disabled{opacity:0.6;cursor:not-allowed}
     .m-cancel{width:100%;padding:11px;border:1px solid var(--border);border-radius:7px;background:transparent;color:var(--muted);font-family:'Oswald';font-size:14px;font-weight:700;cursor:pointer}
+    .m-cancel:disabled{opacity:0.6;cursor:not-allowed}
 
     .logout-btn{width:100%;padding:12px;border:1px solid var(--border);border-radius:7px;background:transparent;color:var(--muted);font-family:'Teko';font-size:18px;letter-spacing:2px;cursor:pointer;text-transform:uppercase;margin-top:8px}
     .logout-btn:hover{border-color:var(--danger);color:var(--danger)}
@@ -138,7 +140,6 @@
 
 <div class="content">
 
-  <!-- PROFILE CARD -->
   <div class="profile-card">
     <div class="profile-banner">
       <div class="avatar" id="avatar-text">?</div>
@@ -190,7 +191,6 @@
     </div>
   </div>
 
-  <!-- STATS -->
   <div class="stats-grid">
     <div class="stat-card"><div class="stat-icon">🎮</div><div class="stat-value" id="stat-played">0</div><div class="stat-label">Played</div></div>
     <div class="stat-card"><div class="stat-icon">🏆</div><div class="stat-value" id="stat-wins">0</div><div class="stat-label">Wins</div></div>
@@ -198,7 +198,6 @@
     <div class="stat-card"><div class="stat-icon">💰</div><div class="stat-value" id="stat-earned">0</div><div class="stat-label">TK Earned</div></div>
   </div>
 
-  <!-- WALLET -->
   <div class="wallet-card">
     <div class="w-title">💰 Wallet Balance</div>
     <div class="w-balance">৳ <span id="wallet-balance">0</span></div>
@@ -210,18 +209,15 @@
     <div id="tx-status-list"><div class="no-tx">⏳ Loading...</div></div>
   </div>
 
-  <!-- TOURNAMENT HISTORY -->
   <div class="sec-card">
     <div class="sec-head">🎮 My Tournaments</div>
     <div id="tournament-history"><div class="no-tx">⏳ Loading...</div></div>
   </div>
 
-  <!-- LOGOUT -->
   <button class="logout-btn" onclick="doLogout()">🚪 Logout</button>
 
 </div>
 
-<!-- DEPOSIT MODAL -->
 <div class="modal-overlay" id="deposit-modal">
   <div class="modal">
     <div class="modal-title">💰 Add Money</div>
@@ -241,12 +237,11 @@
     <span class="m-label">Transaction ID</span>
     <input type="text" class="m-input" id="deposit-txid" placeholder="Paste Transaction ID here"/>
     <div class="msg" id="deposit-msg"></div>
-    <button class="m-btn" onclick="submitDeposit()">Submit Request</button>
+    <button class="m-btn" id="deposit-btn" onclick="submitDeposit()">Submit Request</button>
     <button class="m-cancel" onclick="closeModal('deposit-modal')">Cancel</button>
   </div>
 </div>
 
-<!-- WITHDRAW MODAL -->
 <div class="modal-overlay" id="withdraw-modal">
   <div class="modal">
     <div class="modal-title">💸 Withdraw</div>
@@ -260,12 +255,11 @@
     <span class="m-label">Your Number</span>
     <input type="tel" class="m-input" id="withdraw-number" placeholder="01XXXXXXXXX"/>
     <div class="msg" id="withdraw-msg"></div>
-    <button class="m-btn" onclick="submitWithdraw()">Request Withdrawal</button>
+    <button class="m-btn" id="withdraw-btn" onclick="submitWithdraw()">Request Withdrawal</button>
     <button class="m-cancel" onclick="closeModal('withdraw-modal')">Cancel</button>
   </div>
 </div>
 
-<!-- BOTTOM NAV -->
 <nav class="bottom-nav">
   <button class="nav-item" onclick="window.location.href='home.html'"><span class="nav-icon">🏆</span>Tournaments</button>
   <div class="nav-divider"></div>
@@ -291,7 +285,7 @@
     if (!user) { window.location.href='index.html'; return; }
     currentUser=user;
     await loadProfile(user);
-    loadTransactions(user.uid);    // run in parallel
+    loadTransactions(user.uid);    
     loadTournamentHistory(user.uid);
   });
 
@@ -333,7 +327,7 @@
     document.getElementById('stat-earned').textContent=userData.total_earned||0;
   }
 
-  // Load transactions — NO orderBy to avoid composite index requirement; sort in JS
+  // Load transactions
   async function loadTransactions(uid) {
     const list=document.getElementById('tx-status-list');
     try {
@@ -379,22 +373,50 @@
     }
   }
 
-  // Load tournament history — NO orderBy compound; sort in JS
+  // Load tournament history with 10 Mins Room logic FIX
   async function loadTournamentHistory(uid) {
     const list=document.getElementById('tournament-history');
     try {
       const q=query(collection(db,'registrations'), where('uid','==',uid));
       const snap=await getDocs(q);
       if (snap.empty) { list.innerHTML='<div class="no-tx">No tournaments joined yet</div>'; return; }
+      
       const items=[];
       snap.forEach(d=>items.push(d.data()));
       items.sort((a,b)=>{
         const ta=a.created_at?.toMillis?.()||0, tb=b.created_at?.toMillis?.()||0;
         return tb-ta;
       });
+      
       list.innerHTML='';
-      items.forEach(r=>{
+      
+      for(const r of items) {
         const date=r.created_at?.toDate?.()?.toLocaleDateString('en-GB')||'—';
+        let roomInfoHtml = '';
+
+        // Fetch tournament document to check time & roomID
+        if(r.tournament_id) {
+            const tSnap = await getDoc(doc(db, 'tournaments', r.tournament_id));
+            if(tSnap.exists()){
+                const t = tSnap.data();
+                if(t.time) {
+                    const startTime = new Date(t.time).getTime();
+                    const now = new Date().getTime();
+                    const diffMins = (startTime - now) / 60000;
+                    
+                    if(diffMins <= 10 && t.roomID) {
+                        roomInfoHtml = `
+                        <div style="margin-top:10px; padding:10px; background:rgba(92,255,138,0.1); border:1px solid rgba(92,255,138,0.3); border-radius:6px; font-size:14px; letter-spacing:1px; line-height:1.6;">
+                            <span style="color:var(--green); font-weight:bold;">🟢 Room ID:</span> <span style="color:#fff">${t.roomID}</span><br>
+                            <span style="color:var(--green); font-weight:bold;">🔑 Pass:</span> <span style="color:#fff">${t.roomPass || 'No Password'}</span>
+                        </div>`;
+                    } else if (diffMins > 10) {
+                        roomInfoHtml = `<div style="margin-top:10px; font-size:12px; color:var(--amber);">⏳ Room ID & Pass will appear here 10 mins before match</div>`;
+                    }
+                }
+            }
+        }
+
         list.innerHTML+=`
           <div class="history-item">
             <div class="hist-name">${r.tournament_name||'Tournament'}</div>
@@ -405,8 +427,9 @@
               ${r.game_uids&&r.game_uids[0]?`<span>🎮 UID: ${r.game_uids[0]}</span>`:''}
               ${r.whatsapp?`<span>📱 ${r.whatsapp}</span>`:''}
             </div>
+            ${roomInfoHtml}
           </div>`;
-      });
+      }
     } catch(e) {
       console.error('loadTournamentHistory error:', e);
       list.innerHTML='<div class="no-tx" style="color:var(--danger)">⚠ Could not load tournaments. Check Firestore rules.</div>';
@@ -426,7 +449,6 @@
     document.getElementById('password-field').style.display = (m==='password') ? 'block' : 'none';
   };
 
-  // Save profile (name, whatsapp, game_name, uid)
   window.saveProfile = async () => {
     const name=document.getElementById('input-name').value.trim();
     const whatsapp=document.getElementById('input-whatsapp').value.trim();
@@ -440,7 +462,6 @@
     const ref=doc(db,'users',currentUser.uid);
     const updates={ name, whatsapp, game_name:gameName };
 
-    // UID change with verification
     if (newUid && newUid !== (userData.uid_game||'')) {
       if (userData.uid_changed) {
         if (!reauthMethod) { showMsg('edit-msg','Choose a verification method (Password or Google).','error'); return; }
@@ -451,7 +472,6 @@
             const credential=EmailAuthProvider.credential(currentUser.email, password);
             await reauthenticateWithCredential(currentUser, credential);
           } else {
-            // Google re-authentication
             const provider = new GoogleAuthProvider();
             await reauthenticateWithPopup(currentUser, provider);
           }
@@ -484,7 +504,6 @@
     }
   };
 
-  // Deposit
   window.openDeposit = () => document.getElementById('deposit-modal').classList.add('open');
   window.selectMethod = (m) => {
     selMethod=m;
@@ -493,27 +512,46 @@
     document.getElementById('method-name').textContent=m==='bkash'?'bKash':'Nagad';
     document.getElementById('pay-info').classList.add('show');
   };
+
+  let isProcessingTransaction = false; // ANTI DOUBLE CLICK
+
   window.submitDeposit = async () => {
+    if(isProcessingTransaction) return;
     const amount=parseInt(document.getElementById('deposit-amount').value);
     const txid=document.getElementById('deposit-txid').value.trim();
     if(!amount||amount<10){showMsg('deposit-msg','Minimum deposit is 10 TK.','error');return;}
     if(!selMethod){showMsg('deposit-msg','Select a payment method.','error');return;}
     if(!txid){showMsg('deposit-msg','Enter your Transaction ID.','error');return;}
+    
+    const btn = document.getElementById('deposit-btn');
+    
     try {
+      isProcessingTransaction = true;
+      btn.disabled = true;
+      btn.textContent = "Processing...";
+
       await addDoc(collection(db,'transactions'),{ uid:currentUser.uid, email:currentUser.email, name:userData.name||'', whatsapp:userData.whatsapp||'', amount, method:selMethod, txid, type:'deposit', status:'pending', created_at:serverTimestamp() });
       showMsg('deposit-msg','✅ Request submitted! Admin will verify soon.','success');
       setTimeout(()=>{ closeModal('deposit-modal'); document.getElementById('deposit-amount').value=''; document.getElementById('deposit-txid').value=''; loadTransactions(currentUser.uid); }, 1800);
-    } catch(e){ console.error(e); showMsg('deposit-msg','Failed to submit. Try again.','error'); }
+    } catch(e){ 
+      console.error(e); 
+      showMsg('deposit-msg','Failed to submit. Try again.','error'); 
+    } finally {
+      isProcessingTransaction = false;
+      btn.disabled = false;
+      btn.textContent = "Submit Request";
+    }
   };
 
-  // Withdraw
   window.openWithdraw = () => document.getElementById('withdraw-modal').classList.add('open');
   window.selectWithdrawMethod = (m) => {
     selWMethod=m;
     document.getElementById('wbtn-bkash').classList.toggle('selected',m==='bkash');
     document.getElementById('wbtn-nagad').classList.toggle('selected',m==='nagad');
   };
+
   window.submitWithdraw = async () => {
+    if(isProcessingTransaction) return;
     const amount=parseInt(document.getElementById('withdraw-amount').value);
     const number=document.getElementById('withdraw-number').value.trim();
     const snap=await getDoc(doc(db,'users',currentUser.uid));
@@ -522,7 +560,14 @@
     if(!selWMethod){showMsg('withdraw-msg','Select a payment method.','error');return;}
     if(!number||number.replace(/\D/g,'').length<11){showMsg('withdraw-msg','Enter a valid number.','error');return;}
     if(amount>balance){showMsg('withdraw-msg','Insufficient balance!','error');return;}
+    
+    const btn = document.getElementById('withdraw-btn');
+
     try {
+      isProcessingTransaction = true;
+      btn.disabled = true;
+      btn.textContent = "Processing...";
+
       await addDoc(collection(db,'transactions'),{ uid:currentUser.uid, email:currentUser.email, name:userData.name||'', whatsapp:userData.whatsapp||'', amount, method:selWMethod, number, type:'withdraw', status:'pending', created_at:serverTimestamp() });
       await updateDoc(doc(db,'users',currentUser.uid),{ balance: balance - amount });
       document.getElementById('wallet-balance').textContent=balance-amount;
@@ -530,7 +575,14 @@
       userData.balance = balance - amount;
       showMsg('withdraw-msg','✅ Withdrawal request sent!','success');
       setTimeout(()=>{ closeModal('withdraw-modal'); document.getElementById('withdraw-amount').value=''; document.getElementById('withdraw-number').value=''; loadTransactions(currentUser.uid); }, 1800);
-    } catch(e){ console.error(e); showMsg('withdraw-msg','Failed to submit. Try again.','error'); }
+    } catch(e){ 
+      console.error(e); 
+      showMsg('withdraw-msg','Failed to submit. Try again.','error'); 
+    } finally {
+      isProcessingTransaction = false;
+      btn.disabled = false;
+      btn.textContent = "Request Withdrawal";
+    }
   };
 
   window.closeModal=(id)=>document.getElementById(id).classList.remove('open');
