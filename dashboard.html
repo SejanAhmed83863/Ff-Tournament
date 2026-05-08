@@ -93,8 +93,15 @@
     .sec-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--amber),var(--gold),transparent)}
     .sec-head{font-family:'Teko',sans-serif;font-size:18px;color:#fff;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;border-left:3px solid var(--gold);padding-left:8px}
 
-    .history-item{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:8px;border-left:3px solid var(--gold)}
-    .hist-name{font-family:'Teko';font-size:17px;color:#fff;letter-spacing:1px;margin-bottom:3px}
+    .history-item{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:8px;border-left:3px solid var(--gold);transition: 0.3s;}
+    
+    /* HIGHLIGHT UPCOMING MATCHES */
+    .history-item.upcoming { border-left: 4px solid var(--green); background: rgba(92,255,138,0.05); }
+
+    .hist-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:3px; }
+    .hist-name{font-family:'Teko';font-size:18px;color:#fff;letter-spacing:1px; line-height:1;}
+    .hist-badge { font-size:10px; font-weight:700; letter-spacing:1px; background:var(--green); color:#000; padding:2px 6px; border-radius:4px; }
+
     .hist-meta{font-size:12px;color:var(--muted);display:flex;gap:10px;flex-wrap:wrap}
     .hist-meta span{color:var(--gold)}
 
@@ -116,7 +123,6 @@
     .m-btn{width:100%;padding:13px;border:1px solid var(--gold);border-radius:7px;background:linear-gradient(180deg,var(--amber),var(--amber-deep));color:var(--gold);font-family:'Teko';font-size:20px;letter-spacing:2px;cursor:pointer;margin-bottom:10px;text-transform:uppercase}
     .m-btn:disabled{opacity:0.6;cursor:not-allowed}
     .m-cancel{width:100%;padding:11px;border:1px solid var(--border);border-radius:7px;background:transparent;color:var(--muted);font-family:'Oswald';font-size:14px;font-weight:700;cursor:pointer}
-    .m-cancel:disabled{opacity:0.6;cursor:not-allowed}
 
     .logout-btn{width:100%;padding:12px;border:1px solid var(--border);border-radius:7px;background:transparent;color:var(--muted);font-family:'Teko';font-size:18px;letter-spacing:2px;cursor:pointer;text-transform:uppercase;margin-top:8px}
     .logout-btn:hover{border-color:var(--danger);color:var(--danger)}
@@ -312,7 +318,6 @@
     if (userData.uid_changed) {
       document.getElementById('reauth-section').style.display='block';
       document.getElementById('uid-note').textContent='You have changed your UID before. Verify your identity to change it again.';
-      // Default reauth method based on provider
       const providerId = getProviderId(currentUser);
       if (providerId === 'google.com') setReauthMethod('google'); else setReauthMethod('password');
     }
@@ -373,7 +378,7 @@
     }
   }
 
-  // Load tournament history with 10 Mins Room logic FIX
+  // Load tournament history with Highlights, Time, No UID & 10 Mins Room logic
   async function loadTournamentHistory(uid) {
     const list=document.getElementById('tournament-history');
     try {
@@ -391,8 +396,10 @@
       list.innerHTML='';
       
       for(const r of items) {
-        const date=r.created_at?.toDate?.()?.toLocaleDateString('en-GB')||'—';
+        const joinDate=r.created_at?.toDate?.()?.toLocaleDateString('en-GB')||'—';
         let roomInfoHtml = '';
+        let isUpcoming = false;
+        let matchTime = 'TBA';
 
         // Fetch tournament document to check time & roomID
         if(r.tournament_id) {
@@ -403,6 +410,12 @@
                     const startTime = new Date(t.time).getTime();
                     const now = new Date().getTime();
                     const diffMins = (startTime - now) / 60000;
+                    
+                    // Format Match Time
+                    matchTime = new Date(t.time).toLocaleString('en-US',{day:'2-digit',month:'short',hour:'numeric',minute:'2-digit',hour12:true});
+                    
+                    // Highlight if match hasn't started yet
+                    if(startTime > now) isUpcoming = true;
                     
                     if(diffMins <= 10 && t.roomID) {
                         roomInfoHtml = `
@@ -417,14 +430,20 @@
             }
         }
 
+        const highlightClass = isUpcoming ? 'upcoming' : '';
+        const upcomingBadge = isUpcoming ? `<span class="hist-badge">UPCOMING</span>` : '';
+
+        // Note: UID span removed per your request.
         list.innerHTML+=`
-          <div class="history-item">
-            <div class="hist-name">${r.tournament_name||'Tournament'}</div>
+          <div class="history-item ${highlightClass}">
+            <div class="hist-header">
+              <div class="hist-name">${r.tournament_name||'Tournament'}</div>
+              ${upcomingBadge}
+            </div>
             <div class="hist-meta">
-              <span>📅 ${date}</span>
+              <span>⏰ ${matchTime}</span>
               <span>💵 Entry: ৳${r.entry_paid||0}</span>
               ${r.team_name?`<span>👥 ${r.team_name}</span>`:''}
-              ${r.game_uids&&r.game_uids[0]?`<span>🎮 UID: ${r.game_uids[0]}</span>`:''}
               ${r.whatsapp?`<span>📱 ${r.whatsapp}</span>`:''}
             </div>
             ${roomInfoHtml}
@@ -513,7 +532,7 @@
     document.getElementById('pay-info').classList.add('show');
   };
 
-  let isProcessingTransaction = false; // ANTI DOUBLE CLICK
+  let isProcessingTransaction = false;
 
   window.submitDeposit = async () => {
     if(isProcessingTransaction) return;
