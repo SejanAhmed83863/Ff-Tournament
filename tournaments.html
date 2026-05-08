@@ -103,7 +103,6 @@
   <button class="nav-item" onclick="window.location.href='dashboard.html'"><span class="nav-icon">👤</span>Profile</button>
 </nav>
 
-<!-- JOIN MODAL -->
 <div class="modal-overlay" id="join-modal">
   <div class="modal">
     <div class="modal-title" id="join-title">Join Tournament</div>
@@ -116,9 +115,20 @@
     <input type="text" class="m-input" id="join-name" placeholder="Your full name"/>
     <span class="m-label">WhatsApp Number</span>
     <input type="tel" class="m-input" id="join-whatsapp" placeholder="01XXXXXXXXX"/>
+    
     <div id="uid-inputs"></div>
+
+    <div id="join-rules" style="background:rgba(255,107,107,0.1); border:1px solid rgba(255,107,107,0.3); border-radius:8px; padding:10px; margin-bottom:14px;">
+      <span class="m-label" style="color:var(--danger)">⚠️ Match Rules</span>
+      <ul style="color:var(--muted); font-size:12px; margin-left:16px; line-height:1.4;">
+          <li>One player can join a tournament only once.</li>
+          <li>No teaming up with enemies. Hackers will be banned.</li>
+          <li><b>Room ID & Pass</b> will be sent in Profile > History exactly 10 mins before start.</li>
+      </ul>
+    </div>
+
     <div class="msg" id="join-msg"></div>
-    <button class="m-btn" onclick="confirmJoin()">Confirm & Join</button>
+    <button class="m-btn" id="btn-confirm-join" onclick="confirmJoin()">Confirm & Join</button>
     <button class="m-cancel" onclick="document.getElementById('join-modal').classList.remove('open')">Cancel</button>
   </div>
 </div>
@@ -126,12 +136,12 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, doc, getDoc, updateDoc, getDocs, addDoc, collection, query, orderBy, increment, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, doc, getDoc, updateDoc, getDocs, addDoc, collection, query, orderBy, increment, serverTimestamp, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = { apiKey:"AIzaSyBgMroBilivfk7bJxoz93HjxSt6yU7Ura0", authDomain:"tournament-app-4a050.firebaseapp.com", projectId:"tournament-app-4a050", storageBucket:"tournament-app-4a050.firebasestorage.app", messagingSenderId:"811957533858", appId:"1:811957533858:web:1d1f0f916c0aba5eccebfb" };
 
   const app=initializeApp(firebaseConfig), auth=getAuth(app), db=getFirestore(app);
-  let currentUser=null, userData=null, userBalance=0, allTournaments=[], selectedT=null;
+  let currentUser=null, userData=null, userBalance=0, allTournaments=[], myRegistrations=[], selectedT=null;
 
   onAuthStateChanged(auth, async (user) => {
     if (!user) { window.location.href='index.html'; return; }
@@ -143,10 +153,17 @@
       document.getElementById('nav-balance').textContent=userBalance;
     }
     await loadTournaments();
-    setInterval(()=>renderTournaments(allTournaments), 60000);
+    setInterval(()=>loadTournaments(), 60000); // Reload fully to check new registrations
   });
 
   async function loadTournaments() {
+    // 1. Fetch user's registered tournaments first
+    myRegistrations = [];
+    const qReg = query(collection(db, 'registrations'), where('uid', '==', currentUser.uid));
+    const regSnap = await getDocs(qReg);
+    regSnap.forEach(d => myRegistrations.push(d.data().tournament_id));
+
+    // 2. Fetch all tournaments
     const snap=await getDocs(query(collection(db,'tournaments'),orderBy('time','asc')));
     allTournaments=[];
     snap.forEach(d=>allTournaments.push({id:d.id,...d.data()}));
@@ -173,7 +190,19 @@
       const isFull=joined>=max;
       const isFree=t.fee===0;
       const mode=modeLabel(t.teamType);
-      const timeStr=t.time?new Date(t.time).toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):'';
+      const timeStr=t.time?new Date(t.time).toLocaleString('en-US',{day:'2-digit',month:'short',hour:'numeric',minute:'2-digit',hour12:true}):'';
+      
+      // CHECK IF ALREADY JOINED
+      const hasJoined = myRegistrations.includes(t.id);
+      let btnHtml = '';
+
+      if(hasJoined) {
+        btnHtml = `<button class="btn-join" style="background:var(--green); color:#000; border-color:var(--green); font-weight:bold; cursor:default;" disabled>✓ JOINED</button>`;
+      } else {
+        btnHtml = `<button class="btn-join" onclick="openJoin('${t.id}')" ${isFull?'disabled':''}>
+          ${isFull?'🔒 FULL':'JOIN · '+(isFree?'FREE':'৳'+t.fee)}
+        </button>`;
+      }
 
       container.innerHTML+=`
         <div class="t-card">
@@ -200,9 +229,7 @@
               <div class="progress-label"><span>Players Joined</span><span>${joined}/${max}</span></div>
               <div class="progress-bar"><div class="progress-fill" style="width:${fill}%"></div></div>
             </div>
-            <button class="btn-join" onclick="openJoin('${t.id}')" ${isFull?'disabled':''}>
-              ${isFull?'🔒 FULL':'JOIN · '+(isFree?'FREE':'৳'+t.fee)}
-            </button>
+            ${btnHtml}
           </div>
         </div>`;
     });
@@ -222,7 +249,10 @@
     if(!t) return;
     selectedT=t;
     document.getElementById('join-title').textContent=t.title;
-    document.getElementById('join-sub').textContent=`${modeLabel(t.teamType)} · ${t.time?new Date(t.time).toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):''}`;
+    
+    const timeStr=t.time?new Date(t.time).toLocaleString('en-US',{day:'2-digit',month:'short',hour:'numeric',minute:'2-digit',hour12:true}):'';
+    document.getElementById('join-sub').textContent=`${modeLabel(t.teamType)} · ${timeStr}`;
+    
     document.getElementById('join-fee').textContent=t.fee;
     document.getElementById('join-name').value = userData?.name || '';
     document.getElementById('join-whatsapp').value = userData?.whatsapp || '';
@@ -232,24 +262,44 @@
     for(let i=1;i<=count;i++) {
       const placeholder=i===1?'Leader Game UID':`Player ${i} Game UID`;
       const prefill=i===1?(userData?.uid_game||''):'';
-      inputs+=`<span class="m-label">${i===1?'Leader':'Player '+i} Game UID</span><input type="text" class="m-input uid-val" placeholder="${placeholder}" value="${prefill}"/>`;
+      
+      const isReadOnly = (i===1 && prefill) ? 'readonly style="opacity:0.6; cursor:not-allowed;"' : '';
+      inputs+=`<span class="m-label">${i===1?'Leader':'Player '+i} Game UID</span><input type="text" class="m-input uid-val" placeholder="${placeholder}" value="${prefill}" ${isReadOnly}/>`;
     }
     document.getElementById('uid-inputs').innerHTML=inputs;
     document.getElementById('join-modal').classList.add('open');
   };
 
+  let isJoining = false; 
+
   window.confirmJoin = async () => {
+    if(isJoining) return; 
+
     const t=selectedT; if(!t) return;
     const name=document.getElementById('join-name').value.trim();
     const whatsapp=document.getElementById('join-whatsapp').value.trim();
     const uids=Array.from(document.querySelectorAll('.uid-val')).map(i=>i.value.trim());
     const teamName=document.getElementById('team-name-input')?.value?.trim()||'';
+    
     if(!name){showMsg('join-msg','Please enter your name.','error');return;}
     if(!whatsapp || whatsapp.replace(/\D/g,'').length<11){showMsg('join-msg','Enter a valid WhatsApp number.','error');return;}
     if(uids.some(u=>!u)){showMsg('join-msg','Please fill all UID fields.','error');return;}
     if(t.fee>0&&userBalance<t.fee){showMsg('join-msg',`Not enough balance! Need ৳${t.fee}, have ৳${userBalance}.`,'error');return;}
 
+    const btn = document.getElementById('btn-confirm-join');
+    
     try {
+      isJoining = true;
+      btn.disabled = true;
+      btn.textContent = "Processing...";
+
+      const qJoin = query(collection(db, 'registrations'), where('tournament_id', '==', t.id), where('uid', '==', currentUser.uid));
+      const snapJoin = await getDocs(qJoin);
+      if(!snapJoin.empty) {
+          showMsg('join-msg','You have already joined this tournament!','error');
+          return;
+      }
+
       if(t.fee>0){
         await updateDoc(doc(db,'users',currentUser.uid),{balance:increment(-t.fee)});
         await addDoc(collection(db,'transactions'),{
@@ -265,7 +315,6 @@
 
       await updateDoc(doc(db,'tournaments',t.id),{joined:increment(1)});
 
-      // Save registration record (history)
       await addDoc(collection(db,'registrations'),{
         tournament_id:t.id, tournament_name:t.title,
         uid:currentUser.uid, email:currentUser.email,
@@ -275,17 +324,21 @@
         created_at:serverTimestamp()
       });
 
-      // Save name + whatsapp to user profile so future joins are pre-filled
       await updateDoc(doc(db,'users',currentUser.uid),{
         played:increment(1),
         name, whatsapp
       });
 
-      showMsg('join-msg','🎉 Joined! Admin will send room ID on WhatsApp. BOOYAH!','success');
+      showMsg('join-msg','🎉 Joined! Room ID will appear in Profile > History.','success');
       setTimeout(()=>{ document.getElementById('join-modal').classList.remove('open'); loadTournaments(); }, 2200);
+      
     } catch(e) {
       console.error('Join failed:', e);
       showMsg('join-msg','Failed to join. Try again.','error');
+    } finally {
+      isJoining = false;
+      btn.disabled = false;
+      btn.textContent = "Confirm & Join";
     }
   };
 
