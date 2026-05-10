@@ -149,20 +149,30 @@
 <div class="tab-content" id="tab-settings">
   <div class="card">
     <div class="card-title"><div class="card-title-bar" style="background:var(--gold)"></div><span>APP SETTINGS</span></div>
+    
     <div class="section-label">GLOBAL HOME NOTICE</div>
     <input type="text" id="admin-notice" placeholder="Enter home page notification text...">
     <button onclick="updateNotice()" class="btn-main" style="margin-bottom:20px;">UPDATE NOTICE</button>
 
     <hr style="border:0; border-top:1px solid var(--border); margin:10px 0 20px 0;">
 
-    <div class="section-label">ADMIN PAYMENT INFO</div>
+    <div class="section-label">ADMIN DEPOSIT INFO</div>
+    <div class="row">
+        <select id="admin-pay-wallet">
+            <option value="bKash">bKash</option>
+            <option value="Nagad">Nagad</option>
+            <option value="Rocket">Rocket</option>
+        </select>
+        <select id="admin-pay-way">
+            <option value="Send Money">Send Money</option>
+            <option value="Payment">Payment</option>
+            <option value="Cashout">Cashout</option>
+        </select>
+    </div>
     <input type="text" id="admin-pay-num" placeholder="Account Number (e.g. 017xxxxxxxx)">
-    <select id="admin-pay-way">
-      <option value="Send Money">Send Money</option>
-      <option value="Payment">Payment</option>
-      <option value="Cashout">Cashout</option>
-    </select>
+    
     <button onclick="updatePaymentInfo()" class="btn-gold">UPDATE PAYMENT INFO</button>
+    <p style="font-size: 11px; color: var(--muted); margin-top: 8px;">* This information will show up in user's Deposit/Withdraw section.</p>
   </div>
 </div>
 
@@ -214,6 +224,7 @@
       if(p.exists()) {
         document.getElementById('admin-pay-num').value = p.data().number || '';
         document.getElementById('admin-pay-way').value = p.data().method || 'Send Money';
+        document.getElementById('admin-pay-wallet').value = p.data().wallet || 'bKash';
       }
     } catch (e) { console.error("Error loading settings:", e); }
   }
@@ -227,7 +238,8 @@
   window.updatePaymentInfo = async () => {
     const num = document.getElementById('admin-pay-num').value;
     const way = document.getElementById('admin-pay-way').value;
-    await setDoc(doc(db, 'settings', 'payment'), { number: num, method: way });
+    const wal = document.getElementById('admin-pay-wallet').value;
+    await setDoc(doc(db, 'settings', 'payment'), { number: num, method: way, wallet: wal });
     toast("Payment Info Updated!");
   }
 
@@ -356,7 +368,6 @@
     });
   }
 
-  // UPDATE ROOM INFO FIX
   window.updateRoom = async (id) => {
     const rid = document.getElementById(`room-${id}`).value;
     const rps = document.getElementById(`pass-${id}`).value;
