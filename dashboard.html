@@ -17,13 +17,15 @@
     .logo-wrap{display:flex;align-items:center;gap:10px}
     .logo-img{width:40px;height:40px;border-radius:6px;border:2px solid var(--gold);object-fit:cover}
     .header-title{font-family:'Teko',sans-serif;font-size:24px;color:var(--gold);text-transform:uppercase;letter-spacing:2px}
-    .wallet-badge{background:linear-gradient(180deg,var(--amber),var(--amber-deep));border:1px solid var(--gold);padding:6px 14px;border-radius:6px;font-family:'Teko';font-size:18px;color:var(--gold);letter-spacing:1px}
+    /* Logout button now in header */
+    .header-logout{background:transparent;border:1px solid var(--border);color:var(--muted);padding:6px 12px;border-radius:6px;font-family:'Teko';font-size:14px;letter-spacing:1px;cursor:pointer;transition:0.2s;text-transform:uppercase}
+    .header-logout:hover{border-color:var(--danger);color:var(--danger)}
 
     .content{padding:14px;max-width:500px;margin:0 auto}
 
+    /* PROFILE CARD */
     .profile-card{background:var(--card);border-radius:12px;border:1px solid var(--border);margin-bottom:14px;overflow:hidden;box-shadow:0 5px 20px rgba(0,0,0,0.7);position:relative}
     .profile-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--amber),var(--gold),var(--amber))}
-
     .profile-banner{background:linear-gradient(135deg,rgba(184,134,11,0.18),rgba(254,203,0,0.08),rgba(0,0,0,0.5));padding:18px 16px 14px;display:flex;align-items:center;gap:14px;border-bottom:1px solid var(--border);position:relative}
     .avatar{width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,var(--amber),var(--gold));display:flex;align-items:center;justify-content:center;font-family:'Teko';font-size:28px;color:#000;font-weight:700;border:3px solid var(--gold);box-shadow:0 0 15px rgba(254,203,0,0.3);flex-shrink:0}
     .profile-info{flex:1;min-width:0}
@@ -55,6 +57,7 @@
     .msg.error{display:block;background:rgba(255,50,50,0.1);border:1px solid rgba(255,50,50,0.3);color:var(--danger)}
     .msg.success{display:block;background:rgba(92,255,138,0.1);border:1px solid rgba(92,255,138,0.3);color:var(--green)}
 
+    /* STATS */
     .stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
     .stat-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;position:relative;overflow:hidden}
     .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--amber),var(--gold))}
@@ -62,6 +65,7 @@
     .stat-value{font-family:'Teko',sans-serif;font-size:30px;color:var(--gold);letter-spacing:1px}
     .stat-label{color:var(--muted);font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-top:2px}
 
+    /* WALLET */
     .wallet-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:14px;position:relative;overflow:hidden;box-shadow:0 5px 20px rgba(0,0,0,0.5)}
     .wallet-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--amber),var(--gold))}
     .w-title{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
@@ -69,7 +73,6 @@
     .w-actions{display:flex;gap:10px;margin-bottom:16px}
     .btn-deposit{flex:1;padding:12px;border-radius:7px;background:linear-gradient(180deg,var(--amber),var(--amber-deep));border:1px solid var(--gold);color:var(--gold);font-family:'Teko';font-size:18px;letter-spacing:2px;cursor:pointer;text-transform:uppercase}
     .btn-withdraw{flex:1;padding:12px;border:1px solid var(--gold);border-radius:7px;background:rgba(254,203,0,0.05);color:var(--gold);font-family:'Teko';font-size:18px;letter-spacing:2px;cursor:pointer;text-transform:uppercase}
-
     .tx-title{font-family:'Teko',sans-serif;font-size:16px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;border-left:3px solid var(--gold);padding-left:8px}
     .tx-item{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:7px;margin-bottom:6px;border-left:3px solid var(--border)}
     .tx-item.deposit{border-left-color:var(--green)}
@@ -89,18 +92,19 @@
     .status-pill.rejected{background:rgba(255,107,107,0.15);color:var(--danger);border:1px solid rgba(255,107,107,0.3)}
     .no-tx{text-align:center;color:var(--muted);font-size:13px;padding:14px}
 
+    /* TOURNAMENT HISTORY */
     .sec-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px;position:relative;overflow:hidden}
     .sec-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--amber),var(--gold),transparent)}
     .sec-head{font-family:'Teko',sans-serif;font-size:18px;color:#fff;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;border-left:3px solid var(--gold);padding-left:8px}
-
     .history-item{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:8px;border-left:3px solid var(--gold)}
     .hist-name{font-family:'Teko';font-size:17px;color:#fff;letter-spacing:1px;margin-bottom:3px}
     .hist-meta{font-size:12px;color:var(--muted);display:flex;gap:10px;flex-wrap:wrap}
     .hist-meta span{color:var(--gold)}
 
+    /* MODALS */
     .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:200;align-items:flex-end;justify-content:center}
     .modal-overlay.open{display:flex}
-    .modal{background:#111;border:1px solid var(--gold);border-radius:16px 16px 0 0;padding:24px 20px;width:100%;max-width:500px;animation:slideUp 0.3s ease both;border-top:3px solid var(--gold)}
+    .modal{background:#111;border:1px solid var(--gold);border-radius:16px 16px 0 0;padding:24px 20px;width:100%;max-width:500px;animation:slideUp 0.3s ease both;border-top:3px solid var(--gold);max-height:90vh;overflow-y:auto}
     @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
     .modal-title{font-family:'Teko',sans-serif;font-size:26px;color:var(--gold);letter-spacing:3px;text-transform:uppercase;margin-bottom:16px}
     .m-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:6px;display:block}
@@ -110,20 +114,28 @@
     .m-method-row{display:flex;gap:10px;margin-bottom:14px}
     .m-method-btn{flex:1;padding:11px;border-radius:7px;border:2px solid var(--border);background:transparent;color:var(--text);font-family:'Oswald';font-size:14px;font-weight:700;cursor:pointer;transition:0.2s}
     .m-method-btn.selected{border-color:var(--gold);background:rgba(254,203,0,0.1);color:var(--gold)}
-    .pay-info{background:rgba(0,0,0,0.5);border:1px solid var(--border);border-radius:8px;padding:13px;font-size:13px;line-height:1.8;margin-bottom:12px;color:var(--muted);display:none}
+    .pay-info{background:rgba(0,0,0,0.5);border:1px solid var(--border);border-radius:8px;padding:13px;font-size:13px;line-height:1.9;margin-bottom:12px;color:var(--muted);display:none}
     .pay-info.show{display:block}
-    .pay-number{color:var(--gold);font-family:'Teko';font-size:20px;font-weight:700}
+    .pay-number{color:var(--gold);font-family:'Teko';font-size:22px;font-weight:700;letter-spacing:1px}
+    .pay-method-type{color:var(--gold);font-weight:700}
     .m-btn{width:100%;padding:13px;border:1px solid var(--gold);border-radius:7px;background:linear-gradient(180deg,var(--amber),var(--amber-deep));color:var(--gold);font-family:'Teko';font-size:20px;letter-spacing:2px;cursor:pointer;margin-bottom:10px;text-transform:uppercase}
     .m-cancel{width:100%;padding:11px;border:1px solid var(--border);border-radius:7px;background:transparent;color:var(--muted);font-family:'Oswald';font-size:14px;font-weight:700;cursor:pointer}
 
-    .logout-btn{width:100%;padding:12px;border:1px solid var(--border);border-radius:7px;background:transparent;color:var(--muted);font-family:'Teko';font-size:18px;letter-spacing:2px;cursor:pointer;text-transform:uppercase;margin-top:8px}
-    .logout-btn:hover{border-color:var(--danger);color:var(--danger)}
+    /* WITHDRAW INFO BOX — shows admin-set payment details */
+    .withdraw-info-box{background:rgba(184,134,11,0.08);border:1px solid rgba(184,134,11,0.35);border-radius:8px;padding:14px;margin-bottom:14px}
+    .wib-title{font-family:'Teko';font-size:14px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+    .wib-row{display:flex;justify-content:space-between;align-items:center;font-size:13px;margin-bottom:6px}
+    .wib-row:last-child{margin-bottom:0}
+    .wib-label{color:var(--muted);font-size:12px;letter-spacing:1px;text-transform:uppercase}
+    .wib-val{color:#fff;font-family:'Teko';font-size:16px;letter-spacing:1px}
+    .wib-number{color:var(--gold);font-family:'Teko';font-size:20px;letter-spacing:1px}
 
     .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(0,0,0,0.97);border-top:2px solid var(--gold);display:flex;z-index:200}
     .nav-item{flex:1;padding:12px 8px;text-align:center;cursor:pointer;color:var(--muted);font-family:'Teko';font-size:13px;letter-spacing:2px;text-transform:uppercase;text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:3px;border:none;background:none}
     .nav-item.active{color:var(--gold)}
     .nav-icon{font-size:22px}
     .nav-divider{width:1px;background:var(--border);margin:8px 0}
+    .nav-item.active .nav-icon{filter:drop-shadow(0 0 6px rgba(254,203,0,0.7))}
   </style>
 </head>
 <body>
@@ -133,7 +145,8 @@
     <img class="logo-img" src="logo.png" alt="Logo"/>
     <div class="header-title">My Profile</div>
   </div>
-  <div class="wallet-badge">৳ <span id="nav-balance">0</span></div>
+  <!-- Logout moved to header, near profile info -->
+  <button class="header-logout" onclick="doLogout()">🚪 Logout</button>
 </div>
 
 <div class="content">
@@ -216,9 +229,6 @@
     <div id="tournament-history"><div class="no-tx">⏳ Loading...</div></div>
   </div>
 
-  <!-- LOGOUT -->
-  <button class="logout-btn" onclick="doLogout()">🚪 Logout</button>
-
 </div>
 
 <!-- DEPOSIT MODAL -->
@@ -234,8 +244,8 @@
     </div>
     <div class="pay-info" id="pay-info">
       <p>1. Open <b id="method-name"></b> app</p>
-      <p>2. Tap <b>Send Money</b></p>
-      <p>3. Number: <span class="pay-number">01301516532</span></p>
+      <p>2. Tap <b id="deposit-send-type">Send Money</b></p>
+      <p>3. Number: <span class="pay-number" id="deposit-pay-number">—</span></p>
       <p>4. Copy your <b>Transaction ID</b> after sending</p>
     </div>
     <span class="m-label">Transaction ID</span>
@@ -250,6 +260,24 @@
 <div class="modal-overlay" id="withdraw-modal">
   <div class="modal">
     <div class="modal-title">💸 Withdraw</div>
+
+    <!-- Admin-set payment details shown here -->
+    <div class="withdraw-info-box" id="withdraw-info-box" style="display:none">
+      <div class="wib-title">💳 Send To</div>
+      <div class="wib-row">
+        <span class="wib-label">Method</span>
+        <span class="wib-val" id="wib-method">—</span>
+      </div>
+      <div class="wib-row">
+        <span class="wib-label">Number</span>
+        <span class="wib-number" id="wib-number">—</span>
+      </div>
+      <div class="wib-row">
+        <span class="wib-label">Transfer Type</span>
+        <span class="wib-val" id="wib-type">—</span>
+      </div>
+    </div>
+
     <span class="m-label">Amount (TK)</span>
     <input type="number" class="m-input" id="withdraw-amount" placeholder="Minimum 50 TK"/>
     <span class="m-label">Payment Method</span>
@@ -281,19 +309,44 @@
 
   const app=initializeApp(firebaseConfig), auth=getAuth(app), db=getFirestore(app);
   let currentUser=null, userData=null, selMethod='', selWMethod='', editOpen=false, reauthMethod='';
+  let adminPaymentSettings = null; // holds settings/payment doc data
 
   function getProviderId(user) {
     if (!user || !user.providerData || !user.providerData.length) return 'password';
-    return user.providerData[0].providerId; // 'password' or 'google.com'
+    return user.providerData[0].providerId;
   }
 
   onAuthStateChanged(auth, async (user) => {
     if (!user) { window.location.href='index.html'; return; }
     currentUser=user;
     await loadProfile(user);
-    loadTransactions(user.uid);    // run in parallel
+    await loadAdminPaymentSettings();
+    loadTransactions(user.uid);
     loadTournamentHistory(user.uid);
   });
+
+  // Load admin-set payment details from Firestore settings/payment
+  async function loadAdminPaymentSettings() {
+    try {
+      const snap = await getDoc(doc(db, 'settings', 'payment'));
+      if (snap.exists()) {
+        adminPaymentSettings = snap.data();
+        // Show in withdraw modal info box
+        const box = document.getElementById('withdraw-info-box');
+        if (adminPaymentSettings.number) {
+          document.getElementById('wib-method').textContent = adminPaymentSettings.method || '—';
+          document.getElementById('wib-number').textContent = adminPaymentSettings.number || '—';
+          document.getElementById('wib-type').textContent = adminPaymentSettings.send_type || '—';
+          box.style.display = 'block';
+        }
+        // Also update deposit pay-number placeholder
+        document.getElementById('deposit-pay-number').textContent = adminPaymentSettings.number || '—';
+        if (adminPaymentSettings.send_type) {
+          document.getElementById('deposit-send-type').textContent = adminPaymentSettings.send_type;
+        }
+      }
+    } catch(e) { console.log('No payment settings found:', e); }
+  }
 
   async function loadProfile(user) {
     const ref=doc(db,'users',user.uid);
@@ -318,14 +371,12 @@
     if (userData.uid_changed) {
       document.getElementById('reauth-section').style.display='block';
       document.getElementById('uid-note').textContent='You have changed your UID before. Verify your identity to change it again.';
-      // Default reauth method based on provider
       const providerId = getProviderId(currentUser);
       if (providerId === 'google.com') setReauthMethod('google'); else setReauthMethod('password');
     }
 
     const bal=userData.balance||0;
     document.getElementById('wallet-balance').textContent=bal;
-    document.getElementById('nav-balance').textContent=bal;
     document.getElementById('stat-played').textContent=userData.played||0;
     document.getElementById('stat-wins').textContent=userData.wins||0;
     const p=userData.played||0, w=userData.wins||0;
@@ -333,7 +384,6 @@
     document.getElementById('stat-earned').textContent=userData.total_earned||0;
   }
 
-  // Load transactions — NO orderBy to avoid composite index requirement; sort in JS
   async function loadTransactions(uid) {
     const list=document.getElementById('tx-status-list');
     try {
@@ -374,12 +424,10 @@
           </div>`;
       });
     } catch(e) {
-      console.error('loadTransactions error:', e);
-      list.innerHTML='<div class="no-tx" style="color:var(--danger)">⚠ Could not load transactions. Check Firestore rules.</div>';
+      list.innerHTML='<div class="no-tx" style="color:var(--danger)">⚠ Could not load transactions.</div>';
     }
   }
 
-  // Load tournament history — NO orderBy compound; sort in JS
   async function loadTournamentHistory(uid) {
     const list=document.getElementById('tournament-history');
     try {
@@ -408,8 +456,7 @@
           </div>`;
       });
     } catch(e) {
-      console.error('loadTournamentHistory error:', e);
-      list.innerHTML='<div class="no-tx" style="color:var(--danger)">⚠ Could not load tournaments. Check Firestore rules.</div>';
+      list.innerHTML='<div class="no-tx" style="color:var(--danger)">⚠ Could not load tournaments.</div>';
     }
   }
 
@@ -426,7 +473,6 @@
     document.getElementById('password-field').style.display = (m==='password') ? 'block' : 'none';
   };
 
-  // Save profile (name, whatsapp, game_name, uid)
   window.saveProfile = async () => {
     const name=document.getElementById('input-name').value.trim();
     const whatsapp=document.getElementById('input-whatsapp').value.trim();
@@ -440,10 +486,9 @@
     const ref=doc(db,'users',currentUser.uid);
     const updates={ name, whatsapp, game_name:gameName };
 
-    // UID change with verification
     if (newUid && newUid !== (userData.uid_game||'')) {
       if (userData.uid_changed) {
-        if (!reauthMethod) { showMsg('edit-msg','Choose a verification method (Password or Google).','error'); return; }
+        if (!reauthMethod) { showMsg('edit-msg','Choose a verification method.','error'); return; }
         try {
           if (reauthMethod==='password') {
             const password=document.getElementById('input-password').value;
@@ -451,12 +496,10 @@
             const credential=EmailAuthProvider.credential(currentUser.email, password);
             await reauthenticateWithCredential(currentUser, credential);
           } else {
-            // Google re-authentication
             const provider = new GoogleAuthProvider();
             await reauthenticateWithPopup(currentUser, provider);
           }
         } catch(e) {
-          console.error('Reauth failed:', e);
           showMsg('edit-msg','Verification failed! UID not changed.','error'); return;
         }
       }
@@ -479,18 +522,22 @@
       showMsg('edit-msg','Profile saved! ✅','success');
       setTimeout(()=>toggleEdit(), 1200);
     } catch(e) {
-      console.error('Save profile failed:', e);
       showMsg('edit-msg','Save failed: '+(e.message||'Error'),'error');
     }
   };
 
-  // Deposit
+  // DEPOSIT
   window.openDeposit = () => document.getElementById('deposit-modal').classList.add('open');
   window.selectMethod = (m) => {
     selMethod=m;
     document.getElementById('btn-bkash').classList.toggle('selected',m==='bkash');
     document.getElementById('btn-nagad').classList.toggle('selected',m==='nagad');
     document.getElementById('method-name').textContent=m==='bkash'?'bKash':'Nagad';
+    // Show admin-set number in deposit info
+    const payNum = adminPaymentSettings?.number || '01301516532';
+    const sendType = adminPaymentSettings?.send_type || 'Send Money';
+    document.getElementById('deposit-pay-number').textContent=payNum;
+    document.getElementById('deposit-send-type').textContent=sendType;
     document.getElementById('pay-info').classList.add('show');
   };
   window.submitDeposit = async () => {
@@ -503,10 +550,10 @@
       await addDoc(collection(db,'transactions'),{ uid:currentUser.uid, email:currentUser.email, name:userData.name||'', whatsapp:userData.whatsapp||'', amount, method:selMethod, txid, type:'deposit', status:'pending', created_at:serverTimestamp() });
       showMsg('deposit-msg','✅ Request submitted! Admin will verify soon.','success');
       setTimeout(()=>{ closeModal('deposit-modal'); document.getElementById('deposit-amount').value=''; document.getElementById('deposit-txid').value=''; loadTransactions(currentUser.uid); }, 1800);
-    } catch(e){ console.error(e); showMsg('deposit-msg','Failed to submit. Try again.','error'); }
+    } catch(e){ showMsg('deposit-msg','Failed to submit. Try again.','error'); }
   };
 
-  // Withdraw
+  // WITHDRAW
   window.openWithdraw = () => document.getElementById('withdraw-modal').classList.add('open');
   window.selectWithdrawMethod = (m) => {
     selWMethod=m;
@@ -526,11 +573,10 @@
       await addDoc(collection(db,'transactions'),{ uid:currentUser.uid, email:currentUser.email, name:userData.name||'', whatsapp:userData.whatsapp||'', amount, method:selWMethod, number, type:'withdraw', status:'pending', created_at:serverTimestamp() });
       await updateDoc(doc(db,'users',currentUser.uid),{ balance: balance - amount });
       document.getElementById('wallet-balance').textContent=balance-amount;
-      document.getElementById('nav-balance').textContent=balance-amount;
       userData.balance = balance - amount;
       showMsg('withdraw-msg','✅ Withdrawal request sent!','success');
       setTimeout(()=>{ closeModal('withdraw-modal'); document.getElementById('withdraw-amount').value=''; document.getElementById('withdraw-number').value=''; loadTransactions(currentUser.uid); }, 1800);
-    } catch(e){ console.error(e); showMsg('withdraw-msg','Failed to submit. Try again.','error'); }
+    } catch(e){ showMsg('withdraw-msg','Failed to submit. Try again.','error'); }
   };
 
   window.closeModal=(id)=>document.getElementById(id).classList.remove('open');
