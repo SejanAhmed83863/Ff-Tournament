@@ -89,6 +89,7 @@
   <button class="tab active" onclick="switchTab('requests')" id="tab-btn-requests"><span class="tab-icon">📥</span>REQUESTS<span class="badge" id="pending-badge" style="display:none">0</span></button>
   <button class="tab" onclick="switchTab('tournaments')" id="tab-btn-tournaments"><span class="tab-icon">🎮</span>MATCHES</button>
   <button class="tab" onclick="switchTab('winners')" id="tab-btn-winners"><span class="tab-icon">🏆</span>WINNERS</button>
+  <button class="tab" onclick="switchTab('settings')" id="tab-btn-settings"><span class="tab-icon">⚙️</span>SETTINGS</button>
 </div>
 
 <div class="tab-content active" id="tab-requests">
@@ -145,9 +146,29 @@
   </div>
 </div>
 
+<div class="tab-content" id="tab-settings">
+  <div class="card">
+    <div class="card-title"><div class="card-title-bar" style="background:var(--gold)"></div><span>APP SETTINGS</span></div>
+    <div class="section-label">GLOBAL HOME NOTICE</div>
+    <input type="text" id="admin-notice" placeholder="Enter home page notification text...">
+    <button onclick="updateNotice()" class="btn-main" style="margin-bottom:20px;">UPDATE NOTICE</button>
+
+    <hr style="border:0; border-top:1px solid var(--border); margin:10px 0 20px 0;">
+
+    <div class="section-label">ADMIN PAYMENT INFO</div>
+    <input type="text" id="admin-pay-num" placeholder="Account Number (e.g. 017xxxxxxxx)">
+    <select id="admin-pay-way">
+      <option value="Send Money">Send Money</option>
+      <option value="Payment">Payment</option>
+      <option value="Cashout">Cashout</option>
+    </select>
+    <button onclick="updatePaymentInfo()" class="btn-gold">UPDATE PAYMENT INFO</button>
+  </div>
+</div>
+
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-  import { getFirestore, collection, addDoc, query, where, onSnapshot, doc, updateDoc, increment, getDoc, getDocs, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+  import { getFirestore, collection, addDoc, query, where, onSnapshot, doc, updateDoc, increment, getDoc, getDocs, deleteDoc, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
 
   const ADMIN_EMAIL = "sejansasker@gmail.com"; 
@@ -163,6 +184,7 @@
     if (user.email !== ADMIN_EMAIL) { alert('Access Denied!'); window.location.href='home.html'; return; }
     loadRequests();
     loadTournaments();
+    loadSettings();
   });
 
   function toast(msg, type="success") {
@@ -181,6 +203,33 @@
     document.getElementById('tab-'+name).classList.add('active');
     document.getElementById('tab-btn-'+name).classList.add('active');
   };
+
+  // LOAD SETTINGS (Notice & Payment)
+  async function loadSettings() {
+    try {
+      const n = await getDoc(doc(db, 'settings', 'notice'));
+      if(n.exists()) document.getElementById('admin-notice').value = n.data().text || '';
+      
+      const p = await getDoc(doc(db, 'settings', 'payment'));
+      if(p.exists()) {
+        document.getElementById('admin-pay-num').value = p.data().number || '';
+        document.getElementById('admin-pay-way').value = p.data().method || 'Send Money';
+      }
+    } catch (e) { console.error("Error loading settings:", e); }
+  }
+
+  window.updateNotice = async () => {
+    const text = document.getElementById('admin-notice').value;
+    await setDoc(doc(db, 'settings', 'notice'), { text, updated_at: serverTimestamp() });
+    toast("Notice Updated!");
+  }
+
+  window.updatePaymentInfo = async () => {
+    const num = document.getElementById('admin-pay-num').value;
+    const way = document.getElementById('admin-pay-way').value;
+    await setDoc(doc(db, 'settings', 'payment'), { number: num, method: way });
+    toast("Payment Info Updated!");
+  }
 
   // REQUESTS - listen real time
   function loadRequests() {
