@@ -18,275 +18,278 @@
     .logo-img{width:40px;height:40px;border-radius:6px;border:2px solid var(--gold);object-fit:cover}
     .header-title{font-family:'Teko',sans-serif;font-size:24px;color:var(--gold);text-transform:uppercase;letter-spacing:2px}
     .wallet-badge{background:linear-gradient(180deg,var(--amber),var(--amber-deep));border:1px solid var(--gold);padding:6px 14px;border-radius:6px;font-family:'Teko';font-size:18px;color:var(--gold);letter-spacing:1px}
-
     .content{padding:14px;max-width:500px;margin:0 auto}
-    .section-title{font-family:'Teko',sans-serif;font-size:22px;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-bottom:12px;border-left:4px solid var(--gold);padding-left:10px}
-
-    /* TOURNAMENT CARD */
-    .t-card{background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:16px;overflow:hidden;position:relative;box-shadow:0 10px 30px rgba(0,0,0,0.5)}
+    .filter-row{display:flex;gap:8px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px}
+    .filter-btn{padding:7px 16px;border-radius:5px;border:1px solid var(--border);background:rgba(0,0,0,0.5);color:var(--muted);font-family:'Teko';font-size:14px;letter-spacing:1px;cursor:pointer;white-space:nowrap;transition:0.2s;text-transform:uppercase}
+    .filter-btn.active{border-color:var(--gold);background:rgba(254,203,0,0.1);color:var(--gold)}
+    .t-card{background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:14px;overflow:hidden;position:relative;box-shadow:0 5px 20px rgba(0,0,0,0.6)}
     .t-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--amber),var(--gold),var(--amber))}
-    .t-banner{height:140px;background-size:cover;background-position:center;position:relative;display:flex;align-items:flex-end;padding:15px}
-    .t-banner::after{content:'';position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,0.9),transparent)}
-    .t-title{position:relative;z-index:1;font-family:'Teko';font-size:28px;color:var(--gold);text-transform:uppercase;letter-spacing:1px;line-height:1}
-    
-    .t-info-grid{display:grid;grid-template-columns:repeat(3,1fr);padding:12px;gap:8px;background:rgba(255,255,255,0.02);border-bottom:1px solid var(--border)}
-    .info-item{text-align:center}
-    .info-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px}
-    .info-value{font-family:'Teko';font-size:18px;color:#fff}
-    
-    .t-body{padding:15px}
-    .t-meta-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
-    .t-time{font-size:13px;color:var(--gold);font-weight:600}
-    .t-joined{font-size:12px;color:var(--muted)}
-    
-    .progress-bar{height:6px;background:#222;border-radius:10px;margin-bottom:15px;overflow:hidden;border:1px solid #333}
-    .progress-fill{height:100%;background:linear-gradient(90deg,var(--amber),var(--gold));transition:0.5s ease}
-    
-    .btn-row{display:flex;gap:10px}
-    .btn-info{flex:1;padding:10px;background:transparent;border:1px solid var(--gold);color:var(--gold);font-family:'Teko';font-size:18px;border-radius:8px;cursor:pointer;text-transform:uppercase;letter-spacing:1px}
-    .btn-join{flex:2;padding:10px;background:linear-gradient(180deg,var(--amber),var(--amber-deep));border:1px solid var(--gold);color:var(--gold);font-family:'Teko';font-size:18px;border-radius:8px;cursor:pointer;text-transform:uppercase;letter-spacing:2px}
-    .btn-join:disabled{background:#222;border-color:#444;color:#666;cursor:not-allowed}
-
-    /* MODAL OVERLAY */
-    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:200;align-items:flex-end;justify-content:center}
+    .t-card-header{background:linear-gradient(135deg,rgba(184,134,11,0.25),rgba(254,203,0,0.08),rgba(0,0,0,0.5));padding:14px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start}
+    .t-name{font-family:'Teko',sans-serif;font-size:22px;color:#fff;letter-spacing:2px;text-transform:uppercase}
+    .t-mode-badge{background:rgba(254,203,0,0.15);border:1px solid var(--gold);color:var(--gold);font-family:'Teko';font-size:13px;padding:3px 10px;border-radius:4px;letter-spacing:1px;text-transform:uppercase}
+    .t-body{padding:14px 16px}
+    .info-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px}
+    .info-item{background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:7px;padding:8px 10px;text-align:center}
+    .info-label{font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:3px}
+    .info-value{font-family:'Teko',sans-serif;font-size:16px;color:var(--gold);letter-spacing:1px}
+    .prize-pool{background:rgba(0,0,0,0.5);border:1px solid rgba(254,203,0,0.3);border-radius:8px;padding:12px;margin-bottom:12px}
+    .prize-pool-title{font-family:'Teko',sans-serif;font-size:14px;color:var(--gold);letter-spacing:3px;text-align:center;margin-bottom:10px;text-transform:uppercase;border-bottom:1px solid rgba(254,203,0,0.2);padding-bottom:6px}
+    .prize-row{display:flex;justify-content:space-around;text-align:center}
+    .prize-item .p-label{font-size:11px;color:var(--muted);margin-bottom:3px;letter-spacing:1px}
+    .prize-item .p-val{font-family:'Teko',sans-serif;font-size:22px;letter-spacing:1px}
+    .prize-item.first .p-val{font-size:28px;color:var(--gold)}
+    .prize-item.second .p-val{color:#C0C0C0}
+    .prize-item.third .p-val{color:#CD7F32}
+    .progress-wrap{margin-bottom:12px}
+    .progress-label{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:5px;letter-spacing:1px;text-transform:uppercase}
+    .progress-bar{height:6px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden;border:1px solid var(--border)}
+    .progress-fill{height:100%;background:linear-gradient(90deg,var(--amber),var(--gold));border-radius:3px;transition:width 0.5s ease}
+    .btn-join{width:100%;padding:13px;border:1px solid var(--gold);border-radius:7px;background:linear-gradient(180deg,var(--amber),var(--amber-deep));color:var(--gold);font-family:'Teko';font-size:20px;letter-spacing:3px;cursor:pointer;text-transform:uppercase}
+    .btn-join:disabled{background:#222;color:#555;border-color:#333;cursor:not-allowed}
+    .empty-state{text-align:center;color:var(--muted);padding:60px 20px;font-size:14px}
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:200;align-items:flex-end;justify-content:center}
     .modal-overlay.open{display:flex}
-    .modal{background:#111;border:1px solid var(--gold);border-radius:20px 20px 0 0;padding:24px 20px;width:100%;max-width:500px;animation:slideUp 0.3s ease both;max-height:90vh;overflow-y:auto}
+    .modal{background:#111;border:1px solid var(--gold);border-radius:16px 16px 0 0;padding:22px 18px;width:100%;max-width:500px;animation:slideUp 0.3s ease both;border-top:3px solid var(--gold);max-height:90vh;overflow-y:auto}
     @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-    
-    .modal-title{font-family:'Teko';font-size:26px;color:var(--gold);text-transform:uppercase;margin-bottom:15px;border-bottom:1px solid var(--border);padding-bottom:10px}
-    .info-content{font-size:14px;color:var(--text);line-height:1.6;margin-bottom:20px}
-    .info-content b{color:var(--gold)}
-    .m-label{font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:1px;margin:12px 0 6px;display:block}
-    .m-input{width:100%;background:#000;border:1px solid var(--border);padding:12px;border-radius:8px;color:#fff;font-family:'Oswald';font-size:14px;outline:none}
+    .modal-title{font-family:'Teko',sans-serif;font-size:24px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px}
+    .modal-sub{color:var(--muted);font-size:12px;margin-bottom:14px;letter-spacing:1px}
+    .fee-box{background:rgba(184,134,11,0.1);border:1px solid rgba(184,134,11,0.4);border-radius:8px;padding:12px;margin-bottom:14px;text-align:center}
+    .fee-label{font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:3px}
+    .fee-amount{font-family:'Teko',sans-serif;font-size:34px;color:var(--gold)}
+    .m-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:6px;display:block}
+    .m-input{width:100%;background:#000;border:1px solid var(--border);padding:11px 13px;border-radius:7px;color:#fff;font-family:'Oswald';font-size:14px;outline:none;margin-bottom:12px;transition:border-color 0.2s}
     .m-input:focus{border-color:var(--gold)}
-    
-    .msg{padding:10px;border-radius:6px;font-size:13px;margin:10px 0;display:none;text-align:center;font-weight:600}
-    .msg.error{display:block;background:rgba(255,0,0,0.1);color:var(--danger);border:1px solid var(--danger)}
-    .msg.success{display:block;background:rgba(0,255,0,0.1);color:var(--green);border:1px solid var(--green)}
-
-    .m-btn-group{display:flex;gap:10px;margin-top:20px}
-    .m-btn-close{flex:1;padding:12px;background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:8px;font-family:'Teko';font-size:20px;cursor:pointer}
-    .m-btn-action{flex:2;padding:12px;background:linear-gradient(180deg,var(--amber),var(--amber-deep));border:1px solid var(--gold);color:var(--gold);border-radius:8px;font-family:'Teko';font-size:20px;cursor:pointer;text-transform:uppercase}
-
-    /* FOOTER NAV */
-    .footer-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(10,10,10,0.95);border-top:1px solid var(--border);display:grid;grid-template-columns:repeat(3,1fr);padding:10px 0;z-index:100;backdrop-filter:blur(10px)}
-    .nav-item{display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--muted);text-decoration:none;font-size:11px;font-weight:600;letter-spacing:1px}
-    .nav-item i{font-size:20px}
+    .m-input::placeholder{color:#555}
+    .m-btn{width:100%;padding:13px;border:1px solid var(--gold);border-radius:7px;background:linear-gradient(180deg,var(--amber),var(--amber-deep));color:var(--gold);font-family:'Teko';font-size:20px;letter-spacing:2px;cursor:pointer;margin-bottom:10px;text-transform:uppercase}
+    .m-cancel{width:100%;padding:11px;border:1px solid var(--border);border-radius:7px;background:transparent;color:var(--muted);font-family:'Oswald';font-size:14px;font-weight:700;cursor:pointer}
+    .msg{text-align:center;padding:8px;border-radius:6px;font-size:13px;font-weight:600;display:none;margin-bottom:10px}
+    .msg.error{display:block;background:rgba(255,50,50,0.1);border:1px solid rgba(255,50,50,0.3);color:var(--danger)}
+    .msg.success{display:block;background:rgba(92,255,138,0.1);border:1px solid rgba(92,255,138,0.3);color:var(--green)}
+    .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(0,0,0,0.97);border-top:2px solid var(--gold);display:flex;z-index:200}
+    .nav-item{flex:1;padding:12px 8px;text-align:center;cursor:pointer;color:var(--muted);font-family:'Teko';font-size:13px;letter-spacing:2px;text-transform:uppercase;text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:3px;border:none;background:none}
     .nav-item.active{color:var(--gold)}
+    .nav-icon{font-size:22px}
+    .nav-divider{width:1px;background:var(--border);margin:8px 0}
+    .nav-item.active .nav-icon{filter:drop-shadow(0 0 6px rgba(254,203,0,0.7))}
+    .tagline{text-align:center;font-family:'Teko';font-size:13px;color:var(--muted);letter-spacing:3px;padding:10px 0;text-transform:uppercase}
+    .tagline span{color:var(--gold)}
   </style>
 </head>
 <body>
 
-  <header class="header">
-    <div class="logo-wrap">
-      <img src="logo.png" alt="Logo" class="logo-img">
-      <span class="header-title">TOURNAMENTS</span>
-    </div>
-    <div class="wallet-badge">৳ <span id="nav-balance">0</span></div>
-  </header>
-
-  <main class="content">
-    <div class="section-title">Active Matches</div>
-    <div id="tournaments-list">
-      <div style="text-align:center;padding:40px;color:var(--muted)">Scanning for matches...</div>
-    </div>
-  </main>
-
-  <nav class="footer-nav">
-    <a href="home.html" class="nav-item"><i>🏠</i><span>HOME</span></a>
-    <a href="tournaments.html" class="nav-item active"><i>🎮</i><span>PLAY</span></a>
-    <a href="dashboard.html" class="nav-item"><i>👤</i><span>PROFILE</span></a>
-  </nav>
-
-  <div class="modal-overlay" id="info-modal">
-    <div class="modal">
-      <h2 class="modal-title" id="info-title">Match Rules</h2>
-      <div class="info-content" id="info-text"></div>
-      <div class="m-btn-group">
-        <button class="m-btn-close" onclick="closeModal('info-modal')">CLOSE</button>
-      </div>
-    </div>
+<div class="header">
+  <div class="logo-wrap">
+    <img class="logo-img" src="logo.png" alt="Logo"/>
+    <div class="header-title">Tournaments</div>
   </div>
+  <div class="wallet-badge">৳ <span id="nav-balance">0</span></div>
+</div>
 
-  <div class="modal-overlay" id="join-modal">
-    <div class="modal">
-      <h2 class="modal-title" id="join-title">Register for Match</h2>
-      <div id="join-msg" class="msg"></div>
-      
-      <label class="m-label">Your Full Name</label>
-      <input type="text" id="join-name" class="m-input" placeholder="Enter your name">
-      
-      <label class="m-label">WhatsApp Number</label>
-      <input type="text" id="join-whatsapp" class="m-input" placeholder="01XXXXXXXXX">
-
-      <label class="m-label">Team Name (Optional)</label>
-      <input type="text" id="join-team" class="m-input" placeholder="Enter team name">
-
-      <label class="m-label">Game UIDs (One per line)</label>
-      <textarea id="join-uids" class="m-input" style="height:80px; resize:none" placeholder="Enter Player UIDs"></textarea>
-
-      <div class="m-btn-group">
-        <button class="m-btn-close" onclick="closeModal('join-modal')">CANCEL</button>
-        <button class="m-btn-action" onclick="confirmJoin()">JOIN NOW</button>
-      </div>
-    </div>
+<div class="content">
+  <div class="filter-row">
+    <button class="filter-btn active" onclick="filterT('all',this)">All</button>
+    <button class="filter-btn" onclick="filterT('1',this)">Solo</button>
+    <button class="filter-btn" onclick="filterT('2',this)">Duo</button>
+    <button class="filter-btn" onclick="filterT('4',this)">Squad</button>
+    <button class="filter-btn" onclick="filterT('free',this)">Free</button>
   </div>
+  <div id="tournament-list"><div class="empty-state">⏳ Loading tournaments...</div></div>
+  <div class="tagline">PLAY HARD • STAY PRO • <span>BOOYAH!</span></div>
+</div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, getDoc, collection, getDocs, query, where, addDoc, updateDoc, serverTimestamp, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+<nav class="bottom-nav">
+  <button class="nav-item active"><span class="nav-icon">🏆</span>Tournaments</button>
+  <div class="nav-divider"></div>
+  <button class="nav-item" onclick="window.location.href='dashboard.html'"><span class="nav-icon">👤</span>Profile</button>
+</nav>
 
-    const firebaseConfig = {
-      // PASTE YOUR CONFIG HERE
-    };
+<!-- JOIN MODAL -->
+<div class="modal-overlay" id="join-modal">
+  <div class="modal">
+    <div class="modal-title" id="join-title">Join Tournament</div>
+    <div class="modal-sub" id="join-sub"></div>
+    <div class="fee-box">
+      <div class="fee-label">Entry Fee</div>
+      <div class="fee-amount">৳ <span id="join-fee">0</span></div>
+    </div>
+    <span class="m-label">Your Name</span>
+    <input type="text" class="m-input" id="join-name" placeholder="Your full name"/>
+    <span class="m-label">WhatsApp Number</span>
+    <input type="tel" class="m-input" id="join-whatsapp" placeholder="01XXXXXXXXX"/>
+    <div id="uid-inputs"></div>
+    <div class="msg" id="join-msg"></div>
+    <button class="m-btn" onclick="confirmJoin()">Confirm & Join</button>
+    <button class="m-cancel" onclick="document.getElementById('join-modal').classList.remove('open')">Cancel</button>
+  </div>
+</div>
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc, updateDoc, getDocs, addDoc, collection, query, orderBy, increment, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    let currentUser = null;
-    let userData = null;
-    let selectedT = null;
+  const firebaseConfig = { apiKey:"AIzaSyBgMroBilivfk7bJxoz93HjxSt6yU7Ura0", authDomain:"tournament-app-4a050.firebaseapp.com", projectId:"tournament-app-4a050", storageBucket:"tournament-app-4a050.firebasestorage.app", messagingSenderId:"811957533858", appId:"1:811957533858:web:1d1f0f916c0aba5eccebfb" };
 
-    onAuthStateChanged(auth, async (user) => {
-      if(user){
-        currentUser = user;
-        const snap = await getDoc(doc(db, 'users', user.uid));
-        if(snap.exists()){
-          userData = snap.data();
-          document.getElementById('nav-balance').textContent = userData.balance || 0;
-          loadTournaments();
-        }
-      } else {
-        window.location.href = 'index.html';
-      }
+  const app=initializeApp(firebaseConfig), auth=getAuth(app), db=getFirestore(app);
+  let currentUser=null, userData=null, userBalance=0, allTournaments=[], selectedT=null;
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) { window.location.href='index.html'; return; }
+    currentUser=user;
+    const snap=await getDoc(doc(db,'users',user.uid));
+    if(snap.exists()){
+      userData=snap.data();
+      userBalance=userData.balance||0;
+      document.getElementById('nav-balance').textContent=userBalance;
+    }
+    await loadTournaments();
+    setInterval(()=>renderTournaments(allTournaments), 60000);
+  });
+
+  async function loadTournaments() {
+    const snap=await getDocs(query(collection(db,'tournaments'),orderBy('time','asc')));
+    allTournaments=[];
+    snap.forEach(d=>allTournaments.push({id:d.id,...d.data()}));
+    renderTournaments(allTournaments);
+  }
+
+  function isExpired(t) {
+    if(!t.time) return false;
+    const startTime=new Date(t.time);
+    const now=new Date();
+    const diffMins=(now-startTime)/1000/60;
+    return diffMins>=1;
+  }
+  function modeLabel(v){return v==1?'SOLO':v==2?'DUO':'SQUAD';}
+
+  function renderTournaments(list) {
+    const container=document.getElementById('tournament-list');
+    const active=list.filter(t=>t.status==='open'&&!isExpired(t));
+    if(active.length===0){container.innerHTML='<div class="empty-state">🎮 No active tournaments right now.<br><span style="color:var(--gold)">Check back soon! BOOYAH!</span></div>';return;}
+    container.innerHTML='';
+    active.forEach(t=>{
+      const joined=t.joined||0, max=t.maxPlayers||99;
+      const fill=Math.min((joined/max)*100,100);
+      const isFull=joined>=max;
+      const isFree=t.fee===0;
+      const mode=modeLabel(t.teamType);
+      const timeStr=t.time?new Date(t.time).toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):'';
+
+      container.innerHTML+=`
+        <div class="t-card">
+          <div class="t-card-header">
+            <div class="t-name">${t.title}</div>
+            <div class="t-mode-badge">${mode}</div>
+          </div>
+          <div class="t-body">
+            <div class="info-grid">
+              <div class="info-item"><div class="info-label">⏰ Time</div><div class="info-value">${timeStr}</div></div>
+              <div class="info-item"><div class="info-label">💵 Entry</div><div class="info-value">${isFree?'FREE':'৳'+t.fee}</div></div>
+              <div class="info-item"><div class="info-label">🗺️ Mode</div><div class="info-value">${mode}</div></div>
+              <div class="info-item"><div class="info-label">👥 Slots</div><div class="info-value">${joined}/${max}</div></div>
+            </div>
+            <div class="prize-pool">
+              <div class="prize-pool-title">🏆 Prize Pool</div>
+              <div class="prize-row">
+                <div class="prize-item second"><div class="p-label">🥈 Runner Up</div><div class="p-val">৳${t.prize2||0}</div></div>
+                <div class="prize-item first"><div class="p-label">🥇 Champion</div><div class="p-val">৳${t.prize1||0}</div></div>
+                <div class="prize-item third"><div class="p-label">🥉 3rd Place</div><div class="p-val">৳${t.prize3||0}</div></div>
+              </div>
+            </div>
+            <div class="progress-wrap">
+              <div class="progress-label"><span>Players Joined</span><span>${joined}/${max}</span></div>
+              <div class="progress-bar"><div class="progress-fill" style="width:${fill}%"></div></div>
+            </div>
+            <button class="btn-join" onclick="openJoin('${t.id}')" ${isFull?'disabled':''}>
+              ${isFull?'🔒 FULL':'JOIN · '+(isFree?'FREE':'৳'+t.fee)}
+            </button>
+          </div>
+        </div>`;
     });
+  }
 
-    async function loadTournaments() {
-      const list = document.getElementById('tournaments-list');
-      try {
-        const q = query(collection(db, 'tournaments'), where('status', '==', 'open'));
-        const snap = await getDocs(q);
-        
-        if(snap.empty){
-          list.innerHTML = '<div style="text-align:center;padding:40px;color:var(--muted)">No open matches right now.</div>';
-          return;
-        }
+  window.filterT = (filter, btn) => {
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    let filtered=allTournaments;
+    if(filter==='free') filtered=allTournaments.filter(t=>t.fee===0);
+    else if(filter!=='all') filtered=allTournaments.filter(t=>String(t.teamType)===filter);
+    renderTournaments(filtered);
+  };
 
-        let html = '';
-        snap.forEach(d => {
-          const t = { id: d.id, ...d.data() };
-          const progress = (t.joined / t.totalSlots) * 100;
-          const isFull = t.joined >= t.totalSlots;
-          const date = t.time ? new Date(t.time).toLocaleString('en-GB', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' }) : 'TBA';
-          const type = t.teamType == 1 ? 'SOLO' : t.teamType == 2 ? 'DUO' : 'SQUAD';
-
-          html += `
-            <div class="t-card">
-              <div class="t-banner" style="background-image:url('https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80&w=400')">
-                <div class="t-title">${t.title}</div>
-              </div>
-              <div class="t-info-grid">
-                <div class="info-item"><div class="info-label">Win Prize</div><div class="info-value">৳${t.prize}</div></div>
-                <div class="info-item"><div class="info-label">Entry Fee</div><div class="info-value">${t.fee > 0 ? '৳'+t.fee : 'FREE'}</div></div>
-                <div class="info-item"><div class="info-label">Mode</div><div class="info-value">${type}</div></div>
-              </div>
-              <div class="t-body">
-                <div class="t-meta-row">
-                  <div class="t-time">📅 ${date}</div>
-                  <div class="t-joined">${t.joined}/${t.totalSlots} Joined</div>
-                </div>
-                <div class="progress-bar"><div class="progress-fill" style="width:${progress}%"></div></div>
-                <div class="btn-row">
-                  <button class="btn-info" onclick="viewInfo('${t.id}')">Info</button>
-                  <button class="btn-join" ${isFull ? 'disabled' : ''} onclick="openJoinModal('${t.id}')">
-                    ${isFull ? 'MATCH FULL' : 'JOIN MATCH'}
-                  </button>
-                </div>
-              </div>
-            </div>`;
-        });
-        list.innerHTML = html;
-      } catch(e) {
-        list.innerHTML = '<div class="msg error">Failed to load tournaments.</div>';
-      }
+  window.openJoin = (tId) => {
+    const t=allTournaments.find(x=>x.id===tId);
+    if(!t) return;
+    selectedT=t;
+    document.getElementById('join-title').textContent=t.title;
+    document.getElementById('join-sub').textContent=`${modeLabel(t.teamType)} · ${t.time?new Date(t.time).toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):''}`;
+    document.getElementById('join-fee').textContent=t.fee;
+    document.getElementById('join-name').value = userData?.name || '';
+    document.getElementById('join-whatsapp').value = userData?.whatsapp || '';
+    const count=t.teamType||1;
+    let inputs='';
+    if(count>1) inputs+=`<span class="m-label">Team Name</span><input type="text" class="m-input" id="team-name-input" placeholder="Your team name"/>`;
+    for(let i=1;i<=count;i++) {
+      const placeholder=i===1?'Leader Game UID':`Player ${i} Game UID`;
+      const prefill=i===1?(userData?.uid_game||''):'';
+      inputs+=`<span class="m-label">${i===1?'Leader':'Player '+i} Game UID</span><input type="text" class="m-input uid-val" placeholder="${placeholder}" value="${prefill}"/>`;
     }
+    document.getElementById('uid-inputs').innerHTML=inputs;
+    document.getElementById('join-modal').classList.add('open');
+  };
 
-    window.viewInfo = async (id) => {
-      const snap = await getDoc(doc(db, 'tournaments', id));
-      if(!snap.exists()) return;
-      const t = snap.data();
-      document.getElementById('info-title').textContent = t.title + ' - Rules';
-      document.getElementById('info-text').innerHTML = t.rules ? t.rules.replace(/\n/g, '<br>') : 'No specific rules provided for this match. Play fair!';
-      document.getElementById('info-modal').classList.add('open');
-    };
+  window.confirmJoin = async () => {
+    const t=selectedT; if(!t) return;
+    const name=document.getElementById('join-name').value.trim();
+    const whatsapp=document.getElementById('join-whatsapp').value.trim();
+    const uids=Array.from(document.querySelectorAll('.uid-val')).map(i=>i.value.trim());
+    const teamName=document.getElementById('team-name-input')?.value?.trim()||'';
+    if(!name){showMsg('join-msg','Please enter your name.','error');return;}
+    if(!whatsapp || whatsapp.replace(/\D/g,'').length<11){showMsg('join-msg','Enter a valid WhatsApp number.','error');return;}
+    if(uids.some(u=>!u)){showMsg('join-msg','Please fill all UID fields.','error');return;}
+    if(t.fee>0&&userBalance<t.fee){showMsg('join-msg',`Not enough balance! Need ৳${t.fee}, have ৳${userBalance}.`,'error');return;}
 
-    window.openJoinModal = async (id) => {
-      const snap = await getDoc(doc(db, 'tournaments', id));
-      if(!snap.exists()) return;
-      selectedT = { id: snap.id, ...snap.data() };
-      
-      document.getElementById('join-title').textContent = selectedT.title;
-      document.getElementById('join-name').value = userData.name || '';
-      document.getElementById('join-whatsapp').value = userData.whatsapp || '';
-      document.getElementById('join-modal').classList.add('open');
-    };
-
-    window.closeModal = (id) => document.getElementById(id).classList.remove('open');
-
-    window.confirmJoin = async () => {
-      const name = document.getElementById('join-name').value.trim();
-      const whatsapp = document.getElementById('join-whatsapp').value.trim();
-      const teamName = document.getElementById('join-team').value.trim() || 'Solo';
-      const uids = document.getElementById('join-uids').value.trim();
-      const msg = document.getElementById('join-msg');
-
-      if(!name || !whatsapp || !uids){
-        showModalMsg('Please fill Name, WhatsApp and UID.', 'error');
-        return;
-      }
-
-      if(userData.balance < selectedT.fee){
-        showModalMsg('Insufficient balance. Please deposit first.', 'error');
-        return;
-      }
-
-      try {
-        if(selectedT.fee > 0){
-          const newBal = userData.balance - selectedT.fee;
-          await updateDoc(doc(db, 'users', currentUser.uid), { balance: newBal });
-          await addDoc(collection(db, 'transactions'), {
-            uid: currentUser.uid, email: currentUser.email,
-            amount: selectedT.fee, type: 'entry', status: 'approved',
-            reason: 'Joined: ' + selectedT.title, created_at: serverTimestamp()
-          });
-          userData.balance = newBal;
-          document.getElementById('nav-balance').textContent = newBal;
-        }
-
-        await addDoc(collection(db, 'registrations'), {
-          uid: currentUser.uid, tournament_id: selectedT.id, tournament_name: selectedT.title,
-          name, whatsapp, team_name: teamName, game_uids: uids, entry_paid: selectedT.fee,
-          created_at: serverTimestamp()
+    try {
+      if(t.fee>0){
+        await updateDoc(doc(db,'users',currentUser.uid),{balance:increment(-t.fee)});
+        await addDoc(collection(db,'transactions'),{
+          uid:currentUser.uid, email:currentUser.email,
+          name, whatsapp,
+          amount:t.fee, type:'entry', status:'approved',
+          reason:t.title, tournament_id:t.id,
+          created_at:serverTimestamp()
         });
-
-        await updateDoc(doc(db, 'tournaments', selectedT.id), { joined: increment(1) });
-        await updateDoc(doc(db, 'users', currentUser.uid), { played: increment(1), name, whatsapp });
-
-        showModalMsg('Joined successfully! Check WhatsApp for Room Details.', 'success');
-        setTimeout(() => { closeModal('join-modal'); loadTournaments(); }, 2000);
-      } catch(e) {
-        showModalMsg('Join failed. Try again.', 'error');
+        userBalance-=t.fee;
+        document.getElementById('nav-balance').textContent=userBalance;
       }
-    };
 
-    function showModalMsg(text, type){
-      const el = document.getElementById('join-msg');
-      el.textContent = text;
-      el.className = 'msg ' + type;
-      el.style.display = 'block';
+      await updateDoc(doc(db,'tournaments',t.id),{joined:increment(1)});
+
+      // Save registration record (history)
+      await addDoc(collection(db,'registrations'),{
+        tournament_id:t.id, tournament_name:t.title,
+        uid:currentUser.uid, email:currentUser.email,
+        name, whatsapp,
+        team_name:teamName, game_uids:uids,
+        entry_paid:t.fee, status:'joined',
+        created_at:serverTimestamp()
+      });
+
+      // Save name + whatsapp to user profile so future joins are pre-filled
+      await updateDoc(doc(db,'users',currentUser.uid),{
+        played:increment(1),
+        name, whatsapp
+      });
+
+      showMsg('join-msg','🎉 Joined! Admin will send room ID on WhatsApp. BOOYAH!','success');
+      setTimeout(()=>{ document.getElementById('join-modal').classList.remove('open'); loadTournaments(); }, 2200);
+    } catch(e) {
+      console.error('Join failed:', e);
+      showMsg('join-msg','Failed to join. Try again.','error');
     }
-  </script>
+  };
+
+  function showMsg(id,msg,type){const el=document.getElementById(id);el.textContent=msg;el.className='msg '+type;}
+</script>
 </body>
 </html>
