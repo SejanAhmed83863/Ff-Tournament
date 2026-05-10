@@ -14,6 +14,30 @@
       background-size:cover;background-position:center;background-attachment:fixed;
     }
 
+    /* GLOBAL NOTICE BAR */
+    .notice-bar{
+      background:linear-gradient(90deg,rgba(184,134,11,0.25),rgba(254,203,0,0.15),rgba(184,134,11,0.25));
+      border-bottom:1px solid rgba(254,203,0,0.4);
+      padding:8px 12px 8px 16px;
+      display:none;
+      align-items:center;
+      gap:10px;
+    }
+    .notice-bar.visible{display:flex}
+    .notice-icon{font-size:14px;flex-shrink:0;animation:noti-pulse 2s infinite}
+    @keyframes noti-pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+    .notice-text-wrap{flex:1;overflow:hidden;position:relative}
+    .notice-text{
+      font-family:'Oswald',sans-serif;font-size:13px;color:var(--gold);
+      letter-spacing:0.5px;font-weight:500;
+      white-space:nowrap;
+      display:inline-block;
+      animation:marquee-scroll 20s linear infinite;
+    }
+    @keyframes marquee-scroll{0%{transform:translateX(100%)}100%{transform:translateX(-100%)}}
+    .notice-close{background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;flex-shrink:0;padding:0 4px;line-height:1;transition:color 0.2s}
+    .notice-close:hover{color:var(--gold)}
+
     /* HEADER */
     .header{
       background:linear-gradient(180deg,rgba(0,0,0,0.97),rgba(10,10,10,0.9));
@@ -34,23 +58,19 @@
 
     .content{padding:14px;max-width:500px;margin:0 auto}
 
-    /* WELCOME */
     .welcome{padding:14px 4px 16px;font-family:'Teko';color:var(--gold);font-size:24px;letter-spacing:2px;text-transform:uppercase}
     .welcome .sub{color:var(--muted);font-size:13px;letter-spacing:2px;margin-top:2px}
 
-    /* SECTION */
     .sec-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;border-left:3px solid var(--gold);padding-left:10px}
     .sec-title{font-family:'Teko',sans-serif;font-size:20px;color:#fff;letter-spacing:2px;text-transform:uppercase}
     .sec-link{color:var(--gold);font-size:12px;font-weight:700;text-decoration:none;letter-spacing:1px;text-transform:uppercase}
 
-    /* QUICK STATS ROW */
     .stats-row{display:flex;gap:10px;margin-bottom:18px}
     .qs{flex:1;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center;position:relative;overflow:hidden}
     .qs::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--amber),var(--gold))}
     .qs-val{font-family:'Teko';font-size:26px;color:var(--gold);letter-spacing:1px;line-height:1}
     .qs-label{font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:4px}
 
-    /* MINI TOURNAMENT CARD */
     .mini-card{
       background:var(--card);border:1px solid var(--border);border-radius:10px;
       padding:13px 14px;margin-bottom:10px;display:flex;align-items:center;
@@ -71,11 +91,9 @@
     @keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
     .empty-state{text-align:center;color:var(--muted);padding:40px 20px;font-size:14px}
 
-    /* TAGLINE */
     .tagline{text-align:center;font-family:'Teko',sans-serif;font-size:14px;color:var(--muted);letter-spacing:3px;padding:16px 0 8px;text-transform:uppercase}
     .tagline span{color:var(--gold)}
 
-    /* BOTTOM NAV */
     .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(0,0,0,0.97);border-top:2px solid var(--gold);display:flex;z-index:200}
     .nav-item{flex:1;padding:12px 8px;text-align:center;cursor:pointer;color:var(--muted);font-family:'Teko';font-size:13px;letter-spacing:2px;text-transform:uppercase;text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:3px;border:none;background:none;transition:0.2s}
     .nav-item.active{color:var(--gold)}
@@ -85,6 +103,15 @@
   </style>
 </head>
 <body>
+
+<!-- GLOBAL NOTICE BAR -->
+<div class="notice-bar" id="notice-bar">
+  <span class="notice-icon">📢</span>
+  <div class="notice-text-wrap">
+    <span class="notice-text" id="notice-text"></span>
+  </div>
+  <button class="notice-close" onclick="document.getElementById('notice-bar').classList.remove('visible')" title="Dismiss">✕</button>
+</div>
 
 <div class="header">
   <div class="logo-wrap">
@@ -137,6 +164,19 @@
   const firebaseConfig = { apiKey:"AIzaSyBgMroBilivfk7bJxoz93HjxSt6yU7Ura0", authDomain:"tournament-app-4a050.firebaseapp.com", projectId:"tournament-app-4a050", storageBucket:"tournament-app-4a050.firebasestorage.app", messagingSenderId:"811957533858", appId:"1:811957533858:web:1d1f0f916c0aba5eccebfb" };
   const app=initializeApp(firebaseConfig), auth=getAuth(app), db=getFirestore(app);
 
+  async function loadNotice() {
+    try {
+      const snap = await getDoc(doc(db, 'settings', 'notice'));
+      if (snap.exists()) {
+        const d = snap.data();
+        if (d.text && d.text.trim()) {
+          document.getElementById('notice-text').textContent = d.text;
+          document.getElementById('notice-bar').classList.add('visible');
+        }
+      }
+    } catch(e) {}
+  }
+
   onAuthStateChanged(auth, async (user) => {
     if (!user) { window.location.href='index.html'; return; }
     const snap=await getDoc(doc(db,'users',user.uid));
@@ -146,6 +186,7 @@
       document.getElementById('welcome-name').textContent=d.name||d.game_name||'Player';
       document.getElementById('my-played').textContent=d.played||0;
     }
+    await loadNotice();
     await loadTournaments();
     try {
       const usersSnap=await getDocs(collection(db,'users'));
@@ -173,10 +214,8 @@
     list.innerHTML='';
     active.slice(0,4).forEach(t=>{
       const mode=t.teamType==1?'Solo':t.teamType==2?'Duo':'Squad';
-      
-      // 12 HOUR FORMAT FIX
+      // 12-hour format with AM/PM
       const timeStr=t.time?new Date(t.time).toLocaleString('en-US',{day:'2-digit',month:'short',hour:'numeric',minute:'2-digit',hour12:true}):'';
-      
       list.innerHTML+=`
         <a class="mini-card" href="tournaments.html">
           <div class="mini-left">
