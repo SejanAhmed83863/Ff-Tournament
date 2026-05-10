@@ -47,10 +47,18 @@
     .btn-join{width:100%;padding:13px;border:1px solid var(--gold);border-radius:7px;background:linear-gradient(180deg,var(--amber),var(--amber-deep));color:var(--gold);font-family:'Teko';font-size:20px;letter-spacing:3px;cursor:pointer;text-transform:uppercase}
     .btn-join:disabled{background:#222;color:#555;border-color:#333;cursor:not-allowed}
     .empty-state{text-align:center;color:var(--muted);padding:60px 20px;font-size:14px}
+
+    /* MODAL */
     .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:200;align-items:flex-end;justify-content:center}
     .modal-overlay.open{display:flex}
-    .modal{background:#111;border:1px solid var(--gold);border-radius:16px 16px 0 0;padding:22px 18px;width:100%;max-width:500px;animation:slideUp 0.3s ease both;border-top:3px solid var(--gold);max-height:90vh;overflow-y:auto}
+    .modal{background:#111;border:1px solid var(--gold);border-radius:16px 16px 0 0;padding:0;width:100%;max-width:500px;animation:slideUp 0.3s ease both;border-top:3px solid var(--gold);max-height:92vh;overflow:hidden;display:flex;flex-direction:column}
     @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+
+    /* MODAL TABS */
+    .modal-tab-bar{display:flex;border-bottom:1px solid var(--border);flex-shrink:0}
+    .modal-tab{flex:1;padding:13px 8px;text-align:center;font-family:'Teko';font-size:16px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);border:none;background:transparent;cursor:pointer;border-bottom:2px solid transparent;transition:0.2s}
+    .modal-tab.active{color:var(--gold);border-bottom:2px solid var(--gold)}
+    .modal-body{overflow-y:auto;padding:18px;flex:1}
     .modal-title{font-family:'Teko',sans-serif;font-size:24px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px}
     .modal-sub{color:var(--muted);font-size:12px;margin-bottom:14px;letter-spacing:1px}
     .fee-box{background:rgba(184,134,11,0.1);border:1px solid rgba(184,134,11,0.4);border-radius:8px;padding:12px;margin-bottom:14px;text-align:center}
@@ -60,11 +68,19 @@
     .m-input{width:100%;background:#000;border:1px solid var(--border);padding:11px 13px;border-radius:7px;color:#fff;font-family:'Oswald';font-size:14px;outline:none;margin-bottom:12px;transition:border-color 0.2s}
     .m-input:focus{border-color:var(--gold)}
     .m-input::placeholder{color:#555}
+    .m-input.uid-val:focus{border-color:var(--gold)}
     .m-btn{width:100%;padding:13px;border:1px solid var(--gold);border-radius:7px;background:linear-gradient(180deg,var(--amber),var(--amber-deep));color:var(--gold);font-family:'Teko';font-size:20px;letter-spacing:2px;cursor:pointer;margin-bottom:10px;text-transform:uppercase}
     .m-cancel{width:100%;padding:11px;border:1px solid var(--border);border-radius:7px;background:transparent;color:var(--muted);font-family:'Oswald';font-size:14px;font-weight:700;cursor:pointer}
     .msg{text-align:center;padding:8px;border-radius:6px;font-size:13px;font-weight:600;display:none;margin-bottom:10px}
     .msg.error{display:block;background:rgba(255,50,50,0.1);border:1px solid rgba(255,50,50,0.3);color:var(--danger)}
     .msg.success{display:block;background:rgba(92,255,138,0.1);border:1px solid rgba(92,255,138,0.3);color:var(--green)}
+
+    /* RULES TAB */
+    .rules-list{list-style:none;padding:0}
+    .rules-list li{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;color:#ccc;line-height:1.5}
+    .rules-list li:last-child{border-bottom:none}
+    .rule-num{background:linear-gradient(135deg,var(--amber),var(--gold));color:#000;font-family:'Teko';font-size:14px;font-weight:700;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+
     .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(0,0,0,0.97);border-top:2px solid var(--gold);display:flex;z-index:200}
     .nav-item{flex:1;padding:12px 8px;text-align:center;cursor:pointer;color:var(--muted);font-family:'Teko';font-size:13px;letter-spacing:2px;text-transform:uppercase;text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:3px;border:none;background:none}
     .nav-item.active{color:var(--gold)}
@@ -73,6 +89,10 @@
     .nav-item.active .nav-icon{filter:drop-shadow(0 0 6px rgba(254,203,0,0.7))}
     .tagline{text-align:center;font-family:'Teko';font-size:13px;color:var(--muted);letter-spacing:3px;padding:10px 0;text-transform:uppercase}
     .tagline span{color:var(--gold)}
+
+    /* Profile warning banner */
+    .profile-warn{background:rgba(255,107,107,0.12);border:1px solid rgba(255,107,107,0.4);border-radius:8px;padding:12px;margin-bottom:14px;font-size:13px;color:var(--danger);text-align:center;display:none}
+    .profile-warn a{color:var(--gold);font-weight:700;text-decoration:underline}
   </style>
 </head>
 <body>
@@ -103,23 +123,55 @@
   <button class="nav-item" onclick="window.location.href='dashboard.html'"><span class="nav-icon">👤</span>Profile</button>
 </nav>
 
-<!-- JOIN MODAL -->
+<!-- JOIN MODAL with tabs -->
 <div class="modal-overlay" id="join-modal">
   <div class="modal">
-    <div class="modal-title" id="join-title">Join Tournament</div>
-    <div class="modal-sub" id="join-sub"></div>
-    <div class="fee-box">
-      <div class="fee-label">Entry Fee</div>
-      <div class="fee-amount">৳ <span id="join-fee">0</span></div>
+    <!-- Tab Bar -->
+    <div class="modal-tab-bar">
+      <button class="modal-tab active" id="tab-join-btn" onclick="switchModalTab('join')">🎮 Join</button>
+      <button class="modal-tab" id="tab-rules-btn" onclick="switchModalTab('rules')">📋 Rules</button>
     </div>
-    <span class="m-label">Your Name</span>
-    <input type="text" class="m-input" id="join-name" placeholder="Your full name"/>
-    <span class="m-label">WhatsApp Number</span>
-    <input type="tel" class="m-input" id="join-whatsapp" placeholder="01XXXXXXXXX"/>
-    <div id="uid-inputs"></div>
-    <div class="msg" id="join-msg"></div>
-    <button class="m-btn" onclick="confirmJoin()">Confirm & Join</button>
-    <button class="m-cancel" onclick="document.getElementById('join-modal').classList.remove('open')">Cancel</button>
+
+    <!-- JOIN TAB -->
+    <div class="modal-body" id="tab-join">
+      <div class="modal-title" id="join-title">Join Tournament</div>
+      <div class="modal-sub" id="join-sub"></div>
+      <div class="fee-box">
+        <div class="fee-label">Entry Fee</div>
+        <div class="fee-amount">৳ <span id="join-fee">0</span></div>
+      </div>
+
+      <!-- Profile warning shown if game name/UID not set -->
+      <div class="profile-warn" id="profile-warn">
+        ⚠️ Please set your <b>Game Name</b> and <b>Game UID</b> in your profile before joining.<br>
+        <a href="dashboard.html">Go to Profile →</a>
+      </div>
+
+      <span class="m-label">Your Name</span>
+      <input type="text" class="m-input" id="join-name" placeholder="Your full name"/>
+      <span class="m-label">WhatsApp Number</span>
+      <input type="tel" class="m-input" id="join-whatsapp" placeholder="01XXXXXXXXX"/>
+      <div id="uid-inputs"></div>
+      <div class="msg" id="join-msg"></div>
+      <button class="m-btn" id="confirm-join-btn" onclick="confirmJoin()">Confirm &amp; Join</button>
+      <button class="m-cancel" onclick="document.getElementById('join-modal').classList.remove('open')">Cancel</button>
+    </div>
+
+    <!-- RULES TAB -->
+    <div class="modal-body" id="tab-rules" style="display:none">
+      <div class="modal-title">📋 Tournament Rules</div>
+      <div class="modal-sub" style="margin-bottom:16px">Please read carefully before joining</div>
+      <ul class="rules-list">
+        <li><span class="rule-num">1</span><span>All players must use the <b style="color:var(--gold)">exact Game UID</b> registered in their profile. Any mismatch may result in disqualification.</span></li>
+        <li><span class="rule-num">2</span><span>Players must join the room <b style="color:var(--gold)">at least 5 minutes before</b> match start time. Late entries will not be allowed.</span></li>
+        <li><span class="rule-num">3</span><span>Room ID & Password will be sent to your <b style="color:var(--gold)">WhatsApp number</b> before match start.</span></li>
+        <li><span class="rule-num">4</span><span>Any form of <b style="color:var(--danger)">hacking, teaming, or unsportsmanlike behavior</b> will lead to permanent ban from all tournaments.</span></li>
+        <li><span class="rule-num">5</span><span>For Squad/Duo matches, the <b style="color:var(--gold)">team leader</b> is responsible for all team members' conduct.</span></li>
+        <li><span class="rule-num">6</span><span>Entry fees are <b style="color:var(--danger)">non-refundable</b> once a match has started.</span></li>
+        <li><span class="rule-num">7</span><span>Prize money will be credited to your in-app wallet within <b style="color:var(--gold)">24 hours</b> of result declaration.</span></li>
+        <li><span class="rule-num">8</span><span>Admin decisions on results and disputes are <b style="color:var(--gold)">final and binding</b>.</span></li>
+      </ul>
+    </div>
   </div>
 </div>
 
@@ -162,6 +214,12 @@
   }
   function modeLabel(v){return v==1?'SOLO':v==2?'DUO':'SQUAD';}
 
+  // Format time as 12-hour with AM/PM
+  function formatTime12(isoStr) {
+    if(!isoStr) return '';
+    return new Date(isoStr).toLocaleString('en-US',{day:'2-digit',month:'short',hour:'numeric',minute:'2-digit',hour12:true});
+  }
+
   function renderTournaments(list) {
     const container=document.getElementById('tournament-list');
     const active=list.filter(t=>t.status==='open'&&!isExpired(t));
@@ -173,7 +231,7 @@
       const isFull=joined>=max;
       const isFree=t.fee===0;
       const mode=modeLabel(t.teamType);
-      const timeStr=t.time?new Date(t.time).toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):'';
+      const timeStr=formatTime12(t.time);
 
       container.innerHTML+=`
         <div class="t-card">
@@ -217,22 +275,59 @@
     renderTournaments(filtered);
   };
 
+  // Switch modal tabs
+  window.switchModalTab = (tab) => {
+    const joinTab = document.getElementById('tab-join');
+    const rulesTab = document.getElementById('tab-rules');
+    const joinBtn = document.getElementById('tab-join-btn');
+    const rulesBtn = document.getElementById('tab-rules-btn');
+    if(tab==='join'){
+      joinTab.style.display='block'; rulesTab.style.display='none';
+      joinBtn.classList.add('active'); rulesBtn.classList.remove('active');
+    } else {
+      joinTab.style.display='none'; rulesTab.style.display='block';
+      rulesBtn.classList.add('active'); joinBtn.classList.remove('active');
+    }
+  };
+
   window.openJoin = (tId) => {
     const t=allTournaments.find(x=>x.id===tId);
     if(!t) return;
     selectedT=t;
+
+    // Reset to join tab
+    switchModalTab('join');
+
     document.getElementById('join-title').textContent=t.title;
-    document.getElementById('join-sub').textContent=`${modeLabel(t.teamType)} · ${t.time?new Date(t.time).toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):''}`;
+    document.getElementById('join-sub').textContent=`${modeLabel(t.teamType)} · ${formatTime12(t.time)}`;
     document.getElementById('join-fee').textContent=t.fee;
     document.getElementById('join-name').value = userData?.name || '';
     document.getElementById('join-whatsapp').value = userData?.whatsapp || '';
+
+    // GATEKEEPING: check if user has set game_name and uid_game
+    const hasProfile = userData?.game_name && userData?.uid_game;
+    const warnEl = document.getElementById('profile-warn');
+    const confirmBtn = document.getElementById('confirm-join-btn');
+    if(!hasProfile){
+      warnEl.style.display='block';
+      confirmBtn.disabled=true;
+      confirmBtn.style.opacity='0.4';
+    } else {
+      warnEl.style.display='none';
+      confirmBtn.disabled=false;
+      confirmBtn.style.opacity='1';
+    }
+
     const count=t.teamType||1;
     let inputs='';
     if(count>1) inputs+=`<span class="m-label">Team Name</span><input type="text" class="m-input" id="team-name-input" placeholder="Your team name"/>`;
     for(let i=1;i<=count;i++) {
-      const placeholder=i===1?'Leader Game UID':`Player ${i} Game UID`;
-      const prefill=i===1?(userData?.uid_game||''):'';
-      inputs+=`<span class="m-label">${i===1?'Leader':'Player '+i} Game UID</span><input type="text" class="m-input uid-val" placeholder="${placeholder}" value="${prefill}"/>`;
+      // Player 1 auto-fills from profile UID
+      const placeholder = i===1 ? 'Leader Game UID (10 digits)' : `Player ${i} Game UID (10 digits)`;
+      const prefill = i===1 ? (userData?.uid_game||'') : '';
+      const readonlyAttr = (i===1 && userData?.uid_game) ? 'readonly style="opacity:0.75;cursor:not-allowed"' : '';
+      inputs+=`<span class="m-label">${i===1?'Leader':'Player '+i} Game UID</span>
+        <input type="text" class="m-input uid-val" placeholder="${placeholder}" value="${prefill}" maxlength="12" ${readonlyAttr}/>`;
     }
     document.getElementById('uid-inputs').innerHTML=inputs;
     document.getElementById('join-modal').classList.add('open');
@@ -244,9 +339,17 @@
     const whatsapp=document.getElementById('join-whatsapp').value.trim();
     const uids=Array.from(document.querySelectorAll('.uid-val')).map(i=>i.value.trim());
     const teamName=document.getElementById('team-name-input')?.value?.trim()||'';
+
     if(!name){showMsg('join-msg','Please enter your name.','error');return;}
     if(!whatsapp || whatsapp.replace(/\D/g,'').length<11){showMsg('join-msg','Enter a valid WhatsApp number.','error');return;}
-    if(uids.some(u=>!u)){showMsg('join-msg','Please fill all UID fields.','error');return;}
+
+    // Strict 10-digit UID validation
+    for(let i=0;i<uids.length;i++){
+      const uid=uids[i];
+      if(!uid){showMsg('join-msg',`Player ${i+1} UID is required.`,'error');return;}
+      if(!/^\d{10}$/.test(uid)){showMsg('join-msg',`Player ${i+1} UID must be exactly 10 digits.`,'error');return;}
+    }
+
     if(t.fee>0&&userBalance<t.fee){showMsg('join-msg',`Not enough balance! Need ৳${t.fee}, have ৳${userBalance}.`,'error');return;}
 
     try {
@@ -265,7 +368,6 @@
 
       await updateDoc(doc(db,'tournaments',t.id),{joined:increment(1)});
 
-      // Save registration record (history)
       await addDoc(collection(db,'registrations'),{
         tournament_id:t.id, tournament_name:t.title,
         uid:currentUser.uid, email:currentUser.email,
@@ -275,7 +377,6 @@
         created_at:serverTimestamp()
       });
 
-      // Save name + whatsapp to user profile so future joins are pre-filled
       await updateDoc(doc(db,'users',currentUser.uid),{
         played:increment(1),
         name, whatsapp
