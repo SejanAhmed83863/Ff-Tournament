@@ -91,6 +91,7 @@
   <button class="tab" onclick="switchTab('winners')" id="tab-btn-winners"><span class="tab-icon">🏆</span>WINNERS</button>
 </div>
 
+<!-- REQUESTS -->
 <div class="tab-content active" id="tab-requests">
   <div class="stats-row">
     <div class="stat-box"><div class="stat-val" id="stat-pending" style="color:#FFD700">0</div><div class="stat-lbl">PENDING</div></div>
@@ -101,6 +102,7 @@
   <div id="requests-list"></div>
 </div>
 
+<!-- MATCHES -->
 <div class="tab-content" id="tab-tournaments">
   <div class="card">
     <div class="card-title"><div class="card-title-bar" style="background:#FF6B00"></div><span style="color:#FF6B00">CREATE TOURNAMENT</span></div>
@@ -124,6 +126,7 @@
   <div id="tournament-list"></div>
 </div>
 
+<!-- WINNERS -->
 <div class="tab-content" id="tab-winners">
   <div class="card">
     <div class="card-title"><div class="card-title-bar" style="background:#FFD700"></div><span style="color:#FFD700">DISTRIBUTE PRIZES</span></div>
@@ -150,7 +153,7 @@
   import { getFirestore, collection, addDoc, query, where, onSnapshot, doc, updateDoc, increment, getDoc, getDocs, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
 
-  const ADMIN_EMAIL = "sejansasker@gmail.com"; 
+  const ADMIN_EMAIL = "sejansasker@gmail.com"; // ← Your email
 
   const firebaseConfig = { apiKey:"AIzaSyBgMroBilivfk7bJxoz93HjxSt6yU7Ura0", authDomain:"tournament-app-4a050.firebaseapp.com", projectId:"tournament-app-4a050", storageBucket:"tournament-app-4a050.appspot.com", messagingSenderId:"811957533858", appId:"1:811957533858:web:1d1f0f916c0aba5eccebfb" };
 
@@ -279,7 +282,6 @@
         const tc=teamColor(t.teamType);
         const fill=Math.min(Math.round((t.joined/t.maxPlayers)*100),100);
         const barColor=fill>=100?'#FF6B6B':fill>70?'#FFD700':'#5CFF8A';
-        
         list.innerHTML+=`
           <div class="t-card">
             <div class="t-header">
@@ -294,29 +296,11 @@
             </div>
             <div class="fill-label"><span>PLAYERS</span><span style="color:${barColor}">${t.joined}/${t.maxPlayers}</span></div>
             <div class="fill-bar-bg"><div class="fill-bar" style="width:${fill}%;background:${barColor}"></div></div>
-            
-            <div class="row" style="margin-top:12px;">
-              <input type="text" id="room-${d.id}" placeholder="Room ID" value="${t.roomID || ''}">
-              <input type="text" id="pass-${d.id}" placeholder="Password" value="${t.roomPass || ''}">
-            </div>
-            <button class="btn-main" style="padding:10px; font-size:13px; margin-top:2px;" onclick="updateRoom('${d.id}')">Update Room Info</button>
-
           </div>`;
         select.innerHTML+=`<option value="${d.id}">${t.title}</option>`;
       });
     });
   }
-
-  // UPDATE ROOM INFO FIX
-  window.updateRoom = async (id) => {
-    const rid = document.getElementById(`room-${id}`).value;
-    const rps = document.getElementById(`pass-${id}`).value;
-    await updateDoc(doc(db, 'tournaments', id), {
-        roomID: rid,
-        roomPass: rps
-    });
-    toast("Room Info Updated!");
-  };
 
   window.deleteTournament = async (id) => {
     if(!confirm('Delete this tournament?')) return;
@@ -337,6 +321,7 @@
     preview.style.display='flex';
   };
 
+  // DISTRIBUTE PRIZES BY GAME UID
   window.distributePrizes = async () => {
     const mId=document.getElementById('winner-match-select').value;
     if(!mId) return toast('Select a match first!','error');
@@ -354,20 +339,24 @@
     const positions=['🥇 1st','🥈 2nd','🥉 3rd'];
     const logEntries=[];
 
+    // Get all users
     const allUsers=await getDocs(collection(db,'users'));
 
     for(let i=0;i<3;i++){
       if(!wUIDs[i]||prizes[i]===0) continue;
       let found=false;
+      // Match by uid_game field
       allUsers.forEach(async (uDoc)=>{
         const uData=uDoc.data();
         if(uData.uid_game && uData.uid_game.trim()===wUIDs[i].trim()){
           found=true;
+          // Add prize money
           await updateDoc(doc(db,'users',uDoc.id),{
             balance:increment(prizes[i]),
             total_earned:increment(prizes[i]),
             wins:increment(i===0?1:0)
           });
+          // Add transaction record
           await addDoc(collection(db,'transactions'),{
             uid:uDoc.id, email:uData.email,
             amount:prizes[i], type:'prize',
@@ -380,8 +369,10 @@
       logEntries.push({uid:wUIDs[i],prize:prizes[i],position:positions[i],match:t.title});
     }
 
+    // Close the tournament
     await deleteDoc(doc(db,'tournaments',mId));
 
+    // Show log
     const logWrap=document.getElementById('dist-log-wrap');
     const logDiv=document.getElementById('dist-log');
     logWrap.style.display='block';
