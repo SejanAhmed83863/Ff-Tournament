@@ -1,0 +1,26 @@
+{
+  "name": "FF Battle Arena",
+  "short_name": "FF Arena",
+  "description": "Free Fire Tournament Registration App",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#000000",
+  "theme_color": "#fecb00",
+  "icons": [
+    {
+      "src": "https://i.ibb.co/L5hY8hK/free-fire-battle-arena-poster.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://i.ibb.co/L5hY8hK/free-fire-battle-arena-poster.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["games", "sports"],
+  "lang": "bn"
+}
