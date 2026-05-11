@@ -8,16 +8,13 @@
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
     :root{--amber:#b8860b;--amber-deep:#6b4f00;--gold:#fecb00;--dark:#000;--card:rgba(20,20,20,0.97);--border:#333;--text:#fff;--muted:#999;--green:#5CFF8A;--danger:#FF6B6B}
-    body{
-      font-family:'Oswald',sans-serif;background:#0a0a0a;color:var(--text);min-height:100vh;padding-bottom:90px;
-      background-image:linear-gradient(to bottom,rgba(0,0,0,0.9),rgba(0,0,0,0.97));
-      background-size:cover;background-position:center;background-attachment:fixed;
-    }
+    body{font-family:'Oswald',sans-serif;background:#0a0a0a;color:var(--text);min-height:100vh;padding-bottom:90px;background-image:linear-gradient(to bottom,rgba(0,0,0,0.9),rgba(0,0,0,0.97));background-size:cover;background-position:center;background-attachment:fixed}
+
+    /* HEADER */
     .header{background:linear-gradient(180deg,rgba(0,0,0,0.97),rgba(10,10,10,0.9));border-bottom:2px solid var(--gold);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
     .logo-wrap{display:flex;align-items:center;gap:10px}
     .logo-img{width:40px;height:40px;border-radius:6px;border:2px solid var(--gold);object-fit:cover}
     .header-title{font-family:'Teko',sans-serif;font-size:24px;color:var(--gold);text-transform:uppercase;letter-spacing:2px}
-    /* Logout button now in header */
     .header-logout{background:transparent;border:1px solid var(--border);color:var(--muted);padding:6px 12px;border-radius:6px;font-family:'Teko';font-size:14px;letter-spacing:1px;cursor:pointer;transition:0.2s;text-transform:uppercase}
     .header-logout:hover{border-color:var(--danger);color:var(--danger)}
 
@@ -36,7 +33,6 @@
     .uid-tag{display:inline-block;background:rgba(184,134,11,0.15);border:1px solid var(--amber);color:var(--gold);font-family:'Teko';font-size:13px;padding:2px 10px;border-radius:4px;letter-spacing:1px;margin-top:4px}
     .edit-icon{position:absolute;top:12px;right:12px;background:rgba(254,203,0,0.1);border:1px solid var(--gold);color:var(--gold);width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;transition:0.2s}
     .edit-icon:hover{background:rgba(254,203,0,0.25)}
-
     .edit-panel{display:none;padding:16px;background:rgba(0,0,0,0.5);border-top:1px solid var(--border)}
     .edit-panel.open{display:block;animation:slideDown 0.3s ease}
     @keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
@@ -45,10 +41,10 @@
     .e-input:focus{border-color:var(--gold)}
     .e-input::placeholder{color:#555}
     .uid-box{background:rgba(184,134,11,0.08);border:1px solid rgba(184,134,11,0.35);border-radius:8px;padding:12px;margin-bottom:12px}
-    .uid-box-title{font-family:'Teko';font-size:15px;color:var(--gold);letter-spacing:1px;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+    .uid-box-title{font-family:'Teko';font-size:15px;color:var(--gold);letter-spacing:1px;margin-bottom:8px}
     .uid-note{font-size:11px;color:var(--muted);margin-bottom:8px;line-height:1.5}
     .reauth-row{display:flex;gap:8px;margin-bottom:10px}
-    .reauth-btn{flex:1;padding:10px;border-radius:7px;border:1px solid var(--border);background:transparent;color:var(--text);font-family:'Oswald';font-size:13px;font-weight:700;cursor:pointer;letter-spacing:0.5px;transition:0.2s;display:flex;align-items:center;justify-content:center;gap:6px}
+    .reauth-btn{flex:1;padding:10px;border-radius:7px;border:1px solid var(--border);background:transparent;color:var(--text);font-family:'Oswald';font-size:13px;font-weight:700;cursor:pointer;transition:0.2s;display:flex;align-items:center;justify-content:center;gap:6px}
     .reauth-btn.active{border-color:var(--gold);background:rgba(254,203,0,0.1);color:var(--gold)}
     .btn-row{display:flex;gap:8px}
     .save-btn{flex:1;padding:12px;background:linear-gradient(180deg,var(--amber),var(--amber-deep));border:1px solid var(--gold);color:var(--gold);font-family:'Teko';font-size:18px;letter-spacing:2px;border-radius:7px;cursor:pointer;text-transform:uppercase}
@@ -64,6 +60,22 @@
     .stat-icon{font-size:24px;margin-bottom:4px}
     .stat-value{font-family:'Teko',sans-serif;font-size:30px;color:var(--gold);letter-spacing:1px}
     .stat-label{color:var(--muted);font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-top:2px}
+
+    /* GAME MODE */
+    .sec-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px;position:relative;overflow:hidden}
+    .sec-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--amber),var(--gold),transparent)}
+    .sec-head{font-family:'Teko',sans-serif;font-size:18px;color:#fff;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;border-left:3px solid var(--gold);padding-left:8px}
+    .mode-grid{display:flex;gap:10px}
+    .mode-card{background:rgba(0,0,0,0.55);border:1px solid var(--border);border-radius:10px;padding:14px 8px;text-align:center;flex:1;position:relative;overflow:hidden}
+    .mode-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+    .mode-card.classic::before{background:linear-gradient(90deg,#FF6B00,#FFD700)}
+    .mode-card.clash::before{background:linear-gradient(90deg,#FF6B6B,#FF0040)}
+    .mode-card.lone::before{background:linear-gradient(90deg,#5CFF8A,#00c96a)}
+    .mode-icon{font-size:24px;margin-bottom:5px}
+    .mode-name{font-family:'Teko';font-size:15px;color:#fff;text-transform:uppercase;letter-spacing:1px;line-height:1.1;margin-bottom:3px}
+    .mode-desc{font-size:10px;color:var(--muted);line-height:1.4;margin-bottom:6px}
+    .mode-count{font-family:'Teko';font-size:22px;color:var(--gold)}
+    .mode-count-lbl{font-size:10px;color:var(--muted)}
 
     /* WALLET */
     .wallet-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:14px;position:relative;overflow:hidden;box-shadow:0 5px 20px rgba(0,0,0,0.5)}
@@ -93,43 +105,53 @@
     .no-tx{text-align:center;color:var(--muted);font-size:13px;padding:14px}
 
     /* TOURNAMENT HISTORY */
-    .sec-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px;position:relative;overflow:hidden}
-    .sec-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--amber),var(--gold),transparent)}
-    .sec-head{font-family:'Teko',sans-serif;font-size:18px;color:#fff;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;border-left:3px solid var(--gold);padding-left:8px}
-    .history-item{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:8px;border-left:3px solid var(--gold)}
-    .hist-name{font-family:'Teko';font-size:17px;color:#fff;letter-spacing:1px;margin-bottom:3px}
+    .history-item{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:13px;margin-bottom:10px;position:relative;overflow:hidden}
+    .history-item.upcoming{border-color:rgba(254,203,0,0.45);background:rgba(254,203,0,0.03)}
+    .history-item.upcoming::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--amber),var(--gold))}
+    .hist-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;gap:8px}
+    .hist-name{font-family:'Teko';font-size:18px;color:#fff;letter-spacing:1px;flex:1}
+    .hist-badge{font-size:10px;font-weight:700;letter-spacing:1px;padding:3px 9px;border-radius:20px;text-transform:uppercase;white-space:nowrap;flex-shrink:0}
+    .hist-badge.upcoming-badge{background:rgba(254,203,0,0.15);color:var(--gold);border:1px solid rgba(254,203,0,0.4)}
+    .hist-badge.played-badge{background:rgba(153,153,153,0.1);color:var(--muted);border:1px solid rgba(153,153,153,0.2)}
+    /* Upcoming block */
+    .countdown-chip{display:inline-flex;align-items:center;gap:6px;background:rgba(254,203,0,0.08);border:1px solid rgba(254,203,0,0.3);padding:4px 11px;border-radius:20px;font-size:11px;color:var(--gold);font-weight:700;letter-spacing:1px;margin-bottom:9px}
+    .countdown-chip span.dot{width:6px;height:6px;background:var(--gold);border-radius:50%;display:inline-block;animation:blink 1s infinite}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
+    .upcoming-info-grid{display:flex;flex-wrap:wrap;gap:10px;background:rgba(0,0,0,0.35);border:1px solid rgba(254,203,0,0.15);border-radius:8px;padding:10px 12px;margin-bottom:9px}
+    .ui-item{display:flex;flex-direction:column;gap:2px;min-width:80px}
+    .ui-label{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
+    .ui-val{font-family:'Teko';font-size:15px;color:var(--gold);letter-spacing:1px}
     .hist-meta{font-size:12px;color:var(--muted);display:flex;gap:10px;flex-wrap:wrap}
-    .hist-meta span{color:var(--gold)}
+    .hist-meta span{color:#888}
 
-    /* MODALS */
+    /* MODALS — proper flex layout, close btn top-right */
     .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:200;align-items:flex-end;justify-content:center}
     .modal-overlay.open{display:flex}
-    .modal{background:#111;border:1px solid var(--gold);border-radius:16px 16px 0 0;padding:24px 20px;width:100%;max-width:500px;animation:slideUp 0.3s ease both;border-top:3px solid var(--gold);max-height:90vh;overflow-y:auto}
+    .modal{background:#111;border:1px solid var(--gold);border-radius:16px 16px 0 0;width:100%;max-width:500px;animation:slideUp 0.3s ease both;border-top:3px solid var(--gold);max-height:92vh;overflow:hidden;display:flex;flex-direction:column}
     @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-    .modal-title{font-family:'Teko',sans-serif;font-size:26px;color:var(--gold);letter-spacing:3px;text-transform:uppercase;margin-bottom:16px}
+    /* header bar: title left, ✕ right */
+    .modal-hdr{display:flex;align-items:center;justify-content:space-between;padding:15px 18px 13px;border-bottom:1px solid var(--border);flex-shrink:0;position:relative}
+    .modal-title{font-family:'Teko',sans-serif;font-size:26px;color:var(--gold);letter-spacing:3px;text-transform:uppercase;margin:0;line-height:1}
+    .modal-x{position:absolute;top:50%;right:14px;transform:translateY(-50%);width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,0.05);border:1px solid #444;color:#888;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:0.2s;line-height:1}
+    .modal-x:hover{background:rgba(255,107,107,0.15);border-color:var(--danger);color:var(--danger)}
+    .modal-body{overflow-y:auto;padding:18px;flex:1}
     .m-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:6px;display:block}
     .m-input{width:100%;background:#000;border:1px solid var(--border);padding:12px 13px;border-radius:7px;color:#fff;font-family:'Oswald';font-size:14px;outline:none;margin-bottom:12px;transition:border-color 0.2s}
     .m-input:focus{border-color:var(--gold)}
     .m-input::placeholder{color:#555}
-    .m-method-row{display:flex;gap:10px;margin-bottom:14px}
-    .m-method-btn{flex:1;padding:11px;border-radius:7px;border:2px solid var(--border);background:transparent;color:var(--text);font-family:'Oswald';font-size:14px;font-weight:700;cursor:pointer;transition:0.2s}
+    .m-method-row{display:flex;gap:8px;margin-bottom:14px}
+    .m-method-btn{flex:1;padding:11px 6px;border-radius:7px;border:2px solid var(--border);background:transparent;color:var(--text);font-family:'Oswald';font-size:13px;font-weight:700;cursor:pointer;transition:0.2s;text-align:center}
     .m-method-btn.selected{border-color:var(--gold);background:rgba(254,203,0,0.1);color:var(--gold)}
-    .pay-info{background:rgba(0,0,0,0.5);border:1px solid var(--border);border-radius:8px;padding:13px;font-size:13px;line-height:1.9;margin-bottom:12px;color:var(--muted);display:none}
+    /* Deposit: admin payment info box */
+    .pay-info{background:rgba(0,0,0,0.55);border:1px solid rgba(254,203,0,0.22);border-radius:9px;padding:14px 15px;margin-bottom:14px;display:none}
     .pay-info.show{display:block}
-    .pay-number{color:var(--gold);font-family:'Teko';font-size:22px;font-weight:700;letter-spacing:1px}
-    .pay-method-type{color:var(--gold);font-weight:700}
-    .m-btn{width:100%;padding:13px;border:1px solid var(--gold);border-radius:7px;background:linear-gradient(180deg,var(--amber),var(--amber-deep));color:var(--gold);font-family:'Teko';font-size:20px;letter-spacing:2px;cursor:pointer;margin-bottom:10px;text-transform:uppercase}
-    .m-cancel{width:100%;padding:11px;border:1px solid var(--border);border-radius:7px;background:transparent;color:var(--muted);font-family:'Oswald';font-size:14px;font-weight:700;cursor:pointer}
+    .pay-info-title{font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px}
+    .pay-step{font-size:13px;color:#bbb;line-height:2;display:flex;align-items:baseline;gap:7px}
+    .pay-step b{color:#fff}
+    .pay-step .num{color:var(--gold);font-family:'Teko';font-size:22px;letter-spacing:1px}
+    .m-btn{width:100%;padding:13px;border:1px solid var(--gold);border-radius:7px;background:linear-gradient(180deg,var(--amber),var(--amber-deep));color:var(--gold);font-family:'Teko';font-size:20px;letter-spacing:2px;cursor:pointer;margin-bottom:0;text-transform:uppercase;margin-top:4px}
 
-    /* WITHDRAW INFO BOX — shows admin-set payment details */
-    .withdraw-info-box{background:rgba(184,134,11,0.08);border:1px solid rgba(184,134,11,0.35);border-radius:8px;padding:14px;margin-bottom:14px}
-    .wib-title{font-family:'Teko';font-size:14px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:6px}
-    .wib-row{display:flex;justify-content:space-between;align-items:center;font-size:13px;margin-bottom:6px}
-    .wib-row:last-child{margin-bottom:0}
-    .wib-label{color:var(--muted);font-size:12px;letter-spacing:1px;text-transform:uppercase}
-    .wib-val{color:#fff;font-family:'Teko';font-size:16px;letter-spacing:1px}
-    .wib-number{color:var(--gold);font-family:'Teko';font-size:20px;letter-spacing:1px}
-
+    /* BOTTOM NAV */
     .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(0,0,0,0.97);border-top:2px solid var(--gold);display:flex;z-index:200}
     .nav-item{flex:1;padding:12px 8px;text-align:center;cursor:pointer;color:var(--muted);font-family:'Teko';font-size:13px;letter-spacing:2px;text-transform:uppercase;text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:3px;border:none;background:none}
     .nav-item.active{color:var(--gold)}
@@ -145,7 +167,6 @@
     <img class="logo-img" src="logo.png" alt="Logo"/>
     <div class="header-title">My Profile</div>
   </div>
-  <!-- Logout moved to header, near profile info -->
   <button class="header-logout" onclick="doLogout()">🚪 Logout</button>
 </div>
 
@@ -164,22 +185,17 @@
       </div>
       <div class="edit-icon" onclick="toggleEdit()" title="Edit Profile">✏️</div>
     </div>
-
     <div class="edit-panel" id="edit-panel">
       <span class="e-label">Full Name</span>
       <input type="text" class="e-input" id="input-name" placeholder="Your name"/>
-
       <span class="e-label">WhatsApp Number</span>
       <input type="tel" class="e-input" id="input-whatsapp" placeholder="01XXXXXXXXX"/>
-
-      <span class="e-label">Game Name (shown on profile)</span>
+      <span class="e-label">Game Name</span>
       <input type="text" class="e-input" id="input-game-name" placeholder="In-game display name"/>
-
       <div class="uid-box">
         <div class="uid-box-title">🔒 Change Game UID</div>
-        <div class="uid-note" id="uid-note">First UID change is free. To change UID after that, you must verify your account.</div>
+        <div class="uid-note" id="uid-note">First UID change is free. To change again, you must verify your account.</div>
         <input type="text" class="e-input" id="input-uid" placeholder="New Game UID"/>
-
         <div id="reauth-section" style="display:none">
           <span class="e-label">Verify Identity</span>
           <div class="reauth-row">
@@ -194,7 +210,6 @@
           </div>
         </div>
       </div>
-
       <div class="msg" id="edit-msg"></div>
       <div class="btn-row">
         <button class="save-btn" onclick="saveProfile()">💾 Save</button>
@@ -209,6 +224,34 @@
     <div class="stat-card"><div class="stat-icon">🏆</div><div class="stat-value" id="stat-wins">0</div><div class="stat-label">Wins</div></div>
     <div class="stat-card"><div class="stat-icon">📈</div><div class="stat-value" id="stat-winrate">0%</div><div class="stat-label">Win Rate</div></div>
     <div class="stat-card"><div class="stat-icon">💰</div><div class="stat-value" id="stat-earned">0</div><div class="stat-label">TK Earned</div></div>
+  </div>
+
+  <!-- GAME MODE SECTION -->
+  <div class="sec-card">
+    <div class="sec-head">🎯 Game Modes</div>
+    <div class="mode-grid">
+      <div class="mode-card classic">
+        <div class="mode-icon">🗺️</div>
+        <div class="mode-name">Classic</div>
+        <div class="mode-desc">Battle Royale<br>50–52 Players</div>
+        <div class="mode-count" id="mode-classic">0</div>
+        <div class="mode-count-lbl">open</div>
+      </div>
+      <div class="mode-card clash">
+        <div class="mode-icon">⚔️</div>
+        <div class="mode-name">Clash Squad</div>
+        <div class="mode-desc">4v4 Tactical<br>Squad Battle</div>
+        <div class="mode-count" id="mode-clash">0</div>
+        <div class="mode-count-lbl">open</div>
+      </div>
+      <div class="mode-card lone">
+        <div class="mode-icon">🐺</div>
+        <div class="mode-name">Lone Wolf</div>
+        <div class="mode-desc">Solo Survival<br>Last One Wins</div>
+        <div class="mode-count" id="mode-lone">0</div>
+        <div class="mode-count-lbl">open</div>
+      </div>
+    </div>
   </div>
 
   <!-- WALLET -->
@@ -231,65 +274,66 @@
 
 </div>
 
-<!-- DEPOSIT MODAL -->
+<!-- ════════════ DEPOSIT MODAL ════════════ -->
+<!-- User sees ADMIN's number/method/send-type → sends money there → pastes TxID -->
 <div class="modal-overlay" id="deposit-modal">
   <div class="modal">
-    <div class="modal-title">💰 Add Money</div>
-    <span class="m-label">Amount (TK)</span>
-    <input type="number" class="m-input" id="deposit-amount" placeholder="Minimum 10 TK"/>
-    <span class="m-label">Payment Method</span>
-    <div class="m-method-row">
-      <button class="m-method-btn" id="btn-bkash" onclick="selectMethod('bkash')">📱 bKash</button>
-      <button class="m-method-btn" id="btn-nagad" onclick="selectMethod('nagad')">💳 Nagad</button>
+    <div class="modal-hdr">
+      <div class="modal-title">💰 Deposit</div>
+      <button class="modal-x" onclick="closeModal('deposit-modal')">✕</button>
     </div>
-    <div class="pay-info" id="pay-info">
-      <p>1. Open <b id="method-name"></b> app</p>
-      <p>2. Tap <b id="deposit-send-type">Send Money</b></p>
-      <p>3. Number: <span class="pay-number" id="deposit-pay-number">—</span></p>
-      <p>4. Copy your <b>Transaction ID</b> after sending</p>
+    <div class="modal-body">
+      <span class="m-label">Amount (TK)</span>
+      <input type="number" class="m-input" id="deposit-amount" placeholder="Minimum 10 TK"/>
+
+      <span class="m-label">Payment Method</span>
+      <div class="m-method-row">
+        <button class="m-method-btn" id="btn-bkash"  onclick="selectDepMethod('bkash')">📱 bKash</button>
+        <button class="m-method-btn" id="btn-nagad"  onclick="selectDepMethod('nagad')">💳 Nagad</button>
+        <button class="m-method-btn" id="btn-rocket" onclick="selectDepMethod('rocket')">🚀 Rocket</button>
+      </div>
+
+      <!-- Shown after method selected: admin's receiving number & instructions -->
+      <div class="pay-info" id="pay-info">
+        <div class="pay-info-title">📋 Send Money Instructions</div>
+        <div class="pay-step">1. Open &nbsp;<b id="dep-method-name">—</b>&nbsp; app</div>
+        <div class="pay-step">2. Select &nbsp;<b id="dep-send-type">Send Money</b></div>
+        <div class="pay-step">3. Send to: &nbsp;<span class="num" id="dep-number">—</span></div>
+        <div class="pay-step">4. After payment, copy your <b>Transaction ID</b></div>
+      </div>
+
+      <span class="m-label">Transaction ID</span>
+      <input type="text" class="m-input" id="deposit-txid" placeholder="Paste Transaction ID here"/>
+      <div class="msg" id="deposit-msg"></div>
+      <button class="m-btn" onclick="submitDeposit()">Submit Request</button>
     </div>
-    <span class="m-label">Transaction ID</span>
-    <input type="text" class="m-input" id="deposit-txid" placeholder="Paste Transaction ID here"/>
-    <div class="msg" id="deposit-msg"></div>
-    <button class="m-btn" onclick="submitDeposit()">Submit Request</button>
-    <button class="m-cancel" onclick="closeModal('deposit-modal')">Cancel</button>
   </div>
 </div>
 
-<!-- WITHDRAW MODAL -->
+<!-- ════════════ WITHDRAW MODAL ════════════ -->
+<!-- User only inputs THEIR OWN number & method → admin sends money to them manually -->
 <div class="modal-overlay" id="withdraw-modal">
   <div class="modal">
-    <div class="modal-title">💸 Withdraw</div>
-
-    <!-- Admin-set payment details shown here -->
-    <div class="withdraw-info-box" id="withdraw-info-box" style="display:none">
-      <div class="wib-title">💳 Send To</div>
-      <div class="wib-row">
-        <span class="wib-label">Method</span>
-        <span class="wib-val" id="wib-method">—</span>
-      </div>
-      <div class="wib-row">
-        <span class="wib-label">Number</span>
-        <span class="wib-number" id="wib-number">—</span>
-      </div>
-      <div class="wib-row">
-        <span class="wib-label">Transfer Type</span>
-        <span class="wib-val" id="wib-type">—</span>
-      </div>
+    <div class="modal-hdr">
+      <div class="modal-title">💸 Withdraw</div>
+      <button class="modal-x" onclick="closeModal('withdraw-modal')">✕</button>
     </div>
+    <div class="modal-body">
+      <span class="m-label">Amount (TK)</span>
+      <input type="number" class="m-input" id="withdraw-amount" placeholder="Minimum 50 TK"/>
 
-    <span class="m-label">Amount (TK)</span>
-    <input type="number" class="m-input" id="withdraw-amount" placeholder="Minimum 50 TK"/>
-    <span class="m-label">Payment Method</span>
-    <div class="m-method-row">
-      <button class="m-method-btn" id="wbtn-bkash" onclick="selectWithdrawMethod('bkash')">📱 bKash</button>
-      <button class="m-method-btn" id="wbtn-nagad" onclick="selectWithdrawMethod('nagad')">💳 Nagad</button>
+      <span class="m-label">Send to My Account Via</span>
+      <div class="m-method-row">
+        <button class="m-method-btn" id="wbtn-bkash"  onclick="selectWdMethod('bkash')">📱 bKash</button>
+        <button class="m-method-btn" id="wbtn-nagad"  onclick="selectWdMethod('nagad')">💳 Nagad</button>
+        <button class="m-method-btn" id="wbtn-rocket" onclick="selectWdMethod('rocket')">🚀 Rocket</button>
+      </div>
+
+      <span class="m-label">My Number (Admin sends here)</span>
+      <input type="tel" class="m-input" id="withdraw-number" placeholder="01XXXXXXXXX"/>
+      <div class="msg" id="withdraw-msg"></div>
+      <button class="m-btn" onclick="submitWithdraw()">Request Withdrawal</button>
     </div>
-    <span class="m-label">Your Number</span>
-    <input type="tel" class="m-input" id="withdraw-number" placeholder="01XXXXXXXXX"/>
-    <div class="msg" id="withdraw-msg"></div>
-    <button class="m-btn" onclick="submitWithdraw()">Request Withdrawal</button>
-    <button class="m-cancel" onclick="closeModal('withdraw-modal')">Cancel</button>
   </div>
 </div>
 
@@ -301,295 +345,273 @@
 </nav>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged, EmailAuthProvider, GoogleAuthProvider, reauthenticateWithCredential, reauthenticateWithPopup, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, addDoc, query, where, getDocs, serverTimestamp, increment } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { initializeApp }   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, EmailAuthProvider, GoogleAuthProvider, reauthenticateWithCredential, reauthenticateWithPopup, signOut }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, addDoc, query, where, getDocs, serverTimestamp, increment }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-  const firebaseConfig = { apiKey:"AIzaSyBgMroBilivfk7bJxoz93HjxSt6yU7Ura0", authDomain:"tournament-app-4a050.firebaseapp.com", projectId:"tournament-app-4a050", storageBucket:"tournament-app-4a050.firebasestorage.app", messagingSenderId:"811957533858", appId:"1:811957533858:web:1d1f0f916c0aba5eccebfb" };
+  const cfg = { apiKey:"AIzaSyBgMroBilivfk7bJxoz93HjxSt6yU7Ura0", authDomain:"tournament-app-4a050.firebaseapp.com", projectId:"tournament-app-4a050", storageBucket:"tournament-app-4a050.firebasestorage.app", messagingSenderId:"811957533858", appId:"1:811957533858:web:1d1f0f916c0aba5eccebfb" };
+  const app  = initializeApp(cfg);
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
 
-  const app=initializeApp(firebaseConfig), auth=getAuth(app), db=getFirestore(app);
-  let currentUser=null, userData=null, selMethod='', selWMethod='', editOpen=false, reauthMethod='';
-  let adminPaymentSettings = null; // holds settings/payment doc data
+  let currentUser=null, userData=null, adminPayment=null;
+  let selDepMethod='', selWdMethod='', editOpen=false, reauthMethod='';
 
-  function getProviderId(user) {
-    if (!user || !user.providerData || !user.providerData.length) return 'password';
-    return user.providerData[0].providerId;
-  }
+  function pid(u){ return u?.providerData?.[0]?.providerId ?? 'password'; }
 
-  onAuthStateChanged(auth, async (user) => {
-    if (!user) { window.location.href='index.html'; return; }
-    currentUser=user;
+  // ── BOOT ──────────────────────────────────────────────────────────────────
+  onAuthStateChanged(auth, async user => {
+    if (!user){ window.location.href='index.html'; return; }
+    currentUser = user;
+    // Load admin payment settings (for Deposit instructions)
+    try {
+      const ps = await getDoc(doc(db,'settings','payment'));
+      if (ps.exists()) adminPayment = ps.data();
+    } catch(_){}
     await loadProfile(user);
-    await loadAdminPaymentSettings();
     loadTransactions(user.uid);
     loadTournamentHistory(user.uid);
+    loadGameModeCounts();
   });
 
-  // Load admin-set payment details from Firestore settings/payment
-  async function loadAdminPaymentSettings() {
-    try {
-      const snap = await getDoc(doc(db, 'settings', 'payment'));
-      if (snap.exists()) {
-        adminPaymentSettings = snap.data();
-        // Show in withdraw modal info box
-        const box = document.getElementById('withdraw-info-box');
-        if (adminPaymentSettings.number) {
-          document.getElementById('wib-method').textContent = adminPaymentSettings.method || '—';
-          document.getElementById('wib-number').textContent = adminPaymentSettings.number || '—';
-          document.getElementById('wib-type').textContent = adminPaymentSettings.send_type || '—';
-          box.style.display = 'block';
-        }
-        // Also update deposit pay-number placeholder
-        document.getElementById('deposit-pay-number').textContent = adminPaymentSettings.number || '—';
-        if (adminPaymentSettings.send_type) {
-          document.getElementById('deposit-send-type').textContent = adminPaymentSettings.send_type;
-        }
-      }
-    } catch(e) { console.log('No payment settings found:', e); }
-  }
-
-  async function loadProfile(user) {
-    const ref=doc(db,'users',user.uid);
-    const snap=await getDoc(ref);
-    if (snap.exists()) { userData=snap.data(); }
+  // ── PROFILE ───────────────────────────────────────────────────────────────
+  async function loadProfile(user){
+    const ref  = doc(db,'users',user.uid);
+    const snap = await getDoc(ref);
+    if (snap.exists()){ userData = snap.data(); }
     else {
-      userData={ name:'', whatsapp:'', game_name:'', uid_game:'', email:user.email, balance:0, played:0, wins:0, total_earned:0, uid_changed:false, provider:getProviderId(user), created_at:new Date().toISOString() };
-      await setDoc(ref, userData, { merge: true });
+      userData = {name:'',whatsapp:'',game_name:'',uid_game:'',email:user.email,balance:0,played:0,wins:0,total_earned:0,uid_changed:false,created_at:new Date().toISOString()};
+      await setDoc(ref, userData, {merge:true});
     }
-    const gname=userData.game_name||'PLAYER';
-    document.getElementById('display-game-name').textContent=gname;
-    document.getElementById('display-name').textContent=userData.name?'👤 '+userData.name:'';
-    document.getElementById('display-email').textContent=user.email||'';
-    document.getElementById('display-whatsapp').textContent=userData.whatsapp?'📱 WhatsApp: '+userData.whatsapp:'';
-    document.getElementById('display-uid').textContent=userData.uid_game?'🎮 UID: '+userData.uid_game:'🎮 UID: —';
-    document.getElementById('avatar-text').textContent=(gname||'P').charAt(0).toUpperCase();
-    document.getElementById('input-name').value=userData.name||'';
-    document.getElementById('input-whatsapp').value=userData.whatsapp||'';
-    document.getElementById('input-game-name').value=userData.game_name||'';
-    document.getElementById('input-uid').value=userData.uid_game||'';
-
-    if (userData.uid_changed) {
-      document.getElementById('reauth-section').style.display='block';
-      document.getElementById('uid-note').textContent='You have changed your UID before. Verify your identity to change it again.';
-      const providerId = getProviderId(currentUser);
-      if (providerId === 'google.com') setReauthMethod('google'); else setReauthMethod('password');
+    const gn = userData.game_name||'PLAYER';
+    $('display-game-name').textContent = gn;
+    $('display-name').textContent      = userData.name     ? '👤 '+userData.name    : '';
+    $('display-email').textContent     = user.email || '';
+    $('display-whatsapp').textContent  = userData.whatsapp ? '📱 '+userData.whatsapp : '';
+    $('display-uid').textContent       = userData.uid_game ? '🎮 UID: '+userData.uid_game : '🎮 UID: —';
+    $('avatar-text').textContent       = gn.charAt(0).toUpperCase();
+    $('input-name').value       = userData.name      ||'';
+    $('input-whatsapp').value   = userData.whatsapp  ||'';
+    $('input-game-name').value  = userData.game_name ||'';
+    $('input-uid').value        = userData.uid_game  ||'';
+    if(userData.uid_changed){
+      $('reauth-section').style.display='block';
+      $('uid-note').textContent='You've already changed your UID before. Please verify your identity to change it again.';
+      pid(currentUser)==='google.com' ? setReauthMethod('google') : setReauthMethod('password');
     }
-
-    const bal=userData.balance||0;
-    document.getElementById('wallet-balance').textContent=bal;
-    document.getElementById('stat-played').textContent=userData.played||0;
-    document.getElementById('stat-wins').textContent=userData.wins||0;
+    $('wallet-balance').textContent = userData.balance||0;
+    $('stat-played').textContent    = userData.played||0;
+    $('stat-wins').textContent      = userData.wins||0;
     const p=userData.played||0, w=userData.wins||0;
-    document.getElementById('stat-winrate').textContent=p>0?Math.round((w/p)*100)+'%':'0%';
-    document.getElementById('stat-earned').textContent=userData.total_earned||0;
+    $('stat-winrate').textContent   = p>0 ? Math.round(w/p*100)+'%' : '0%';
+    $('stat-earned').textContent    = userData.total_earned||0;
   }
 
-  async function loadTransactions(uid) {
-    const list=document.getElementById('tx-status-list');
-    try {
-      const q=query(collection(db,'transactions'), where('uid','==',uid));
-      const snap=await getDocs(q);
-      if (snap.empty) { list.innerHTML='<div class="no-tx">No transactions yet</div>'; return; }
-      const items=[];
-      snap.forEach(d=>items.push(d.data()));
-      items.sort((a,b)=>{
-        const ta=a.created_at?.toMillis?.()||0, tb=b.created_at?.toMillis?.()||0;
-        return tb-ta;
+  // ── GAME MODE COUNTS ──────────────────────────────────────────────────────
+  async function loadGameModeCounts(){
+    try{
+      const snap = await getDocs(collection(db,'tournaments'));
+      let cl=0,cs=0,lw=0;
+      snap.forEach(d=>{
+        const t=d.data(); if(t.status!=='open') return;
+        const m=(t.game_mode||'').toLowerCase();
+        if(m.includes('clash'))               cs++;
+        else if(m.includes('lone')||m.includes('wolf')) lw++;
+        else                                  cl++;
       });
+      $('mode-classic').textContent = cl;
+      $('mode-clash').textContent   = cs;
+      $('mode-lone').textContent    = lw;
+    }catch(_){}
+  }
+
+  // ── TRANSACTIONS ──────────────────────────────────────────────────────────
+  async function loadTransactions(uid){
+    const list=$('tx-status-list');
+    try{
+      const snap=await getDocs(query(collection(db,'transactions'),where('uid','==',uid)));
+      if(snap.empty){list.innerHTML='<div class="no-tx">No transactions yet</div>';return;}
+      const items=[]; snap.forEach(d=>items.push(d.data()));
+      items.sort((a,b)=>(b.created_at?.toMillis?.()??0)-(a.created_at?.toMillis?.()??0));
       list.innerHTML='';
       items.slice(0,8).forEach(tx=>{
-        const isPlus=tx.type==='deposit'||tx.type==='prize';
-        const icon=tx.type==='deposit'?'💰':tx.type==='prize'?'🏆':tx.type==='withdraw'?'💸':'🎮';
-        const label=tx.type==='deposit'?'Deposit':tx.type==='prize'?'Prize Won':tx.type==='withdraw'?'Withdrawal':'Entry Fee';
-        const sign=isPlus?'+':'-';
-        const cls=isPlus?'plus':'minus';
-        const txClass=tx.type==='deposit'?'deposit':tx.type==='withdraw'?'withdraw':tx.type==='prize'?'prize':'';
-        const date=tx.created_at?.toDate?.()?.toLocaleDateString('en-GB')||'—';
-        const statusCls=tx.status==='pending'?'pending':tx.status==='approved'?'approved':'rejected';
-        const statusTxt=tx.status==='pending'?'⏳ Pending':tx.status==='approved'?'✅ Approved':tx.status==='rejected'?'❌ Rejected':tx.status||'';
-        const reasonStr=tx.reason?' · '+tx.reason:'';
+        const plus   = tx.type==='deposit'||tx.type==='prize';
+        const icon   = tx.type==='deposit'?'💰':tx.type==='prize'?'🏆':tx.type==='withdraw'?'💸':'🎮';
+        const label  = tx.type==='deposit'?'Deposit':tx.type==='prize'?'Prize Won':tx.type==='withdraw'?'Withdrawal':'Entry Fee';
+        const txCls  = tx.type==='deposit'?'deposit':tx.type==='withdraw'?'withdraw':tx.type==='prize'?'prize':'';
+        const date   = tx.created_at?.toDate?.()?.toLocaleDateString('en-GB')||'—';
+        const stCls  = tx.status==='pending'?'pending':tx.status==='approved'?'approved':'rejected';
+        const stTxt  = tx.status==='pending'?'⏳ Pending':tx.status==='approved'?'✅ Approved':'❌ Rejected';
         list.innerHTML+=`
-          <div class="tx-item ${txClass}">
-            <div class="tx-left">
-              <div class="tx-icon">${icon}</div>
-              <div>
-                <div class="tx-desc">${label}${tx.method?' · '+tx.method.toUpperCase():''}${reasonStr}</div>
-                <div class="tx-date">${date}${tx.txid?' · TxID: '+tx.txid:''}</div>
-              </div>
+          <div class="tx-item ${txCls}">
+            <div class="tx-left"><div class="tx-icon">${icon}</div>
+              <div><div class="tx-desc">${label}${tx.method?' · '+tx.method.toUpperCase():''}${tx.reason?' · '+tx.reason:''}</div>
+              <div class="tx-date">${date}${tx.txid?' · '+tx.txid:''}</div></div>
             </div>
             <div class="tx-right">
-              <div class="tx-amount ${cls}">${sign}৳${tx.amount}</div>
-              <span class="status-pill ${statusCls}">${statusTxt}</span>
+              <div class="tx-amount ${plus?'plus':'minus'}">${plus?'+':'-'}৳${tx.amount}</div>
+              <span class="status-pill ${stCls}">${stTxt}</span>
             </div>
           </div>`;
       });
-    } catch(e) {
-      list.innerHTML='<div class="no-tx" style="color:var(--danger)">⚠ Could not load transactions.</div>';
-    }
+    }catch(e){list.innerHTML='<div class="no-tx" style="color:var(--danger)">⚠ Could not load.</div>';}
   }
 
-  async function loadTournamentHistory(uid) {
-    const list=document.getElementById('tournament-history');
-    try {
-      const q=query(collection(db,'registrations'), where('uid','==',uid));
-      const snap=await getDocs(q);
-      if (snap.empty) { list.innerHTML='<div class="no-tx">No tournaments joined yet</div>'; return; }
-      const items=[];
-      snap.forEach(d=>items.push(d.data()));
-      items.sort((a,b)=>{
-        const ta=a.created_at?.toMillis?.()||0, tb=b.created_at?.toMillis?.()||0;
-        return tb-ta;
-      });
-      list.innerHTML='';
+  // ── TOURNAMENT HISTORY (with upcoming highlight) ──────────────────────────
+  async function loadTournamentHistory(uid){
+    const list=$('tournament-history');
+    try{
+      const regSnap = await getDocs(query(collection(db,'registrations'),where('uid','==',uid)));
+      if(regSnap.empty){list.innerHTML='<div class="no-tx">No tournaments joined yet</div>';return;}
+      // Build tournament lookup
+      const tSnap=await getDocs(collection(db,'tournaments'));
+      const tMap={}; tSnap.forEach(d=>tMap[d.id]=d.data());
+      const items=[]; regSnap.forEach(d=>items.push({...d.data()}));
+      items.sort((a,b)=>(b.created_at?.toMillis?.()??0)-(a.created_at?.toMillis?.()??0));
+      const now=new Date(); list.innerHTML='';
       items.forEach(r=>{
-        const date=r.created_at?.toDate?.()?.toLocaleDateString('en-GB')||'—';
+        const t      = tMap[r.tournament_id]||{};
+        const tTime  = t.time ? new Date(t.time) : null;
+        const upcoming = tTime && tTime>now && t.status==='open';
+        const date   = r.created_at?.toDate?.()?.toLocaleDateString('en-GB')||'—';
+        const mode   = t.teamType==1?'Solo':t.teamType==2?'Duo':'Squad';
+        const timeStr= tTime ? tTime.toLocaleString('en-US',{weekday:'short',day:'2-digit',month:'short',hour:'numeric',minute:'2-digit',hour12:true}) : '';
+        // Countdown
+        let cd='';
+        if(upcoming){ const d=tTime-now; const h=Math.floor(d/3600000); const m=Math.floor(d%3600000/60000); cd=h>0?`${h}h ${m}m`:m>0?`${m} min`:'Starting soon!'; }
         list.innerHTML+=`
-          <div class="history-item">
-            <div class="hist-name">${r.tournament_name||'Tournament'}</div>
+          <div class="history-item${upcoming?' upcoming':''}">
+            <div class="hist-top">
+              <div class="hist-name">${r.tournament_name||'Tournament'}</div>
+              <span class="hist-badge ${upcoming?'upcoming-badge':'played-badge'}">${upcoming?'⏰ Upcoming':'Played'}</span>
+            </div>
+            ${upcoming?`
+            <div class="countdown-chip"><span class="dot"></span>Starts in ${cd}</div>
+            <div class="upcoming-info-grid">
+              <div class="ui-item"><span class="ui-label">📅 Time</span><span class="ui-val">${timeStr}</span></div>
+              <div class="ui-item"><span class="ui-label">🗺️ Mode</span><span class="ui-val">${mode}</span></div>
+              <div class="ui-item"><span class="ui-label">🏆 1st Prize</span><span class="ui-val">৳${t.prize1||0}</span></div>
+              ${t.roomID?`<div class="ui-item"><span class="ui-label">🔑 Room ID</span><span class="ui-val">${t.roomID}</span></div>`:''}
+              ${t.roomPass?`<div class="ui-item"><span class="ui-label">🔒 Password</span><span class="ui-val">${t.roomPass}</span></div>`:''}
+            </div>`:''}
             <div class="hist-meta">
-              <span>📅 ${date}</span>
-              <span>💵 Entry: ৳${r.entry_paid||0}</span>
+              <span>📅 ${date}</span><span>💵 ৳${r.entry_paid||0}</span>
               ${r.team_name?`<span>👥 ${r.team_name}</span>`:''}
-              ${r.game_uids&&r.game_uids[0]?`<span>🎮 UID: ${r.game_uids[0]}</span>`:''}
-              ${r.whatsapp?`<span>📱 ${r.whatsapp}</span>`:''}
+              ${r.game_uids?.[0]?`<span>🎮 ${r.game_uids[0]}</span>`:''}
             </div>
           </div>`;
       });
-    } catch(e) {
-      list.innerHTML='<div class="no-tx" style="color:var(--danger)">⚠ Could not load tournaments.</div>';
-    }
+    }catch(e){list.innerHTML='<div class="no-tx" style="color:var(--danger)">⚠ Could not load.</div>';}
   }
 
-  window.toggleEdit = () => {
-    editOpen=!editOpen;
-    const panel=document.getElementById('edit-panel');
-    if(editOpen) panel.classList.add('open'); else panel.classList.remove('open');
-  };
-
-  window.setReauthMethod = (m) => {
+  // ── PROFILE EDIT ──────────────────────────────────────────────────────────
+  window.toggleEdit=()=>{ editOpen=!editOpen; $('edit-panel').classList.toggle('open',editOpen); };
+  window.setReauthMethod=m=>{
     reauthMethod=m;
-    document.getElementById('reauth-pass-btn').classList.toggle('active', m==='password');
-    document.getElementById('reauth-google-btn').classList.toggle('active', m==='google');
-    document.getElementById('password-field').style.display = (m==='password') ? 'block' : 'none';
+    $('reauth-pass-btn').classList.toggle('active',m==='password');
+    $('reauth-google-btn').classList.toggle('active',m==='google');
+    $('password-field').style.display=m==='password'?'block':'none';
   };
-
-  window.saveProfile = async () => {
-    const name=document.getElementById('input-name').value.trim();
-    const whatsapp=document.getElementById('input-whatsapp').value.trim();
-    const gameName=document.getElementById('input-game-name').value.trim();
-    const newUid=document.getElementById('input-uid').value.trim();
-
-    if (!name) { showMsg('edit-msg','Please enter your name.','error'); return; }
-    if (!whatsapp || whatsapp.replace(/\D/g,'').length<11) { showMsg('edit-msg','Enter a valid 11-digit WhatsApp number.','error'); return; }
-    if (!gameName) { showMsg('edit-msg','Please enter your game name.','error'); return; }
-
+  window.saveProfile=async()=>{
+    const name=$('input-name').value.trim();
+    const wa=$('input-whatsapp').value.trim();
+    const gn=$('input-game-name').value.trim();
+    const nu=$('input-uid').value.trim();
+    if(!name){showMsg('edit-msg','Enter your name.','error');return;}
+    if(!wa||wa.replace(/\D/g,'').length<11){showMsg('edit-msg','Enter valid 11-digit WhatsApp.','error');return;}
+    if(!gn){showMsg('edit-msg','Enter your game name.','error');return;}
     const ref=doc(db,'users',currentUser.uid);
-    const updates={ name, whatsapp, game_name:gameName };
-
-    if (newUid && newUid !== (userData.uid_game||'')) {
-      if (userData.uid_changed) {
-        if (!reauthMethod) { showMsg('edit-msg','Choose a verification method.','error'); return; }
-        try {
-          if (reauthMethod==='password') {
-            const password=document.getElementById('input-password').value;
-            if (!password) { showMsg('edit-msg','Enter your password to confirm.','error'); return; }
-            const credential=EmailAuthProvider.credential(currentUser.email, password);
-            await reauthenticateWithCredential(currentUser, credential);
-          } else {
-            const provider = new GoogleAuthProvider();
-            await reauthenticateWithPopup(currentUser, provider);
-          }
-        } catch(e) {
-          showMsg('edit-msg','Verification failed! UID not changed.','error'); return;
-        }
+    const upd={name,whatsapp:wa,game_name:gn};
+    if(nu&&nu!==(userData.uid_game||'')){
+      if(userData.uid_changed){
+        if(!reauthMethod){showMsg('edit-msg','Choose verification method.','error');return;}
+        try{
+          if(reauthMethod==='password'){
+            const pw=$('input-password').value;
+            if(!pw){showMsg('edit-msg','Enter password.','error');return;}
+            await reauthenticateWithCredential(currentUser,EmailAuthProvider.credential(currentUser.email,pw));
+          } else { await reauthenticateWithPopup(currentUser,new GoogleAuthProvider()); }
+        }catch(e){showMsg('edit-msg','Verification failed!','error');return;}
       }
-      updates.uid_game=newUid;
-      updates.uid_changed=true;
+      upd.uid_game=nu; upd.uid_changed=true;
     }
-
-    try {
-      await updateDoc(ref, updates);
-      userData={...userData, ...updates};
-      document.getElementById('display-game-name').textContent=gameName;
-      document.getElementById('display-name').textContent='👤 '+name;
-      document.getElementById('display-whatsapp').textContent='📱 WhatsApp: '+whatsapp;
-      document.getElementById('avatar-text').textContent=gameName.charAt(0).toUpperCase();
-      if(updates.uid_game) {
-        document.getElementById('display-uid').textContent='🎮 UID: '+newUid;
-        document.getElementById('reauth-section').style.display='block';
-        document.getElementById('uid-note').textContent='You have changed your UID before. Verify your identity to change it again.';
-      }
-      showMsg('edit-msg','Profile saved! ✅','success');
-      setTimeout(()=>toggleEdit(), 1200);
-    } catch(e) {
-      showMsg('edit-msg','Save failed: '+(e.message||'Error'),'error');
-    }
+    try{
+      await updateDoc(ref,upd); userData={...userData,...upd};
+      $('display-game-name').textContent=gn; $('display-name').textContent='👤 '+name;
+      $('display-whatsapp').textContent='📱 '+wa; $('avatar-text').textContent=gn.charAt(0).toUpperCase();
+      if(upd.uid_game){ $('display-uid').textContent='🎮 UID: '+nu; $('reauth-section').style.display='block'; }
+      showMsg('edit-msg','Saved! ✅','success'); setTimeout(()=>toggleEdit(),1200);
+    }catch(e){showMsg('edit-msg','Save failed.','error');}
   };
 
-  // DEPOSIT
-  window.openDeposit = () => document.getElementById('deposit-modal').classList.add('open');
-  window.selectMethod = (m) => {
-    selMethod=m;
-    document.getElementById('btn-bkash').classList.toggle('selected',m==='bkash');
-    document.getElementById('btn-nagad').classList.toggle('selected',m==='nagad');
-    document.getElementById('method-name').textContent=m==='bkash'?'bKash':'Nagad';
-    // Show admin-set number in deposit info
-    const payNum = adminPaymentSettings?.number || '01301516532';
-    const sendType = adminPaymentSettings?.send_type || 'Send Money';
-    document.getElementById('deposit-pay-number').textContent=payNum;
-    document.getElementById('deposit-send-type').textContent=sendType;
-    document.getElementById('pay-info').classList.add('show');
+  // ── DEPOSIT ───────────────────────────────────────────────────────────────
+  window.openDeposit=()=>{
+    selDepMethod='';
+    ['btn-bkash','btn-nagad','btn-rocket'].forEach(i=>$(i).classList.remove('selected'));
+    $('pay-info').classList.remove('show');
+    $('deposit-amount').value=''; $('deposit-txid').value='';
+    $('deposit-msg').className='msg';
+    $('deposit-modal').classList.add('open');
   };
-  window.submitDeposit = async () => {
-    const amount=parseInt(document.getElementById('deposit-amount').value);
-    const txid=document.getElementById('deposit-txid').value.trim();
-    if(!amount||amount<10){showMsg('deposit-msg','Minimum deposit is 10 TK.','error');return;}
-    if(!selMethod){showMsg('deposit-msg','Select a payment method.','error');return;}
-    if(!txid){showMsg('deposit-msg','Enter your Transaction ID.','error');return;}
-    try {
-      await addDoc(collection(db,'transactions'),{ uid:currentUser.uid, email:currentUser.email, name:userData.name||'', whatsapp:userData.whatsapp||'', amount, method:selMethod, txid, type:'deposit', status:'pending', created_at:serverTimestamp() });
-      showMsg('deposit-msg','✅ Request submitted! Admin will verify soon.','success');
-      setTimeout(()=>{ closeModal('deposit-modal'); document.getElementById('deposit-amount').value=''; document.getElementById('deposit-txid').value=''; loadTransactions(currentUser.uid); }, 1800);
-    } catch(e){ showMsg('deposit-msg','Failed to submit. Try again.','error'); }
+  window.selectDepMethod=m=>{
+    selDepMethod=m;
+    ['btn-bkash','btn-nagad','btn-rocket'].forEach(i=>$(i).classList.remove('selected'));
+    $('btn-'+m).classList.add('selected');
+    $('dep-method-name').textContent = m==='bkash'?'bKash':m==='nagad'?'Nagad':'Rocket';
+    $('dep-send-type').textContent   = adminPayment?.send_type||'Send Money';
+    $('dep-number').textContent      = adminPayment?.number||'—';
+    $('pay-info').classList.add('show');
+  };
+  window.submitDeposit=async()=>{
+    const amt=parseInt($('deposit-amount').value);
+    const txid=$('deposit-txid').value.trim();
+    if(!amt||amt<10){showMsg('deposit-msg','Minimum 10 TK.','error');return;}
+    if(!selDepMethod){showMsg('deposit-msg','Select payment method.','error');return;}
+    if(!txid){showMsg('deposit-msg','Enter Transaction ID.','error');return;}
+    try{
+      await addDoc(collection(db,'transactions'),{uid:currentUser.uid,email:currentUser.email,name:userData.name||'',whatsapp:userData.whatsapp||'',amount:amt,method:selDepMethod,txid,type:'deposit',status:'pending',created_at:serverTimestamp()});
+      showMsg('deposit-msg','✅ Submitted! Admin will verify.','success');
+      setTimeout(()=>{closeModal('deposit-modal');loadTransactions(currentUser.uid);},1800);
+    }catch(e){showMsg('deposit-msg','Failed. Try again.','error');}
   };
 
-  // WITHDRAW
-  window.openWithdraw = () => document.getElementById('withdraw-modal').classList.add('open');
-  window.selectWithdrawMethod = (m) => {
-    selWMethod=m;
-    document.getElementById('wbtn-bkash').classList.toggle('selected',m==='bkash');
-    document.getElementById('wbtn-nagad').classList.toggle('selected',m==='nagad');
+  // ── WITHDRAW ──────────────────────────────────────────────────────────────
+  window.openWithdraw=()=>{
+    selWdMethod='';
+    ['wbtn-bkash','wbtn-nagad','wbtn-rocket'].forEach(i=>$(i).classList.remove('selected'));
+    $('withdraw-amount').value=''; $('withdraw-number').value='';
+    $('withdraw-msg').className='msg';
+    $('withdraw-modal').classList.add('open');
   };
-  window.submitWithdraw = async () => {
-    const amount=parseInt(document.getElementById('withdraw-amount').value);
-    const number=document.getElementById('withdraw-number').value.trim();
+  window.selectWdMethod=m=>{
+    selWdMethod=m;
+    ['wbtn-bkash','wbtn-nagad','wbtn-rocket'].forEach(i=>$(i).classList.remove('selected'));
+    $('wbtn-'+m).classList.add('selected');
+  };
+  window.submitWithdraw=async()=>{
+    const amt=parseInt($('withdraw-amount').value);
+    const num=$('withdraw-number').value.trim();
     const snap=await getDoc(doc(db,'users',currentUser.uid));
-    const balance=snap.data()?.balance||0;
-    if(!amount||amount<50){showMsg('withdraw-msg','Minimum withdrawal is 50 TK.','error');return;}
-    if(!selWMethod){showMsg('withdraw-msg','Select a payment method.','error');return;}
-    if(!number||number.replace(/\D/g,'').length<11){showMsg('withdraw-msg','Enter a valid number.','error');return;}
-    if(amount>balance){showMsg('withdraw-msg','Insufficient balance!','error');return;}
-    try {
-      await addDoc(collection(db,'transactions'),{ uid:currentUser.uid, email:currentUser.email, name:userData.name||'', whatsapp:userData.whatsapp||'', amount, method:selWMethod, number, type:'withdraw', status:'pending', created_at:serverTimestamp() });
-      await updateDoc(doc(db,'users',currentUser.uid),{ balance: balance - amount });
-      document.getElementById('wallet-balance').textContent=balance-amount;
-      userData.balance = balance - amount;
-      showMsg('withdraw-msg','✅ Withdrawal request sent!','success');
-      setTimeout(()=>{ closeModal('withdraw-modal'); document.getElementById('withdraw-amount').value=''; document.getElementById('withdraw-number').value=''; loadTransactions(currentUser.uid); }, 1800);
-    } catch(e){ showMsg('withdraw-msg','Failed to submit. Try again.','error'); }
+    const bal=snap.data()?.balance||0;
+    if(!amt||amt<50){showMsg('withdraw-msg','Minimum 50 TK.','error');return;}
+    if(!selWdMethod){showMsg('withdraw-msg','Select payment method.','error');return;}
+    if(!num||num.replace(/\D/g,'').length<11){showMsg('withdraw-msg','Enter valid number.','error');return;}
+    if(amt>bal){showMsg('withdraw-msg','Insufficient balance!','error');return;}
+    try{
+      await addDoc(collection(db,'transactions'),{uid:currentUser.uid,email:currentUser.email,name:userData.name||'',whatsapp:userData.whatsapp||'',amount:amt,method:selWdMethod,number:num,type:'withdraw',status:'pending',created_at:serverTimestamp()});
+      await updateDoc(doc(db,'users',currentUser.uid),{balance:bal-amt});
+      $('wallet-balance').textContent=bal-amt; userData.balance=bal-amt;
+      showMsg('withdraw-msg','✅ Request sent! Admin will send soon.','success');
+      setTimeout(()=>{closeModal('withdraw-modal');loadTransactions(currentUser.uid);},1800);
+    }catch(e){showMsg('withdraw-msg','Failed. Try again.','error');}
   };
 
-  window.closeModal=(id)=>document.getElementById(id).classList.remove('open');
-
-  window.doLogout = async () => {
-    try { await signOut(auth); } catch(_){}
-    window.location.href='index.html';
-  };
-
-  function showMsg(id,msg,type){
-    const el=document.getElementById(id); el.textContent=msg; el.className='msg '+type;
-    setTimeout(()=>{ if(el.className.includes('msg')) el.className='msg'; },4500);
-  }
+  window.closeModal=id=>$(id).classList.remove('open');
+  window.doLogout=async()=>{ try{await signOut(auth);}catch(_){} window.location.href='index.html'; };
+  function $(id){return document.getElementById(id);}
+  function showMsg(id,msg,type){const e=$(id);e.textContent=msg;e.className='msg '+type;setTimeout(()=>{if(e.className.includes('msg'))e.className='msg';},4500);}
 </script>
 </body>
 </html>
