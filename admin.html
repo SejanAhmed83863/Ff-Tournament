@@ -18,9 +18,8 @@
     .live-dot span:first-child{width:8px;height:8px;background:var(--green);border-radius:50%;box-shadow:0 0 6px var(--green);display:inline-block}
     .live-dot span:last-child{font-size:12px;color:var(--green);font-weight:600}
 
-    /* TABS — now 4 tabs */
     .tabs{display:flex;background:var(--card);border-bottom:1px solid var(--border);overflow-x:auto}
-    .tab{flex:1;min-width:70px;padding:13px 4px;text-align:center;cursor:pointer;font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:1px;color:var(--muted);border-bottom:2px solid transparent;transition:0.2s;position:relative;background:none;border-top:none;border-left:none;border-right:none;white-space:nowrap}
+    .tab{flex:1;min-width:70px;padding:13px 4px;text-align:center;cursor:pointer;font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:1px;color:var(--muted);border-bottom:2px solid transparent;position:relative;background:none;border-top:none;border-left:none;border-right:none;white-space:nowrap}
     .tab.active{color:var(--orange);border-bottom:2px solid var(--orange)}
     .tab-icon{font-size:15px;display:block;margin-bottom:1px}
     .badge{position:absolute;top:8px;right:50%;transform:translateX(14px);background:var(--red);color:white;border-radius:50%;width:18px;height:18px;font-size:11px;display:flex;align-items:center;justify-content:center;font-family:'Rajdhani',sans-serif;font-weight:700}
@@ -40,7 +39,7 @@
     .req-type{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:1px;display:inline-block;margin-bottom:8px}
     .req-amount{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--gold);letter-spacing:1px}
     .req-email{font-weight:600;margin-bottom:2px}
-    .req-meta{color:var(--muted);font-size:13px}
+    .req-meta{color:var(--muted);font-size:13px;margin-bottom:2px;line-height:1.7}
     .req-actions{display:flex;gap:10px;margin-top:12px}
     .btn-approve{flex:1;padding:10px;background:var(--green);color:#0A0A0F;border:none;border-radius:7px;font-weight:700;cursor:pointer;font-family:'Rajdhani',sans-serif;font-size:14px;letter-spacing:1px}
     .btn-reject{flex:1;padding:10px;background:transparent;color:var(--red);border:1px solid var(--red);border-radius:7px;font-weight:700;cursor:pointer;font-family:'Rajdhani',sans-serif;font-size:14px;letter-spacing:1px}
@@ -57,9 +56,11 @@
     .t-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px}
     .t-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
     .t-title{font-weight:700;font-size:16px;margin-bottom:4px}
+    .t-badges{display:flex;gap:6px;flex-wrap:wrap}
     .t-badge{padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:1px;display:inline-block}
+    .t-badge.mode-badge{background:rgba(255,107,107,0.15);border:1px solid rgba(255,107,107,0.4);color:#FF6B6B}
     .btn-delete{background:none;border:1px solid #FF6B6B44;color:var(--red);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:700;font-family:'Rajdhani',sans-serif}
-    .t-prizes{display:flex;gap:16px;margin-bottom:10px}
+    .t-prizes{display:flex;gap:16px;margin-bottom:10px;flex-wrap:wrap}
     .t-prize-lbl{color:var(--muted);font-size:11px;font-weight:600;letter-spacing:1px}
     .t-prize-val{font-weight:700}
     .fill-label{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:5px}
@@ -79,20 +80,27 @@
     .log-prize{color:var(--green);font-family:'Bebas Neue',sans-serif;font-size:20px}
     #toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);padding:11px 26px;border-radius:8px;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.5);display:none;white-space:nowrap}
 
-    /* SETTINGS TAB SPECIFIC */
-    .settings-section{margin-bottom:18px}
+    /* SETTINGS */
+    .settings-section{margin-bottom:20px}
     .settings-section-title{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:8px}
     .settings-section-title::after{content:'';flex:1;height:1px;background:var(--border)}
-    .current-val{background:#0A0A0F;border:1px solid var(--border);border-radius:7px;padding:10px 13px;font-size:13px;color:var(--gold);margin-bottom:10px;min-height:40px;word-break:break-word;line-height:1.5}
-    .current-val.empty{color:var(--muted);font-style:italic}
-    .field-hint{font-size:11px;color:var(--muted);margin-bottom:10px;letter-spacing:0.5px;line-height:1.5}
-    .method-select-row{display:flex;gap:8px;margin-bottom:10px}
-    .method-opt{flex:1;padding:10px;border-radius:7px;border:2px solid var(--border);background:transparent;color:var(--text);font-family:'Rajdhani';font-size:14px;font-weight:700;cursor:pointer;transition:0.2s;text-align:center}
-    .method-opt.active{border-color:var(--orange);background:rgba(255,107,0,0.1);color:var(--orange)}
+    .field-hint{font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.6;padding:10px;background:rgba(255,255,255,0.03);border-radius:7px;border:1px solid var(--border)}
+
+    /* Per-method payment tabs */
+    .pay-method-tabs{display:flex;gap:0;margin-bottom:0;border-radius:8px;overflow:hidden;border:1px solid var(--border)}
+    .pay-method-tab{flex:1;padding:10px;text-align:center;font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1px;color:var(--muted);cursor:pointer;background:var(--dark);border:none;border-bottom:2px solid transparent;transition:0.2s}
+    .pay-method-tab.active{color:var(--orange);background:rgba(255,107,0,0.08);border-bottom:2px solid var(--orange)}
+    .pay-method-panel{display:none;padding-top:14px}
+    .pay-method-panel.active{display:block}
+    .pay-cur{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+    .pay-cur-box{background:#0A0A0F;border:1px solid var(--border);border-radius:7px;padding:10px 12px;flex:1;min-width:80px}
+    .pay-cur-lbl{font-size:10px;color:var(--muted);letter-spacing:1px;margin-bottom:4px}
+    .pay-cur-val{font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--gold);letter-spacing:1px;word-break:break-all}
   </style>
 </head>
 <body>
 <div id="toast"></div>
+
 <div class="header">
   <div class="header-left">
     <div class="header-icon">⚡</div>
@@ -101,21 +109,14 @@
   <div class="live-dot"><span></span><span>LIVE</span></div>
 </div>
 
-<!-- 4 TABS: Requests · Matches · Winners · Settings -->
 <div class="tabs">
   <button class="tab active" onclick="switchTab('requests')" id="tab-btn-requests">
     <span class="tab-icon">📥</span>REQUESTS
     <span class="badge" id="pending-badge" style="display:none">0</span>
   </button>
-  <button class="tab" onclick="switchTab('tournaments')" id="tab-btn-tournaments">
-    <span class="tab-icon">🎮</span>MATCHES
-  </button>
-  <button class="tab" onclick="switchTab('winners')" id="tab-btn-winners">
-    <span class="tab-icon">🏆</span>WINNERS
-  </button>
-  <button class="tab" onclick="switchTab('settings')" id="tab-btn-settings">
-    <span class="tab-icon">⚙️</span>SETTINGS
-  </button>
+  <button class="tab" onclick="switchTab('tournaments')" id="tab-btn-tournaments"><span class="tab-icon">🎮</span>MATCHES</button>
+  <button class="tab" onclick="switchTab('winners')"     id="tab-btn-winners"><span class="tab-icon">🏆</span>WINNERS</button>
+  <button class="tab" onclick="switchTab('settings')"    id="tab-btn-settings"><span class="tab-icon">⚙️</span>SETTINGS</button>
 </div>
 
 <!-- REQUESTS TAB -->
@@ -141,8 +142,18 @@
     </div>
     <div class="row">
       <input type="number" id="t-fee" placeholder="Entry Fee ৳ *">
-      <select id="t-type"><option value="1">Solo</option><option value="2">Duo</option><option value="4">Squad</option></select>
+      <select id="t-type">
+        <option value="1">Solo</option>
+        <option value="2">Duo</option>
+        <option value="4">Squad</option>
+      </select>
     </div>
+    <!-- GAME MODE FIELD — new -->
+    <select id="t-game-mode">
+      <option value="Classic">🗺️ Classic (Battle Royale)</option>
+      <option value="Clash Squad">⚔️ Clash Squad</option>
+      <option value="Lone Wolf">🐺 Lone Wolf</option>
+    </select>
     <div class="row">
       <input type="number" id="t-max" placeholder="Max Players *">
       <input type="datetime-local" id="t-time">
@@ -163,7 +174,7 @@
       <div class="pp-item"><div class="pp-val" id="pp2" style="color:#C0C0C0">৳0</div><div class="pp-lbl">2ND</div></div>
       <div class="pp-item"><div class="pp-val" id="pp3" style="color:#CD7F32">৳0</div><div class="pp-lbl">3RD</div></div>
     </div>
-    <p style="color:var(--muted);font-size:13px;margin-bottom:12px;">⚠️ Enter the Game UID that players registered with in their profile.</p>
+    <p style="color:var(--muted);font-size:13px;margin-bottom:12px;">⚠️ Enter the Game UID registered in the player's profile.</p>
     <div class="w-uid-wrap"><span class="w-uid-num" style="color:#FFD700">#1</span><input type="text" id="w1" placeholder="1st Place Game UID 🥇"></div>
     <div class="w-uid-wrap"><span class="w-uid-num" style="color:#C0C0C0">#2</span><input type="text" id="w2" placeholder="2nd Place Game UID 🥈"></div>
     <div class="w-uid-wrap"><span class="w-uid-num" style="color:#CD7F32">#3</span><input type="text" id="w3" placeholder="3rd Place Game UID 🥉"></div>
@@ -178,284 +189,309 @@
 <!-- SETTINGS TAB -->
 <div class="tab-content" id="tab-settings">
 
-  <!-- NOTICE MANAGEMENT -->
+  <!-- NOTICE -->
   <div class="card">
     <div class="card-title"><div class="card-title-bar" style="background:#FFD700"></div><span style="color:#FFD700">📢 GLOBAL NOTICE BAR</span></div>
-
     <div class="settings-section">
       <div class="settings-section-title">CURRENT NOTICE</div>
-      <div class="current-val" id="current-notice-display"><span style="color:var(--muted);font-style:italic">No notice set</span></div>
+      <div id="current-notice-display" style="background:#0A0A0F;border:1px solid var(--border);border-radius:7px;padding:10px 13px;font-size:13px;color:var(--gold);margin-bottom:10px;min-height:40px;word-break:break-word;line-height:1.5">
+        <span style="color:var(--muted);font-style:italic">No notice set</span>
+      </div>
     </div>
-
     <div class="settings-section">
       <div class="settings-section-title">UPDATE NOTICE</div>
-      <p class="field-hint">This text will scroll across the top of the Home page. Leave blank to hide the notice bar entirely.</p>
-      <textarea id="notice-input" placeholder="e.g. 🔥 New tournament tonight at 9PM! Entry fee ৳50. Join now!"></textarea>
+      <p class="field-hint">This text scrolls across the top of the Home page. Leave blank to hide the bar.</p>
+      <textarea id="notice-input" placeholder="e.g. 🔥 New tournament tonight at 9PM! Join now!"></textarea>
       <div class="row">
         <button class="btn-main" onclick="saveNotice()">SAVE NOTICE</button>
-        <button class="btn-reject" style="flex:1;padding:13px;border-radius:8px;font-family:'Bebas Neue';font-size:16px;letter-spacing:2px;cursor:pointer;margin-top:4px" onclick="clearNotice()">CLEAR</button>
+        <button class="btn-reject" style="flex:1;padding:13px;border-radius:8px;font-family:'Bebas Neue';font-size:16px;letter-spacing:2px;cursor:pointer;margin-top:4px;background:transparent;color:var(--red);border:1px solid var(--red)" onclick="clearNotice()">CLEAR</button>
       </div>
     </div>
   </div>
 
-  <!-- PAYMENT DETAILS MANAGEMENT -->
+  <!-- PAYMENT DETAILS — separate settings per method -->
   <div class="card">
-    <div class="card-title"><div class="card-title-bar" style="background:#5CFF8A"></div><span style="color:#5CFF8A">💳 PAYMENT DETAILS</span></div>
+    <div class="card-title"><div class="card-title-bar" style="background:#5CFF8A"></div><span style="color:#5CFF8A">💳 DEPOSIT PAYMENT DETAILS</span></div>
+    <p class="field-hint">
+      ℹ️ Set a <b>separate number and send type for each payment method</b>. When a user selects bKash in Deposit, they see the bKash number. When they select Nagad, they see the Nagad number — and so on.
+    </p>
 
-    <div class="settings-section">
-      <div class="settings-section-title">CURRENT SETTINGS</div>
-      <div style="display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap">
-        <div class="stat-box" style="text-align:left;padding:12px">
-          <div style="font-size:11px;color:var(--muted);letter-spacing:1px;margin-bottom:4px">METHOD</div>
-          <div id="pay-current-method" style="font-family:'Bebas Neue';font-size:18px;color:var(--gold)">—</div>
-        </div>
-        <div class="stat-box" style="text-align:left;padding:12px;flex:2">
-          <div style="font-size:11px;color:var(--muted);letter-spacing:1px;margin-bottom:4px">NUMBER</div>
-          <div id="pay-current-number" style="font-family:'Bebas Neue';font-size:18px;color:var(--green)">—</div>
-        </div>
-        <div class="stat-box" style="text-align:left;padding:12px">
-          <div style="font-size:11px;color:var(--muted);letter-spacing:1px;margin-bottom:4px">SEND TYPE</div>
-          <div id="pay-current-type" style="font-family:'Bebas Neue';font-size:16px;color:var(--text)">—</div>
-        </div>
-      </div>
+    <!-- Per-method tabs -->
+    <div class="pay-method-tabs">
+      <button class="pay-method-tab active" onclick="switchPayTab('bkash')">📱 bKash</button>
+      <button class="pay-method-tab"        onclick="switchPayTab('nagad')">💳 Nagad</button>
+      <button class="pay-method-tab"        onclick="switchPayTab('rocket')">🚀 Rocket</button>
     </div>
 
-    <div class="settings-section">
-      <div class="settings-section-title">UPDATE PAYMENT DETAILS</div>
-      <p class="field-hint">These details are shown to users in the Deposit & Withdrawal section of their Dashboard.</p>
-
-      <label style="font-size:11px;color:var(--muted);letter-spacing:2px;display:block;margin-bottom:8px">PAYMENT METHOD</label>
-      <div class="method-select-row">
-        <button class="method-opt" id="pay-opt-bkash" onclick="selectPayMethod('bkash')">📱 bKash</button>
-        <button class="method-opt" id="pay-opt-nagad" onclick="selectPayMethod('nagad')">💳 Nagad</button>
-        <button class="method-opt" id="pay-opt-rocket" onclick="selectPayMethod('rocket')">🚀 Rocket</button>
+    <!-- bKash panel -->
+    <div class="pay-method-panel active" id="pay-panel-bkash">
+      <div class="settings-section" style="margin-top:14px">
+        <div class="settings-section-title">CURRENT bKash SETTINGS</div>
+        <div class="pay-cur">
+          <div class="pay-cur-box"><div class="pay-cur-lbl">NUMBER</div><div class="pay-cur-val" id="cur-bkash-number">—</div></div>
+          <div class="pay-cur-box"><div class="pay-cur-lbl">SEND TYPE</div><div class="pay-cur-val" id="cur-bkash-type">—</div></div>
+        </div>
       </div>
-
-      <label style="font-size:11px;color:var(--muted);letter-spacing:2px;display:block;margin-bottom:6px">PAYMENT NUMBER</label>
-      <input type="tel" id="pay-number-input" placeholder="01XXXXXXXXX (your receiving number)">
-
+      <label style="font-size:11px;color:var(--muted);letter-spacing:2px;display:block;margin-bottom:6px">bKash RECEIVING NUMBER</label>
+      <input type="tel" id="pay-bkash-number" placeholder="01XXXXXXXXX">
       <label style="font-size:11px;color:var(--muted);letter-spacing:2px;display:block;margin-bottom:6px">SEND TYPE</label>
-      <select id="pay-send-type">
+      <select id="pay-bkash-type">
         <option value="Send Money">Send Money</option>
         <option value="Cashout">Cashout</option>
-        <option value="Payment">Payment</option>
+        <option value="Add Money">Add Money</option>
       </select>
+      <button class="btn-green" onclick="savePayMethod('bkash')">SAVE bKash DETAILS</button>
+    </div>
 
-      <button class="btn-green" onclick="savePaymentDetails()">SAVE PAYMENT DETAILS</button>
+    <!-- Nagad panel -->
+    <div class="pay-method-panel" id="pay-panel-nagad">
+      <div class="settings-section" style="margin-top:14px">
+        <div class="settings-section-title">CURRENT NAGAD SETTINGS</div>
+        <div class="pay-cur">
+          <div class="pay-cur-box"><div class="pay-cur-lbl">NUMBER</div><div class="pay-cur-val" id="cur-nagad-number">—</div></div>
+          <div class="pay-cur-box"><div class="pay-cur-lbl">SEND TYPE</div><div class="pay-cur-val" id="cur-nagad-type">—</div></div>
+        </div>
+      </div>
+      <label style="font-size:11px;color:var(--muted);letter-spacing:2px;display:block;margin-bottom:6px">NAGAD RECEIVING NUMBER</label>
+      <input type="tel" id="pay-nagad-number" placeholder="01XXXXXXXXX">
+      <label style="font-size:11px;color:var(--muted);letter-spacing:2px;display:block;margin-bottom:6px">SEND TYPE</label>
+      <select id="pay-nagad-type">
+        <option value="Send Money">Send Money</option>
+        <option value="Cashout">Cashout</option>
+        <option value="Add Money">Add Money</option>
+      </select>
+      <button class="btn-green" onclick="savePayMethod('nagad')">SAVE NAGAD DETAILS</button>
+    </div>
+
+    <!-- Rocket panel -->
+    <div class="pay-method-panel" id="pay-panel-rocket">
+      <div class="settings-section" style="margin-top:14px">
+        <div class="settings-section-title">CURRENT ROCKET SETTINGS</div>
+        <div class="pay-cur">
+          <div class="pay-cur-box"><div class="pay-cur-lbl">NUMBER</div><div class="pay-cur-val" id="cur-rocket-number">—</div></div>
+          <div class="pay-cur-box"><div class="pay-cur-lbl">SEND TYPE</div><div class="pay-cur-val" id="cur-rocket-type">—</div></div>
+        </div>
+      </div>
+      <label style="font-size:11px;color:var(--muted);letter-spacing:2px;display:block;margin-bottom:6px">ROCKET RECEIVING NUMBER</label>
+      <input type="tel" id="pay-rocket-number" placeholder="01XXXXXXXXX">
+      <label style="font-size:11px;color:var(--muted);letter-spacing:2px;display:block;margin-bottom:6px">SEND TYPE</label>
+      <select id="pay-rocket-type">
+        <option value="Send Money">Send Money</option>
+        <option value="Cashout">Cashout</option>
+        <option value="Add Money">Add Money</option>
+      </select>
+      <button class="btn-green" onclick="savePayMethod('rocket')">SAVE ROCKET DETAILS</button>
     </div>
   </div>
 
-</div><!-- end settings tab -->
+</div><!-- end settings -->
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-  import { getFirestore, collection, addDoc, query, where, onSnapshot, doc, updateDoc, setDoc, increment, getDoc, getDocs, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+  import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, setDoc,
+           increment, getDoc, getDocs, deleteDoc, serverTimestamp }
+    from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
 
   const ADMIN_EMAIL = "sejansasker@gmail.com";
+  const cfg = {
+    apiKey:"AIzaSyBgMroBilivfk7bJxoz93HjxSt6yU7Ura0",
+    authDomain:"tournament-app-4a050.firebaseapp.com",
+    projectId:"tournament-app-4a050",
+    storageBucket:"tournament-app-4a050.appspot.com",
+    messagingSenderId:"811957533858",
+    appId:"1:811957533858:web:1d1f0f916c0aba5eccebfb"
+  };
+  const app=initializeApp(cfg), db=getFirestore(app), auth=getAuth(app);
 
-  const firebaseConfig = { apiKey:"AIzaSyBgMroBilivfk7bJxoz93HjxSt6yU7Ura0", authDomain:"tournament-app-4a050.firebaseapp.com", projectId:"tournament-app-4a050", storageBucket:"tournament-app-4a050.appspot.com", messagingSenderId:"811957533858", appId:"1:811957533858:web:1d1f0f916c0aba5eccebfb" };
-
-  const app  = initializeApp(firebaseConfig);
-  const db   = getFirestore(app);
-  const auth = getAuth(app);
-  let selectedPayMethod = '';
-
-  onAuthStateChanged(auth, (user) => {
-    if (!user) { window.location.href='index.html'; return; }
-    if (user.email !== ADMIN_EMAIL) { alert('Access Denied!'); window.location.href='home.html'; return; }
+  onAuthStateChanged(auth, function(user){
+    if(!user){ window.location.href='index.html'; return; }
+    if(user.email!==ADMIN_EMAIL){ alert('Access Denied!'); window.location.href='home.html'; return; }
     loadRequests();
     loadTournaments();
     loadSettingsData();
   });
 
-  function toast(msg, type="success") {
-    const el = document.getElementById("toast");
-    el.textContent = msg;
-    el.style.background = type==="success"?"#5CFF8A":type==="error"?"#FF6B6B":"#FFD700";
-    el.style.color = type==="error"?"#fff":"#0A0A0F";
-    el.style.display = "block";
-    clearTimeout(window._toastTimer);
-    window._toastTimer = setTimeout(()=>el.style.display="none",2600);
+  function toast(msg, type){
+    var e=document.getElementById('toast');
+    e.textContent=msg;
+    e.style.background=type==='error'?'#FF6B6B':type==='warn'?'#FFD700':'#5CFF8A';
+    e.style.color=(type==='error'||!type)?'#fff':'#0A0A0F';
+    e.style.display='block';
+    clearTimeout(window._tt);
+    window._tt=setTimeout(function(){e.style.display='none';},2600);
   }
 
-  window.switchTab = (name) => {
-    document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
-    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  window.switchTab=function(name){
+    document.querySelectorAll('.tab-content').forEach(function(c){c.classList.remove('active');});
+    document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
     document.getElementById('tab-'+name).classList.add('active');
     document.getElementById('tab-btn-'+name).classList.add('active');
   };
 
   // ─── REQUESTS ─────────────────────────────────────────────────────────────
-  function loadRequests() {
-    onSnapshot(collection(db,'transactions'), (snap) => {
-      const all=[], pending=[], approved=[], rejected=[];
-      snap.forEach(d => {
-        const tx={id:d.id,...d.data()};
-        all.push(tx);
-        if(tx.status==='pending') pending.push(tx);
-        else if(tx.status==='approved') approved.push(tx);
-        else rejected.push(tx);
-      });
+  function loadRequests(){
+    onSnapshot(collection(db,'transactions'),function(snap){
+      var all=[],pending=[],approved=[],rejected=[];
+      snap.forEach(function(d){ var tx=Object.assign({id:d.id},d.data()); all.push(tx); if(tx.status==='pending')pending.push(tx); else if(tx.status==='approved')approved.push(tx); else rejected.push(tx); });
       document.getElementById('stat-pending').textContent=pending.length;
       document.getElementById('stat-total').textContent=all.length;
       document.getElementById('stat-approved').textContent=approved.length;
       document.getElementById('stat-rejected').textContent=rejected.length;
-      const badge=document.getElementById('pending-badge');
+      var badge=document.getElementById('pending-badge');
       if(pending.length>0){badge.textContent=pending.length;badge.style.display='flex';}else badge.style.display='none';
-
-      const list=document.getElementById('requests-list');
-      if(pending.length===0){list.innerHTML=`<div class="empty-state"><div class="tick">✓</div><div>ALL REQUESTS HANDLED</div></div>`;return;}
+      var list=document.getElementById('requests-list');
+      if(pending.length===0){list.innerHTML='<div class="empty-state"><div class="tick">✓</div><div>ALL REQUESTS HANDLED</div></div>';return;}
       list.innerHTML='';
-      pending.forEach(tx=>{
-        const isDeposit=tx.type==='deposit'||tx.type==='entry';
-        const stripColor=isDeposit?'#5CFF8A':'#FF6B6B';
-        const typeColor=isDeposit?'#5CFF8A22':'#FF6B6B22';
-        const typeText=isDeposit?'#5CFF8A':'#FF6B6B';
-        list.innerHTML+=`
-          <div class="req-card">
-            <div class="req-strip" style="background:${stripColor}"></div>
-            <div style="display:flex;justify-content:space-between;align-items:flex-start">
-              <span class="req-type" style="background:${typeColor};color:${typeText}">${tx.type.toUpperCase()}</span>
-              <span class="req-amount">৳${tx.amount}</span>
-            </div>
-            <div class="req-email">${tx.email}</div>
-            <div class="req-meta">
-              ${tx.txid?'TxID: '+tx.txid+'<br>':''}
-              ${tx.number?'📞 '+tx.number+'<br>':''}
-              ${tx.method?'📱 '+tx.method.toUpperCase():''}
-            </div>
-            <div class="req-actions">
-              <button class="btn-approve" onclick="handleTx('${tx.id}','${tx.uid}',${tx.amount},'${tx.type}','approve')">✓ APPROVE</button>
-              <button class="btn-reject" onclick="handleTx('${tx.id}','${tx.uid}',${tx.amount},'${tx.type}','reject')">✕ REJECT</button>
-            </div>
-          </div>`;
+      pending.forEach(function(tx){
+        var isd=tx.type==='deposit'||tx.type==='entry';
+        var sc=isd?'#5CFF8A':'#FF6B6B', tc=isd?'#5CFF8A22':'#FF6B6B22';
+        list.innerHTML+='<div class="req-card">'
+          +'<div class="req-strip" style="background:'+sc+'"></div>'
+          +'<div style="display:flex;justify-content:space-between;align-items:flex-start">'
+          +'<span class="req-type" style="background:'+tc+';color:'+sc+'">'+tx.type.toUpperCase()+'</span>'
+          +'<span class="req-amount">৳'+tx.amount+'</span></div>'
+          +'<div class="req-email">'+tx.email+'</div>'
+          +'<div class="req-meta">'
+          +(tx.name?'👤 '+tx.name+'<br>':'')
+          +(tx.txid?'TxID: '+tx.txid+'<br>':'')
+          +(tx.number?'📞 '+tx.number+'<br>':'')
+          +(tx.method?'📱 '+tx.method.toUpperCase():'')
+          +'</div>'
+          +'<div class="req-actions">'
+          +'<button class="btn-approve" onclick="handleTx(\''+tx.id+'\',\''+tx.uid+'\','+tx.amount+',\''+tx.type+'\',\'approve\')">✓ APPROVE</button>'
+          +'<button class="btn-reject"  onclick="handleTx(\''+tx.id+'\',\''+tx.uid+'\','+tx.amount+',\''+tx.type+'\',\'reject\')">✕ REJECT</button>'
+          +'</div></div>';
       });
     });
   }
 
-  window.handleTx = async (id, uid, amt, type, action) => {
-    try {
+  window.handleTx=async function(id,uid,amt,type,action){
+    try{
       if(action==='approve'){
         await updateDoc(doc(db,'transactions',id),{status:'approved'});
         if(type==='deposit') await updateDoc(doc(db,'users',uid),{balance:increment(amt)});
-        toast(`✅ Approved! ৳${amt} credited`);
+        toast('✅ Approved! ৳'+amt+' credited');
       } else {
         await updateDoc(doc(db,'transactions',id),{status:'rejected'});
         if(type==='withdraw') await updateDoc(doc(db,'users',uid),{balance:increment(amt)});
-        toast(`❌ Rejected${type==='withdraw'?' & ৳'+amt+' refunded':''}`, 'error');
+        toast('❌ Rejected'+(type==='withdraw'?' & ৳'+amt+' refunded':''),'error');
       }
-    } catch(e){toast(e.message,'error');}
+    }catch(e){toast(e.message,'error');}
   };
 
-  // ─── TOURNAMENTS ───────────────────────────────────────────────────────────
-  window.createTournament = async () => {
-    const title=document.getElementById('t-title').value.trim();
-    const fee=Number(document.getElementById('t-fee').value);
-    const time=document.getElementById('t-time').value;
-    const max=Number(document.getElementById('t-max').value);
-    if(!title||!fee||!time||!max) return toast('Fill all required fields!','error');
+  // ─── TOURNAMENTS ──────────────────────────────────────────────────────────
+  window.createTournament=async function(){
+    var title=document.getElementById('t-title').value.trim();
+    var fee=Number(document.getElementById('t-fee').value);
+    var time=document.getElementById('t-time').value;
+    var max=Number(document.getElementById('t-max').value);
+    var gameMode=document.getElementById('t-game-mode').value;
+    if(!title||fee===undefined||!time||!max){ toast('Fill all required fields!','error'); return; }
     await addDoc(collection(db,'tournaments'),{
-      title, prize1:Number(document.getElementById('t-prize1').value)||0,
+      title:title,
+      prize1:Number(document.getElementById('t-prize1').value)||0,
       prize2:Number(document.getElementById('t-prize2').value)||0,
       prize3:Number(document.getElementById('t-prize3').value)||0,
-      fee, teamType:Number(document.getElementById('t-type').value),
-      maxPlayers:max, joined:0, time, status:'open',
+      fee:fee,
+      teamType:Number(document.getElementById('t-type').value),
+      game_mode:gameMode,
+      maxPlayers:max, joined:0, time:time, status:'open',
       created_at:serverTimestamp()
     });
-    ['t-title','t-prize1','t-prize2','t-prize3','t-fee','t-max','t-time'].forEach(id=>document.getElementById(id).value='');
+    ['t-title','t-prize1','t-prize2','t-prize3','t-fee','t-max','t-time'].forEach(function(id){document.getElementById(id).value='';});
     document.getElementById('t-type').value='1';
+    document.getElementById('t-game-mode').value='Classic';
     toast('🏆 Tournament created!');
   };
 
-  function teamLabel(t){return t==1?'SOLO':t==2?'DUO':'SQUAD';}
-  function teamColor(t){return t==1?'#FFD700':t==2?'#5CFF8A':'#FF6B00';}
+  function teamLabel(v){return v==1?'SOLO':v==2?'DUO':'SQUAD';}
+  function teamColor(v){return v==1?'#FFD700':v==2?'#5CFF8A':'#FF6B00';}
+  function gmColor(m){var ml=(m||'').toLowerCase();if(ml.includes('clash'))return '#FF6B6B';if(ml.includes('lone')||ml.includes('wolf'))return '#5CFF8A';return '#FF9500';}
 
-  function loadTournaments() {
-    onSnapshot(collection(db,'tournaments'),(snap)=>{
-      const list=document.getElementById('tournament-list');
-      const select=document.getElementById('winner-match-select');
-      list.innerHTML='';
-      select.innerHTML='<option value="">— Select Match —</option>';
-      document.getElementById('match-count-label').textContent=`ACTIVE MATCHES (${snap.size})`;
-      snap.forEach(d=>{
-        const t=d.data();
-        const tc=teamColor(t.teamType);
-        const fill=Math.min(Math.round((t.joined/t.maxPlayers)*100),100);
-        const barColor=fill>=100?'#FF6B6B':fill>70?'#FFD700':'#5CFF8A';
-        list.innerHTML+=`
-          <div class="t-card">
-            <div class="t-header">
-              <div><div class="t-title">${t.title}</div><span class="t-badge" style="background:${tc}22;color:${tc}">${teamLabel(t.teamType)}</span></div>
-              <button class="btn-delete" onclick="deleteTournament('${d.id}')">✕ DELETE</button>
-            </div>
-            <div class="t-prizes">
-              <div><div class="t-prize-lbl">ENTRY</div><div class="t-prize-val" style="color:#FFD700">৳${t.fee}</div></div>
-              <div><div class="t-prize-lbl">1ST</div><div class="t-prize-val" style="color:#5CFF8A">৳${t.prize1}</div></div>
-              <div><div class="t-prize-lbl">2ND</div><div class="t-prize-val">৳${t.prize2}</div></div>
-              <div><div class="t-prize-lbl">3RD</div><div class="t-prize-val" style="color:#CD7F32">৳${t.prize3}</div></div>
-            </div>
-            <div class="fill-label"><span>PLAYERS</span><span style="color:${barColor}">${t.joined}/${t.maxPlayers}</span></div>
-            <div class="fill-bar-bg"><div class="fill-bar" style="width:${fill}%;background:${barColor}"></div></div>
-            <div class="row" style="margin-top:12px;">
-              <input type="text" id="room-${d.id}" placeholder="Room ID" value="${t.roomID||''}">
-              <input type="text" id="pass-${d.id}" placeholder="Password" value="${t.roomPass||''}">
-            </div>
-            <button class="btn-main" style="padding:10px;font-size:13px;margin-top:2px;" onclick="updateRoom('${d.id}')">Update Room Info</button>
-          </div>`;
-        select.innerHTML+=`<option value="${d.id}">${t.title}</option>`;
+  function loadTournaments(){
+    onSnapshot(collection(db,'tournaments'),function(snap){
+      var list=document.getElementById('tournament-list');
+      var sel=document.getElementById('winner-match-select');
+      list.innerHTML=''; sel.innerHTML='<option value="">— Select Match —</option>';
+      document.getElementById('match-count-label').textContent='ACTIVE MATCHES ('+snap.size+')';
+      snap.forEach(function(d){
+        var t=d.data();
+        var tc=teamColor(t.teamType);
+        var fill=Math.min(Math.round((t.joined/t.maxPlayers)*100),100);
+        var barColor=fill>=100?'#FF6B6B':fill>70?'#FFD700':'#5CFF8A';
+        var gc=gmColor(t.game_mode);
+        list.innerHTML+='<div class="t-card">'
+          +'<div class="t-header">'
+          +'<div><div class="t-title">'+t.title+'</div>'
+          +'<div class="t-badges">'
+          +'<span class="t-badge" style="background:'+tc+'22;color:'+tc+'">'+teamLabel(t.teamType)+'</span>'
+          +(t.game_mode?'<span class="t-badge mode-badge" style="background:'+gc+'22;color:'+gc+'">'+t.game_mode+'</span>':'')
+          +'</div></div>'
+          +'<button class="btn-delete" onclick="deleteTournament(\''+d.id+'\')">✕ DELETE</button>'
+          +'</div>'
+          +'<div class="t-prizes">'
+          +'<div><div class="t-prize-lbl">ENTRY</div><div class="t-prize-val" style="color:#FFD700">৳'+t.fee+'</div></div>'
+          +'<div><div class="t-prize-lbl">1ST</div><div class="t-prize-val" style="color:#5CFF8A">৳'+t.prize1+'</div></div>'
+          +'<div><div class="t-prize-lbl">2ND</div><div class="t-prize-val">৳'+t.prize2+'</div></div>'
+          +'<div><div class="t-prize-lbl">3RD</div><div class="t-prize-val" style="color:#CD7F32">৳'+t.prize3+'</div></div>'
+          +'</div>'
+          +'<div class="fill-label"><span>PLAYERS</span><span style="color:'+barColor+'">'+t.joined+'/'+t.maxPlayers+'</span></div>'
+          +'<div class="fill-bar-bg"><div class="fill-bar" style="width:'+fill+'%;background:'+barColor+'"></div></div>'
+          +'<div class="row" style="margin-top:12px">'
+          +'<input type="text" id="room-'+d.id+'" placeholder="Room ID" value="'+(t.roomID||'')+'">'
+          +'<input type="text" id="pass-'+d.id+'" placeholder="Password" value="'+(t.roomPass||'')+'">'
+          +'</div>'
+          +'<button class="btn-main" style="padding:10px;font-size:13px;margin-top:2px" onclick="updateRoom(\''+d.id+'\')">Update Room Info</button>'
+          +'</div>';
+        sel.innerHTML+='<option value="'+d.id+'">'+t.title+(t.game_mode?' ['+t.game_mode+']':'')+'</option>';
       });
     });
   }
 
-  window.updateRoom = async (id) => {
-    const rid=document.getElementById(`room-${id}`).value;
-    const rps=document.getElementById(`pass-${id}`).value;
+  window.updateRoom=async function(id){
+    var rid=document.getElementById('room-'+id).value;
+    var rps=document.getElementById('pass-'+id).value;
     await updateDoc(doc(db,'tournaments',id),{roomID:rid,roomPass:rps});
-    toast("Room Info Updated!");
+    toast('Room Info Updated!');
   };
-
-  window.deleteTournament = async (id) => {
+  window.deleteTournament=async function(id){
     if(!confirm('Delete this tournament?')) return;
     await deleteDoc(doc(db,'tournaments',id));
     toast('Match deleted','warn');
   };
 
-  // ─── WINNERS ───────────────────────────────────────────────────────────────
-  window.updatePrizePreview = async () => {
-    const mId=document.getElementById('winner-match-select').value;
-    const preview=document.getElementById('prize-preview');
+  // ─── WINNERS ──────────────────────────────────────────────────────────────
+  window.updatePrizePreview=async function(){
+    var mId=document.getElementById('winner-match-select').value;
+    var preview=document.getElementById('prize-preview');
     if(!mId){preview.style.display='none';return;}
-    const snap=await getDoc(doc(db,'tournaments',mId));
+    var snap=await getDoc(doc(db,'tournaments',mId));
     if(!snap.exists()) return;
-    const t=snap.data();
+    var t=snap.data();
     document.getElementById('pp1').textContent='৳'+(t.prize1||0);
     document.getElementById('pp2').textContent='৳'+(t.prize2||0);
     document.getElementById('pp3').textContent='৳'+(t.prize3||0);
     preview.style.display='flex';
   };
 
-  window.distributePrizes = async () => {
-    const mId=document.getElementById('winner-match-select').value;
-    if(!mId) return toast('Select a match first!','error');
-    const wUIDs=[
-      document.getElementById('w1').value.trim(),
-      document.getElementById('w2').value.trim(),
-      document.getElementById('w3').value.trim()
-    ];
-    if(!wUIDs[0]&&!wUIDs[1]&&!wUIDs[2]) return toast('Enter at least 1 winner Game UID!','error');
-    const tSnap=await getDoc(doc(db,'tournaments',mId));
-    if(!tSnap.exists()) return toast('Match not found!','error');
-    const t=tSnap.data();
-    const prizes=[t.prize1||0,t.prize2||0,t.prize3||0];
-    const positions=['🥇 1st','🥈 2nd','🥉 3rd'];
-    const logEntries=[];
-    const allUsers=await getDocs(collection(db,'users'));
-    for(let i=0;i<3;i++){
+  window.distributePrizes=async function(){
+    var mId=document.getElementById('winner-match-select').value;
+    if(!mId){ toast('Select a match first!','error'); return; }
+    var wUIDs=[document.getElementById('w1').value.trim(),document.getElementById('w2').value.trim(),document.getElementById('w3').value.trim()];
+    if(!wUIDs[0]&&!wUIDs[1]&&!wUIDs[2]){ toast('Enter at least 1 winner UID!','error'); return; }
+    var tSnap=await getDoc(doc(db,'tournaments',mId));
+    if(!tSnap.exists()){ toast('Match not found!','error'); return; }
+    var t=tSnap.data();
+    var prizes=[t.prize1||0,t.prize2||0,t.prize3||0];
+    var positions=['🥇 1st','🥈 2nd','🥉 3rd'];
+    var logEntries=[];
+    var allUsers=await getDocs(collection(db,'users'));
+    for(var i=0;i<3;i++){
       if(!wUIDs[i]||prizes[i]===0) continue;
-      allUsers.forEach(async (uDoc)=>{
-        const uData=uDoc.data();
-        if(uData.uid_game && uData.uid_game.trim()===wUIDs[i].trim()){
+      allUsers.forEach(async function(uDoc){
+        var uData=uDoc.data();
+        if(uData.uid_game&&uData.uid_game.trim()===wUIDs[i].trim()){
           await updateDoc(doc(db,'users',uDoc.id),{balance:increment(prizes[i]),total_earned:increment(prizes[i]),wins:increment(i===0?1:0)});
           await addDoc(collection(db,'transactions'),{uid:uDoc.id,email:uData.email,amount:prizes[i],type:'prize',status:'approved',reason:t.title+' - '+positions[i],created_at:serverTimestamp()});
         }
@@ -463,101 +499,92 @@
       logEntries.push({uid:wUIDs[i],prize:prizes[i],position:positions[i],match:t.title});
     }
     await deleteDoc(doc(db,'tournaments',mId));
-    const logWrap=document.getElementById('dist-log-wrap');
-    const logDiv=document.getElementById('dist-log');
-    logWrap.style.display='block';
-    logEntries.forEach(e=>{
-      const now=new Date().toLocaleTimeString();
-      logDiv.innerHTML=`<div class="log-entry"><div><div class="log-uid">UID: ${e.uid}</div><div class="log-meta">${e.match} · ${e.position} · ${now}</div></div><div class="log-prize">+৳${e.prize}</div></div>`+logDiv.innerHTML;
+    document.getElementById('dist-log-wrap').style.display='block';
+    var logDiv=document.getElementById('dist-log');
+    logEntries.forEach(function(e){
+      var now=new Date().toLocaleTimeString();
+      logDiv.innerHTML='<div class="log-entry"><div><div class="log-uid">UID: '+e.uid+'</div><div class="log-meta">'+e.match+' · '+e.position+' · '+now+'</div></div><div class="log-prize">+৳'+e.prize+'</div></div>'+logDiv.innerHTML;
     });
-    ['w1','w2','w3'].forEach(id=>document.getElementById(id).value='');
+    ['w1','w2','w3'].forEach(function(id){document.getElementById(id).value='';});
     document.getElementById('winner-match-select').value='';
     document.getElementById('prize-preview').style.display='none';
-    toast(`🏆 Prizes distributed to ${logEntries.length} winner(s)!`);
+    toast('🏆 Prizes distributed to '+logEntries.length+' winner(s)!');
   };
 
-  // ─── SETTINGS ──────────────────────────────────────────────────────────────
-
-  async function loadSettingsData() {
-    // Load notice
-    try {
-      const nSnap = await getDoc(doc(db,'settings','notice'));
-      if(nSnap.exists() && nSnap.data().text) {
-        const txt = nSnap.data().text;
-        document.getElementById('current-notice-display').textContent = txt;
-        document.getElementById('notice-input').value = txt;
+  // ─── SETTINGS ─────────────────────────────────────────────────────────────
+  async function loadSettingsData(){
+    // Notice
+    try{
+      var ns=await getDoc(doc(db,'settings','notice'));
+      if(ns.exists()&&ns.data().text){
+        document.getElementById('current-notice-display').textContent=ns.data().text;
+        document.getElementById('notice-input').value=ns.data().text;
       }
-    } catch(e){}
+    }catch(e){}
 
-    // Load payment details
-    try {
-      const pSnap = await getDoc(doc(db,'settings','payment'));
-      if(pSnap.exists()) {
-        const p = pSnap.data();
-        document.getElementById('pay-current-method').textContent = p.method || '—';
-        document.getElementById('pay-current-number').textContent = p.number || '—';
-        document.getElementById('pay-current-type').textContent = p.send_type || '—';
-        if(p.number) document.getElementById('pay-number-input').value = p.number;
-        if(p.send_type) document.getElementById('pay-send-type').value = p.send_type;
-        if(p.method) {
-          selectedPayMethod = p.method.toLowerCase();
-          document.querySelectorAll('.method-opt').forEach(b=>b.classList.remove('active'));
-          const btn = document.getElementById('pay-opt-'+selectedPayMethod);
-          if(btn) btn.classList.add('active');
-        }
+    // Payment — per method: settings/payment doc has { bkash:{number,send_type}, nagad:{...}, rocket:{...} }
+    try{
+      var ps=await getDoc(doc(db,'settings','payment'));
+      if(ps.exists()){
+        var p=ps.data();
+        ['bkash','nagad','rocket'].forEach(function(m){
+          if(p[m]){
+            document.getElementById('cur-'+m+'-number').textContent=p[m].number||'—';
+            document.getElementById('cur-'+m+'-type').textContent=p[m].send_type||'—';
+            if(p[m].number) document.getElementById('pay-'+m+'-number').value=p[m].number;
+            if(p[m].send_type) document.getElementById('pay-'+m+'-type').value=p[m].send_type;
+          }
+        });
       }
-    } catch(e){}
+    }catch(e){}
   }
 
-  // Notice
-  window.saveNotice = async () => {
-    const text = document.getElementById('notice-input').value.trim();
-    try {
-      await setDoc(doc(db,'settings','notice'), { text, updated_at: serverTimestamp() }, { merge: true });
-      const display = document.getElementById('current-notice-display');
-      if(text) {
-        display.textContent = text;
-        display.className = 'current-val';
+  // Per-method payment tabs
+  window.switchPayTab=function(m){
+    document.querySelectorAll('.pay-method-tab').forEach(function(t){t.classList.remove('active');});
+    document.querySelectorAll('.pay-method-panel').forEach(function(p){p.classList.remove('active');});
+    // find which tab button corresponds
+    var tabs=document.querySelectorAll('.pay-method-tab');
+    var idx=m==='bkash'?0:m==='nagad'?1:2;
+    tabs[idx].classList.add('active');
+    document.getElementById('pay-panel-'+m).classList.add('active');
+  };
+
+  window.savePayMethod=async function(m){
+    var number=document.getElementById('pay-'+m+'-number').value.trim();
+    var send_type=document.getElementById('pay-'+m+'-type').value;
+    if(!number||number.replace(/\D/g,'').length<11){ toast('Enter valid 11-digit number for '+m+'!','error'); return; }
+    try{
+      // Save as nested object under method key
+      var update={};
+      update[m]={ number:number, send_type:send_type };
+      await setDoc(doc(db,'settings','payment'), update, {merge:true});
+      document.getElementById('cur-'+m+'-number').textContent=number;
+      document.getElementById('cur-'+m+'-type').textContent=send_type;
+      toast('💳 '+m.charAt(0).toUpperCase()+m.slice(1)+' payment details saved!');
+    }catch(e){ toast('Failed to save','error'); }
+  };
+
+  window.saveNotice=async function(){
+    var text=document.getElementById('notice-input').value.trim();
+    try{
+      await setDoc(doc(db,'settings','notice'),{text:text,updated_at:serverTimestamp()},{merge:true});
+      if(text){
+        document.getElementById('current-notice-display').textContent=text;
       } else {
-        display.innerHTML = '<span style="color:var(--muted);font-style:italic">No notice set</span>';
+        document.getElementById('current-notice-display').innerHTML='<span style="color:var(--muted);font-style:italic">No notice set</span>';
       }
       toast('📢 Notice saved!');
-    } catch(e){ toast('Failed to save notice','error'); }
+    }catch(e){ toast('Failed','error'); }
   };
-
-  window.clearNotice = async () => {
-    try {
-      await setDoc(doc(db,'settings','notice'), { text: '', updated_at: serverTimestamp() }, { merge: true });
-      document.getElementById('notice-input').value = '';
-      document.getElementById('current-notice-display').innerHTML = '<span style="color:var(--muted);font-style:italic">No notice set</span>';
+  window.clearNotice=async function(){
+    try{
+      await setDoc(doc(db,'settings','notice'),{text:'',updated_at:serverTimestamp()},{merge:true});
+      document.getElementById('notice-input').value='';
+      document.getElementById('current-notice-display').innerHTML='<span style="color:var(--muted);font-style:italic">No notice set</span>';
       toast('Notice cleared');
-    } catch(e){ toast('Failed to clear','error'); }
+    }catch(e){ toast('Failed','error'); }
   };
-
-  // Payment details
-  window.selectPayMethod = (m) => {
-    selectedPayMethod = m;
-    document.querySelectorAll('.method-opt').forEach(b=>b.classList.remove('active'));
-    document.getElementById('pay-opt-'+m).classList.add('active');
-  };
-
-  window.savePaymentDetails = async () => {
-    const number = document.getElementById('pay-number-input').value.trim();
-    const send_type = document.getElementById('pay-send-type').value;
-    if(!selectedPayMethod){ toast('Select a payment method!','error'); return; }
-    if(!number || number.replace(/\D/g,'').length < 11){ toast('Enter a valid 11-digit number!','error'); return; }
-    try {
-      await setDoc(doc(db,'settings','payment'), {
-        method: selectedPayMethod.charAt(0).toUpperCase()+selectedPayMethod.slice(1),
-        number, send_type, updated_at: serverTimestamp()
-      }, { merge: true });
-      document.getElementById('pay-current-method').textContent = selectedPayMethod.charAt(0).toUpperCase()+selectedPayMethod.slice(1);
-      document.getElementById('pay-current-number').textContent = number;
-      document.getElementById('pay-current-type').textContent = send_type;
-      toast('💳 Payment details saved!');
-    } catch(e){ toast('Failed to save','error'); }
-  };
-
 </script>
 </body>
 </html>
