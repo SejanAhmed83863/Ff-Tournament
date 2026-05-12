@@ -8,43 +8,39 @@
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
     :root{--amber:#b8860b;--amber-deep:#6b4f00;--gold:#fecb00;--card:rgba(20,20,20,0.97);--border:#333;--text:#fff;--muted:#999;--green:#5CFF8A;--danger:#FF6B6B}
-    body{font-family:'Oswald',sans-serif;background:#0a0a0a;color:var(--text);min-height:100vh;padding-bottom:90px;background-image:linear-gradient(to bottom,rgba(0,0,0,0.9),rgba(0,0,0,0.97));background-size:cover;background-position:center;background-attachment:fixed}
+    body{font-family:'Oswald',sans-serif;background:#0a0a0a;color:var(--text);min-height:100vh;padding-bottom:80px;background-image:linear-gradient(to bottom,rgba(0,0,0,0.9),rgba(0,0,0,0.97));background-size:cover;background-attachment:fixed}
 
-    /* HEADER */
     .header{background:linear-gradient(180deg,rgba(0,0,0,0.97),rgba(10,10,10,0.9));border-bottom:2px solid var(--gold);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
     .logo-wrap{display:flex;align-items:center;gap:10px}
     .logo-img{width:40px;height:40px;border-radius:6px;border:2px solid var(--gold);object-fit:cover}
     .header-title{font-family:'Teko',sans-serif;font-size:24px;color:var(--gold);text-transform:uppercase;letter-spacing:2px}
-    .header-logout{background:transparent;border:1px solid var(--border);color:var(--muted);padding:6px 12px;border-radius:6px;font-family:'Teko';font-size:14px;letter-spacing:1px;cursor:pointer;transition:0.2s;text-transform:uppercase}
-    .header-logout:hover{border-color:var(--danger);color:var(--danger)}
-
+    .header-logout{background:transparent;border:1px solid var(--border);color:var(--muted);padding:6px 12px;border-radius:6px;font-family:'Teko';font-size:14px;letter-spacing:1px;cursor:pointer;text-transform:uppercase}
+    .header-logout:active{border-color:var(--danger);color:var(--danger)}
     .content{padding:14px;max-width:500px;margin:0 auto}
 
-    /* PROFILE CARD */
+    /* PROFILE */
     .profile-card{background:var(--card);border-radius:12px;border:1px solid var(--border);margin-bottom:14px;overflow:hidden;box-shadow:0 5px 20px rgba(0,0,0,0.7);position:relative}
     .profile-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--amber),var(--gold),var(--amber))}
     .profile-banner{background:linear-gradient(135deg,rgba(184,134,11,0.18),rgba(254,203,0,0.08),rgba(0,0,0,0.5));padding:18px 16px 14px;display:flex;align-items:center;gap:14px;border-bottom:1px solid var(--border);position:relative}
-    .avatar{width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,var(--amber),var(--gold));display:flex;align-items:center;justify-content:center;font-family:'Teko';font-size:28px;color:#000;font-weight:700;border:3px solid var(--gold);box-shadow:0 0 15px rgba(254,203,0,0.3);flex-shrink:0}
+    .avatar{width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,var(--amber),var(--gold));display:flex;align-items:center;justify-content:center;font-family:'Teko';font-size:28px;color:#000;font-weight:700;border:3px solid var(--gold);flex-shrink:0}
     .profile-info{flex:1;min-width:0}
-    .game-name{font-family:'Teko',sans-serif;font-size:28px;color:var(--gold);text-transform:uppercase;letter-spacing:2px;line-height:1;margin-bottom:3px;word-break:break-word}
+    .game-name{font-family:'Teko',sans-serif;font-size:26px;color:var(--gold);text-transform:uppercase;letter-spacing:2px;line-height:1;margin-bottom:3px;word-break:break-word}
     .player-name{color:#fff;font-size:14px;font-weight:600;margin-bottom:2px}
-    .player-email{color:var(--muted);font-size:12px;letter-spacing:1px;margin-bottom:4px;word-break:break-all}
-    .player-whatsapp{color:#25D366;font-size:12px;font-weight:600;margin-top:2px}
+    .player-email{color:var(--muted);font-size:12px;word-break:break-all;margin-bottom:3px}
+    .player-whatsapp{color:#25D366;font-size:12px;font-weight:600}
     .uid-tag{display:inline-block;background:rgba(184,134,11,0.15);border:1px solid var(--amber);color:var(--gold);font-family:'Teko';font-size:13px;padding:2px 10px;border-radius:4px;letter-spacing:1px;margin-top:4px}
-    .edit-icon{position:absolute;top:12px;right:12px;background:rgba(254,203,0,0.1);border:1px solid var(--gold);color:var(--gold);width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;transition:0.2s}
-    .edit-icon:hover{background:rgba(254,203,0,0.25)}
+    .edit-icon{position:absolute;top:12px;right:12px;background:rgba(254,203,0,0.1);border:1px solid var(--gold);color:var(--gold);width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px}
     .edit-panel{display:none;padding:16px;background:rgba(0,0,0,0.5);border-top:1px solid var(--border)}
-    .edit-panel.open{display:block;animation:slideDown 0.3s ease}
-    @keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+    .edit-panel.open{display:block}
     .e-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:6px;display:block}
-    .e-input{width:100%;background:#111;border:1px solid var(--border);padding:11px 13px;border-radius:7px;color:#fff;font-family:'Oswald';font-size:14px;outline:none;margin-bottom:12px;transition:border-color 0.2s}
+    .e-input{width:100%;background:#111;border:1px solid var(--border);padding:11px 13px;border-radius:7px;color:#fff;font-family:'Oswald';font-size:14px;outline:none;margin-bottom:12px}
     .e-input:focus{border-color:var(--gold)}
     .e-input::placeholder{color:#555}
     .uid-box{background:rgba(184,134,11,0.08);border:1px solid rgba(184,134,11,0.35);border-radius:8px;padding:12px;margin-bottom:12px}
-    .uid-box-title{font-family:'Teko';font-size:15px;color:var(--gold);letter-spacing:1px;margin-bottom:8px}
+    .uid-box-title{font-family:'Teko';font-size:15px;color:var(--gold);letter-spacing:1px;margin-bottom:6px}
     .uid-note{font-size:11px;color:var(--muted);margin-bottom:8px;line-height:1.5}
     .reauth-row{display:flex;gap:8px;margin-bottom:10px}
-    .reauth-btn{flex:1;padding:10px;border-radius:7px;border:1px solid var(--border);background:transparent;color:var(--text);font-family:'Oswald';font-size:13px;font-weight:700;cursor:pointer;transition:0.2s;display:flex;align-items:center;justify-content:center;gap:6px}
+    .reauth-btn{flex:1;padding:10px;border-radius:7px;border:1px solid var(--border);background:transparent;color:var(--text);font-family:'Oswald';font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}
     .reauth-btn.active{border-color:var(--gold);background:rgba(254,203,0,0.1);color:var(--gold)}
     .btn-row{display:flex;gap:8px}
     .save-btn{flex:1;padding:12px;background:linear-gradient(180deg,var(--amber),var(--amber-deep));border:1px solid var(--gold);color:var(--gold);font-family:'Teko';font-size:18px;letter-spacing:2px;border-radius:7px;cursor:pointer;text-transform:uppercase}
@@ -57,15 +53,15 @@
     .stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
     .stat-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;position:relative;overflow:hidden}
     .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--amber),var(--gold))}
-    .stat-icon{font-size:24px;margin-bottom:4px}
-    .stat-value{font-family:'Teko',sans-serif;font-size:30px;color:var(--gold);letter-spacing:1px}
+    .stat-icon{font-size:22px;margin-bottom:4px}
+    .stat-value{font-family:'Teko',sans-serif;font-size:28px;color:var(--gold);letter-spacing:1px}
     .stat-label{color:var(--muted);font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-top:2px}
 
     /* WALLET */
-    .wallet-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:14px;position:relative;overflow:hidden;box-shadow:0 5px 20px rgba(0,0,0,0.5)}
+    .wallet-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:14px;position:relative;overflow:hidden}
     .wallet-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--amber),var(--gold))}
     .w-title{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
-    .w-balance{font-family:'Teko',sans-serif;font-size:48px;color:var(--gold);letter-spacing:2px;line-height:1;margin-bottom:14px}
+    .w-balance{font-family:'Teko',sans-serif;font-size:46px;color:var(--gold);letter-spacing:2px;line-height:1;margin-bottom:14px}
     .w-actions{display:flex;gap:10px;margin-bottom:16px}
     .btn-deposit{flex:1;padding:12px;border-radius:7px;background:linear-gradient(180deg,var(--amber),var(--amber-deep));border:1px solid var(--gold);color:var(--gold);font-family:'Teko';font-size:18px;letter-spacing:2px;cursor:pointer;text-transform:uppercase}
     .btn-withdraw{flex:1;padding:12px;border:1px solid var(--gold);border-radius:7px;background:rgba(254,203,0,0.05);color:var(--gold);font-family:'Teko';font-size:18px;letter-spacing:2px;cursor:pointer;text-transform:uppercase}
@@ -76,9 +72,9 @@
     .tx-item.prize{border-left-color:var(--gold)}
     .tx-left{display:flex;align-items:center;gap:10px}
     .tx-icon{font-size:18px}
-    .tx-desc{font-size:13px;font-weight:600;letter-spacing:0.5px}
+    .tx-desc{font-size:13px;font-weight:600}
     .tx-date{font-size:11px;color:var(--muted);margin-top:1px}
-    .tx-right{text-align:right}
+    .tx-right{text-align:right;flex-shrink:0}
     .tx-amount{font-family:'Teko',sans-serif;font-size:18px;letter-spacing:1px}
     .tx-amount.plus{color:var(--green)}
     .tx-amount.minus{color:var(--danger)}
@@ -88,7 +84,7 @@
     .status-pill.rejected{background:rgba(255,107,107,0.15);color:var(--danger);border:1px solid rgba(255,107,107,0.3)}
     .no-tx{text-align:center;color:var(--muted);font-size:13px;padding:14px}
 
-    /* TOURNAMENT HISTORY */
+    /* HISTORY */
     .sec-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px;position:relative;overflow:hidden}
     .sec-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--amber),var(--gold),transparent)}
     .sec-head{font-family:'Teko',sans-serif;font-size:18px;color:#fff;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;border-left:3px solid var(--gold);padding-left:8px}
@@ -110,34 +106,59 @@
     .hist-meta{font-size:12px;color:var(--muted);display:flex;gap:10px;flex-wrap:wrap}
     .hist-meta span{color:#888}
 
-    /* MODALS */
-    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:200;align-items:flex-end;justify-content:center}
+    /* MODAL — full height sheet, submit always visible */
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:500;align-items:flex-end;justify-content:center}
     .modal-overlay.open{display:flex}
-    .modal{background:#111;border:1px solid var(--gold);border-radius:16px 16px 0 0;width:100%;max-width:500px;animation:slideUp 0.3s ease both;border-top:3px solid var(--gold);max-height:92vh;overflow:hidden;display:flex;flex-direction:column}
+    .modal{
+      background:#111;border:1px solid var(--gold);border-radius:16px 16px 0 0;
+      width:100%;max-width:500px;border-top:3px solid var(--gold);
+      /* fixed height so submit never gets hidden */
+      height:88vh;display:flex;flex-direction:column;
+      animation:slideUp 0.28s ease both;
+    }
     @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-    .modal-hdr{display:flex;align-items:center;justify-content:space-between;padding:15px 18px 13px;border-bottom:1px solid var(--border);flex-shrink:0}
-    .modal-title{font-family:'Teko',sans-serif;font-size:26px;color:var(--gold);letter-spacing:3px;text-transform:uppercase;margin:0;line-height:1}
-    .modal-x{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,0.05);border:1px solid #444;color:#888;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:0.2s;flex-shrink:0}
-    .modal-x:hover{background:rgba(255,107,107,0.15);border-color:var(--danger);color:var(--danger)}
-    .modal-body{overflow-y:auto;padding:18px;flex:1}
+    /* Header: title left, X right — always visible at top */
+    .modal-hdr{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:14px 16px 12px;border-bottom:1px solid var(--border);
+      flex-shrink:0;position:relative;
+    }
+    .modal-title{font-family:'Teko',sans-serif;font-size:24px;color:var(--gold);letter-spacing:3px;text-transform:uppercase;margin:0;line-height:1}
+    /* ✕ pinned top-right corner of modal */
+    .modal-x{
+      width:30px;height:30px;border-radius:50%;
+      background:rgba(255,255,255,0.05);border:1px solid #444;color:#888;
+      font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+      flex-shrink:0;transition:0.18s;line-height:1;
+    }
+    .modal-x:active{background:rgba(255,107,107,0.2);border-color:var(--danger);color:var(--danger)}
+    /* Scrollable middle section */
+    .modal-scroll{overflow-y:auto;padding:16px;flex:1}
+    /* Submit bar always pinned at bottom of modal */
+    .modal-foot{padding:12px 16px 16px;border-top:1px solid var(--border);flex-shrink:0;background:#111}
+    .m-btn{width:100%;padding:14px;border:1px solid var(--gold);border-radius:7px;background:linear-gradient(180deg,var(--amber),var(--amber-deep));color:var(--gold);font-family:'Teko';font-size:20px;letter-spacing:2px;cursor:pointer;text-transform:uppercase}
+
     .m-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:6px;display:block}
-    .m-input{width:100%;background:#000;border:1px solid var(--border);padding:12px 13px;border-radius:7px;color:#fff;font-family:'Oswald';font-size:14px;outline:none;margin-bottom:12px;transition:border-color 0.2s}
+    .m-input{width:100%;background:#000;border:1px solid var(--border);padding:12px 13px;border-radius:7px;color:#fff;font-family:'Oswald';font-size:14px;outline:none;margin-bottom:12px}
     .m-input:focus{border-color:var(--gold)}
     .m-input::placeholder{color:#555}
     .m-method-row{display:flex;gap:8px;margin-bottom:14px}
-    .m-method-btn{flex:1;padding:11px 6px;border-radius:7px;border:2px solid var(--border);background:transparent;color:var(--text);font-family:'Oswald';font-size:13px;font-weight:700;cursor:pointer;transition:0.2s;text-align:center}
+    .m-method-btn{flex:1;padding:10px 4px;border-radius:7px;border:2px solid var(--border);background:transparent;color:var(--text);font-family:'Oswald';font-size:12px;font-weight:700;cursor:pointer;text-align:center}
     .m-method-btn.selected{border-color:var(--gold);background:rgba(254,203,0,0.1);color:var(--gold)}
+    /* Deposit info box shown after method select */
     .pay-info{background:rgba(0,0,0,0.55);border:1px solid rgba(254,203,0,0.22);border-radius:9px;padding:14px 15px;margin-bottom:14px;display:none}
     .pay-info.show{display:block}
     .pay-info-title{font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px}
     .pay-step{font-size:13px;color:#bbb;line-height:2;display:flex;align-items:baseline;gap:7px}
     .pay-step b{color:#fff}
     .pay-step .pnum{color:var(--gold);font-family:'Teko';font-size:22px;letter-spacing:1px}
-    .m-btn{width:100%;padding:13px;border:1px solid var(--gold);border-radius:7px;background:linear-gradient(180deg,var(--amber),var(--amber-deep));color:var(--gold);font-family:'Teko';font-size:20px;letter-spacing:2px;cursor:pointer;text-transform:uppercase;margin-top:4px}
+    .msg2{text-align:center;padding:8px;border-radius:6px;font-size:13px;font-weight:600;display:none;margin-bottom:8px}
+    .msg2.error{display:block;background:rgba(255,50,50,0.1);border:1px solid rgba(255,50,50,0.3);color:var(--danger)}
+    .msg2.success{display:block;background:rgba(92,255,138,0.1);border:1px solid rgba(92,255,138,0.3);color:var(--green)}
 
     /* BOTTOM NAV */
     .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(0,0,0,0.97);border-top:2px solid var(--gold);display:flex;z-index:200}
-    .nav-item{flex:1;padding:12px 8px;text-align:center;cursor:pointer;color:var(--muted);font-family:'Teko';font-size:13px;letter-spacing:2px;text-transform:uppercase;text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:3px;border:none;background:none}
+    .nav-item{flex:1;padding:11px 8px;text-align:center;cursor:pointer;color:var(--muted);font-family:'Teko';font-size:13px;letter-spacing:2px;text-transform:uppercase;text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:2px;border:none;background:none}
     .nav-item.active{color:var(--gold)}
     .nav-icon{font-size:22px}
     .nav-divider{width:1px;background:var(--border);margin:8px 0}
@@ -167,21 +188,22 @@
         <div class="player-whatsapp" id="display-whatsapp"></div>
         <div class="uid-tag" id="display-uid">🎮 UID: —</div>
       </div>
-      <div class="edit-icon" onclick="toggleEdit()" title="Edit Profile">✏️</div>
+      <div class="edit-icon" onclick="toggleEdit()">✏️</div>
     </div>
     <div class="edit-panel" id="edit-panel">
       <span class="e-label">Full Name</span>
       <input type="text" class="e-input" id="input-name" placeholder="Your name"/>
       <span class="e-label">WhatsApp Number</span>
       <input type="tel" class="e-input" id="input-whatsapp" placeholder="01XXXXXXXXX"/>
-      <span class="e-label">Game Name</span>
-      <input type="text" class="e-input" id="input-game-name" placeholder="In-game display name"/>
+      <span class="e-label">Game Name (from Garena — read only)</span>
+      <input type="text" class="e-input" id="input-game-name" placeholder="Enter your Game UID to fetch" style="opacity:0.6;cursor:not-allowed" readonly/>
       <div class="uid-box">
-        <div class="uid-box-title">🔒 Change Game UID</div>
-        <div class="uid-note" id="uid-note">First UID change is free. To change again, you must verify your account.</div>
-        <input type="text" class="e-input" id="input-uid" placeholder="New Game UID"/>
+        <div class="uid-box-title">🔒 Game UID</div>
+        <div class="uid-note" id="uid-note">Enter your 10-digit UID. Game name will be fetched automatically from Garena servers.</div>
+        <input type="text" class="e-input" id="input-uid" placeholder="10-digit Game UID" maxlength="12" oninput="onUidInput(this.value)"/>
+        <div id="uid-fetch-status" style="font-size:12px;color:var(--muted);margin-bottom:8px;min-height:18px"></div>
         <div id="reauth-section" style="display:none">
-          <span class="e-label">Verify Identity</span>
+          <span class="e-label">Verify Identity to Change UID</span>
           <div class="reauth-row">
             <button type="button" class="reauth-btn" id="reauth-pass-btn" onclick="setReauthMethod('password')">🔑 Password</button>
             <button type="button" class="reauth-btn" id="reauth-google-btn" onclick="setReauthMethod('google')">
@@ -230,14 +252,15 @@
 
 </div>
 
-<!-- DEPOSIT MODAL: shows admin number/method so user knows where to send money -->
+<!-- ══════ DEPOSIT MODAL ══════ -->
+<!-- Layout: fixed header (title+X), scrollable body, fixed footer (submit) -->
 <div class="modal-overlay" id="deposit-modal">
   <div class="modal">
     <div class="modal-hdr">
       <div class="modal-title">💰 Deposit</div>
       <button class="modal-x" onclick="closeModal('deposit-modal')">✕</button>
     </div>
-    <div class="modal-body">
+    <div class="modal-scroll">
       <span class="m-label">Amount (TK)</span>
       <input type="number" class="m-input" id="deposit-amount" placeholder="Minimum 10 TK"/>
       <span class="m-label">Payment Method</span>
@@ -246,30 +269,33 @@
         <button class="m-method-btn" id="btn-nagad"  onclick="selectDepMethod('nagad')">💳 Nagad</button>
         <button class="m-method-btn" id="btn-rocket" onclick="selectDepMethod('rocket')">🚀 Rocket</button>
       </div>
-      <!-- Admin's receiving number shown here after method selected -->
+      <!-- Per-method admin number/send-type shown here -->
       <div class="pay-info" id="pay-info">
         <div class="pay-info-title">📋 Send Money Instructions</div>
         <div class="pay-step">1. Open &nbsp;<b id="dep-method-name">—</b>&nbsp; app</div>
-        <div class="pay-step">2. Select &nbsp;<b id="dep-send-type">Send Money</b></div>
+        <div class="pay-step">2. Select &nbsp;<b id="dep-send-type">—</b></div>
         <div class="pay-step">3. Send to: &nbsp;<span class="pnum" id="dep-number">—</span></div>
         <div class="pay-step">4. Copy your <b>Transaction ID</b> after payment</div>
       </div>
       <span class="m-label">Transaction ID</span>
       <input type="text" class="m-input" id="deposit-txid" placeholder="Paste Transaction ID here"/>
-      <div class="msg" id="deposit-msg"></div>
+      <div class="msg2" id="deposit-msg"></div>
+    </div>
+    <!-- Submit always visible at bottom -->
+    <div class="modal-foot">
       <button class="m-btn" onclick="submitDeposit()">Submit Request</button>
     </div>
   </div>
 </div>
 
-<!-- WITHDRAW MODAL: user enters only their own number/method -->
+<!-- ══════ WITHDRAW MODAL ══════ -->
 <div class="modal-overlay" id="withdraw-modal">
   <div class="modal">
     <div class="modal-hdr">
       <div class="modal-title">💸 Withdraw</div>
       <button class="modal-x" onclick="closeModal('withdraw-modal')">✕</button>
     </div>
-    <div class="modal-body">
+    <div class="modal-scroll">
       <span class="m-label">Amount (TK)</span>
       <input type="number" class="m-input" id="withdraw-amount" placeholder="Minimum 50 TK"/>
       <span class="m-label">Send to My Account Via</span>
@@ -280,7 +306,9 @@
       </div>
       <span class="m-label">My Number (Admin sends money here)</span>
       <input type="tel" class="m-input" id="withdraw-number" placeholder="01XXXXXXXXX"/>
-      <div class="msg" id="withdraw-msg"></div>
+      <div class="msg2" id="withdraw-msg"></div>
+    </div>
+    <div class="modal-foot">
       <button class="m-btn" onclick="submitWithdraw()">Request Withdrawal</button>
     </div>
   </div>
@@ -314,336 +342,308 @@
   const auth = getAuth(app);
   const db   = getFirestore(app);
 
-  let currentUser = null;
-  let userData    = null;
-  let adminPayment = null;
-  let selDepMethod = '';
-  let selWdMethod  = '';
-  let editOpen     = false;
-  let reauthMethod = '';
+  var currentUser  = null;
+  var userData     = null;
+  // paymentSettings stored per-method: { bkash:{number,send_type}, nagad:{...}, rocket:{...} }
+  var paySettings  = {};
+  var selDepMethod = '';
+  var selWdMethod  = '';
+  var editOpen     = false;
+  var reauthMethod = '';
+  var fetchedGameName = '';  // from UID lookup
+  var uidFetchTimer = null;
 
-  function $(id){ return document.getElementById(id); }
-
-  function getProvId(user){
-    return user && user.providerData && user.providerData.length
-      ? user.providerData[0].providerId : 'password';
-  }
+  function el(id){ return document.getElementById(id); }
+  function getProvId(u){ return u && u.providerData && u.providerData.length ? u.providerData[0].providerId : 'password'; }
 
   // ─── BOOT ────────────────────────────────────────────────────────────────
   onAuthStateChanged(auth, async function(user) {
     if (!user) { window.location.href = 'index.html'; return; }
     currentUser = user;
-    // Load admin payment settings (used in Deposit instructions)
     try {
-      var ps = await getDoc(doc(db, 'settings', 'payment'));
-      if (ps.exists()) adminPayment = ps.data();
+      var ps = await getDoc(doc(db,'settings','payment'));
+      if (ps.exists()) paySettings = ps.data();
     } catch(e) {}
     await loadProfile(user);
     loadTransactions(user.uid);
     loadTournamentHistory(user.uid);
   });
 
+  // ─── UID → Game Name fetch via Garena API proxy ─────────────────────────
+  // Uses a CORS-friendly third-party Free Fire stats API
+  window.onUidInput = function(val) {
+    el('uid-fetch-status').textContent = '';
+    fetchedGameName = '';
+    if (uidFetchTimer) clearTimeout(uidFetchTimer);
+    if (!/^\d{10}$/.test(val)) return;
+    el('uid-fetch-status').textContent = '🔍 Fetching player name...';
+    el('uid-fetch-status').style.color = 'var(--muted)';
+    uidFetchTimer = setTimeout(function() { fetchGameName(val); }, 600);
+  };
+
+  async function fetchGameName(uid) {
+    // Uses freefireinfo.in public API — best available CORS-open Free Fire player lookup
+    try {
+      var res = await fetch('https://freefireinfo.in/api/player?uid=' + uid + '&region=bd', { signal: AbortSignal.timeout(5000) });
+      if (!res.ok) throw new Error('no data');
+      var data = await res.json();
+      var name = data && (data.basicInfo && data.basicInfo.nickname || data.nickname || data.name);
+      if (name) {
+        fetchedGameName = name;
+        el('input-game-name').value = name;
+        el('uid-fetch-status').textContent = '✅ Found: ' + name;
+        el('uid-fetch-status').style.color = 'var(--green)';
+      } else {
+        el('uid-fetch-status').textContent = '⚠️ UID not found. Check and retry.';
+        el('uid-fetch-status').style.color = 'var(--danger)';
+      }
+    } catch(e) {
+      el('uid-fetch-status').textContent = '⚠️ Could not fetch name. UID saved, name unchanged.';
+      el('uid-fetch-status').style.color = 'var(--muted)';
+    }
+  }
+
   // ─── PROFILE ─────────────────────────────────────────────────────────────
   async function loadProfile(user) {
     var ref  = doc(db, 'users', user.uid);
     var snap = await getDoc(ref);
-    if (snap.exists()) {
-      userData = snap.data();
-    } else {
-      userData = {
-        name:'', whatsapp:'', game_name:'', uid_game:'',
-        email: user.email, balance:0, played:0, wins:0,
-        total_earned:0, uid_changed:false,
-        created_at: new Date().toISOString()
-      };
-      await setDoc(ref, userData, { merge: true });
+    if (snap.exists()) { userData = snap.data(); }
+    else {
+      userData = { name:'', whatsapp:'', game_name:'', uid_game:'', email:user.email,
+                   balance:0, played:0, wins:0, total_earned:0, uid_changed:false,
+                   created_at:new Date().toISOString() };
+      await setDoc(ref, userData, { merge:true });
     }
     var gn = userData.game_name || 'PLAYER';
-    $('display-game-name').textContent = gn;
-    $('display-name').textContent      = userData.name     ? '👤 ' + userData.name    : '';
-    $('display-email').textContent     = user.email        || '';
-    $('display-whatsapp').textContent  = userData.whatsapp ? '📱 ' + userData.whatsapp : '';
-    $('display-uid').textContent       = userData.uid_game ? '🎮 UID: ' + userData.uid_game : '🎮 UID: —';
-    $('avatar-text').textContent       = gn.charAt(0).toUpperCase();
-    $('input-name').value       = userData.name       || '';
-    $('input-whatsapp').value   = userData.whatsapp   || '';
-    $('input-game-name').value  = userData.game_name  || '';
-    $('input-uid').value        = userData.uid_game   || '';
+    el('display-game-name').textContent = gn;
+    el('display-name').textContent      = userData.name     ? '👤 '+userData.name    : '';
+    el('display-email').textContent     = user.email        || '';
+    el('display-whatsapp').textContent  = userData.whatsapp ? '📱 '+userData.whatsapp : '';
+    el('display-uid').textContent       = userData.uid_game ? '🎮 UID: '+userData.uid_game : '🎮 UID: —';
+    el('avatar-text').textContent       = gn.charAt(0).toUpperCase();
+    el('input-name').value      = userData.name      || '';
+    el('input-whatsapp').value  = userData.whatsapp  || '';
+    el('input-game-name').value = userData.game_name || '';
+    el('input-uid').value       = userData.uid_game  || '';
     if (userData.uid_changed) {
-      $('reauth-section').style.display = 'block';
-      $('uid-note').textContent = 'UID already changed once. Verify identity to change again.';
-      if (getProvId(currentUser) === 'google.com') {
-        setReauthMethod('google');
-      } else {
-        setReauthMethod('password');
-      }
+      el('reauth-section').style.display = 'block';
+      el('uid-note').textContent = 'UID changed once before — verify identity to change again.';
+      getProvId(currentUser) === 'google.com' ? setReauthMethod('google') : setReauthMethod('password');
     }
-    $('wallet-balance').textContent = userData.balance      || 0;
-    $('stat-played').textContent    = userData.played       || 0;
-    $('stat-wins').textContent      = userData.wins         || 0;
-    var p = userData.played || 0;
-    var w = userData.wins   || 0;
-    $('stat-winrate').textContent   = p > 0 ? Math.round(w / p * 100) + '%' : '0%';
-    $('stat-earned').textContent    = userData.total_earned || 0;
+    el('wallet-balance').textContent = userData.balance      || 0;
+    el('stat-played').textContent    = userData.played       || 0;
+    el('stat-wins').textContent      = userData.wins         || 0;
+    var p = userData.played||0, w = userData.wins||0;
+    el('stat-winrate').textContent   = p > 0 ? Math.round(w/p*100)+'%' : '0%';
+    el('stat-earned').textContent    = userData.total_earned || 0;
   }
 
   // ─── TRANSACTIONS ─────────────────────────────────────────────────────────
   async function loadTransactions(uid) {
-    var list = $('tx-status-list');
+    var list = el('tx-status-list');
     try {
-      var snap = await getDocs(query(collection(db, 'transactions'), where('uid', '==', uid)));
-      if (snap.empty) { list.innerHTML = '<div class="no-tx">No transactions yet</div>'; return; }
+      var snap = await getDocs(query(collection(db,'transactions'), where('uid','==',uid)));
+      if (snap.empty) { list.innerHTML='<div class="no-tx">No transactions yet</div>'; return; }
       var items = [];
-      snap.forEach(function(d) { items.push(d.data()); });
-      items.sort(function(a, b) {
-        return (b.created_at && b.created_at.toMillis ? b.created_at.toMillis() : 0)
-             - (a.created_at && a.created_at.toMillis ? a.created_at.toMillis() : 0);
-      });
+      snap.forEach(function(d){ items.push(d.data()); });
+      items.sort(function(a,b){ return (b.created_at&&b.created_at.toMillis?b.created_at.toMillis():0)-(a.created_at&&a.created_at.toMillis?a.created_at.toMillis():0); });
       list.innerHTML = '';
-      items.slice(0, 8).forEach(function(tx) {
-        var plus   = tx.type === 'deposit' || tx.type === 'prize';
-        var icon   = tx.type === 'deposit' ? '💰' : tx.type === 'prize' ? '🏆' : tx.type === 'withdraw' ? '💸' : '🎮';
-        var label  = tx.type === 'deposit' ? 'Deposit' : tx.type === 'prize' ? 'Prize Won' : tx.type === 'withdraw' ? 'Withdrawal' : 'Entry Fee';
-        var txCls  = tx.type === 'deposit' ? 'deposit' : tx.type === 'withdraw' ? 'withdraw' : tx.type === 'prize' ? 'prize' : '';
-        var date   = tx.created_at && tx.created_at.toDate ? tx.created_at.toDate().toLocaleDateString('en-GB') : '—';
-        var stCls  = tx.status === 'pending' ? 'pending' : tx.status === 'approved' ? 'approved' : 'rejected';
-        var stTxt  = tx.status === 'pending' ? '⏳ Pending' : tx.status === 'approved' ? '✅ Approved' : '❌ Rejected';
-        var meth   = tx.method ? ' · ' + tx.method.toUpperCase() : '';
-        var reason = tx.reason ? ' · ' + tx.reason : '';
-        var txid   = tx.txid  ? ' · ' + tx.txid   : '';
-        list.innerHTML += '<div class="tx-item ' + txCls + '">'
-          + '<div class="tx-left"><div class="tx-icon">' + icon + '</div>'
-          + '<div><div class="tx-desc">' + label + meth + reason + '</div>'
-          + '<div class="tx-date">' + date + txid + '</div></div></div>'
-          + '<div class="tx-right">'
-          + '<div class="tx-amount ' + (plus ? 'plus' : 'minus') + '">' + (plus ? '+' : '-') + '৳' + tx.amount + '</div>'
-          + '<span class="status-pill ' + stCls + '">' + stTxt + '</span>'
-          + '</div></div>';
+      items.slice(0,8).forEach(function(tx) {
+        var plus   = tx.type==='deposit'||tx.type==='prize';
+        var icon   = tx.type==='deposit'?'💰':tx.type==='prize'?'🏆':tx.type==='withdraw'?'💸':'🎮';
+        var label  = tx.type==='deposit'?'Deposit':tx.type==='prize'?'Prize Won':tx.type==='withdraw'?'Withdrawal':'Entry Fee';
+        var txCls  = tx.type==='deposit'?'deposit':tx.type==='withdraw'?'withdraw':tx.type==='prize'?'prize':'';
+        var date   = tx.created_at&&tx.created_at.toDate?tx.created_at.toDate().toLocaleDateString('en-GB'):'—';
+        var stCls  = tx.status==='pending'?'pending':tx.status==='approved'?'approved':'rejected';
+        var stTxt  = tx.status==='pending'?'⏳ Pending':tx.status==='approved'?'✅ Approved':'❌ Rejected';
+        list.innerHTML += '<div class="tx-item '+txCls+'">'
+          +'<div class="tx-left"><div class="tx-icon">'+icon+'</div>'
+          +'<div><div class="tx-desc">'+label+(tx.method?' · '+tx.method.toUpperCase():'')+(tx.reason?' · '+tx.reason:'')+'</div>'
+          +'<div class="tx-date">'+date+(tx.txid?' · '+tx.txid:'')+'</div></div></div>'
+          +'<div class="tx-right"><div class="tx-amount '+(plus?'plus':'minus')+'">'+(plus?'+':'-')+'৳'+tx.amount+'</div>'
+          +'<span class="status-pill '+stCls+'">'+stTxt+'</span></div></div>';
       });
-    } catch(e) {
-      list.innerHTML = '<div class="no-tx" style="color:var(--danger)">Could not load transactions.</div>';
-    }
+    } catch(e) { list.innerHTML='<div class="no-tx" style="color:var(--danger)">Could not load.</div>'; }
   }
 
   // ─── TOURNAMENT HISTORY ───────────────────────────────────────────────────
   async function loadTournamentHistory(uid) {
-    var list = $('tournament-history');
+    var list = el('tournament-history');
     try {
-      var regSnap = await getDocs(query(collection(db, 'registrations'), where('uid', '==', uid)));
-      if (regSnap.empty) { list.innerHTML = '<div class="no-tx">No tournaments joined yet</div>'; return; }
-      var tSnap = await getDocs(collection(db, 'tournaments'));
+      var regSnap = await getDocs(query(collection(db,'registrations'), where('uid','==',uid)));
+      if (regSnap.empty) { list.innerHTML='<div class="no-tx">No tournaments joined yet</div>'; return; }
+      var tSnap = await getDocs(collection(db,'tournaments'));
       var tMap  = {};
-      tSnap.forEach(function(d) { tMap[d.id] = d.data(); });
+      tSnap.forEach(function(d){ tMap[d.id]=d.data(); });
       var items = [];
-      regSnap.forEach(function(d) { items.push(d.data()); });
-      items.sort(function(a, b) {
-        return (b.created_at && b.created_at.toMillis ? b.created_at.toMillis() : 0)
-             - (a.created_at && a.created_at.toMillis ? a.created_at.toMillis() : 0);
-      });
+      regSnap.forEach(function(d){ items.push(d.data()); });
+      items.sort(function(a,b){ return (b.created_at&&b.created_at.toMillis?b.created_at.toMillis():0)-(a.created_at&&a.created_at.toMillis?a.created_at.toMillis():0); });
       var now = new Date();
       list.innerHTML = '';
       items.forEach(function(r) {
-        var t        = tMap[r.tournament_id] || {};
-        var tTime    = t.time ? new Date(t.time) : null;
-        var upcoming = tTime && tTime > now && t.status === 'open';
-        var date     = r.created_at && r.created_at.toDate ? r.created_at.toDate().toLocaleDateString('en-GB') : '—';
-        var mode     = t.teamType == 1 ? 'Solo' : t.teamType == 2 ? 'Duo' : 'Squad';
-        var timeStr  = tTime ? tTime.toLocaleString('en-US', { weekday:'short', day:'2-digit', month:'short', hour:'numeric', minute:'2-digit', hour12:true }) : '';
-        var cd = '';
-        if (upcoming) {
-          var diff = tTime - now;
-          var h    = Math.floor(diff / 3600000);
-          var m    = Math.floor((diff % 3600000) / 60000);
-          cd = h > 0 ? h + 'h ' + m + 'm' : m > 0 ? m + ' min' : 'Starting soon!';
-        }
-        var roomRow = '';
-        if (upcoming) {
-          var ri = t.roomID   ? '<div class="ui-item"><span class="ui-label">🔑 Room ID</span><span class="ui-val">' + t.roomID + '</span></div>' : '';
-          var rp = t.roomPass ? '<div class="ui-item"><span class="ui-label">🔒 Password</span><span class="ui-val">' + t.roomPass + '</span></div>' : '';
-          roomRow = '<div class="countdown-chip"><span class="cdot"></span>Starts in ' + cd + '</div>'
-            + '<div class="upcoming-info-grid">'
-            + '<div class="ui-item"><span class="ui-label">📅 Time</span><span class="ui-val">' + timeStr + '</span></div>'
-            + '<div class="ui-item"><span class="ui-label">🗺️ Mode</span><span class="ui-val">' + mode + '</span></div>'
-            + '<div class="ui-item"><span class="ui-label">🏆 1st Prize</span><span class="ui-val">৳' + (t.prize1 || 0) + '</span></div>'
-            + ri + rp
-            + '</div>';
-        }
-        var teamStr = r.team_name  ? '<span>👥 ' + r.team_name + '</span>'        : '';
-        var uidStr  = r.game_uids && r.game_uids[0] ? '<span>🎮 ' + r.game_uids[0] + '</span>' : '';
-        list.innerHTML += '<div class="history-item' + (upcoming ? ' upcoming' : '') + '">'
-          + '<div class="hist-top">'
-          + '<div class="hist-name">' + (r.tournament_name || 'Tournament') + '</div>'
-          + '<span class="hist-badge ' + (upcoming ? 'upcoming-badge' : 'played-badge') + '">' + (upcoming ? '⏰ Upcoming' : 'Played') + '</span>'
-          + '</div>'
-          + roomRow
-          + '<div class="hist-meta"><span>📅 ' + date + '</span><span>💵 ৳' + (r.entry_paid || 0) + '</span>' + teamStr + uidStr + '</div>'
-          + '</div>';
+        var t       = tMap[r.tournament_id]||{};
+        var tTime   = t.time?new Date(t.time):null;
+        var upcoming= tTime&&tTime>now&&t.status==='open';
+        var date    = r.created_at&&r.created_at.toDate?r.created_at.toDate().toLocaleDateString('en-GB'):'—';
+        var mode    = t.teamType==1?'Solo':t.teamType==2?'Duo':'Squad';
+        var timeStr = tTime?tTime.toLocaleString('en-US',{weekday:'short',day:'2-digit',month:'short',hour:'numeric',minute:'2-digit',hour12:true}):'';
+        var cd='';
+        if(upcoming){var d=tTime-now;var h=Math.floor(d/3600000);var m=Math.floor(d%3600000/60000);cd=h>0?h+'h '+m+'m':m>0?m+' min':'Starting soon!';}
+        var ri=t.roomID?'<div class="ui-item"><span class="ui-label">🔑 Room ID</span><span class="ui-val">'+t.roomID+'</span></div>':'';
+        var rp=t.roomPass?'<div class="ui-item"><span class="ui-label">🔒 Password</span><span class="ui-val">'+t.roomPass+'</span></div>':'';
+        var upBlock=upcoming?'<div class="countdown-chip"><span class="cdot"></span>Starts in '+cd+'</div>'
+          +'<div class="upcoming-info-grid">'
+          +'<div class="ui-item"><span class="ui-label">📅 Time</span><span class="ui-val">'+timeStr+'</span></div>'
+          +'<div class="ui-item"><span class="ui-label">🗺️ Mode</span><span class="ui-val">'+mode+'</span></div>'
+          +'<div class="ui-item"><span class="ui-label">🏆 1st</span><span class="ui-val">৳'+(t.prize1||0)+'</span></div>'+ri+rp+'</div>':'';
+        list.innerHTML+='<div class="history-item'+(upcoming?' upcoming':'')+'"><div class="hist-top">'
+          +'<div class="hist-name">'+(r.tournament_name||'Tournament')+'</div>'
+          +'<span class="hist-badge '+(upcoming?'upcoming-badge':'played-badge')+'">'+(upcoming?'⏰ Upcoming':'Played')+'</span>'
+          +'</div>'+upBlock
+          +'<div class="hist-meta"><span>📅 '+date+'</span><span>💵 ৳'+(r.entry_paid||0)+'</span>'
+          +(r.team_name?'<span>👥 '+r.team_name+'</span>':'')
+          +(r.game_uids&&r.game_uids[0]?'<span>🎮 '+r.game_uids[0]+'</span>':'')+'</div></div>';
       });
-    } catch(e) {
-      list.innerHTML = '<div class="no-tx" style="color:var(--danger)">Could not load tournaments.</div>';
-    }
+    } catch(e) { list.innerHTML='<div class="no-tx" style="color:var(--danger)">Could not load.</div>'; }
   }
 
-  // ─── PROFILE EDIT ─────────────────────────────────────────────────────────
+  // ─── EDIT PROFILE ─────────────────────────────────────────────────────────
   window.toggleEdit = function() {
-    editOpen = !editOpen;
-    $('edit-panel').classList.toggle('open', editOpen);
+    editOpen=!editOpen;
+    el('edit-panel').classList.toggle('open',editOpen);
   };
-
   window.setReauthMethod = function(m) {
-    reauthMethod = m;
-    $('reauth-pass-btn').classList.toggle('active',   m === 'password');
-    $('reauth-google-btn').classList.toggle('active', m === 'google');
-    $('password-field').style.display = (m === 'password') ? 'block' : 'none';
+    reauthMethod=m;
+    el('reauth-pass-btn').classList.toggle('active',m==='password');
+    el('reauth-google-btn').classList.toggle('active',m==='google');
+    el('password-field').style.display=(m==='password')?'block':'none';
   };
-
   window.saveProfile = async function() {
-    var name = $('input-name').value.trim();
-    var wa   = $('input-whatsapp').value.trim();
-    var gn   = $('input-game-name').value.trim();
-    var nu   = $('input-uid').value.trim();
-
-    if (!name)                                  { showMsg('edit-msg', 'Enter your name.', 'error');               return; }
-    if (!wa || wa.replace(/\D/g,'').length < 11){ showMsg('edit-msg', 'Enter valid 11-digit WhatsApp.', 'error'); return; }
-    if (!gn)                                    { showMsg('edit-msg', 'Enter your game name.', 'error');           return; }
-
-    var ref = doc(db, 'users', currentUser.uid);
-    var upd = { name: name, whatsapp: wa, game_name: gn };
-
-    if (nu && nu !== (userData.uid_game || '')) {
+    var name = el('input-name').value.trim();
+    var wa   = el('input-whatsapp').value.trim();
+    var nu   = el('input-uid').value.trim();
+    if (!name){ showMsg('edit-msg','Enter your name.','error'); return; }
+    if (!wa||wa.replace(/\D/g,'').length<11){ showMsg('edit-msg','Enter valid 11-digit WhatsApp.','error'); return; }
+    var ref = doc(db,'users',currentUser.uid);
+    var upd = { name:name, whatsapp:wa };
+    // Game name is auto-fetched from UID — read-only field, updated only when UID changes
+    if (nu && nu!==(userData.uid_game||'')) {
+      if (!/^\d{10}$/.test(nu)){ showMsg('edit-msg','UID must be exactly 10 digits.','error'); return; }
       if (userData.uid_changed) {
-        if (!reauthMethod) { showMsg('edit-msg', 'Choose a verification method.', 'error'); return; }
+        if (!reauthMethod){ showMsg('edit-msg','Choose verification method.','error'); return; }
         try {
-          if (reauthMethod === 'password') {
-            var pw = $('input-password').value;
-            if (!pw) { showMsg('edit-msg', 'Enter your password.', 'error'); return; }
-            await reauthenticateWithCredential(currentUser, EmailAuthProvider.credential(currentUser.email, pw));
-          } else {
-            await reauthenticateWithPopup(currentUser, new GoogleAuthProvider());
-          }
-        } catch(e) { showMsg('edit-msg', 'Verification failed!', 'error'); return; }
+          if (reauthMethod==='password') {
+            var pw = el('input-password').value;
+            if (!pw){ showMsg('edit-msg','Enter password.','error'); return; }
+            await reauthenticateWithCredential(currentUser, EmailAuthProvider.credential(currentUser.email,pw));
+          } else { await reauthenticateWithPopup(currentUser, new GoogleAuthProvider()); }
+        } catch(e){ showMsg('edit-msg','Verification failed!','error'); return; }
       }
       upd.uid_game    = nu;
       upd.uid_changed = true;
+      // Save fetched game name if we got one, otherwise keep existing
+      if (fetchedGameName) upd.game_name = fetchedGameName;
     }
-
     try {
       await updateDoc(ref, upd);
       userData = Object.assign({}, userData, upd);
-      $('display-game-name').textContent = gn;
-      $('display-name').textContent      = '👤 ' + name;
-      $('display-whatsapp').textContent  = '📱 ' + wa;
-      $('avatar-text').textContent       = gn.charAt(0).toUpperCase();
+      el('display-game-name').textContent = upd.game_name || userData.game_name || 'PLAYER';
+      el('display-name').textContent      = '👤 '+name;
+      el('display-whatsapp').textContent  = '📱 '+wa;
+      el('avatar-text').textContent       = (upd.game_name||userData.game_name||'P').charAt(0).toUpperCase();
       if (upd.uid_game) {
-        $('display-uid').textContent         = '🎮 UID: ' + nu;
-        $('reauth-section').style.display    = 'block';
-        $('uid-note').textContent            = 'UID already changed once. Verify identity to change again.';
+        el('display-uid').textContent = '🎮 UID: '+nu;
+        el('reauth-section').style.display='block';
+        el('uid-note').textContent='UID changed once before — verify identity to change again.';
       }
-      showMsg('edit-msg', 'Saved! ✅', 'success');
-      setTimeout(function() { toggleEdit(); }, 1200);
-    } catch(e) {
-      showMsg('edit-msg', 'Save failed: ' + (e.message || 'Error'), 'error');
-    }
+      showMsg('edit-msg','Saved! ✅','success');
+      setTimeout(function(){ toggleEdit(); },1200);
+    } catch(e){ showMsg('edit-msg','Save failed.','error'); }
   };
 
-  // ─── DEPOSIT ──────────────────────────────────────────────────────────────
+  // ─── DEPOSIT — per method settings ────────────────────────────────────────
   window.openDeposit = function() {
-    selDepMethod = '';
-    ['btn-bkash','btn-nagad','btn-rocket'].forEach(function(i){ $(i).classList.remove('selected'); });
-    $('pay-info').classList.remove('show');
-    $('deposit-amount').value  = '';
-    $('deposit-txid').value    = '';
-    $('deposit-msg').className = 'msg';
-    $('deposit-modal').classList.add('open');
+    selDepMethod='';
+    ['btn-bkash','btn-nagad','btn-rocket'].forEach(function(i){ el(i).classList.remove('selected'); });
+    el('pay-info').classList.remove('show');
+    el('deposit-amount').value='';
+    el('deposit-txid').value='';
+    el('deposit-msg').className='msg2';
+    el('deposit-modal').classList.add('open');
   };
-
   window.selectDepMethod = function(m) {
-    selDepMethod = m;
-    ['btn-bkash','btn-nagad','btn-rocket'].forEach(function(i){ $(i).classList.remove('selected'); });
-    $('btn-' + m).classList.add('selected');
-    $('dep-method-name').textContent = m === 'bkash' ? 'bKash' : m === 'nagad' ? 'Nagad' : 'Rocket';
-    $('dep-send-type').textContent   = (adminPayment && adminPayment.send_type) ? adminPayment.send_type : 'Send Money';
-    $('dep-number').textContent      = (adminPayment && adminPayment.number)    ? adminPayment.number    : 'Not configured';
-    $('pay-info').classList.add('show');
+    selDepMethod=m;
+    ['btn-bkash','btn-nagad','btn-rocket'].forEach(function(i){ el(i).classList.remove('selected'); });
+    el('btn-'+m).classList.add('selected');
+    var label = m==='bkash'?'bKash':m==='nagad'?'Nagad':'Rocket';
+    el('dep-method-name').textContent = label;
+    // Load per-method settings saved by admin
+    var mData = paySettings[m] || {};
+    el('dep-send-type').textContent = mData.send_type || 'Send Money';
+    el('dep-number').textContent    = mData.number    || 'Not configured';
+    el('pay-info').classList.add('show');
   };
-
   window.submitDeposit = async function() {
-    var amt  = parseInt($('deposit-amount').value);
-    var txid = $('deposit-txid').value.trim();
-    if (!amt  || amt < 10)  { showMsg('deposit-msg', 'Minimum deposit is 10 TK.',     'error'); return; }
-    if (!selDepMethod)       { showMsg('deposit-msg', 'Select a payment method.',       'error'); return; }
-    if (!txid)               { showMsg('deposit-msg', 'Enter your Transaction ID.',    'error'); return; }
+    var amt  = parseInt(el('deposit-amount').value);
+    var txid = el('deposit-txid').value.trim();
+    if (!amt||amt<10)   { showMsg2('deposit-msg','Minimum deposit 10 TK.','error'); return; }
+    if (!selDepMethod)  { showMsg2('deposit-msg','Select a payment method.','error'); return; }
+    if (!txid)          { showMsg2('deposit-msg','Enter Transaction ID.','error'); return; }
     try {
-      await addDoc(collection(db, 'transactions'), {
-        uid: currentUser.uid, email: currentUser.email,
-        name: userData.name || '', whatsapp: userData.whatsapp || '',
-        amount: amt, method: selDepMethod, txid: txid,
-        type: 'deposit', status: 'pending', created_at: serverTimestamp()
+      await addDoc(collection(db,'transactions'),{
+        uid:currentUser.uid, email:currentUser.email,
+        name:userData.name||'', whatsapp:userData.whatsapp||'',
+        amount:amt, method:selDepMethod, txid:txid,
+        type:'deposit', status:'pending', created_at:serverTimestamp()
       });
-      showMsg('deposit-msg', '✅ Submitted! Admin will verify soon.', 'success');
-      setTimeout(function() { closeModal('deposit-modal'); loadTransactions(currentUser.uid); }, 1800);
-    } catch(e) {
-      showMsg('deposit-msg', 'Failed. Try again.', 'error');
-    }
+      showMsg2('deposit-msg','✅ Submitted! Admin will verify.','success');
+      setTimeout(function(){ closeModal('deposit-modal'); loadTransactions(currentUser.uid); },1800);
+    } catch(e){ showMsg2('deposit-msg','Failed. Try again.','error'); }
   };
 
   // ─── WITHDRAW ─────────────────────────────────────────────────────────────
   window.openWithdraw = function() {
-    selWdMethod = '';
-    ['wbtn-bkash','wbtn-nagad','wbtn-rocket'].forEach(function(i){ $(i).classList.remove('selected'); });
-    $('withdraw-amount').value  = '';
-    $('withdraw-number').value  = '';
-    $('withdraw-msg').className = 'msg';
-    $('withdraw-modal').classList.add('open');
+    selWdMethod='';
+    ['wbtn-bkash','wbtn-nagad','wbtn-rocket'].forEach(function(i){ el(i).classList.remove('selected'); });
+    el('withdraw-amount').value='';
+    el('withdraw-number').value='';
+    el('withdraw-msg').className='msg2';
+    el('withdraw-modal').classList.add('open');
   };
-
   window.selectWdMethod = function(m) {
-    selWdMethod = m;
-    ['wbtn-bkash','wbtn-nagad','wbtn-rocket'].forEach(function(i){ $(i).classList.remove('selected'); });
-    $('wbtn-' + m).classList.add('selected');
+    selWdMethod=m;
+    ['wbtn-bkash','wbtn-nagad','wbtn-rocket'].forEach(function(i){ el(i).classList.remove('selected'); });
+    el('wbtn-'+m).classList.add('selected');
   };
-
   window.submitWithdraw = async function() {
-    var amt  = parseInt($('withdraw-amount').value);
-    var num  = $('withdraw-number').value.trim();
-    var snap = await getDoc(doc(db, 'users', currentUser.uid));
-    var bal  = (snap.data() && snap.data().balance) ? snap.data().balance : 0;
-    if (!amt || amt < 50)                           { showMsg('withdraw-msg', 'Minimum withdrawal is 50 TK.', 'error'); return; }
-    if (!selWdMethod)                               { showMsg('withdraw-msg', 'Select a payment method.',     'error'); return; }
-    if (!num || num.replace(/\D/g,'').length < 11)  { showMsg('withdraw-msg', 'Enter a valid number.',        'error'); return; }
-    if (amt > bal)                                  { showMsg('withdraw-msg', 'Insufficient balance!',        'error'); return; }
+    var amt  = parseInt(el('withdraw-amount').value);
+    var num  = el('withdraw-number').value.trim();
+    var snap = await getDoc(doc(db,'users',currentUser.uid));
+    var bal  = snap.data()&&snap.data().balance?snap.data().balance:0;
+    if (!amt||amt<50)                          { showMsg2('withdraw-msg','Minimum 50 TK.','error'); return; }
+    if (!selWdMethod)                          { showMsg2('withdraw-msg','Select a method.','error'); return; }
+    if (!num||num.replace(/\D/g,'').length<11) { showMsg2('withdraw-msg','Enter valid number.','error'); return; }
+    if (amt>bal)                               { showMsg2('withdraw-msg','Insufficient balance!','error'); return; }
     try {
-      await addDoc(collection(db, 'transactions'), {
-        uid: currentUser.uid, email: currentUser.email,
-        name: userData.name || '', whatsapp: userData.whatsapp || '',
-        amount: amt, method: selWdMethod, number: num,
-        type: 'withdraw', status: 'pending', created_at: serverTimestamp()
+      await addDoc(collection(db,'transactions'),{
+        uid:currentUser.uid, email:currentUser.email,
+        name:userData.name||'', whatsapp:userData.whatsapp||'',
+        amount:amt, method:selWdMethod, number:num,
+        type:'withdraw', status:'pending', created_at:serverTimestamp()
       });
-      await updateDoc(doc(db, 'users', currentUser.uid), { balance: bal - amt });
-      $('wallet-balance').textContent = bal - amt;
-      userData.balance = bal - amt;
-      showMsg('withdraw-msg', '✅ Request sent! Admin will send money shortly.', 'success');
-      setTimeout(function() { closeModal('withdraw-modal'); loadTransactions(currentUser.uid); }, 1800);
-    } catch(e) {
-      showMsg('withdraw-msg', 'Failed. Try again.', 'error');
-    }
+      await updateDoc(doc(db,'users',currentUser.uid),{ balance:bal-amt });
+      el('wallet-balance').textContent = bal-amt;
+      userData.balance = bal-amt;
+      showMsg2('withdraw-msg','✅ Request sent! Admin will pay shortly.','success');
+      setTimeout(function(){ closeModal('withdraw-modal'); loadTransactions(currentUser.uid); },1800);
+    } catch(e){ showMsg2('withdraw-msg','Failed. Try again.','error'); }
   };
 
-  window.closeModal = function(id) { $(id).classList.remove('open'); };
+  window.closeModal = function(id){ el(id).classList.remove('open'); };
+  window.doLogout   = async function(){ try{await signOut(auth);}catch(e){} window.location.href='index.html'; };
 
-  window.doLogout = async function() {
-    try { await signOut(auth); } catch(e) {}
-    window.location.href = 'index.html';
-  };
-
-  function showMsg(id, msg, type) {
-    var el = $(id);
-    el.textContent = msg;
-    el.className   = 'msg ' + type;
-    setTimeout(function() {
-      if (el.className.indexOf('msg') >= 0) el.className = 'msg';
-    }, 4500);
-  }
+  function showMsg(id,msg,type){ var e=el(id); e.textContent=msg; e.className='msg '+type; setTimeout(function(){ e.className='msg'; },4500); }
+  function showMsg2(id,msg,type){ var e=el(id); e.textContent=msg; e.className='msg2 '+type; setTimeout(function(){ e.className='msg2'; },4500); }
 </script>
 </body>
 </html>
