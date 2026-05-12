@@ -7,26 +7,39 @@
   <link href="https://fonts.googleapis.com/css2?family=Teko:wght@400;600;700&family=Oswald:wght@400;500;700&display=swap" rel="stylesheet"/>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-    :root{--amber:#b8860b;--amber-deep:#6b4f00;--gold:#fecb00;--dark:#000;--card:rgba(20,20,20,0.97);--border:#333;--text:#fff;--muted:#999;--green:#5CFF8A;--danger:#FF6B6B}
-    body{
-      font-family:'Oswald',sans-serif;background:#0a0a0a;color:var(--text);min-height:100vh;padding-bottom:90px;
-      background-image:linear-gradient(to bottom,rgba(0,0,0,0.9),rgba(0,0,0,0.97));
-      background-size:cover;background-position:center;background-attachment:fixed;
-    }
+    :root{--amber:#b8860b;--amber-deep:#6b4f00;--gold:#fecb00;--card:rgba(20,20,20,0.97);--border:#333;--text:#fff;--muted:#999;--green:#5CFF8A;--danger:#FF6B6B}
+    body{font-family:'Oswald',sans-serif;background:#0a0a0a;color:var(--text);min-height:100vh;padding-bottom:90px;background-image:linear-gradient(to bottom,rgba(0,0,0,0.9),rgba(0,0,0,0.97));background-size:cover;background-attachment:fixed}
     .header{background:linear-gradient(180deg,rgba(0,0,0,0.97),rgba(10,10,10,0.9));border-bottom:2px solid var(--gold);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
     .logo-wrap{display:flex;align-items:center;gap:10px}
     .logo-img{width:40px;height:40px;border-radius:6px;border:2px solid var(--gold);object-fit:cover}
     .header-title{font-family:'Teko',sans-serif;font-size:24px;color:var(--gold);text-transform:uppercase;letter-spacing:2px}
     .wallet-badge{background:linear-gradient(180deg,var(--amber),var(--amber-deep));border:1px solid var(--gold);padding:6px 14px;border-radius:6px;font-family:'Teko';font-size:18px;color:var(--gold);letter-spacing:1px}
     .content{padding:14px;max-width:500px;margin:0 auto}
-    .filter-row{display:flex;gap:8px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px}
-    .filter-btn{padding:7px 16px;border-radius:5px;border:1px solid var(--border);background:rgba(0,0,0,0.5);color:var(--muted);font-family:'Teko';font-size:14px;letter-spacing:1px;cursor:pointer;white-space:nowrap;transition:0.2s;text-transform:uppercase}
+
+    /* FILTER ROW — team type + game mode */
+    .filter-row{display:flex;gap:8px;margin-bottom:8px;overflow-x:auto;padding-bottom:4px}
+    .filter-btn{padding:7px 14px;border-radius:5px;border:1px solid var(--border);background:rgba(0,0,0,0.5);color:var(--muted);font-family:'Teko';font-size:14px;letter-spacing:1px;cursor:pointer;white-space:nowrap;text-transform:uppercase;flex-shrink:0}
     .filter-btn.active{border-color:var(--gold);background:rgba(254,203,0,0.1);color:var(--gold)}
+    .filter-label{font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:5px;padding-left:2px}
+
+    /* GAME MODE CHIPS */
+    .mode-chip-row{display:flex;gap:8px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px}
+    .mode-chip{padding:7px 14px;border-radius:20px;border:1px solid var(--border);background:rgba(0,0,0,0.5);color:var(--muted);font-family:'Teko';font-size:13px;letter-spacing:1px;cursor:pointer;white-space:nowrap;text-transform:uppercase;flex-shrink:0;display:flex;align-items:center;gap:5px}
+    .mode-chip.active{border-color:var(--gold);background:rgba(254,203,0,0.1);color:var(--gold)}
+    .mode-chip.classic.active{border-color:#FF9500;background:rgba(255,149,0,0.12);color:#FF9500}
+    .mode-chip.clash.active{border-color:#FF6B6B;background:rgba(255,107,107,0.12);color:#FF6B6B}
+    .mode-chip.lone.active{border-color:var(--green);background:rgba(92,255,138,0.1);color:var(--green)}
+
     .t-card{background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:14px;overflow:hidden;position:relative;box-shadow:0 5px 20px rgba(0,0,0,0.6)}
     .t-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--amber),var(--gold),var(--amber))}
-    .t-card-header{background:linear-gradient(135deg,rgba(184,134,11,0.25),rgba(254,203,0,0.08),rgba(0,0,0,0.5));padding:14px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start}
-    .t-name{font-family:'Teko',sans-serif;font-size:22px;color:#fff;letter-spacing:2px;text-transform:uppercase}
-    .t-mode-badge{background:rgba(254,203,0,0.15);border:1px solid var(--gold);color:var(--gold);font-family:'Teko';font-size:13px;padding:3px 10px;border-radius:4px;letter-spacing:1px;text-transform:uppercase}
+    .t-card-header{background:linear-gradient(135deg,rgba(184,134,11,0.25),rgba(254,203,0,0.08),rgba(0,0,0,0.5));padding:14px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+    .t-name{font-family:'Teko',sans-serif;font-size:22px;color:#fff;letter-spacing:2px;text-transform:uppercase;flex:1}
+    .t-badges{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}
+    .t-mode-badge{background:rgba(254,203,0,0.15);border:1px solid var(--gold);color:var(--gold);font-family:'Teko';font-size:12px;padding:2px 8px;border-radius:4px;letter-spacing:1px;text-transform:uppercase}
+    .t-game-mode-badge{font-family:'Teko';font-size:11px;padding:2px 8px;border-radius:4px;letter-spacing:1px;text-transform:uppercase}
+    .t-game-mode-badge.classic{background:rgba(255,149,0,0.15);border:1px solid #FF9500;color:#FF9500}
+    .t-game-mode-badge.clash{background:rgba(255,107,107,0.15);border:1px solid #FF6B6B;color:#FF6B6B}
+    .t-game-mode-badge.lone{background:rgba(92,255,138,0.12);border:1px solid var(--green);color:var(--green)}
     .t-body{padding:14px 16px}
     .info-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px}
     .info-item{background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:7px;padding:8px 10px;text-align:center}
@@ -43,39 +56,42 @@
     .progress-wrap{margin-bottom:12px}
     .progress-label{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:5px;letter-spacing:1px;text-transform:uppercase}
     .progress-bar{height:6px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden;border:1px solid var(--border)}
-    .progress-fill{height:100%;background:linear-gradient(90deg,var(--amber),var(--gold));border-radius:3px;transition:width 0.5s ease}
+    .progress-fill{height:100%;background:linear-gradient(90deg,var(--amber),var(--gold));border-radius:3px}
+    /* JOIN button — default gold */
     .btn-join{width:100%;padding:13px;border:1px solid var(--gold);border-radius:7px;background:linear-gradient(180deg,var(--amber),var(--amber-deep));color:var(--gold);font-family:'Teko';font-size:20px;letter-spacing:3px;cursor:pointer;text-transform:uppercase}
-    .btn-join:disabled{background:#222;color:#555;border-color:#333;cursor:not-allowed}
+    /* JOINED state — green */
+    .btn-join.joined{background:linear-gradient(180deg,#2ecc71,#1a8a47);border-color:var(--green);color:#000;cursor:default;letter-spacing:2px}
+    .btn-join:disabled:not(.joined){background:#222;color:#555;border-color:#333;cursor:not-allowed}
     .empty-state{text-align:center;color:var(--muted);padding:60px 20px;font-size:14px}
 
     /* MODAL */
-    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:200;align-items:flex-end;justify-content:center}
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:500;align-items:flex-end;justify-content:center}
     .modal-overlay.open{display:flex}
-    .modal{background:#111;border:1px solid var(--gold);border-radius:16px 16px 0 0;padding:0;width:100%;max-width:500px;animation:slideUp 0.3s ease both;border-top:3px solid var(--gold);max-height:92vh;overflow:hidden;display:flex;flex-direction:column}
+    .modal{background:#111;border:1px solid var(--gold);border-radius:16px 16px 0 0;width:100%;max-width:500px;animation:slideUp 0.28s ease both;border-top:3px solid var(--gold);height:88vh;display:flex;flex-direction:column}
     @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-
-    /* MODAL TABS */
     .modal-tab-bar{display:flex;border-bottom:1px solid var(--border);flex-shrink:0}
-    .modal-tab{flex:1;padding:13px 8px;text-align:center;font-family:'Teko';font-size:16px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);border:none;background:transparent;cursor:pointer;border-bottom:2px solid transparent;transition:0.2s}
+    .modal-tab{flex:1;padding:13px 8px;text-align:center;font-family:'Teko';font-size:16px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);border:none;background:transparent;cursor:pointer;border-bottom:2px solid transparent}
     .modal-tab.active{color:var(--gold);border-bottom:2px solid var(--gold)}
-    .modal-body{overflow-y:auto;padding:18px;flex:1}
+    .modal-scroll{overflow-y:auto;padding:18px;flex:1}
+    .modal-foot{padding:12px 16px 16px;border-top:1px solid var(--border);flex-shrink:0;background:#111;display:flex;gap:10px}
     .modal-title{font-family:'Teko',sans-serif;font-size:24px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px}
     .modal-sub{color:var(--muted);font-size:12px;margin-bottom:14px;letter-spacing:1px}
     .fee-box{background:rgba(184,134,11,0.1);border:1px solid rgba(184,134,11,0.4);border-radius:8px;padding:12px;margin-bottom:14px;text-align:center}
     .fee-label{font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:3px}
     .fee-amount{font-family:'Teko',sans-serif;font-size:34px;color:var(--gold)}
     .m-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:6px;display:block}
-    .m-input{width:100%;background:#000;border:1px solid var(--border);padding:11px 13px;border-radius:7px;color:#fff;font-family:'Oswald';font-size:14px;outline:none;margin-bottom:12px;transition:border-color 0.2s}
+    .m-input{width:100%;background:#000;border:1px solid var(--border);padding:11px 13px;border-radius:7px;color:#fff;font-family:'Oswald';font-size:14px;outline:none;margin-bottom:12px}
     .m-input:focus{border-color:var(--gold)}
     .m-input::placeholder{color:#555}
-    .m-input.uid-val:focus{border-color:var(--gold)}
-    .m-btn{width:100%;padding:13px;border:1px solid var(--gold);border-radius:7px;background:linear-gradient(180deg,var(--amber),var(--amber-deep));color:var(--gold);font-family:'Teko';font-size:20px;letter-spacing:2px;cursor:pointer;margin-bottom:10px;text-transform:uppercase}
-    .m-cancel{width:100%;padding:11px;border:1px solid var(--border);border-radius:7px;background:transparent;color:var(--muted);font-family:'Oswald';font-size:14px;font-weight:700;cursor:pointer}
+    .m-btn{flex:1;padding:13px;border:1px solid var(--gold);border-radius:7px;background:linear-gradient(180deg,var(--amber),var(--amber-deep));color:var(--gold);font-family:'Teko';font-size:20px;letter-spacing:2px;cursor:pointer;text-transform:uppercase}
+    .m-cancel{flex:0 0 auto;padding:13px 18px;border:1px solid var(--border);border-radius:7px;background:transparent;color:var(--muted);font-family:'Oswald';font-size:14px;font-weight:700;cursor:pointer}
     .msg{text-align:center;padding:8px;border-radius:6px;font-size:13px;font-weight:600;display:none;margin-bottom:10px}
     .msg.error{display:block;background:rgba(255,50,50,0.1);border:1px solid rgba(255,50,50,0.3);color:var(--danger)}
     .msg.success{display:block;background:rgba(92,255,138,0.1);border:1px solid rgba(92,255,138,0.3);color:var(--green)}
+    .profile-warn{background:rgba(255,107,107,0.12);border:1px solid rgba(255,107,107,0.4);border-radius:8px;padding:12px;margin-bottom:14px;font-size:13px;color:var(--danger);text-align:center;display:none}
+    .profile-warn a{color:var(--gold);font-weight:700;text-decoration:underline}
 
-    /* RULES TAB */
+    /* RULES */
     .rules-list{list-style:none;padding:0}
     .rules-list li{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;color:#ccc;line-height:1.5}
     .rules-list li:last-child{border-bottom:none}
@@ -89,10 +105,6 @@
     .nav-item.active .nav-icon{filter:drop-shadow(0 0 6px rgba(254,203,0,0.7))}
     .tagline{text-align:center;font-family:'Teko';font-size:13px;color:var(--muted);letter-spacing:3px;padding:10px 0;text-transform:uppercase}
     .tagline span{color:var(--gold)}
-
-    /* Profile warning banner */
-    .profile-warn{background:rgba(255,107,107,0.12);border:1px solid rgba(255,107,107,0.4);border-radius:8px;padding:12px;margin-bottom:14px;font-size:13px;color:var(--danger);text-align:center;display:none}
-    .profile-warn a{color:var(--gold);font-weight:700;text-decoration:underline}
   </style>
 </head>
 <body>
@@ -106,12 +118,22 @@
 </div>
 
 <div class="content">
+  <!-- TEAM TYPE FILTER -->
+  <div class="filter-label">Team Type</div>
   <div class="filter-row">
-    <button class="filter-btn active" onclick="filterT('all',this)">All</button>
-    <button class="filter-btn" onclick="filterT('1',this)">Solo</button>
-    <button class="filter-btn" onclick="filterT('2',this)">Duo</button>
-    <button class="filter-btn" onclick="filterT('4',this)">Squad</button>
-    <button class="filter-btn" onclick="filterT('free',this)">Free</button>
+    <button class="filter-btn active" onclick="setTypeFilter('all',this)">All</button>
+    <button class="filter-btn" onclick="setTypeFilter('1',this)">Solo</button>
+    <button class="filter-btn" onclick="setTypeFilter('2',this)">Duo</button>
+    <button class="filter-btn" onclick="setTypeFilter('4',this)">Squad</button>
+    <button class="filter-btn" onclick="setTypeFilter('free',this)">Free</button>
+  </div>
+  <!-- GAME MODE FILTER -->
+  <div class="filter-label">Game Mode</div>
+  <div class="mode-chip-row">
+    <button class="mode-chip active" onclick="setModeFilter('all',this)">🎮 All Modes</button>
+    <button class="mode-chip classic" onclick="setModeFilter('classic',this)">🗺️ Classic</button>
+    <button class="mode-chip clash"   onclick="setModeFilter('clash',this)">⚔️ Clash Squad</button>
+    <button class="mode-chip lone"    onclick="setModeFilter('lone',this)">🐺 Lone Wolf</button>
   </div>
   <div id="tournament-list"><div class="empty-state">⏳ Loading tournaments...</div></div>
   <div class="tagline">PLAY HARD • STAY PRO • <span>BOOYAH!</span></div>
@@ -123,54 +145,51 @@
   <button class="nav-item" onclick="window.location.href='dashboard.html'"><span class="nav-icon">👤</span>Profile</button>
 </nav>
 
-<!-- JOIN MODAL with tabs -->
+<!-- JOIN MODAL -->
 <div class="modal-overlay" id="join-modal">
   <div class="modal">
-    <!-- Tab Bar -->
     <div class="modal-tab-bar">
-      <button class="modal-tab active" id="tab-join-btn" onclick="switchModalTab('join')">🎮 Join</button>
-      <button class="modal-tab" id="tab-rules-btn" onclick="switchModalTab('rules')">📋 Rules</button>
+      <button class="modal-tab active" id="tab-join-btn" onclick="switchTab('join')">🎮 Join</button>
+      <button class="modal-tab"        id="tab-rules-btn" onclick="switchTab('rules')">📋 Rules</button>
     </div>
-
     <!-- JOIN TAB -->
-    <div class="modal-body" id="tab-join">
+    <div class="modal-scroll" id="tab-join">
       <div class="modal-title" id="join-title">Join Tournament</div>
-      <div class="modal-sub" id="join-sub"></div>
+      <div class="modal-sub"   id="join-sub"></div>
       <div class="fee-box">
         <div class="fee-label">Entry Fee</div>
         <div class="fee-amount">৳ <span id="join-fee">0</span></div>
       </div>
-
-      <!-- Profile warning shown if game name/UID not set -->
       <div class="profile-warn" id="profile-warn">
-        ⚠️ Please set your <b>Game Name</b> and <b>Game UID</b> in your profile before joining.<br>
+        ⚠️ Please set your <b>Game UID</b> in your profile before joining.<br>
         <a href="dashboard.html">Go to Profile →</a>
       </div>
-
       <span class="m-label">Your Name</span>
       <input type="text" class="m-input" id="join-name" placeholder="Your full name"/>
       <span class="m-label">WhatsApp Number</span>
       <input type="tel" class="m-input" id="join-whatsapp" placeholder="01XXXXXXXXX"/>
       <div id="uid-inputs"></div>
       <div class="msg" id="join-msg"></div>
-      <button class="m-btn" id="confirm-join-btn" onclick="confirmJoin()">Confirm &amp; Join</button>
-      <button class="m-cancel" onclick="document.getElementById('join-modal').classList.remove('open')">Cancel</button>
     </div>
-
     <!-- RULES TAB -->
-    <div class="modal-body" id="tab-rules" style="display:none">
+    <div class="modal-scroll" id="tab-rules" style="display:none">
       <div class="modal-title">📋 Tournament Rules</div>
       <div class="modal-sub" style="margin-bottom:16px">Please read carefully before joining</div>
       <ul class="rules-list">
-        <li><span class="rule-num">1</span><span>All players must use the <b style="color:var(--gold)">exact Game UID</b> registered in their profile. Any mismatch may result in disqualification.</span></li>
-        <li><span class="rule-num">2</span><span>Players must join the room <b style="color:var(--gold)">at least 5 minutes before</b> match start time. Late entries will not be allowed.</span></li>
-        <li><span class="rule-num">3</span><span>Room ID & Password will be sent to your <b style="color:var(--gold)">WhatsApp number</b> before match start.</span></li>
-        <li><span class="rule-num">4</span><span>Any form of <b style="color:var(--danger)">hacking, teaming, or unsportsmanlike behavior</b> will lead to permanent ban from all tournaments.</span></li>
-        <li><span class="rule-num">5</span><span>For Squad/Duo matches, the <b style="color:var(--gold)">team leader</b> is responsible for all team members' conduct.</span></li>
-        <li><span class="rule-num">6</span><span>Entry fees are <b style="color:var(--danger)">non-refundable</b> once a match has started.</span></li>
-        <li><span class="rule-num">7</span><span>Prize money will be credited to your in-app wallet within <b style="color:var(--gold)">24 hours</b> of result declaration.</span></li>
-        <li><span class="rule-num">8</span><span>Admin decisions on results and disputes are <b style="color:var(--gold)">final and binding</b>.</span></li>
+        <li><span class="rule-num">1</span><span>Use the <b style="color:var(--gold)">exact Game UID</b> from your profile. Mismatches lead to disqualification.</span></li>
+        <li><span class="rule-num">2</span><span>Join the room <b style="color:var(--gold)">5 minutes before</b> start time. Late entries are not allowed.</span></li>
+        <li><span class="rule-num">3</span><span>Room ID & Password sent to your <b style="color:var(--gold)">WhatsApp</b> before match starts.</span></li>
+        <li><span class="rule-num">4</span><span><b style="color:var(--danger)">Hacking, teaming, or toxic behavior</b> results in a permanent ban.</span></li>
+        <li><span class="rule-num">5</span><span>For Squad/Duo, the <b style="color:var(--gold)">team leader</b> is responsible for all teammates' conduct.</span></li>
+        <li><span class="rule-num">6</span><span>Entry fees are <b style="color:var(--danger)">non-refundable</b> once a match starts.</span></li>
+        <li><span class="rule-num">7</span><span>Prize money credited to wallet within <b style="color:var(--gold)">24 hours</b> of result.</span></li>
+        <li><span class="rule-num">8</span><span>Admin decisions are <b style="color:var(--gold)">final and binding</b>.</span></li>
       </ul>
+    </div>
+    <!-- Footer: submit + cancel always visible -->
+    <div class="modal-foot" id="join-footer">
+      <button class="m-btn" id="confirm-join-btn" onclick="confirmJoin()">Confirm &amp; Join</button>
+      <button class="m-cancel" onclick="document.getElementById('join-modal').classList.remove('open')">Cancel</button>
     </div>
   </div>
 </div>
@@ -178,219 +197,242 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, doc, getDoc, updateDoc, getDocs, addDoc, collection, query, orderBy, increment, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, doc, getDoc, updateDoc, getDocs, addDoc, collection,
+           query, where, orderBy, increment, serverTimestamp }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-  const firebaseConfig = { apiKey:"AIzaSyBgMroBilivfk7bJxoz93HjxSt6yU7Ura0", authDomain:"tournament-app-4a050.firebaseapp.com", projectId:"tournament-app-4a050", storageBucket:"tournament-app-4a050.firebasestorage.app", messagingSenderId:"811957533858", appId:"1:811957533858:web:1d1f0f916c0aba5eccebfb" };
+  const cfg = {
+    apiKey:"AIzaSyBgMroBilivfk7bJxoz93HjxSt6yU7Ura0",
+    authDomain:"tournament-app-4a050.firebaseapp.com",
+    projectId:"tournament-app-4a050",
+    storageBucket:"tournament-app-4a050.firebasestorage.app",
+    messagingSenderId:"811957533858",
+    appId:"1:811957533858:web:1d1f0f916c0aba5eccebfb"
+  };
+  const app=initializeApp(cfg), auth=getAuth(app), db=getFirestore(app);
+  var currentUser=null, userData=null, userBalance=0;
+  var allTournaments=[], joinedIds=new Set(), selectedT=null;
+  var typeFilter='all', modeFilter='all';
 
-  const app=initializeApp(firebaseConfig), auth=getAuth(app), db=getFirestore(app);
-  let currentUser=null, userData=null, userBalance=0, allTournaments=[], selectedT=null;
+  function el(id){ return document.getElementById(id); }
 
-  onAuthStateChanged(auth, async (user) => {
-    if (!user) { window.location.href='index.html'; return; }
+  onAuthStateChanged(auth, async function(user){
+    if(!user){ window.location.href='index.html'; return; }
     currentUser=user;
-    const snap=await getDoc(doc(db,'users',user.uid));
-    if(snap.exists()){
-      userData=snap.data();
-      userBalance=userData.balance||0;
-      document.getElementById('nav-balance').textContent=userBalance;
-    }
+    var snap=await getDoc(doc(db,'users',user.uid));
+    if(snap.exists()){ userData=snap.data(); userBalance=userData.balance||0; el('nav-balance').textContent=userBalance; }
+    // Load which tournaments this user already joined
+    await loadJoined();
     await loadTournaments();
-    setInterval(()=>renderTournaments(allTournaments), 60000);
+    setInterval(function(){ loadTournaments(); }, 60000);
+
+    // Check URL param for mode filter from home page
+    var params=new URLSearchParams(window.location.search);
+    var modeParam=params.get('mode');
+    if(modeParam){
+      var chip=document.querySelector('.mode-chip.'+modeParam);
+      if(chip){ modeFilter=modeParam; document.querySelectorAll('.mode-chip').forEach(function(c){c.classList.remove('active')}); chip.classList.add('active'); }
+    }
   });
 
-  async function loadTournaments() {
-    const snap=await getDocs(query(collection(db,'tournaments'),orderBy('time','asc')));
+  async function loadJoined(){
+    joinedIds.clear();
+    try{
+      var snap=await getDocs(query(collection(db,'registrations'),where('uid','==',currentUser.uid)));
+      snap.forEach(function(d){ joinedIds.add(d.data().tournament_id); });
+    }catch(e){}
+  }
+
+  async function loadTournaments(){
+    var snap;
+    try{ snap=await getDocs(query(collection(db,'tournaments'),orderBy('time','asc'))); }
+    catch(e){ snap=await getDocs(collection(db,'tournaments')); }
     allTournaments=[];
-    snap.forEach(d=>allTournaments.push({id:d.id,...d.data()}));
-    renderTournaments(allTournaments);
+    snap.forEach(function(d){ allTournaments.push(Object.assign({id:d.id},d.data())); });
+    renderTournaments();
   }
 
-  function isExpired(t) {
-    if(!t.time) return false;
-    const startTime=new Date(t.time);
-    const now=new Date();
-    const diffMins=(now-startTime)/1000/60;
-    return diffMins>=1;
+  function getGameModeKey(t){
+    var m=(t.game_mode||'').toLowerCase();
+    if(m.includes('clash')) return 'clash';
+    if(m.includes('lone')||m.includes('wolf')) return 'lone';
+    return 'classic';
   }
-  function modeLabel(v){return v==1?'SOLO':v==2?'DUO':'SQUAD';}
-
-  // Format time as 12-hour with AM/PM
-  function formatTime12(isoStr) {
-    if(!isoStr) return '';
-    return new Date(isoStr).toLocaleString('en-US',{day:'2-digit',month:'short',hour:'numeric',minute:'2-digit',hour12:true});
+  function gameModeLabel(t){
+    var k=getGameModeKey(t);
+    return k==='clash'?'Clash Squad':k==='lone'?'Lone Wolf':'Classic';
   }
+  function modeLabel(v){ return v==1?'SOLO':v==2?'DUO':'SQUAD'; }
+  function isExpired(t){ if(!t.time) return false; return (new Date()-new Date(t.time))/60000>=60; }
+  function formatTime12(s){ if(!s) return ''; return new Date(s).toLocaleString('en-US',{day:'2-digit',month:'short',hour:'numeric',minute:'2-digit',hour12:true}); }
 
-  function renderTournaments(list) {
-    const container=document.getElementById('tournament-list');
-    const active=list.filter(t=>t.status==='open'&&!isExpired(t));
-    if(active.length===0){container.innerHTML='<div class="empty-state">🎮 No active tournaments right now.<br><span style="color:var(--gold)">Check back soon! BOOYAH!</span></div>';return;}
+  function renderTournaments(){
+    var container=el('tournament-list');
+    var active=allTournaments.filter(function(t){ return t.status==='open'&&!isExpired(t); });
+    // Apply type filter
+    if(typeFilter==='free')      active=active.filter(function(t){return !t.fee||t.fee===0;});
+    else if(typeFilter!=='all')  active=active.filter(function(t){return String(t.teamType)===typeFilter;});
+    // Apply mode filter
+    if(modeFilter!=='all')       active=active.filter(function(t){return getGameModeKey(t)===modeFilter;});
+
+    if(active.length===0){ container.innerHTML='<div class="empty-state">🎮 No tournaments found.<br><span style="color:var(--gold)">Check back soon!</span></div>'; return; }
     container.innerHTML='';
-    active.forEach(t=>{
-      const joined=t.joined||0, max=t.maxPlayers||99;
-      const fill=Math.min((joined/max)*100,100);
-      const isFull=joined>=max;
-      const isFree=t.fee===0;
-      const mode=modeLabel(t.teamType);
-      const timeStr=formatTime12(t.time);
+    active.forEach(function(t){
+      var joined=t.joined||0, max=t.maxPlayers||99;
+      var fill=Math.min((joined/max)*100,100);
+      var isFull=joined>=max;
+      var isFree=!t.fee||t.fee===0;
+      var hasJoined=joinedIds.has(t.id);
+      var gmKey=getGameModeKey(t);
+      var gmLabel=gameModeLabel(t);
 
-      container.innerHTML+=`
-        <div class="t-card">
-          <div class="t-card-header">
-            <div class="t-name">${t.title}</div>
-            <div class="t-mode-badge">${mode}</div>
-          </div>
-          <div class="t-body">
-            <div class="info-grid">
-              <div class="info-item"><div class="info-label">⏰ Time</div><div class="info-value">${timeStr}</div></div>
-              <div class="info-item"><div class="info-label">💵 Entry</div><div class="info-value">${isFree?'FREE':'৳'+t.fee}</div></div>
-              <div class="info-item"><div class="info-label">🗺️ Mode</div><div class="info-value">${mode}</div></div>
-              <div class="info-item"><div class="info-label">👥 Slots</div><div class="info-value">${joined}/${max}</div></div>
-            </div>
-            <div class="prize-pool">
-              <div class="prize-pool-title">🏆 Prize Pool</div>
-              <div class="prize-row">
-                <div class="prize-item second"><div class="p-label">🥈 Runner Up</div><div class="p-val">৳${t.prize2||0}</div></div>
-                <div class="prize-item first"><div class="p-label">🥇 Champion</div><div class="p-val">৳${t.prize1||0}</div></div>
-                <div class="prize-item third"><div class="p-label">🥉 3rd Place</div><div class="p-val">৳${t.prize3||0}</div></div>
-              </div>
-            </div>
-            <div class="progress-wrap">
-              <div class="progress-label"><span>Players Joined</span><span>${joined}/${max}</span></div>
-              <div class="progress-bar"><div class="progress-fill" style="width:${fill}%"></div></div>
-            </div>
-            <button class="btn-join" onclick="openJoin('${t.id}')" ${isFull?'disabled':''}>
-              ${isFull?'🔒 FULL':'JOIN · '+(isFree?'FREE':'৳'+t.fee)}
-            </button>
-          </div>
-        </div>`;
+      var btnClass='btn-join'+(hasJoined?' joined':'');
+      var btnText=hasJoined?'✅ JOINED':isFull?'🔒 FULL':'JOIN · '+(isFree?'FREE':'৳'+t.fee);
+      var btnDisabled=(hasJoined||isFull)?'disabled':'';
+      var btnClick=(!hasJoined&&!isFull)?'onclick="openJoin(\''+t.id+'\')"':'';
+
+      container.innerHTML+='<div class="t-card">'
+        +'<div class="t-card-header">'
+        +'<div class="t-name">'+t.title+'</div>'
+        +'<div class="t-badges">'
+        +'<div class="t-mode-badge">'+modeLabel(t.teamType)+'</div>'
+        +'<div class="t-game-mode-badge '+gmKey+'">'+gmLabel+'</div>'
+        +'</div></div>'
+        +'<div class="t-body">'
+        +'<div class="info-grid">'
+        +'<div class="info-item"><div class="info-label">⏰ Time</div><div class="info-value">'+formatTime12(t.time)+'</div></div>'
+        +'<div class="info-item"><div class="info-label">💵 Entry</div><div class="info-value">'+(isFree?'FREE':'৳'+t.fee)+'</div></div>'
+        +'<div class="info-item"><div class="info-label">🗺️ Mode</div><div class="info-value">'+gmLabel+'</div></div>'
+        +'<div class="info-item"><div class="info-label">👥 Slots</div><div class="info-value">'+joined+'/'+max+'</div></div>'
+        +'</div>'
+        +'<div class="prize-pool"><div class="prize-pool-title">🏆 Prize Pool</div>'
+        +'<div class="prize-row">'
+        +'<div class="prize-item second"><div class="p-label">🥈 Runner Up</div><div class="p-val">৳'+(t.prize2||0)+'</div></div>'
+        +'<div class="prize-item first"><div class="p-label">🥇 Champion</div><div class="p-val">৳'+(t.prize1||0)+'</div></div>'
+        +'<div class="prize-item third"><div class="p-label">🥉 3rd Place</div><div class="p-val">৳'+(t.prize3||0)+'</div></div>'
+        +'</div></div>'
+        +'<div class="progress-wrap">'
+        +'<div class="progress-label"><span>Players Joined</span><span>'+joined+'/'+max+'</span></div>'
+        +'<div class="progress-bar"><div class="progress-fill" style="width:'+fill+'%"></div></div>'
+        +'</div>'
+        +'<button class="'+btnClass+'" '+btnDisabled+' '+btnClick+'>'+btnText+'</button>'
+        +'</div></div>';
     });
   }
 
-  window.filterT = (filter, btn) => {
-    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  window.setTypeFilter=function(f,btn){
+    typeFilter=f;
+    document.querySelectorAll('.filter-btn').forEach(function(b){b.classList.remove('active');});
     btn.classList.add('active');
-    let filtered=allTournaments;
-    if(filter==='free') filtered=allTournaments.filter(t=>t.fee===0);
-    else if(filter!=='all') filtered=allTournaments.filter(t=>String(t.teamType)===filter);
-    renderTournaments(filtered);
+    renderTournaments();
+  };
+  window.setModeFilter=function(f,btn){
+    modeFilter=f;
+    document.querySelectorAll('.mode-chip').forEach(function(b){b.classList.remove('active');});
+    btn.classList.add('active');
+    renderTournaments();
   };
 
-  // Switch modal tabs
-  window.switchModalTab = (tab) => {
-    const joinTab = document.getElementById('tab-join');
-    const rulesTab = document.getElementById('tab-rules');
-    const joinBtn = document.getElementById('tab-join-btn');
-    const rulesBtn = document.getElementById('tab-rules-btn');
+  window.switchTab=function(tab){
+    var jt=el('tab-join'), rt=el('tab-rules'), jb=el('tab-join-btn'), rb=el('tab-rules-btn');
+    var ft=el('join-footer');
     if(tab==='join'){
-      joinTab.style.display='block'; rulesTab.style.display='none';
-      joinBtn.classList.add('active'); rulesBtn.classList.remove('active');
+      jt.style.display='block'; rt.style.display='none';
+      jb.classList.add('active'); rb.classList.remove('active');
+      ft.style.display='flex';
     } else {
-      joinTab.style.display='none'; rulesTab.style.display='block';
-      rulesBtn.classList.add('active'); joinBtn.classList.remove('active');
+      jt.style.display='none'; rt.style.display='block';
+      rb.classList.add('active'); jb.classList.remove('active');
+      ft.style.display='none'; // hide submit on rules tab
     }
   };
 
-  window.openJoin = (tId) => {
-    const t=allTournaments.find(x=>x.id===tId);
+  window.openJoin=function(tId){
+    var t=allTournaments.find(function(x){return x.id===tId;});
     if(!t) return;
     selectedT=t;
+    switchTab('join');
+    el('join-title').textContent = t.title;
+    el('join-sub').textContent   = modeLabel(t.teamType)+' · '+gameModeLabel(t)+' · '+formatTime12(t.time);
+    el('join-fee').textContent   = t.fee||0;
+    el('join-name').value        = userData&&userData.name      ? userData.name      : '';
+    el('join-whatsapp').value    = userData&&userData.whatsapp  ? userData.whatsapp  : '';
 
-    // Reset to join tab
-    switchModalTab('join');
+    var hasProfile = userData&&userData.uid_game;
+    el('profile-warn').style.display   = hasProfile?'none':'block';
+    el('confirm-join-btn').disabled    = !hasProfile;
+    el('confirm-join-btn').style.opacity = hasProfile?'1':'0.4';
 
-    document.getElementById('join-title').textContent=t.title;
-    document.getElementById('join-sub').textContent=`${modeLabel(t.teamType)} · ${formatTime12(t.time)}`;
-    document.getElementById('join-fee').textContent=t.fee;
-    document.getElementById('join-name').value = userData?.name || '';
-    document.getElementById('join-whatsapp').value = userData?.whatsapp || '';
-
-    // GATEKEEPING: check if user has set game_name and uid_game
-    const hasProfile = userData?.game_name && userData?.uid_game;
-    const warnEl = document.getElementById('profile-warn');
-    const confirmBtn = document.getElementById('confirm-join-btn');
-    if(!hasProfile){
-      warnEl.style.display='block';
-      confirmBtn.disabled=true;
-      confirmBtn.style.opacity='0.4';
-    } else {
-      warnEl.style.display='none';
-      confirmBtn.disabled=false;
-      confirmBtn.style.opacity='1';
+    var count=t.teamType||1;
+    var inputs='';
+    if(count>1) inputs+='<span class="m-label">Team Name</span><input type="text" class="m-input" id="team-name-input" placeholder="Your team name"/>';
+    for(var i=1;i<=count;i++){
+      var ph=i===1?'Leader Game UID (10 digits)':'Player '+i+' UID (10 digits)';
+      var pre=i===1&&userData&&userData.uid_game?userData.uid_game:'';
+      var ro=pre?'readonly style="opacity:0.7;cursor:not-allowed"':'';
+      inputs+='<span class="m-label">'+(i===1?'Your':'Player '+i)+' Game UID</span>'
+        +'<input type="text" class="m-input uid-val" placeholder="'+ph+'" value="'+pre+'" maxlength="12" '+ro+'/>';
     }
-
-    const count=t.teamType||1;
-    let inputs='';
-    if(count>1) inputs+=`<span class="m-label">Team Name</span><input type="text" class="m-input" id="team-name-input" placeholder="Your team name"/>`;
-    for(let i=1;i<=count;i++) {
-      // Player 1 auto-fills from profile UID
-      const placeholder = i===1 ? 'Leader Game UID (10 digits)' : `Player ${i} Game UID (10 digits)`;
-      const prefill = i===1 ? (userData?.uid_game||'') : '';
-      const readonlyAttr = (i===1 && userData?.uid_game) ? 'readonly style="opacity:0.75;cursor:not-allowed"' : '';
-      inputs+=`<span class="m-label">${i===1?'Leader':'Player '+i} Game UID</span>
-        <input type="text" class="m-input uid-val" placeholder="${placeholder}" value="${prefill}" maxlength="12" ${readonlyAttr}/>`;
-    }
-    document.getElementById('uid-inputs').innerHTML=inputs;
-    document.getElementById('join-modal').classList.add('open');
+    el('uid-inputs').innerHTML=inputs;
+    el('join-modal').classList.add('open');
   };
 
-  window.confirmJoin = async () => {
-    const t=selectedT; if(!t) return;
-    const name=document.getElementById('join-name').value.trim();
-    const whatsapp=document.getElementById('join-whatsapp').value.trim();
-    const uids=Array.from(document.querySelectorAll('.uid-val')).map(i=>i.value.trim());
-    const teamName=document.getElementById('team-name-input')?.value?.trim()||'';
+  window.confirmJoin=async function(){
+    var t=selectedT; if(!t) return;
+    var name     = el('join-name').value.trim();
+    var whatsapp = el('join-whatsapp').value.trim();
+    var uids     = Array.from(document.querySelectorAll('.uid-val')).map(function(i){return i.value.trim();});
+    var teamName = el('team-name-input')?el('team-name-input').value.trim():'';
 
-    if(!name){showMsg('join-msg','Please enter your name.','error');return;}
-    if(!whatsapp || whatsapp.replace(/\D/g,'').length<11){showMsg('join-msg','Enter a valid WhatsApp number.','error');return;}
-
-    // Strict 10-digit UID validation
-    for(let i=0;i<uids.length;i++){
-      const uid=uids[i];
-      if(!uid){showMsg('join-msg',`Player ${i+1} UID is required.`,'error');return;}
-      if(!/^\d{10}$/.test(uid)){showMsg('join-msg',`Player ${i+1} UID must be exactly 10 digits.`,'error');return;}
+    if(!name){ showMsg('join-msg','Enter your name.','error'); return; }
+    if(!whatsapp||whatsapp.replace(/\D/g,'').length<11){ showMsg('join-msg','Enter valid WhatsApp number.','error'); return; }
+    for(var i=0;i<uids.length;i++){
+      if(!uids[i]){ showMsg('join-msg','Player '+(i+1)+' UID required.','error'); return; }
+      if(!/^\d{10}$/.test(uids[i])){ showMsg('join-msg','Player '+(i+1)+' UID must be exactly 10 digits.','error'); return; }
     }
+    if(t.fee>0&&userBalance<t.fee){ showMsg('join-msg','Not enough balance! Need ৳'+t.fee+', have ৳'+userBalance+'.','error'); return; }
 
-    if(t.fee>0&&userBalance<t.fee){showMsg('join-msg',`Not enough balance! Need ৳${t.fee}, have ৳${userBalance}.`,'error');return;}
+    // One join per tournament check (double-check server-side)
+    if(joinedIds.has(t.id)){ showMsg('join-msg','You have already joined this tournament!','error'); return; }
 
-    try {
+    el('confirm-join-btn').disabled=true;
+    el('confirm-join-btn').textContent='Joining...';
+
+    try{
       if(t.fee>0){
         await updateDoc(doc(db,'users',currentUser.uid),{balance:increment(-t.fee)});
         await addDoc(collection(db,'transactions'),{
           uid:currentUser.uid, email:currentUser.email,
-          name, whatsapp,
+          name:name, whatsapp:whatsapp,
           amount:t.fee, type:'entry', status:'approved',
           reason:t.title, tournament_id:t.id,
           created_at:serverTimestamp()
         });
         userBalance-=t.fee;
-        document.getElementById('nav-balance').textContent=userBalance;
+        el('nav-balance').textContent=userBalance;
       }
-
       await updateDoc(doc(db,'tournaments',t.id),{joined:increment(1)});
-
       await addDoc(collection(db,'registrations'),{
         tournament_id:t.id, tournament_name:t.title,
         uid:currentUser.uid, email:currentUser.email,
-        name, whatsapp,
+        name:name, whatsapp:whatsapp,
         team_name:teamName, game_uids:uids,
-        entry_paid:t.fee, status:'joined',
+        entry_paid:t.fee||0, status:'joined',
         created_at:serverTimestamp()
       });
-
-      await updateDoc(doc(db,'users',currentUser.uid),{
-        played:increment(1),
-        name, whatsapp
-      });
-
-      showMsg('join-msg','🎉 Joined! Admin will send room ID on WhatsApp. BOOYAH!','success');
-      setTimeout(()=>{ document.getElementById('join-modal').classList.remove('open'); loadTournaments(); }, 2200);
-    } catch(e) {
-      console.error('Join failed:', e);
+      await updateDoc(doc(db,'users',currentUser.uid),{played:increment(1),name:name,whatsapp:whatsapp});
+      joinedIds.add(t.id);
+      showMsg('join-msg','🎉 Joined! Room ID will be sent on WhatsApp. BOOYAH!','success');
+      setTimeout(function(){ el('join-modal').classList.remove('open'); loadTournaments(); },2200);
+    } catch(e){
+      console.error(e);
+      el('confirm-join-btn').disabled=false;
+      el('confirm-join-btn').textContent='Confirm & Join';
       showMsg('join-msg','Failed to join. Try again.','error');
     }
   };
 
-  function showMsg(id,msg,type){const el=document.getElementById(id);el.textContent=msg;el.className='msg '+type;}
+  function showMsg(id,msg,type){ var e=el(id); e.textContent=msg; e.className='msg '+type; }
 </script>
 </body>
 </html>
