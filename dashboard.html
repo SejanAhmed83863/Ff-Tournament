@@ -8,18 +8,15 @@
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
     :root{--amber:#b8860b;--amber-deep:#6b4f00;--gold:#fecb00;--card:rgba(20,20,20,0.97);--border:#333;--text:#fff;--muted:#999;--green:#5CFF8A;--danger:#FF6B6B}
-    body{font-family:'Oswald',sans-serif;background:#0a0a0a;color:var(--text);min-height:100vh;padding-bottom:80px;background-image:linear-gradient(to bottom,rgba(0,0,0,0.9),rgba(0,0,0,0.97));background-size:cover;background-attachment:fixed}
-
+    body{font-family:'Oswald',sans-serif;background:#0a0a0a;color:var(--text);min-height:100vh;padding-bottom:90px;background-image:linear-gradient(to bottom,rgba(0,0,0,0.9),rgba(0,0,0,0.97));background-size:cover;background-attachment:fixed}
     .header{background:linear-gradient(180deg,rgba(0,0,0,0.97),rgba(10,10,10,0.9));border-bottom:2px solid var(--gold);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
     .logo-wrap{display:flex;align-items:center;gap:10px}
     .logo-img{width:40px;height:40px;border-radius:6px;border:2px solid var(--gold);object-fit:cover}
     .header-title{font-family:'Teko',sans-serif;font-size:24px;color:var(--gold);text-transform:uppercase;letter-spacing:2px}
     .header-logout{background:transparent;border:1px solid var(--border);color:var(--muted);padding:6px 12px;border-radius:6px;font-family:'Teko';font-size:14px;letter-spacing:1px;cursor:pointer;text-transform:uppercase}
-    .header-logout:active{border-color:var(--danger);color:var(--danger)}
     .content{padding:14px;max-width:500px;margin:0 auto}
-
     /* PROFILE */
-    .profile-card{background:var(--card);border-radius:12px;border:1px solid var(--border);margin-bottom:14px;overflow:hidden;box-shadow:0 5px 20px rgba(0,0,0,0.7);position:relative}
+    .profile-card{background:var(--card);border-radius:12px;border:1px solid var(--border);margin-bottom:14px;overflow:hidden;position:relative}
     .profile-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--amber),var(--gold),var(--amber))}
     .profile-banner{background:linear-gradient(135deg,rgba(184,134,11,0.18),rgba(254,203,0,0.08),rgba(0,0,0,0.5));padding:18px 16px 14px;display:flex;align-items:center;gap:14px;border-bottom:1px solid var(--border);position:relative}
     .avatar{width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,var(--amber),var(--gold));display:flex;align-items:center;justify-content:center;font-family:'Teko';font-size:28px;color:#000;font-weight:700;border:3px solid var(--gold);flex-shrink:0}
@@ -36,11 +33,19 @@
     .e-input{width:100%;background:#111;border:1px solid var(--border);padding:11px 13px;border-radius:7px;color:#fff;font-family:'Oswald';font-size:14px;outline:none;margin-bottom:12px}
     .e-input:focus{border-color:var(--gold)}
     .e-input::placeholder{color:#555}
+    .e-input[readonly]{opacity:0.6;cursor:not-allowed}
     .uid-box{background:rgba(184,134,11,0.08);border:1px solid rgba(184,134,11,0.35);border-radius:8px;padding:12px;margin-bottom:12px}
     .uid-box-title{font-family:'Teko';font-size:15px;color:var(--gold);letter-spacing:1px;margin-bottom:6px}
     .uid-note{font-size:11px;color:var(--muted);margin-bottom:8px;line-height:1.5}
+    .uid-fetch-row{display:flex;gap:8px;margin-bottom:8px}
+    .uid-fetch-row .e-input{margin-bottom:0;flex:1}
+    .uid-verify-btn{padding:0 14px;background:linear-gradient(180deg,var(--amber),var(--amber-deep));border:1px solid var(--gold);color:var(--gold);font-family:'Teko';font-size:15px;border-radius:7px;cursor:pointer;white-space:nowrap;flex-shrink:0}
+    .uid-status{font-size:12px;margin-bottom:8px;min-height:18px;padding:4px 8px;border-radius:5px;display:none}
+    .uid-status.loading{display:block;color:var(--muted);background:rgba(255,255,255,0.04);border:1px solid var(--border)}
+    .uid-status.ok{display:block;color:var(--green);background:rgba(92,255,138,0.08);border:1px solid rgba(92,255,138,0.3)}
+    .uid-status.fail{display:block;color:var(--danger);background:rgba(255,107,107,0.08);border:1px solid rgba(255,107,107,0.3)}
     .reauth-row{display:flex;gap:8px;margin-bottom:10px}
-    .reauth-btn{flex:1;padding:10px;border-radius:7px;border:1px solid var(--border);background:transparent;color:var(--text);font-family:'Oswald';font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}
+    .reauth-btn{flex:1;padding:10px;border-radius:7px;border:1px solid var(--border);background:transparent;color:var(--text);font-family:'Oswald';font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px}
     .reauth-btn.active{border-color:var(--gold);background:rgba(254,203,0,0.1);color:var(--gold)}
     .btn-row{display:flex;gap:8px}
     .save-btn{flex:1;padding:12px;background:linear-gradient(180deg,var(--amber),var(--amber-deep));border:1px solid var(--gold);color:var(--gold);font-family:'Teko';font-size:18px;letter-spacing:2px;border-radius:7px;cursor:pointer;text-transform:uppercase}
@@ -48,7 +53,6 @@
     .msg{text-align:center;padding:8px;border-radius:6px;font-size:13px;font-weight:600;display:none;margin-bottom:10px}
     .msg.error{display:block;background:rgba(255,50,50,0.1);border:1px solid rgba(255,50,50,0.3);color:var(--danger)}
     .msg.success{display:block;background:rgba(92,255,138,0.1);border:1px solid rgba(92,255,138,0.3);color:var(--green)}
-
     /* STATS */
     .stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
     .stat-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;position:relative;overflow:hidden}
@@ -56,7 +60,6 @@
     .stat-icon{font-size:22px;margin-bottom:4px}
     .stat-value{font-family:'Teko',sans-serif;font-size:28px;color:var(--gold);letter-spacing:1px}
     .stat-label{color:var(--muted);font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-top:2px}
-
     /* WALLET */
     .wallet-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:14px;position:relative;overflow:hidden}
     .wallet-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--amber),var(--gold))}
@@ -67,23 +70,19 @@
     .btn-withdraw{flex:1;padding:12px;border:1px solid var(--gold);border-radius:7px;background:rgba(254,203,0,0.05);color:var(--gold);font-family:'Teko';font-size:18px;letter-spacing:2px;cursor:pointer;text-transform:uppercase}
     .tx-title{font-family:'Teko',sans-serif;font-size:16px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;border-left:3px solid var(--gold);padding-left:8px}
     .tx-item{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:7px;margin-bottom:6px;border-left:3px solid var(--border)}
-    .tx-item.deposit{border-left-color:var(--green)}
-    .tx-item.withdraw{border-left-color:var(--amber)}
-    .tx-item.prize{border-left-color:var(--gold)}
+    .tx-item.deposit{border-left-color:var(--green)}.tx-item.withdraw{border-left-color:var(--amber)}.tx-item.prize{border-left-color:var(--gold)}
     .tx-left{display:flex;align-items:center;gap:10px}
     .tx-icon{font-size:18px}
     .tx-desc{font-size:13px;font-weight:600}
     .tx-date{font-size:11px;color:var(--muted);margin-top:1px}
     .tx-right{text-align:right;flex-shrink:0}
     .tx-amount{font-family:'Teko',sans-serif;font-size:18px;letter-spacing:1px}
-    .tx-amount.plus{color:var(--green)}
-    .tx-amount.minus{color:var(--danger)}
+    .tx-amount.plus{color:var(--green)}.tx-amount.minus{color:var(--danger)}
     .status-pill{font-size:10px;font-weight:700;letter-spacing:1px;padding:2px 7px;border-radius:20px;margin-top:2px;display:inline-block}
     .status-pill.pending{background:rgba(254,203,0,0.15);color:var(--gold);border:1px solid rgba(254,203,0,0.3)}
     .status-pill.approved{background:rgba(92,255,138,0.15);color:var(--green);border:1px solid rgba(92,255,138,0.3)}
     .status-pill.rejected{background:rgba(255,107,107,0.15);color:var(--danger);border:1px solid rgba(255,107,107,0.3)}
     .no-tx{text-align:center;color:var(--muted);font-size:13px;padding:14px}
-
     /* HISTORY */
     .sec-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px;position:relative;overflow:hidden}
     .sec-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--amber),var(--gold),transparent)}
@@ -96,48 +95,34 @@
     .hist-badge{font-size:10px;font-weight:700;letter-spacing:1px;padding:3px 9px;border-radius:20px;text-transform:uppercase;white-space:nowrap;flex-shrink:0}
     .hist-badge.upcoming-badge{background:rgba(254,203,0,0.15);color:var(--gold);border:1px solid rgba(254,203,0,0.4)}
     .hist-badge.played-badge{background:rgba(153,153,153,0.1);color:var(--muted);border:1px solid rgba(153,153,153,0.2)}
-    .countdown-chip{display:inline-flex;align-items:center;gap:6px;background:rgba(254,203,0,0.08);border:1px solid rgba(254,203,0,0.3);padding:4px 11px;border-radius:20px;font-size:11px;color:var(--gold);font-weight:700;letter-spacing:1px;margin-bottom:9px}
+    .countdown-chip{display:inline-flex;align-items:center;gap:6px;background:rgba(254,203,0,0.08);border:1px solid rgba(254,203,0,0.3);padding:4px 11px;border-radius:20px;font-size:11px;color:var(--gold);font-weight:700;margin-bottom:9px}
     .cdot{width:6px;height:6px;background:var(--gold);border-radius:50%;display:inline-block;animation:blink 1s infinite;flex-shrink:0}
     @keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
     .upcoming-info-grid{display:flex;flex-wrap:wrap;gap:10px;background:rgba(0,0,0,0.35);border:1px solid rgba(254,203,0,0.15);border-radius:8px;padding:10px 12px;margin-bottom:9px}
     .ui-item{display:flex;flex-direction:column;gap:2px;min-width:80px}
     .ui-label{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
     .ui-val{font-family:'Teko';font-size:15px;color:var(--gold);letter-spacing:1px}
+    /* TEAMMATES BLOCK */
+    .teammates-block{background:rgba(92,255,138,0.05);border:1px solid rgba(92,255,138,0.2);border-radius:8px;padding:10px 12px;margin-bottom:8px}
+    .teammates-title{font-size:10px;color:var(--green);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;font-weight:700}
+    .teammate-row{display:flex;align-items:center;gap:8px;margin-bottom:5px;font-size:13px;color:#ccc}
+    .teammate-row:last-child{margin-bottom:0}
+    .teammate-avatar{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,var(--amber),var(--gold));display:flex;align-items:center;justify-content:center;font-size:11px;color:#000;font-weight:700;flex-shrink:0;font-family:'Teko'}
+    .awaiting-chip{display:inline-flex;align-items:center;gap:5px;background:rgba(153,153,153,0.08);border:1px solid rgba(153,153,153,0.2);padding:5px 10px;border-radius:6px;font-size:12px;color:var(--muted);margin-bottom:8px}
     .hist-meta{font-size:12px;color:var(--muted);display:flex;gap:10px;flex-wrap:wrap}
     .hist-meta span{color:#888}
-
-    /* MODAL — full height sheet, submit always visible */
+    /* MODALS */
     .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:500;align-items:flex-end;justify-content:center}
     .modal-overlay.open{display:flex}
-    .modal{
-      background:#111;border:1px solid var(--gold);border-radius:16px 16px 0 0;
-      width:100%;max-width:500px;border-top:3px solid var(--gold);
-      /* fixed height so submit never gets hidden */
-      height:88vh;display:flex;flex-direction:column;
-      animation:slideUp 0.28s ease both;
-    }
+    .modal{background:#111;border:1px solid var(--gold);border-radius:16px 16px 0 0;width:100%;max-width:500px;border-top:3px solid var(--gold);height:88vh;display:flex;flex-direction:column;animation:slideUp 0.28s ease both}
     @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-    /* Header: title left, X right — always visible at top */
-    .modal-hdr{
-      display:flex;align-items:center;justify-content:space-between;
-      padding:14px 16px 12px;border-bottom:1px solid var(--border);
-      flex-shrink:0;position:relative;
-    }
+    .modal-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 12px;border-bottom:1px solid var(--border);flex-shrink:0}
     .modal-title{font-family:'Teko',sans-serif;font-size:24px;color:var(--gold);letter-spacing:3px;text-transform:uppercase;margin:0;line-height:1}
-    /* ✕ pinned top-right corner of modal */
-    .modal-x{
-      width:30px;height:30px;border-radius:50%;
-      background:rgba(255,255,255,0.05);border:1px solid #444;color:#888;
-      font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;
-      flex-shrink:0;transition:0.18s;line-height:1;
-    }
+    .modal-x{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,0.05);border:1px solid #444;color:#888;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
     .modal-x:active{background:rgba(255,107,107,0.2);border-color:var(--danger);color:var(--danger)}
-    /* Scrollable middle section */
     .modal-scroll{overflow-y:auto;padding:16px;flex:1}
-    /* Submit bar always pinned at bottom of modal */
     .modal-foot{padding:12px 16px 16px;border-top:1px solid var(--border);flex-shrink:0;background:#111}
     .m-btn{width:100%;padding:14px;border:1px solid var(--gold);border-radius:7px;background:linear-gradient(180deg,var(--amber),var(--amber-deep));color:var(--gold);font-family:'Teko';font-size:20px;letter-spacing:2px;cursor:pointer;text-transform:uppercase}
-
     .m-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:6px;display:block}
     .m-input{width:100%;background:#000;border:1px solid var(--border);padding:12px 13px;border-radius:7px;color:#fff;font-family:'Oswald';font-size:14px;outline:none;margin-bottom:12px}
     .m-input:focus{border-color:var(--gold)}
@@ -145,7 +130,6 @@
     .m-method-row{display:flex;gap:8px;margin-bottom:14px}
     .m-method-btn{flex:1;padding:10px 4px;border-radius:7px;border:2px solid var(--border);background:transparent;color:var(--text);font-family:'Oswald';font-size:12px;font-weight:700;cursor:pointer;text-align:center}
     .m-method-btn.selected{border-color:var(--gold);background:rgba(254,203,0,0.1);color:var(--gold)}
-    /* Deposit info box shown after method select */
     .pay-info{background:rgba(0,0,0,0.55);border:1px solid rgba(254,203,0,0.22);border-radius:9px;padding:14px 15px;margin-bottom:14px;display:none}
     .pay-info.show{display:block}
     .pay-info-title{font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px}
@@ -155,14 +139,18 @@
     .msg2{text-align:center;padding:8px;border-radius:6px;font-size:13px;font-weight:600;display:none;margin-bottom:8px}
     .msg2.error{display:block;background:rgba(255,50,50,0.1);border:1px solid rgba(255,50,50,0.3);color:var(--danger)}
     .msg2.success{display:block;background:rgba(92,255,138,0.1);border:1px solid rgba(92,255,138,0.3);color:var(--green)}
-
+    /* SUPPORT FAB */
+    .support-fab{position:fixed;bottom:88px;right:16px;z-index:300}
+    .support-fab button{width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,#25D366,#128C7E);border:2px solid rgba(255,255,255,0.25);color:white;font-size:22px;cursor:pointer;box-shadow:0 4px 15px rgba(37,211,102,0.5);display:flex;align-items:center;justify-content:center}
+    .support-link{display:flex;align-items:center;gap:12px;padding:14px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;margin-bottom:10px;color:#fff;text-decoration:none;font-size:15px;font-weight:600;transition:0.15s}
+    .support-link:active{background:rgba(254,203,0,0.08);border-color:var(--gold)}
+    .support-link .s-icon{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
     /* BOTTOM NAV */
     .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(0,0,0,0.97);border-top:2px solid var(--gold);display:flex;z-index:200}
     .nav-item{flex:1;padding:11px 8px;text-align:center;cursor:pointer;color:var(--muted);font-family:'Teko';font-size:13px;letter-spacing:2px;text-transform:uppercase;text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:2px;border:none;background:none}
     .nav-item.active{color:var(--gold)}
     .nav-icon{font-size:22px}
     .nav-divider{width:1px;background:var(--border);margin:8px 0}
-    .nav-item.active .nav-icon{filter:drop-shadow(0 0 6px rgba(254,203,0,0.7))}
   </style>
 </head>
 <body>
@@ -176,7 +164,6 @@
 </div>
 
 <div class="content">
-
   <!-- PROFILE CARD -->
   <div class="profile-card">
     <div class="profile-banner">
@@ -195,15 +182,20 @@
       <input type="text" class="e-input" id="input-name" placeholder="Your name"/>
       <span class="e-label">WhatsApp Number</span>
       <input type="tel" class="e-input" id="input-whatsapp" placeholder="01XXXXXXXXX"/>
-      <span class="e-label">Game Name (from Garena — read only)</span>
-      <input type="text" class="e-input" id="input-game-name" placeholder="Enter your Game UID to fetch" style="opacity:0.6;cursor:not-allowed" readonly/>
+
       <div class="uid-box">
-        <div class="uid-box-title">🔒 Game UID</div>
-        <div class="uid-note" id="uid-note">Enter your 10-digit UID. Game name will be fetched automatically from Garena servers.</div>
-        <input type="text" class="e-input" id="input-uid" placeholder="10-digit Game UID" maxlength="12" oninput="onUidInput(this.value)"/>
-        <div id="uid-fetch-status" style="font-size:12px;color:var(--muted);margin-bottom:8px;min-height:18px"></div>
+        <div class="uid-box-title">🎮 Game UID & Name Verification</div>
+        <div class="uid-note" id="uid-note">Enter your 10-digit UID. We'll verify and fetch your in-game name from Garena servers automatically.</div>
+        <div class="uid-fetch-row">
+          <input type="text" class="e-input" id="input-uid" placeholder="10-digit Game UID" maxlength="12"/>
+          <button class="uid-verify-btn" onclick="triggerVerify()">Verify</button>
+        </div>
+        <div class="uid-status" id="uid-status"></div>
+        <span class="e-label" style="margin-top:4px">Game Name (auto-fetched from Garena)</span>
+        <input type="text" class="e-input" id="input-game-name" placeholder="Will be filled after UID verification" readonly/>
+
         <div id="reauth-section" style="display:none">
-          <span class="e-label">Verify Identity to Change UID</span>
+          <span class="e-label">Verify Identity to Change UID Again</span>
           <div class="reauth-row">
             <button type="button" class="reauth-btn" id="reauth-pass-btn" onclick="setReauthMethod('password')">🔑 Password</button>
             <button type="button" class="reauth-btn" id="reauth-google-btn" onclick="setReauthMethod('google')">
@@ -249,11 +241,14 @@
     <div class="sec-head">🎮 My Tournaments</div>
     <div id="tournament-history"><div class="no-tx">⏳ Loading...</div></div>
   </div>
-
 </div>
 
-<!-- ══════ DEPOSIT MODAL ══════ -->
-<!-- Layout: fixed header (title+X), scrollable body, fixed footer (submit) -->
+<!-- SUPPORT FAB -->
+<div class="support-fab" id="support-fab" style="display:none">
+  <button onclick="openSupport()" title="Support">💬</button>
+</div>
+
+<!-- DEPOSIT MODAL -->
 <div class="modal-overlay" id="deposit-modal">
   <div class="modal">
     <div class="modal-hdr">
@@ -269,7 +264,6 @@
         <button class="m-method-btn" id="btn-nagad"  onclick="selectDepMethod('nagad')">💳 Nagad</button>
         <button class="m-method-btn" id="btn-rocket" onclick="selectDepMethod('rocket')">🚀 Rocket</button>
       </div>
-      <!-- Per-method admin number/send-type shown here -->
       <div class="pay-info" id="pay-info">
         <div class="pay-info-title">📋 Send Money Instructions</div>
         <div class="pay-step">1. Open &nbsp;<b id="dep-method-name">—</b>&nbsp; app</div>
@@ -281,14 +275,11 @@
       <input type="text" class="m-input" id="deposit-txid" placeholder="Paste Transaction ID here"/>
       <div class="msg2" id="deposit-msg"></div>
     </div>
-    <!-- Submit always visible at bottom -->
-    <div class="modal-foot">
-      <button class="m-btn" onclick="submitDeposit()">Submit Request</button>
-    </div>
+    <div class="modal-foot"><button class="m-btn" onclick="submitDeposit()">Submit Request</button></div>
   </div>
 </div>
 
-<!-- ══════ WITHDRAW MODAL ══════ -->
+<!-- WITHDRAW MODAL -->
 <div class="modal-overlay" id="withdraw-modal">
   <div class="modal">
     <div class="modal-hdr">
@@ -308,13 +299,23 @@
       <input type="tel" class="m-input" id="withdraw-number" placeholder="01XXXXXXXXX"/>
       <div class="msg2" id="withdraw-msg"></div>
     </div>
-    <div class="modal-foot">
-      <button class="m-btn" onclick="submitWithdraw()">Request Withdrawal</button>
+    <div class="modal-foot"><button class="m-btn" onclick="submitWithdraw()">Request Withdrawal</button></div>
+  </div>
+</div>
+
+<!-- SUPPORT MODAL -->
+<div class="modal-overlay" id="support-modal">
+  <div class="modal" style="height:auto;max-height:60vh">
+    <div class="modal-hdr">
+      <div class="modal-title">💬 Support</div>
+      <button class="modal-x" onclick="closeModal('support-modal')">✕</button>
+    </div>
+    <div class="modal-scroll" id="support-links-dash">
+      <div class="no-tx">Loading...</div>
     </div>
   </div>
 </div>
 
-<!-- BOTTOM NAV -->
 <nav class="bottom-nav">
   <button class="nav-item" onclick="window.location.href='home.html'"><span class="nav-icon">🏆</span>Tournaments</button>
   <div class="nav-divider"></div>
@@ -330,165 +331,152 @@
            query, where, getDocs, serverTimestamp, increment }
     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-  const cfg = {
-    apiKey:"AIzaSyBgMroBilivfk7bJxoz93HjxSt6yU7Ura0",
-    authDomain:"tournament-app-4a050.firebaseapp.com",
-    projectId:"tournament-app-4a050",
-    storageBucket:"tournament-app-4a050.firebasestorage.app",
-    messagingSenderId:"811957533858",
-    appId:"1:811957533858:web:1d1f0f916c0aba5eccebfb"
-  };
-  const app  = initializeApp(cfg);
-  const auth = getAuth(app);
-  const db   = getFirestore(app);
+  const cfg={apiKey:"AIzaSyBgMroBilivfk7bJxoz93HjxSt6yU7Ura0",authDomain:"tournament-app-4a050.firebaseapp.com",projectId:"tournament-app-4a050",storageBucket:"tournament-app-4a050.firebasestorage.app",messagingSenderId:"811957533858",appId:"1:811957533858:web:1d1f0f916c0aba5eccebfb"};
+  const app=initializeApp(cfg),auth=getAuth(app),db=getFirestore(app);
+  var cu=null,ud=null,paySettings={},selDep='',selWd='',editOpen=false,reauthM='';
+  var fetchedName='',supportData={};
+  function el(id){return document.getElementById(id);}
+  function getProvId(u){return u&&u.providerData&&u.providerData.length?u.providerData[0].providerId:'password';}
 
-  var currentUser  = null;
-  var userData     = null;
-  // paymentSettings stored per-method: { bkash:{number,send_type}, nagad:{...}, rocket:{...} }
-  var paySettings  = {};
-  var selDepMethod = '';
-  var selWdMethod  = '';
-  var editOpen     = false;
-  var reauthMethod = '';
-  var fetchedGameName = '';  // from UID lookup
-  var uidFetchTimer = null;
-
-  function el(id){ return document.getElementById(id); }
-  function getProvId(u){ return u && u.providerData && u.providerData.length ? u.providerData[0].providerId : 'password'; }
-
-  // ─── BOOT ────────────────────────────────────────────────────────────────
-  onAuthStateChanged(auth, async function(user) {
-    if (!user) { window.location.href = 'index.html'; return; }
-    currentUser = user;
-    try {
-      var ps = await getDoc(doc(db,'settings','payment'));
-      if (ps.exists()) paySettings = ps.data();
-    } catch(e) {}
+  // ─── BOOT ─────────────────────────────────────────────────────────────────
+  onAuthStateChanged(auth,async function(user){
+    if(!user){window.location.href='index.html';return;}
+    cu=user;
+    try{var ps=await getDoc(doc(db,'settings','payment'));if(ps.exists())paySettings=ps.data();}catch(e){}
+    try{
+      var ss=await getDoc(doc(db,'settings','support'));
+      if(ss.exists()){supportData=ss.data();if(supportData.whatsapp||supportData.telegram_user||supportData.phone)el('support-fab').style.display='block';}
+    }catch(e){}
     await loadProfile(user);
     loadTransactions(user.uid);
     loadTournamentHistory(user.uid);
   });
 
-  // ─── UID → Game Name fetch via Garena API proxy ─────────────────────────
-  // Uses a CORS-friendly third-party Free Fire stats API
-  window.onUidInput = function(val) {
-    el('uid-fetch-status').textContent = '';
-    fetchedGameName = '';
-    if (uidFetchTimer) clearTimeout(uidFetchTimer);
-    if (!/^\d{10}$/.test(val)) return;
-    el('uid-fetch-status').textContent = '🔍 Fetching player name...';
-    el('uid-fetch-status').style.color = 'var(--muted)';
-    uidFetchTimer = setTimeout(function() { fetchGameName(val); }, 600);
-  };
-
-  async function fetchGameName(uid) {
-    // Uses freefireinfo.in public API — best available CORS-open Free Fire player lookup
-    try {
-      var res = await fetch('https://freefireinfo.in/api/player?uid=' + uid + '&region=bd', { signal: AbortSignal.timeout(5000) });
-      if (!res.ok) throw new Error('no data');
-      var data = await res.json();
-      var name = data && (data.basicInfo && data.basicInfo.nickname || data.nickname || data.name);
-      if (name) {
-        fetchedGameName = name;
-        el('input-game-name').value = name;
-        el('uid-fetch-status').textContent = '✅ Found: ' + name;
-        el('uid-fetch-status').style.color = 'var(--green)';
-      } else {
-        el('uid-fetch-status').textContent = '⚠️ UID not found. Check and retry.';
-        el('uid-fetch-status').style.color = 'var(--danger)';
-      }
-    } catch(e) {
-      el('uid-fetch-status').textContent = '⚠️ Could not fetch name. UID saved, name unchanged.';
-      el('uid-fetch-status').style.color = 'var(--muted)';
-    }
+  // ─── GARENA UID VERIFICATION — 3-layer fallback ───────────────────────────
+  // Uses shop2game.com (via corsproxy.io) → then allorigins proxy → then freefireinfo.in
+  async function fetchGarenaName(uid){
+    // Layer 1: shop2game.com via corsproxy.io (most reliable Free Fire player API)
+    try{
+      var res=await fetch('https://corsproxy.io/?'+encodeURIComponent('https://shop2game.com/api/auth/player_id_login'),{
+        method:'POST',
+        headers:{'Content-Type':'application/x-www-form-urlencoded','x-cors-api-key':'temp_9999'},
+        body:'app_id=100067&player_id='+uid+'&server_id=0',
+        signal:AbortSignal.timeout(8000)
+      });
+      var d=await res.json();
+      if(d.code===0&&d.data&&d.data.player_name)return d.data.player_name;
+    }catch(e){console.log('shop2game failed');}
+    // Layer 2: shop.garena.my via allorigins proxy
+    try{
+      var url2='https://shop.garena.my/api/payment/checkaccount?app_id=100067&account_id='+uid;
+      var res2=await fetch('https://api.allorigins.win/raw?url='+encodeURIComponent(url2),{signal:AbortSignal.timeout(8000)});
+      var d2=await res2.json();
+      if(d2&&(d2.username||d2.name||d2.player_name))return d2.username||d2.name||d2.player_name;
+    }catch(e){console.log('garena.my failed');}
+    // Layer 3: freefireinfo.in (BD region)
+    try{
+      var res3=await fetch('https://freefireinfo.in/api/player?uid='+uid+'&region=bd',{signal:AbortSignal.timeout(7000)});
+      var d3=await res3.json();
+      var n=d3&&(d3.basicInfo&&d3.basicInfo.nickname||d3.nickname||d3.player_name);
+      if(n&&n.trim())return n.trim();
+    }catch(e){console.log('freefireinfo failed');}
+    return null;
   }
 
-  // ─── PROFILE ─────────────────────────────────────────────────────────────
-  async function loadProfile(user) {
-    var ref  = doc(db, 'users', user.uid);
-    var snap = await getDoc(ref);
-    if (snap.exists()) { userData = snap.data(); }
-    else {
-      userData = { name:'', whatsapp:'', game_name:'', uid_game:'', email:user.email,
-                   balance:0, played:0, wins:0, total_earned:0, uid_changed:false,
-                   created_at:new Date().toISOString() };
-      await setDoc(ref, userData, { merge:true });
+  window.triggerVerify=async function(){
+    var uid=el('input-uid').value.trim();
+    var st=el('uid-status');
+    if(!/^\d{10}$/.test(uid)){st.textContent='UID must be exactly 10 digits.';st.className='uid-status fail';return;}
+    st.textContent='🔍 Verifying on Garena servers...';st.className='uid-status loading';
+    var name=await fetchGarenaName(uid);
+    if(name){
+      fetchedName=name;
+      el('input-game-name').value=name;
+      st.textContent='✅ Verified: '+name;st.className='uid-status ok';
+    }else{
+      st.textContent='⚠️ Could not verify UID. Check it and try again, or proceed if you are sure.';
+      st.className='uid-status fail';
+      fetchedName='';
     }
-    var gn = userData.game_name || 'PLAYER';
-    el('display-game-name').textContent = gn;
-    el('display-name').textContent      = userData.name     ? '👤 '+userData.name    : '';
-    el('display-email').textContent     = user.email        || '';
-    el('display-whatsapp').textContent  = userData.whatsapp ? '📱 '+userData.whatsapp : '';
-    el('display-uid').textContent       = userData.uid_game ? '🎮 UID: '+userData.uid_game : '🎮 UID: —';
-    el('avatar-text').textContent       = gn.charAt(0).toUpperCase();
-    el('input-name').value      = userData.name      || '';
-    el('input-whatsapp').value  = userData.whatsapp  || '';
-    el('input-game-name').value = userData.game_name || '';
-    el('input-uid').value       = userData.uid_game  || '';
-    if (userData.uid_changed) {
-      el('reauth-section').style.display = 'block';
-      el('uid-note').textContent = 'UID changed once before — verify identity to change again.';
-      getProvId(currentUser) === 'google.com' ? setReauthMethod('google') : setReauthMethod('password');
+  };
+
+  // ─── PROFILE ──────────────────────────────────────────────────────────────
+  async function loadProfile(user){
+    var ref=doc(db,'users',user.uid);
+    var snap=await getDoc(ref);
+    if(snap.exists()){ud=snap.data();}
+    else{
+      ud={name:'',whatsapp:'',game_name:'',uid_game:'',email:user.email,balance:0,played:0,wins:0,total_earned:0,uid_changed:false,created_at:new Date().toISOString()};
+      await setDoc(ref,ud,{merge:true});
     }
-    el('wallet-balance').textContent = userData.balance      || 0;
-    el('stat-played').textContent    = userData.played       || 0;
-    el('stat-wins').textContent      = userData.wins         || 0;
-    var p = userData.played||0, w = userData.wins||0;
-    el('stat-winrate').textContent   = p > 0 ? Math.round(w/p*100)+'%' : '0%';
-    el('stat-earned').textContent    = userData.total_earned || 0;
+    var gn=ud.game_name||'PLAYER';
+    el('display-game-name').textContent=gn;
+    el('display-name').textContent=ud.name?'👤 '+ud.name:'';
+    el('display-email').textContent=user.email||'';
+    el('display-whatsapp').textContent=ud.whatsapp?'📱 '+ud.whatsapp:'';
+    el('display-uid').textContent=ud.uid_game?'🎮 UID: '+ud.uid_game:'🎮 UID: —';
+    el('avatar-text').textContent=gn.charAt(0).toUpperCase();
+    el('input-name').value=ud.name||'';el('input-whatsapp').value=ud.whatsapp||'';
+    el('input-game-name').value=ud.game_name||'';el('input-uid').value=ud.uid_game||'';
+    if(ud.uid_changed){
+      el('reauth-section').style.display='block';
+      el('uid-note').textContent='UID changed before. Verify identity to change again.';
+      getProvId(cu)==='google.com'?setReauthMethod('google'):setReauthMethod('password');
+    }
+    el('wallet-balance').textContent=ud.balance||0;el('stat-played').textContent=ud.played||0;
+    el('stat-wins').textContent=ud.wins||0;
+    var p=ud.played||0,w=ud.wins||0;el('stat-winrate').textContent=p>0?Math.round(w/p*100)+'%':'0%';
+    el('stat-earned').textContent=ud.total_earned||0;
   }
 
   // ─── TRANSACTIONS ─────────────────────────────────────────────────────────
-  async function loadTransactions(uid) {
-    var list = el('tx-status-list');
-    try {
-      var snap = await getDocs(query(collection(db,'transactions'), where('uid','==',uid)));
-      if (snap.empty) { list.innerHTML='<div class="no-tx">No transactions yet</div>'; return; }
-      var items = [];
-      snap.forEach(function(d){ items.push(d.data()); });
-      items.sort(function(a,b){ return (b.created_at&&b.created_at.toMillis?b.created_at.toMillis():0)-(a.created_at&&a.created_at.toMillis?a.created_at.toMillis():0); });
-      list.innerHTML = '';
-      items.slice(0,8).forEach(function(tx) {
-        var plus   = tx.type==='deposit'||tx.type==='prize';
-        var icon   = tx.type==='deposit'?'💰':tx.type==='prize'?'🏆':tx.type==='withdraw'?'💸':'🎮';
-        var label  = tx.type==='deposit'?'Deposit':tx.type==='prize'?'Prize Won':tx.type==='withdraw'?'Withdrawal':'Entry Fee';
-        var txCls  = tx.type==='deposit'?'deposit':tx.type==='withdraw'?'withdraw':tx.type==='prize'?'prize':'';
-        var date   = tx.created_at&&tx.created_at.toDate?tx.created_at.toDate().toLocaleDateString('en-GB'):'—';
-        var stCls  = tx.status==='pending'?'pending':tx.status==='approved'?'approved':'rejected';
-        var stTxt  = tx.status==='pending'?'⏳ Pending':tx.status==='approved'?'✅ Approved':'❌ Rejected';
-        list.innerHTML += '<div class="tx-item '+txCls+'">'
-          +'<div class="tx-left"><div class="tx-icon">'+icon+'</div>'
+  async function loadTransactions(uid){
+    var list=el('tx-status-list');
+    try{
+      var snap=await getDocs(query(collection(db,'transactions'),where('uid','==',uid)));
+      if(snap.empty){list.innerHTML='<div class="no-tx">No transactions yet</div>';return;}
+      var items=[];snap.forEach(function(d){items.push(d.data());});
+      items.sort(function(a,b){return(b.created_at&&b.created_at.toMillis?b.created_at.toMillis():0)-(a.created_at&&a.created_at.toMillis?a.created_at.toMillis():0);});
+      list.innerHTML='';
+      items.slice(0,8).forEach(function(tx){
+        var plus=tx.type==='deposit'||tx.type==='prize';
+        var icon=tx.type==='deposit'?'💰':tx.type==='prize'?'🏆':tx.type==='withdraw'?'💸':'🎮';
+        var label=tx.type==='deposit'?'Deposit':tx.type==='prize'?'Prize Won':tx.type==='withdraw'?'Withdrawal':'Entry Fee';
+        var txCls=tx.type==='deposit'?'deposit':tx.type==='withdraw'?'withdraw':tx.type==='prize'?'prize':'';
+        var date=tx.created_at&&tx.created_at.toDate?tx.created_at.toDate().toLocaleDateString('en-GB'):'—';
+        var stCls=tx.status==='pending'?'pending':tx.status==='approved'?'approved':'rejected';
+        var stTxt=tx.status==='pending'?'⏳ Pending':tx.status==='approved'?'✅ Approved':'❌ Rejected';
+        list.innerHTML+='<div class="tx-item '+txCls+'"><div class="tx-left"><div class="tx-icon">'+icon+'</div>'
           +'<div><div class="tx-desc">'+label+(tx.method?' · '+tx.method.toUpperCase():'')+(tx.reason?' · '+tx.reason:'')+'</div>'
           +'<div class="tx-date">'+date+(tx.txid?' · '+tx.txid:'')+'</div></div></div>'
           +'<div class="tx-right"><div class="tx-amount '+(plus?'plus':'minus')+'">'+(plus?'+':'-')+'৳'+tx.amount+'</div>'
           +'<span class="status-pill '+stCls+'">'+stTxt+'</span></div></div>';
       });
-    } catch(e) { list.innerHTML='<div class="no-tx" style="color:var(--danger)">Could not load.</div>'; }
+    }catch(e){list.innerHTML='<div class="no-tx" style="color:var(--danger)">Could not load.</div>';}
   }
 
-  // ─── TOURNAMENT HISTORY ───────────────────────────────────────────────────
-  async function loadTournamentHistory(uid) {
-    var list = el('tournament-history');
-    try {
-      var regSnap = await getDocs(query(collection(db,'registrations'), where('uid','==',uid)));
-      if (regSnap.empty) { list.innerHTML='<div class="no-tx">No tournaments joined yet</div>'; return; }
-      var tSnap = await getDocs(collection(db,'tournaments'));
-      var tMap  = {};
-      tSnap.forEach(function(d){ tMap[d.id]=d.data(); });
-      var items = [];
-      regSnap.forEach(function(d){ items.push(d.data()); });
-      items.sort(function(a,b){ return (b.created_at&&b.created_at.toMillis?b.created_at.toMillis():0)-(a.created_at&&a.created_at.toMillis?a.created_at.toMillis():0); });
-      var now = new Date();
-      list.innerHTML = '';
-      items.forEach(function(r) {
-        var t       = tMap[r.tournament_id]||{};
-        var tTime   = t.time?new Date(t.time):null;
-        var upcoming= tTime&&tTime>now&&t.status==='open';
-        var date    = r.created_at&&r.created_at.toDate?r.created_at.toDate().toLocaleDateString('en-GB'):'—';
-        var mode    = t.teamType==1?'Solo':t.teamType==2?'Duo':'Squad';
-        var timeStr = tTime?tTime.toLocaleString('en-US',{weekday:'short',day:'2-digit',month:'short',hour:'numeric',minute:'2-digit',hour12:true}):'';
+  // ─── TOURNAMENT HISTORY with TEAMMATES ────────────────────────────────────
+  async function loadTournamentHistory(uid){
+    var list=el('tournament-history');
+    try{
+      var regSnap=await getDocs(query(collection(db,'registrations'),where('uid','==',uid)));
+      if(regSnap.empty){list.innerHTML='<div class="no-tx">No tournaments joined yet</div>';return;}
+      var tSnap=await getDocs(collection(db,'tournaments'));
+      var tMap={};tSnap.forEach(function(d){tMap[d.id]=d.data();});
+      var items=[];regSnap.forEach(function(d){items.push(Object.assign({_id:d.id},d.data()));});
+      items.sort(function(a,b){return(b.created_at&&b.created_at.toMillis?b.created_at.toMillis():0)-(a.created_at&&a.created_at.toMillis?a.created_at.toMillis():0);});
+      var now=new Date();list.innerHTML='';
+      // For solo regs, we may need to do grouping lookup
+      for(var i=0;i<items.length;i++){
+        var r=items[i];
+        var t=tMap[r.tournament_id]||{};
+        var tTime=t.time?new Date(t.time):null;
+        var upcoming=tTime&&tTime>now&&t.status==='open';
+        var date=r.created_at&&r.created_at.toDate?r.created_at.toDate().toLocaleDateString('en-GB'):'—';
+        var mode=t.teamType==1?'Solo':t.teamType==2?'Duo':'Squad';
+        var timeStr=tTime?tTime.toLocaleString('en-US',{weekday:'short',day:'2-digit',month:'short',hour:'numeric',minute:'2-digit',hour12:true}):'';
         var cd='';
-        if(upcoming){var d=tTime-now;var h=Math.floor(d/3600000);var m=Math.floor(d%3600000/60000);cd=h>0?h+'h '+m+'m':m>0?m+' min':'Starting soon!';}
+        if(upcoming){var df=tTime-now;var h=Math.floor(df/3600000);var m=Math.floor(df%3600000/60000);cd=h>0?h+'h '+m+'m':m>0?m+' min':'Starting soon!';}
         var ri=t.roomID?'<div class="ui-item"><span class="ui-label">🔑 Room ID</span><span class="ui-val">'+t.roomID+'</span></div>':'';
         var rp=t.roomPass?'<div class="ui-item"><span class="ui-label">🔒 Password</span><span class="ui-val">'+t.roomPass+'</span></div>':'';
         var upBlock=upcoming?'<div class="countdown-chip"><span class="cdot"></span>Starts in '+cd+'</div>'
@@ -496,154 +484,158 @@
           +'<div class="ui-item"><span class="ui-label">📅 Time</span><span class="ui-val">'+timeStr+'</span></div>'
           +'<div class="ui-item"><span class="ui-label">🗺️ Mode</span><span class="ui-val">'+mode+'</span></div>'
           +'<div class="ui-item"><span class="ui-label">🏆 1st</span><span class="ui-val">৳'+(t.prize1||0)+'</span></div>'+ri+rp+'</div>':'';
+
+        // TEAMMATES BLOCK — show for solo registrations in duo/squad matches
+        var tmBlock='';
+        if(r.solo){
+          if(r.teammates&&r.teammates.length>1){
+            // Has grouped teammates
+            tmBlock='<div class="teammates-block"><div class="teammates-title">👥 Your Team</div>';
+            r.teammates.forEach(function(tm){
+              if(tm.uid!==uid){
+                tmBlock+='<div class="teammate-row"><div class="teammate-avatar">'+(tm.name||'?').charAt(0).toUpperCase()+'</div>'
+                  +'<span>'+tm.name+(tm.game_name?' ('+tm.game_name+')':'')+'</span></div>';
+              }
+            });
+            tmBlock+='</div>';
+          }else{
+            // Solo, waiting for teammates
+            var teamSize=t.teamType||4;
+            // Count other solo registrations for this tournament to show how many are waiting
+            tmBlock='<div class="awaiting-chip">⏳ Solo — waiting for teammates ('+teamSize+'-player team)</div>';
+          }
+        }else if(r.team_name||(r.game_uids&&r.game_uids.length>1)){
+          // Full team registration — show UIDs
+          tmBlock='<div class="teammates-block"><div class="teammates-title">👥 Registered Team</div>';
+          var uids=r.game_uids||[];
+          uids.forEach(function(u,idx){
+            tmBlock+='<div class="teammate-row"><div class="teammate-avatar">'+(idx+1)+'</div><span>UID: '+u+'</span></div>';
+          });
+          tmBlock+='</div>';
+        }
+
         list.innerHTML+='<div class="history-item'+(upcoming?' upcoming':'')+'"><div class="hist-top">'
           +'<div class="hist-name">'+(r.tournament_name||'Tournament')+'</div>'
           +'<span class="hist-badge '+(upcoming?'upcoming-badge':'played-badge')+'">'+(upcoming?'⏰ Upcoming':'Played')+'</span>'
-          +'</div>'+upBlock
+          +'</div>'+upBlock+tmBlock
           +'<div class="hist-meta"><span>📅 '+date+'</span><span>💵 ৳'+(r.entry_paid||0)+'</span>'
-          +(r.team_name?'<span>👥 '+r.team_name+'</span>':'')
+          +(r.solo?'<span>👤 Solo Reg</span>':r.team_name?'<span>👥 '+r.team_name+'</span>':'')
           +(r.game_uids&&r.game_uids[0]?'<span>🎮 '+r.game_uids[0]+'</span>':'')+'</div></div>';
-      });
-    } catch(e) { list.innerHTML='<div class="no-tx" style="color:var(--danger)">Could not load.</div>'; }
+      }
+    }catch(e){list.innerHTML='<div class="no-tx" style="color:var(--danger)">Could not load.</div>';}
   }
 
   // ─── EDIT PROFILE ─────────────────────────────────────────────────────────
-  window.toggleEdit = function() {
-    editOpen=!editOpen;
-    el('edit-panel').classList.toggle('open',editOpen);
-  };
-  window.setReauthMethod = function(m) {
-    reauthMethod=m;
-    el('reauth-pass-btn').classList.toggle('active',m==='password');
+  window.toggleEdit=function(){editOpen=!editOpen;el('edit-panel').classList.toggle('open',editOpen);};
+  window.setReauthMethod=function(m){
+    reauthM=m;el('reauth-pass-btn').classList.toggle('active',m==='password');
     el('reauth-google-btn').classList.toggle('active',m==='google');
-    el('password-field').style.display=(m==='password')?'block':'none';
+    el('password-field').style.display=m==='password'?'block':'none';
   };
-  window.saveProfile = async function() {
-    var name = el('input-name').value.trim();
-    var wa   = el('input-whatsapp').value.trim();
-    var nu   = el('input-uid').value.trim();
-    if (!name){ showMsg('edit-msg','Enter your name.','error'); return; }
-    if (!wa||wa.replace(/\D/g,'').length<11){ showMsg('edit-msg','Enter valid 11-digit WhatsApp.','error'); return; }
-    var ref = doc(db,'users',currentUser.uid);
-    var upd = { name:name, whatsapp:wa };
-    // Game name is auto-fetched from UID — read-only field, updated only when UID changes
-    if (nu && nu!==(userData.uid_game||'')) {
-      if (!/^\d{10}$/.test(nu)){ showMsg('edit-msg','UID must be exactly 10 digits.','error'); return; }
-      if (userData.uid_changed) {
-        if (!reauthMethod){ showMsg('edit-msg','Choose verification method.','error'); return; }
-        try {
-          if (reauthMethod==='password') {
-            var pw = el('input-password').value;
-            if (!pw){ showMsg('edit-msg','Enter password.','error'); return; }
-            await reauthenticateWithCredential(currentUser, EmailAuthProvider.credential(currentUser.email,pw));
-          } else { await reauthenticateWithPopup(currentUser, new GoogleAuthProvider()); }
-        } catch(e){ showMsg('edit-msg','Verification failed!','error'); return; }
+  window.saveProfile=async function(){
+    var name=el('input-name').value.trim();
+    var wa=el('input-whatsapp').value.trim();
+    var nu=el('input-uid').value.trim();
+    if(!name){showMsg('edit-msg','Enter your name.','error');return;}
+    if(!wa||wa.replace(/\D/g,'').length<11){showMsg('edit-msg','Enter valid 11-digit WhatsApp.','error');return;}
+    var ref=doc(db,'users',cu.uid);
+    var upd={name:name,whatsapp:wa};
+    if(nu&&nu!==(ud.uid_game||'')){
+      if(!/^\d{10}$/.test(nu)){showMsg('edit-msg','UID must be exactly 10 digits.','error');return;}
+      if(ud.uid_changed){
+        if(!reauthM){showMsg('edit-msg','Choose verification method.','error');return;}
+        try{
+          if(reauthM==='password'){var pw=el('input-password').value;if(!pw){showMsg('edit-msg','Enter password.','error');return;}await reauthenticateWithCredential(cu,EmailAuthProvider.credential(cu.email,pw));}
+          else{await reauthenticateWithPopup(cu,new GoogleAuthProvider());}
+        }catch(e){showMsg('edit-msg','Verification failed!','error');return;}
       }
-      upd.uid_game    = nu;
-      upd.uid_changed = true;
-      // Save fetched game name if we got one, otherwise keep existing
-      if (fetchedGameName) upd.game_name = fetchedGameName;
+      upd.uid_game=nu;upd.uid_changed=true;
+      // Save verified game name if we have it
+      if(fetchedName)upd.game_name=fetchedName;
     }
-    try {
-      await updateDoc(ref, upd);
-      userData = Object.assign({}, userData, upd);
-      el('display-game-name').textContent = upd.game_name || userData.game_name || 'PLAYER';
-      el('display-name').textContent      = '👤 '+name;
-      el('display-whatsapp').textContent  = '📱 '+wa;
-      el('avatar-text').textContent       = (upd.game_name||userData.game_name||'P').charAt(0).toUpperCase();
-      if (upd.uid_game) {
-        el('display-uid').textContent = '🎮 UID: '+nu;
-        el('reauth-section').style.display='block';
-        el('uid-note').textContent='UID changed once before — verify identity to change again.';
-      }
-      showMsg('edit-msg','Saved! ✅','success');
-      setTimeout(function(){ toggleEdit(); },1200);
-    } catch(e){ showMsg('edit-msg','Save failed.','error'); }
+    try{
+      await updateDoc(ref,upd);ud=Object.assign({},ud,upd);
+      el('display-game-name').textContent=upd.game_name||ud.game_name||'PLAYER';
+      el('display-name').textContent='👤 '+name;el('display-whatsapp').textContent='📱 '+wa;
+      el('avatar-text').textContent=(upd.game_name||ud.game_name||'P').charAt(0).toUpperCase();
+      if(upd.uid_game){el('display-uid').textContent='🎮 UID: '+nu;el('reauth-section').style.display='block';}
+      showMsg('edit-msg','Saved! ✅','success');setTimeout(function(){toggleEdit();},1200);
+    }catch(e){showMsg('edit-msg','Save failed.','error');}
   };
 
-  // ─── DEPOSIT — per method settings ────────────────────────────────────────
-  window.openDeposit = function() {
-    selDepMethod='';
-    ['btn-bkash','btn-nagad','btn-rocket'].forEach(function(i){ el(i).classList.remove('selected'); });
-    el('pay-info').classList.remove('show');
-    el('deposit-amount').value='';
-    el('deposit-txid').value='';
-    el('deposit-msg').className='msg2';
+  // ─── DEPOSIT ──────────────────────────────────────────────────────────────
+  window.openDeposit=function(){
+    selDep='';['btn-bkash','btn-nagad','btn-rocket'].forEach(function(i){el(i).classList.remove('selected');});
+    el('pay-info').classList.remove('show');el('deposit-amount').value='';el('deposit-txid').value='';el('deposit-msg').className='msg2';
     el('deposit-modal').classList.add('open');
   };
-  window.selectDepMethod = function(m) {
-    selDepMethod=m;
-    ['btn-bkash','btn-nagad','btn-rocket'].forEach(function(i){ el(i).classList.remove('selected'); });
+  window.selectDepMethod=function(m){
+    selDep=m;['btn-bkash','btn-nagad','btn-rocket'].forEach(function(i){el(i).classList.remove('selected');});
     el('btn-'+m).classList.add('selected');
-    var label = m==='bkash'?'bKash':m==='nagad'?'Nagad':'Rocket';
-    el('dep-method-name').textContent = label;
-    // Load per-method settings saved by admin
-    var mData = paySettings[m] || {};
-    el('dep-send-type').textContent = mData.send_type || 'Send Money';
-    el('dep-number').textContent    = mData.number    || 'Not configured';
+    el('dep-method-name').textContent=m==='bkash'?'bKash':m==='nagad'?'Nagad':'Rocket';
+    var md=paySettings[m]||{};
+    el('dep-send-type').textContent=md.send_type||'Send Money';
+    el('dep-number').textContent=md.number||'Not configured yet';
     el('pay-info').classList.add('show');
   };
-  window.submitDeposit = async function() {
-    var amt  = parseInt(el('deposit-amount').value);
-    var txid = el('deposit-txid').value.trim();
-    if (!amt||amt<10)   { showMsg2('deposit-msg','Minimum deposit 10 TK.','error'); return; }
-    if (!selDepMethod)  { showMsg2('deposit-msg','Select a payment method.','error'); return; }
-    if (!txid)          { showMsg2('deposit-msg','Enter Transaction ID.','error'); return; }
-    try {
-      await addDoc(collection(db,'transactions'),{
-        uid:currentUser.uid, email:currentUser.email,
-        name:userData.name||'', whatsapp:userData.whatsapp||'',
-        amount:amt, method:selDepMethod, txid:txid,
-        type:'deposit', status:'pending', created_at:serverTimestamp()
-      });
+  window.submitDeposit=async function(){
+    var amt=parseInt(el('deposit-amount').value);var txid=el('deposit-txid').value.trim();
+    if(!amt||amt<10){showMsg2('deposit-msg','Minimum deposit 10 TK.','error');return;}
+    if(!selDep){showMsg2('deposit-msg','Select a payment method.','error');return;}
+    if(!txid){showMsg2('deposit-msg','Enter Transaction ID.','error');return;}
+    try{
+      await addDoc(collection(db,'transactions'),{uid:cu.uid,email:cu.email,name:ud.name||'',whatsapp:ud.whatsapp||'',amount:amt,method:selDep,txid:txid,type:'deposit',status:'pending',created_at:serverTimestamp()});
       showMsg2('deposit-msg','✅ Submitted! Admin will verify.','success');
-      setTimeout(function(){ closeModal('deposit-modal'); loadTransactions(currentUser.uid); },1800);
-    } catch(e){ showMsg2('deposit-msg','Failed. Try again.','error'); }
+      setTimeout(function(){closeModal('deposit-modal');loadTransactions(cu.uid);},1800);
+    }catch(e){showMsg2('deposit-msg','Failed. Try again.','error');}
   };
 
   // ─── WITHDRAW ─────────────────────────────────────────────────────────────
-  window.openWithdraw = function() {
-    selWdMethod='';
-    ['wbtn-bkash','wbtn-nagad','wbtn-rocket'].forEach(function(i){ el(i).classList.remove('selected'); });
-    el('withdraw-amount').value='';
-    el('withdraw-number').value='';
-    el('withdraw-msg').className='msg2';
+  window.openWithdraw=function(){
+    selWd='';['wbtn-bkash','wbtn-nagad','wbtn-rocket'].forEach(function(i){el(i).classList.remove('selected');});
+    el('withdraw-amount').value='';el('withdraw-number').value='';el('withdraw-msg').className='msg2';
     el('withdraw-modal').classList.add('open');
   };
-  window.selectWdMethod = function(m) {
-    selWdMethod=m;
-    ['wbtn-bkash','wbtn-nagad','wbtn-rocket'].forEach(function(i){ el(i).classList.remove('selected'); });
+  window.selectWdMethod=function(m){
+    selWd=m;['wbtn-bkash','wbtn-nagad','wbtn-rocket'].forEach(function(i){el(i).classList.remove('selected');});
     el('wbtn-'+m).classList.add('selected');
   };
-  window.submitWithdraw = async function() {
-    var amt  = parseInt(el('withdraw-amount').value);
-    var num  = el('withdraw-number').value.trim();
-    var snap = await getDoc(doc(db,'users',currentUser.uid));
-    var bal  = snap.data()&&snap.data().balance?snap.data().balance:0;
-    if (!amt||amt<50)                          { showMsg2('withdraw-msg','Minimum 50 TK.','error'); return; }
-    if (!selWdMethod)                          { showMsg2('withdraw-msg','Select a method.','error'); return; }
-    if (!num||num.replace(/\D/g,'').length<11) { showMsg2('withdraw-msg','Enter valid number.','error'); return; }
-    if (amt>bal)                               { showMsg2('withdraw-msg','Insufficient balance!','error'); return; }
-    try {
-      await addDoc(collection(db,'transactions'),{
-        uid:currentUser.uid, email:currentUser.email,
-        name:userData.name||'', whatsapp:userData.whatsapp||'',
-        amount:amt, method:selWdMethod, number:num,
-        type:'withdraw', status:'pending', created_at:serverTimestamp()
-      });
-      await updateDoc(doc(db,'users',currentUser.uid),{ balance:bal-amt });
-      el('wallet-balance').textContent = bal-amt;
-      userData.balance = bal-amt;
-      showMsg2('withdraw-msg','✅ Request sent! Admin will pay shortly.','success');
-      setTimeout(function(){ closeModal('withdraw-modal'); loadTransactions(currentUser.uid); },1800);
-    } catch(e){ showMsg2('withdraw-msg','Failed. Try again.','error'); }
+  window.submitWithdraw=async function(){
+    var amt=parseInt(el('withdraw-amount').value);var num=el('withdraw-number').value.trim();
+    var snap=await getDoc(doc(db,'users',cu.uid));var bal=snap.data()&&snap.data().balance?snap.data().balance:0;
+    if(!amt||amt<50){showMsg2('withdraw-msg','Minimum 50 TK.','error');return;}
+    if(!selWd){showMsg2('withdraw-msg','Select a method.','error');return;}
+    if(!num||num.replace(/\D/g,'').length<11){showMsg2('withdraw-msg','Enter valid number.','error');return;}
+    if(amt>bal){showMsg2('withdraw-msg','Insufficient balance!','error');return;}
+    try{
+      await addDoc(collection(db,'transactions'),{uid:cu.uid,email:cu.email,name:ud.name||'',whatsapp:ud.whatsapp||'',amount:amt,method:selWd,number:num,type:'withdraw',status:'pending',created_at:serverTimestamp()});
+      await updateDoc(doc(db,'users',cu.uid),{balance:bal-amt});
+      el('wallet-balance').textContent=bal-amt;ud.balance=bal-amt;
+      showMsg2('withdraw-msg','✅ Request sent! Admin will pay soon.','success');
+      setTimeout(function(){closeModal('withdraw-modal');loadTransactions(cu.uid);},1800);
+    }catch(e){showMsg2('withdraw-msg','Failed. Try again.','error');}
   };
 
-  window.closeModal = function(id){ el(id).classList.remove('open'); };
-  window.doLogout   = async function(){ try{await signOut(auth);}catch(e){} window.location.href='index.html'; };
+  // ─── SUPPORT ──────────────────────────────────────────────────────────────
+  window.openSupport=function(){
+    var s=supportData,html='';
+    if(s.whatsapp)html+='<a href="https://wa.me/88'+s.whatsapp.replace(/^0/,'')+'" target="_blank" class="support-link">'
+      +'<div class="s-icon" style="background:#25D366">📱</div>'
+      +'<div><div style="font-size:14px;font-weight:700;color:#25D366">WhatsApp</div><div style="font-size:12px;color:var(--muted)">'+s.whatsapp+'</div></div></a>';
+    if(s.telegram_user)html+='<a href="https://t.me/'+s.telegram_user.replace('@','')+'" target="_blank" class="support-link">'
+      +'<div class="s-icon" style="background:#229ED9">✈️</div>'
+      +'<div><div style="font-size:14px;font-weight:700;color:#229ED9">Telegram</div><div style="font-size:12px;color:var(--muted)">'+s.telegram_user+'</div></div></a>';
+    if(s.phone)html+='<a href="tel:'+s.phone+'" class="support-link">'
+      +'<div class="s-icon" style="background:var(--gold)">📞</div>'
+      +'<div><div style="font-size:14px;font-weight:700;color:var(--gold)">Call Us</div><div style="font-size:12px;color:var(--muted)">'+s.phone+'</div></div></a>';
+    el('support-links-dash').innerHTML=html||'<div class="no-tx">No contact info set</div>';
+    el('support-modal').classList.add('open');
+  };
 
-  function showMsg(id,msg,type){ var e=el(id); e.textContent=msg; e.className='msg '+type; setTimeout(function(){ e.className='msg'; },4500); }
-  function showMsg2(id,msg,type){ var e=el(id); e.textContent=msg; e.className='msg2 '+type; setTimeout(function(){ e.className='msg2'; },4500); }
+  window.closeModal=function(id){el(id).classList.remove('open');};
+  window.doLogout=async function(){try{await signOut(auth);}catch(e){}window.location.href='index.html';};
+  function showMsg(id,msg,type){var e=el(id);e.textContent=msg;e.className='msg '+type;setTimeout(function(){e.className='msg';},4500);}
+  function showMsg2(id,msg,type){var e=el(id);e.textContent=msg;e.className='msg2 '+type;setTimeout(function(){e.className='msg2';},4500);}
 </script>
 </body>
 </html>
