@@ -19,7 +19,7 @@
     .live-dot span:last-child{font-size:12px;color:var(--green);font-weight:600}
 
     .tabs{display:flex;background:var(--card);border-bottom:1px solid var(--border);overflow-x:auto}
-    .tab{flex:1;min-width:70px;padding:13px 4px;text-align:center;cursor:pointer;font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:1px;color:var(--muted);border-bottom:2px solid transparent;position:relative;background:none;border-top:none;border-left:none;border-right:none;white-space:nowrap}
+    .tab{flex:1;min-width:65px;padding:13px 4px;text-align:center;cursor:pointer;font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:1px;color:var(--muted);border-bottom:2px solid transparent;position:relative;background:none;border-top:none;border-left:none;border-right:none;white-space:nowrap}
     .tab.active{color:var(--orange);border-bottom:2px solid var(--orange)}
     .tab-icon{font-size:15px;display:block;margin-bottom:1px}
     .badge{position:absolute;top:8px;right:50%;transform:translateX(14px);background:var(--red);color:white;border-radius:50%;width:18px;height:18px;font-size:11px;display:flex;align-items:center;justify-content:center;font-family:'Rajdhani',sans-serif;font-weight:700}
@@ -35,67 +35,70 @@
     .stat-val{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px}
     .stat-lbl{font-size:11px;color:var(--muted);font-weight:600;letter-spacing:1px}
     .req-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 16px 16px 20px;margin-bottom:12px;position:relative;overflow:hidden}
-    .req-strip{position:absolute;top:0;left:0;width:4px;height:100%;border-radius:12px 0 0 12px}
+    .req-strip{position:absolute;top:0;left:0;width:4px;height:100%}
     .req-type{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:1px;display:inline-block;margin-bottom:8px}
     .req-amount{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--gold);letter-spacing:1px}
     .req-email{font-weight:600;margin-bottom:2px}
-    .req-meta{color:var(--muted);font-size:13px;margin-bottom:2px;line-height:1.7}
+    .req-meta{color:var(--muted);font-size:13px;margin-bottom:2px;line-height:1.8}
     .req-actions{display:flex;gap:10px;margin-top:12px}
-    .btn-approve{flex:1;padding:10px;background:var(--green);color:#0A0A0F;border:none;border-radius:7px;font-weight:700;cursor:pointer;font-family:'Rajdhani',sans-serif;font-size:14px;letter-spacing:1px}
-    .btn-reject{flex:1;padding:10px;background:transparent;color:var(--red);border:1px solid var(--red);border-radius:7px;font-weight:700;cursor:pointer;font-family:'Rajdhani',sans-serif;font-size:14px;letter-spacing:1px}
+    .btn-approve{flex:1;padding:10px;background:var(--green);color:#0A0A0F;border:none;border-radius:7px;font-weight:700;cursor:pointer;font-family:'Rajdhani';font-size:14px;letter-spacing:1px}
+    .btn-reject{flex:1;padding:10px;background:transparent;color:var(--red);border:1px solid var(--red);border-radius:7px;font-weight:700;cursor:pointer;font-family:'Rajdhani';font-size:14px;letter-spacing:1px}
     .empty-state{text-align:center;padding:60px 0;color:var(--muted)}
     .empty-state .tick{font-size:48px;margin-bottom:8px}
-    input,select,textarea{width:100%;padding:11px 13px;background:#0A0A0F;border:1px solid var(--border);color:var(--text);border-radius:7px;margin-bottom:10px;font-family:'Rajdhani',sans-serif;font-size:14px;outline:none}
+    input,select,textarea{width:100%;padding:11px 13px;background:#0A0A0F;border:1px solid var(--border);color:var(--text);border-radius:7px;margin-bottom:10px;font-family:'Rajdhani';font-size:14px;outline:none}
     textarea{resize:vertical;min-height:80px;line-height:1.5}
     input:focus,select:focus,textarea:focus{border-color:var(--orange)}
     .row{display:flex;gap:8px}
     .row input,.row select{flex:1}
-    .btn-main{width:100%;padding:13px;background:linear-gradient(90deg,#FF6B00,#FF9500);border:none;color:white;font-weight:700;font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;border-radius:8px;cursor:pointer;margin-top:4px}
-    .btn-gold{width:100%;padding:13px;background:linear-gradient(90deg,#FFD700,#FF9500);border:none;color:#0A0A0F;font-weight:700;font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;border-radius:8px;cursor:pointer;margin-top:4px}
-    .btn-green{width:100%;padding:13px;background:linear-gradient(90deg,#5CFF8A,#00c96a);border:none;color:#0A0A0F;font-weight:700;font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;border-radius:8px;cursor:pointer;margin-top:4px}
+    .btn-main{width:100%;padding:13px;background:linear-gradient(90deg,#FF6B00,#FF9500);border:none;color:white;font-weight:700;font-family:'Bebas Neue';font-size:16px;letter-spacing:2px;border-radius:8px;cursor:pointer;margin-top:4px}
+    .btn-gold{width:100%;padding:13px;background:linear-gradient(90deg,#FFD700,#FF9500);border:none;color:#0A0A0F;font-weight:700;font-family:'Bebas Neue';font-size:16px;letter-spacing:2px;border-radius:8px;cursor:pointer;margin-top:4px}
+    .btn-green{width:100%;padding:13px;background:linear-gradient(90deg,#5CFF8A,#00c96a);border:none;color:#0A0A0F;font-weight:700;font-family:'Bebas Neue';font-size:16px;letter-spacing:2px;border-radius:8px;cursor:pointer;margin-top:4px}
+    .btn-blue{width:100%;padding:13px;background:linear-gradient(90deg,#4facfe,#0093e9);border:none;color:#fff;font-weight:700;font-family:'Bebas Neue';font-size:16px;letter-spacing:2px;border-radius:8px;cursor:pointer;margin-top:4px}
     .t-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px}
     .t-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
     .t-title{font-weight:700;font-size:16px;margin-bottom:4px}
     .t-badges{display:flex;gap:6px;flex-wrap:wrap}
     .t-badge{padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:1px;display:inline-block}
-    .t-badge.mode-badge{background:rgba(255,107,107,0.15);border:1px solid rgba(255,107,107,0.4);color:#FF6B6B}
-    .btn-delete{background:none;border:1px solid #FF6B6B44;color:var(--red);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:700;font-family:'Rajdhani',sans-serif}
-    .t-prizes{display:flex;gap:16px;margin-bottom:10px;flex-wrap:wrap}
+    .btn-delete{background:none;border:1px solid rgba(255,107,107,0.3);color:var(--red);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:700;font-family:'Rajdhani'}
+    .t-prizes{display:flex;gap:12px;margin-bottom:10px;flex-wrap:wrap}
     .t-prize-lbl{color:var(--muted);font-size:11px;font-weight:600;letter-spacing:1px}
     .t-prize-val{font-weight:700}
     .fill-label{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:5px}
     .fill-bar-bg{background:#0A0A0F;border-radius:4px;height:6px;overflow:hidden}
     .fill-bar{height:100%;border-radius:4px;transition:width 0.6s ease}
-    .section-label{font-family:'Bebas Neue',sans-serif;font-size:15px;color:var(--muted);letter-spacing:2px;margin-bottom:10px}
+    .section-label{font-family:'Bebas Neue';font-size:15px;color:var(--muted);letter-spacing:2px;margin-bottom:10px}
     .w-uid-wrap{position:relative;margin-bottom:10px}
     .w-uid-wrap input{padding-left:40px}
     .w-uid-num{position:absolute;left:14px;top:50%;transform:translateY(-60%);font-weight:700;font-size:14px}
     .prize-preview{background:#0A0A0F;border-radius:8px;padding:12px;margin-bottom:14px;display:flex;gap:20px}
     .pp-item{text-align:center}
-    .pp-val{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px}
+    .pp-val{font-family:'Bebas Neue';font-size:20px;letter-spacing:1px}
     .pp-lbl{color:var(--muted);font-size:11px}
     .log-entry{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
     .log-uid{font-weight:700;font-size:14px}
     .log-meta{color:var(--muted);font-size:12px}
-    .log-prize{color:var(--green);font-family:'Bebas Neue',sans-serif;font-size:20px}
-    #toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);padding:11px 26px;border-radius:8px;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.5);display:none;white-space:nowrap}
+    .log-prize{color:var(--green);font-family:'Bebas Neue';font-size:20px}
+    #toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);padding:11px 26px;border-radius:8px;font-family:'Rajdhani';font-weight:700;font-size:14px;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.5);display:none;white-space:nowrap}
 
     /* SETTINGS */
     .settings-section{margin-bottom:20px}
-    .settings-section-title{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+    .settings-section-title{font-family:'Bebas Neue';font-size:15px;letter-spacing:2px;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:8px}
     .settings-section-title::after{content:'';flex:1;height:1px;background:var(--border)}
     .field-hint{font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.6;padding:10px;background:rgba(255,255,255,0.03);border-radius:7px;border:1px solid var(--border)}
+    .cur-display{background:#0A0A0F;border:1px solid var(--border);border-radius:7px;padding:10px 13px;font-size:13px;color:var(--gold);margin-bottom:10px;min-height:38px;word-break:break-word;line-height:1.5}
+    .cur-display.empty{color:var(--muted);font-style:italic}
 
     /* Per-method payment tabs */
-    .pay-method-tabs{display:flex;gap:0;margin-bottom:0;border-radius:8px;overflow:hidden;border:1px solid var(--border)}
-    .pay-method-tab{flex:1;padding:10px;text-align:center;font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1px;color:var(--muted);cursor:pointer;background:var(--dark);border:none;border-bottom:2px solid transparent;transition:0.2s}
+    .pay-method-tabs{display:flex;border-radius:8px 8px 0 0;overflow:hidden;border:1px solid var(--border);border-bottom:none;margin-bottom:0}
+    .pay-method-tab{flex:1;padding:10px;text-align:center;font-family:'Bebas Neue';font-size:14px;letter-spacing:1px;color:var(--muted);cursor:pointer;background:var(--dark);border:none;border-bottom:2px solid transparent}
     .pay-method-tab.active{color:var(--orange);background:rgba(255,107,0,0.08);border-bottom:2px solid var(--orange)}
-    .pay-method-panel{display:none;padding-top:14px}
+    .pay-method-panel{display:none;border:1px solid var(--border);border-radius:0 0 8px 8px;padding:14px;margin-bottom:12px}
     .pay-method-panel.active{display:block}
-    .pay-cur{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
-    .pay-cur-box{background:#0A0A0F;border:1px solid var(--border);border-radius:7px;padding:10px 12px;flex:1;min-width:80px}
-    .pay-cur-lbl{font-size:10px;color:var(--muted);letter-spacing:1px;margin-bottom:4px}
-    .pay-cur-val{font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--gold);letter-spacing:1px;word-break:break-all}
+    .pay-cur{display:flex;gap:8px;margin-bottom:12px}
+    .pay-cur-box{background:#0A0A0F;border:1px solid var(--border);border-radius:7px;padding:10px 12px;flex:1}
+    .pay-cur-lbl{font-size:10px;color:var(--muted);letter-spacing:1px;margin-bottom:4px;text-transform:uppercase}
+    .pay-cur-val{font-family:'Bebas Neue';font-size:16px;color:var(--green);letter-spacing:1px;word-break:break-all}
+    .fld-label{font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;display:block;margin-bottom:6px}
   </style>
 </head>
 <body>
@@ -110,30 +113,27 @@
 </div>
 
 <div class="tabs">
-  <button class="tab active" onclick="switchTab('requests')" id="tab-btn-requests">
-    <span class="tab-icon">📥</span>REQUESTS
-    <span class="badge" id="pending-badge" style="display:none">0</span>
-  </button>
-  <button class="tab" onclick="switchTab('tournaments')" id="tab-btn-tournaments"><span class="tab-icon">🎮</span>MATCHES</button>
-  <button class="tab" onclick="switchTab('winners')"     id="tab-btn-winners"><span class="tab-icon">🏆</span>WINNERS</button>
-  <button class="tab" onclick="switchTab('settings')"    id="tab-btn-settings"><span class="tab-icon">⚙️</span>SETTINGS</button>
+  <button class="tab active" onclick="switchTab('requests')"   id="tab-btn-requests"><span class="tab-icon">📥</span>REQUESTS<span class="badge" id="pending-badge" style="display:none">0</span></button>
+  <button class="tab"        onclick="switchTab('tournaments')" id="tab-btn-tournaments"><span class="tab-icon">🎮</span>MATCHES</button>
+  <button class="tab"        onclick="switchTab('winners')"     id="tab-btn-winners"><span class="tab-icon">🏆</span>WINNERS</button>
+  <button class="tab"        onclick="switchTab('settings')"    id="tab-btn-settings"><span class="tab-icon">⚙️</span>SETTINGS</button>
 </div>
 
-<!-- REQUESTS TAB -->
+<!-- REQUESTS -->
 <div class="tab-content active" id="tab-requests">
   <div class="stats-row">
-    <div class="stat-box"><div class="stat-val" id="stat-pending" style="color:#FFD700">0</div><div class="stat-lbl">PENDING</div></div>
-    <div class="stat-box"><div class="stat-val" id="stat-total" style="color:#FF6B00">0</div><div class="stat-lbl">TOTAL</div></div>
-    <div class="stat-box"><div class="stat-val" id="stat-approved" style="color:#5CFF8A">0</div><div class="stat-lbl">APPROVED</div></div>
-    <div class="stat-box"><div class="stat-val" id="stat-rejected" style="color:#FF6B6B">0</div><div class="stat-lbl">REJECTED</div></div>
+    <div class="stat-box"><div class="stat-val" id="stat-pending" style="color:var(--gold)">0</div><div class="stat-lbl">PENDING</div></div>
+    <div class="stat-box"><div class="stat-val" id="stat-total" style="color:var(--orange)">0</div><div class="stat-lbl">TOTAL</div></div>
+    <div class="stat-box"><div class="stat-val" id="stat-approved" style="color:var(--green)">0</div><div class="stat-lbl">APPROVED</div></div>
+    <div class="stat-box"><div class="stat-val" id="stat-rejected" style="color:var(--red)">0</div><div class="stat-lbl">REJECTED</div></div>
   </div>
   <div id="requests-list"></div>
 </div>
 
-<!-- TOURNAMENTS TAB -->
+<!-- MATCHES -->
 <div class="tab-content" id="tab-tournaments">
   <div class="card">
-    <div class="card-title"><div class="card-title-bar" style="background:#FF6B00"></div><span style="color:#FF6B00">CREATE TOURNAMENT</span></div>
+    <div class="card-title"><div class="card-title-bar" style="background:var(--orange)"></div><span style="color:var(--orange)">CREATE TOURNAMENT</span></div>
     <input type="text" id="t-title" placeholder="Match Title *">
     <div class="row">
       <input type="number" id="t-prize1" placeholder="1st Prize ৳">
@@ -141,14 +141,11 @@
       <input type="number" id="t-prize3" placeholder="3rd Prize ৳">
     </div>
     <div class="row">
-      <input type="number" id="t-fee" placeholder="Entry Fee ৳ *">
-      <select id="t-type">
-        <option value="1">Solo</option>
-        <option value="2">Duo</option>
-        <option value="4">Squad</option>
-      </select>
+      <input type="number" id="t-fee" placeholder="Entry Fee ৳ (per player) *">
+      <select id="t-type"><option value="1">Solo</option><option value="2">Duo</option><option value="4">Squad</option></select>
     </div>
-    <!-- GAME MODE FIELD — new -->
+    <!-- GAME MODE — Classic / Clash Squad / Lone Wolf -->
+    <label class="fld-label">Game Mode</label>
     <select id="t-game-mode">
       <option value="Classic">🗺️ Classic (Battle Royale)</option>
       <option value="Clash Squad">⚔️ Clash Squad</option>
@@ -164,21 +161,21 @@
   <div id="tournament-list"></div>
 </div>
 
-<!-- WINNERS TAB -->
+<!-- WINNERS -->
 <div class="tab-content" id="tab-winners">
   <div class="card">
-    <div class="card-title"><div class="card-title-bar" style="background:#FFD700"></div><span style="color:#FFD700">DISTRIBUTE PRIZES</span></div>
+    <div class="card-title"><div class="card-title-bar" style="background:var(--gold)"></div><span style="color:var(--gold)">DISTRIBUTE PRIZES</span></div>
     <select id="winner-match-select" onchange="updatePrizePreview()"><option value="">— Select Match —</option></select>
     <div id="prize-preview" style="display:none" class="prize-preview">
-      <div class="pp-item"><div class="pp-val" id="pp1" style="color:#FFD700">৳0</div><div class="pp-lbl">1ST</div></div>
+      <div class="pp-item"><div class="pp-val" id="pp1" style="color:var(--gold)">৳0</div><div class="pp-lbl">1ST</div></div>
       <div class="pp-item"><div class="pp-val" id="pp2" style="color:#C0C0C0">৳0</div><div class="pp-lbl">2ND</div></div>
       <div class="pp-item"><div class="pp-val" id="pp3" style="color:#CD7F32">৳0</div><div class="pp-lbl">3RD</div></div>
     </div>
-    <p style="color:var(--muted);font-size:13px;margin-bottom:12px;">⚠️ Enter the Game UID registered in the player's profile.</p>
-    <div class="w-uid-wrap"><span class="w-uid-num" style="color:#FFD700">#1</span><input type="text" id="w1" placeholder="1st Place Game UID 🥇"></div>
+    <p style="color:var(--muted);font-size:13px;margin-bottom:12px">⚠️ Enter the Game UID registered in each player's profile.</p>
+    <div class="w-uid-wrap"><span class="w-uid-num" style="color:var(--gold)">#1</span><input type="text" id="w1" placeholder="1st Place Game UID 🥇"></div>
     <div class="w-uid-wrap"><span class="w-uid-num" style="color:#C0C0C0">#2</span><input type="text" id="w2" placeholder="2nd Place Game UID 🥈"></div>
     <div class="w-uid-wrap"><span class="w-uid-num" style="color:#CD7F32">#3</span><input type="text" id="w3" placeholder="3rd Place Game UID 🥉"></div>
-    <button class="btn-gold" onclick="distributePrizes()">DISTRIBUTE PRIZES & CLOSE MATCH</button>
+    <button class="btn-gold" onclick="distributePrizes()">DISTRIBUTE PRIZES &amp; CLOSE MATCH</button>
   </div>
   <div id="dist-log-wrap" style="display:none">
     <div class="section-label">DISTRIBUTION LOG</div>
@@ -186,101 +183,107 @@
   </div>
 </div>
 
-<!-- SETTINGS TAB -->
+<!-- SETTINGS -->
 <div class="tab-content" id="tab-settings">
 
   <!-- NOTICE -->
   <div class="card">
-    <div class="card-title"><div class="card-title-bar" style="background:#FFD700"></div><span style="color:#FFD700">📢 GLOBAL NOTICE BAR</span></div>
+    <div class="card-title"><div class="card-title-bar" style="background:var(--gold)"></div><span style="color:var(--gold)">📢 GLOBAL NOTICE BAR</span></div>
     <div class="settings-section">
       <div class="settings-section-title">CURRENT NOTICE</div>
-      <div id="current-notice-display" style="background:#0A0A0F;border:1px solid var(--border);border-radius:7px;padding:10px 13px;font-size:13px;color:var(--gold);margin-bottom:10px;min-height:40px;word-break:break-word;line-height:1.5">
-        <span style="color:var(--muted);font-style:italic">No notice set</span>
-      </div>
+      <div class="cur-display" id="current-notice-display"><span style="color:var(--muted);font-style:italic">No notice set</span></div>
     </div>
     <div class="settings-section">
       <div class="settings-section-title">UPDATE NOTICE</div>
-      <p class="field-hint">This text scrolls across the top of the Home page. Leave blank to hide the bar.</p>
-      <textarea id="notice-input" placeholder="e.g. 🔥 New tournament tonight at 9PM! Join now!"></textarea>
+      <p class="field-hint">Scrolls across the top of Home page. Leave blank to hide bar.</p>
+      <textarea id="notice-input" placeholder="e.g. 🔥 New tournament tonight at 9PM!"></textarea>
       <div class="row">
-        <button class="btn-main" onclick="saveNotice()">SAVE NOTICE</button>
-        <button class="btn-reject" style="flex:1;padding:13px;border-radius:8px;font-family:'Bebas Neue';font-size:16px;letter-spacing:2px;cursor:pointer;margin-top:4px;background:transparent;color:var(--red);border:1px solid var(--red)" onclick="clearNotice()">CLEAR</button>
+        <button class="btn-main" style="margin-top:0" onclick="saveNotice()">SAVE NOTICE</button>
+        <button onclick="clearNotice()" style="flex:1;padding:13px;border-radius:8px;font-family:'Bebas Neue';font-size:16px;letter-spacing:2px;cursor:pointer;background:transparent;color:var(--red);border:1px solid var(--red)">CLEAR</button>
       </div>
     </div>
   </div>
 
-  <!-- PAYMENT DETAILS — separate settings per method -->
+  <!-- PAYMENT DETAILS — per method -->
   <div class="card">
-    <div class="card-title"><div class="card-title-bar" style="background:#5CFF8A"></div><span style="color:#5CFF8A">💳 DEPOSIT PAYMENT DETAILS</span></div>
-    <p class="field-hint">
-      ℹ️ Set a <b>separate number and send type for each payment method</b>. When a user selects bKash in Deposit, they see the bKash number. When they select Nagad, they see the Nagad number — and so on.
-    </p>
-
-    <!-- Per-method tabs -->
+    <div class="card-title"><div class="card-title-bar" style="background:var(--green)"></div><span style="color:var(--green)">💳 DEPOSIT PAYMENT DETAILS</span></div>
+    <p class="field-hint">Set a <b>separate number &amp; send type for each method</b>. Users see the correct number when they select bKash, Nagad, or Rocket in the Deposit screen.</p>
     <div class="pay-method-tabs">
       <button class="pay-method-tab active" onclick="switchPayTab('bkash')">📱 bKash</button>
       <button class="pay-method-tab"        onclick="switchPayTab('nagad')">💳 Nagad</button>
       <button class="pay-method-tab"        onclick="switchPayTab('rocket')">🚀 Rocket</button>
     </div>
 
-    <!-- bKash panel -->
+    <!-- bKash -->
     <div class="pay-method-panel active" id="pay-panel-bkash">
-      <div class="settings-section" style="margin-top:14px">
-        <div class="settings-section-title">CURRENT bKash SETTINGS</div>
-        <div class="pay-cur">
-          <div class="pay-cur-box"><div class="pay-cur-lbl">NUMBER</div><div class="pay-cur-val" id="cur-bkash-number">—</div></div>
-          <div class="pay-cur-box"><div class="pay-cur-lbl">SEND TYPE</div><div class="pay-cur-val" id="cur-bkash-type">—</div></div>
-        </div>
+      <div class="pay-cur">
+        <div class="pay-cur-box"><div class="pay-cur-lbl">Number</div><div class="pay-cur-val" id="cur-bkash-number">—</div></div>
+        <div class="pay-cur-box"><div class="pay-cur-lbl">Send Type</div><div class="pay-cur-val" id="cur-bkash-type">—</div></div>
       </div>
-      <label style="font-size:11px;color:var(--muted);letter-spacing:2px;display:block;margin-bottom:6px">bKash RECEIVING NUMBER</label>
+      <label class="fld-label">bKash Receiving Number</label>
       <input type="tel" id="pay-bkash-number" placeholder="01XXXXXXXXX">
-      <label style="font-size:11px;color:var(--muted);letter-spacing:2px;display:block;margin-bottom:6px">SEND TYPE</label>
-      <select id="pay-bkash-type">
-        <option value="Send Money">Send Money</option>
-        <option value="Cashout">Cashout</option>
-        <option value="Payment">Payment</option>
-      </select>
+      <label class="fld-label">Send Type</label>
+      <select id="pay-bkash-type"><option value="Send Money">Send Money</option><option value="Cashout">Cashout</option><option value="Add Money">Add Money</option></select>
       <button class="btn-green" onclick="savePayMethod('bkash')">SAVE bKash DETAILS</button>
     </div>
 
-    <!-- Nagad panel -->
+    <!-- Nagad -->
     <div class="pay-method-panel" id="pay-panel-nagad">
-      <div class="settings-section" style="margin-top:14px">
-        <div class="settings-section-title">CURRENT NAGAD SETTINGS</div>
-        <div class="pay-cur">
-          <div class="pay-cur-box"><div class="pay-cur-lbl">NUMBER</div><div class="pay-cur-val" id="cur-nagad-number">—</div></div>
-          <div class="pay-cur-box"><div class="pay-cur-lbl">SEND TYPE</div><div class="pay-cur-val" id="cur-nagad-type">—</div></div>
-        </div>
+      <div class="pay-cur">
+        <div class="pay-cur-box"><div class="pay-cur-lbl">Number</div><div class="pay-cur-val" id="cur-nagad-number">—</div></div>
+        <div class="pay-cur-box"><div class="pay-cur-lbl">Send Type</div><div class="pay-cur-val" id="cur-nagad-type">—</div></div>
       </div>
-      <label style="font-size:11px;color:var(--muted);letter-spacing:2px;display:block;margin-bottom:6px">NAGAD RECEIVING NUMBER</label>
+      <label class="fld-label">Nagad Receiving Number</label>
       <input type="tel" id="pay-nagad-number" placeholder="01XXXXXXXXX">
-      <label style="font-size:11px;color:var(--muted);letter-spacing:2px;display:block;margin-bottom:6px">SEND TYPE</label>
-      <select id="pay-nagad-type">
-        <option value="Send Money">Send Money</option>
-        <option value="Cashout">Cashout</option>
-        <option value="Payment">Payment</option>
-      </select>
+      <label class="fld-label">Send Type</label>
+      <select id="pay-nagad-type"><option value="Send Money">Send Money</option><option value="Cashout">Cashout</option><option value="Add Money">Add Money</option></select>
       <button class="btn-green" onclick="savePayMethod('nagad')">SAVE NAGAD DETAILS</button>
     </div>
 
-    <!-- Rocket panel -->
+    <!-- Rocket -->
     <div class="pay-method-panel" id="pay-panel-rocket">
-      <div class="settings-section" style="margin-top:14px">
-        <div class="settings-section-title">CURRENT ROCKET SETTINGS</div>
-        <div class="pay-cur">
-          <div class="pay-cur-box"><div class="pay-cur-lbl">NUMBER</div><div class="pay-cur-val" id="cur-rocket-number">—</div></div>
-          <div class="pay-cur-box"><div class="pay-cur-lbl">SEND TYPE</div><div class="pay-cur-val" id="cur-rocket-type">—</div></div>
-        </div>
+      <div class="pay-cur">
+        <div class="pay-cur-box"><div class="pay-cur-lbl">Number</div><div class="pay-cur-val" id="cur-rocket-number">—</div></div>
+        <div class="pay-cur-box"><div class="pay-cur-lbl">Send Type</div><div class="pay-cur-val" id="cur-rocket-type">—</div></div>
       </div>
-      <label style="font-size:11px;color:var(--muted);letter-spacing:2px;display:block;margin-bottom:6px">ROCKET RECEIVING NUMBER</label>
+      <label class="fld-label">Rocket Receiving Number</label>
       <input type="tel" id="pay-rocket-number" placeholder="01XXXXXXXXX">
-      <label style="font-size:11px;color:var(--muted);letter-spacing:2px;display:block;margin-bottom:6px">SEND TYPE</label>
-      <select id="pay-rocket-type">
-        <option value="Send Money">Send Money</option>
-        <option value="Cashout">Cashout</option>
-        <option value="Payment">Payment</option>
-      </select>
+      <label class="fld-label">Send Type</label>
+      <select id="pay-rocket-type"><option value="Send Money">Send Money</option><option value="Cashout">Cashout</option><option value="Add Money">Add Money</option></select>
       <button class="btn-green" onclick="savePayMethod('rocket')">SAVE ROCKET DETAILS</button>
+    </div>
+  </div>
+
+  <!-- SUPPORT CONTACTS -->
+  <div class="card">
+    <div class="card-title"><div class="card-title-bar" style="background:#4facfe"></div><span style="color:#4facfe">🎧 SUPPORT CONTACTS</span></div>
+    <p class="field-hint">These contacts appear in the Support button on every page. Users can reach you via WhatsApp, Telegram, or phone call.</p>
+
+    <div class="settings-section">
+      <div class="settings-section-title">CURRENT SUPPORT INFO</div>
+      <div class="pay-cur">
+        <div class="pay-cur-box"><div class="pay-cur-lbl">WhatsApp</div><div class="pay-cur-val" id="cur-wa">—</div></div>
+        <div class="pay-cur-box"><div class="pay-cur-lbl">Telegram</div><div class="pay-cur-val" id="cur-tg">—</div></div>
+        <div class="pay-cur-box"><div class="pay-cur-lbl">Phone</div><div class="pay-cur-val" id="cur-ph">—</div></div>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-section-title">UPDATE SUPPORT CONTACTS</div>
+
+      <label class="fld-label">WhatsApp Number (with country code, e.g. +8801XXXXXXXXX)</label>
+      <input type="tel" id="support-whatsapp" placeholder="+8801XXXXXXXXX">
+
+      <label class="fld-label">Telegram Username (e.g. @yourusername)</label>
+      <input type="text" id="support-telegram-link" placeholder="@yourusername">
+
+      <label class="fld-label">Telegram Phone Number (optional, e.g. +8801XXXXXXXXX)</label>
+      <input type="tel" id="support-telegram-number" placeholder="+8801XXXXXXXXX">
+
+      <label class="fld-label">Phone Number (for direct call)</label>
+      <input type="tel" id="support-phone" placeholder="01XXXXXXXXX">
+
+      <button class="btn-blue" onclick="saveSupportContacts()">SAVE SUPPORT CONTACTS</button>
     </div>
   </div>
 
@@ -312,40 +315,45 @@
     loadSettingsData();
   });
 
+  function el(id){ return document.getElementById(id); }
   function toast(msg, type){
-    var e=document.getElementById('toast');
+    var e=el('toast');
     e.textContent=msg;
     e.style.background=type==='error'?'#FF6B6B':type==='warn'?'#FFD700':'#5CFF8A';
-    e.style.color=(type==='error'||!type)?'#fff':'#0A0A0F';
+    e.style.color=(type==='error')?'#fff':'#0A0A0F';
     e.style.display='block';
-    clearTimeout(window._tt);
-    window._tt=setTimeout(function(){e.style.display='none';},2600);
+    clearTimeout(window._tt); window._tt=setTimeout(function(){e.style.display='none';},2600);
   }
 
   window.switchTab=function(name){
     document.querySelectorAll('.tab-content').forEach(function(c){c.classList.remove('active');});
     document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
-    document.getElementById('tab-'+name).classList.add('active');
-    document.getElementById('tab-btn-'+name).classList.add('active');
+    el('tab-'+name).classList.add('active');
+    el('tab-btn-'+name).classList.add('active');
   };
 
   // ─── REQUESTS ─────────────────────────────────────────────────────────────
   function loadRequests(){
-    onSnapshot(collection(db,'transactions'),function(snap){
+    onSnapshot(collection(db,'transactions'), function(snap){
       var all=[],pending=[],approved=[],rejected=[];
-      snap.forEach(function(d){ var tx=Object.assign({id:d.id},d.data()); all.push(tx); if(tx.status==='pending')pending.push(tx); else if(tx.status==='approved')approved.push(tx); else rejected.push(tx); });
-      document.getElementById('stat-pending').textContent=pending.length;
-      document.getElementById('stat-total').textContent=all.length;
-      document.getElementById('stat-approved').textContent=approved.length;
-      document.getElementById('stat-rejected').textContent=rejected.length;
-      var badge=document.getElementById('pending-badge');
+      snap.forEach(function(d){
+        var tx=Object.assign({id:d.id},d.data()); all.push(tx);
+        if(tx.status==='pending') pending.push(tx);
+        else if(tx.status==='approved') approved.push(tx);
+        else rejected.push(tx);
+      });
+      el('stat-pending').textContent=pending.length;
+      el('stat-total').textContent=all.length;
+      el('stat-approved').textContent=approved.length;
+      el('stat-rejected').textContent=rejected.length;
+      var badge=el('pending-badge');
       if(pending.length>0){badge.textContent=pending.length;badge.style.display='flex';}else badge.style.display='none';
-      var list=document.getElementById('requests-list');
-      if(pending.length===0){list.innerHTML='<div class="empty-state"><div class="tick">✓</div><div>ALL REQUESTS HANDLED</div></div>';return;}
+      var list=el('requests-list');
+      if(!pending.length){list.innerHTML='<div class="empty-state"><div class="tick">✓</div><div>ALL REQUESTS HANDLED</div></div>';return;}
       list.innerHTML='';
       pending.forEach(function(tx){
         var isd=tx.type==='deposit'||tx.type==='entry';
-        var sc=isd?'#5CFF8A':'#FF6B6B', tc=isd?'#5CFF8A22':'#FF6B6B22';
+        var sc=isd?'#5CFF8A':'#FF6B6B', tc=isd?'rgba(92,255,138,0.12)':'rgba(255,107,107,0.12)';
         list.innerHTML+='<div class="req-card">'
           +'<div class="req-strip" style="background:'+sc+'"></div>'
           +'<div style="display:flex;justify-content:space-between;align-items:flex-start">'
@@ -354,7 +362,7 @@
           +'<div class="req-email">'+tx.email+'</div>'
           +'<div class="req-meta">'
           +(tx.name?'👤 '+tx.name+'<br>':'')
-          +(tx.txid?'TxID: '+tx.txid+'<br>':'')
+          +(tx.txid?'🔖 TxID: '+tx.txid+'<br>':'')
           +(tx.number?'📞 '+tx.number+'<br>':'')
           +(tx.method?'📱 '+tx.method.toUpperCase():'')
           +'</div>'
@@ -382,26 +390,23 @@
 
   // ─── TOURNAMENTS ──────────────────────────────────────────────────────────
   window.createTournament=async function(){
-    var title=document.getElementById('t-title').value.trim();
-    var fee=Number(document.getElementById('t-fee').value);
-    var time=document.getElementById('t-time').value;
-    var max=Number(document.getElementById('t-max').value);
-    var gameMode=document.getElementById('t-game-mode').value;
-    if(!title||fee===undefined||!time||!max){ toast('Fill all required fields!','error'); return; }
+    var title=el('t-title').value.trim();
+    var fee=Number(el('t-fee').value);
+    var time=el('t-time').value;
+    var max=Number(el('t-max').value);
+    var gameMode=el('t-game-mode').value;
+    if(!title||fee===undefined||isNaN(fee)||!time||!max){toast('Fill all required fields!','error');return;}
     await addDoc(collection(db,'tournaments'),{
       title:title,
-      prize1:Number(document.getElementById('t-prize1').value)||0,
-      prize2:Number(document.getElementById('t-prize2').value)||0,
-      prize3:Number(document.getElementById('t-prize3').value)||0,
-      fee:fee,
-      teamType:Number(document.getElementById('t-type').value),
-      game_mode:gameMode,
-      maxPlayers:max, joined:0, time:time, status:'open',
-      created_at:serverTimestamp()
+      prize1:Number(el('t-prize1').value)||0,
+      prize2:Number(el('t-prize2').value)||0,
+      prize3:Number(el('t-prize3').value)||0,
+      fee:fee, teamType:Number(el('t-type').value),
+      game_mode:gameMode, maxPlayers:max, joined:0,
+      time:time, status:'open', created_at:serverTimestamp()
     });
-    ['t-title','t-prize1','t-prize2','t-prize3','t-fee','t-max','t-time'].forEach(function(id){document.getElementById(id).value='';});
-    document.getElementById('t-type').value='1';
-    document.getElementById('t-game-mode').value='Classic';
+    ['t-title','t-prize1','t-prize2','t-prize3','t-fee','t-max','t-time'].forEach(function(id){el(id).value='';});
+    el('t-type').value='1'; el('t-game-mode').value='Classic';
     toast('🏆 Tournament created!');
   };
 
@@ -411,28 +416,24 @@
 
   function loadTournaments(){
     onSnapshot(collection(db,'tournaments'),function(snap){
-      var list=document.getElementById('tournament-list');
-      var sel=document.getElementById('winner-match-select');
+      var list=el('tournament-list'), sel=el('winner-match-select');
       list.innerHTML=''; sel.innerHTML='<option value="">— Select Match —</option>';
-      document.getElementById('match-count-label').textContent='ACTIVE MATCHES ('+snap.size+')';
+      el('match-count-label').textContent='ACTIVE MATCHES ('+snap.size+')';
       snap.forEach(function(d){
-        var t=d.data();
-        var tc=teamColor(t.teamType);
-        var fill=Math.min(Math.round((t.joined/t.maxPlayers)*100),100);
+        var t=d.data(), tc=teamColor(t.teamType), gc=gmColor(t.game_mode);
+        var fill=Math.min(Math.round(((t.joined||0)/(t.maxPlayers||1))*100),100);
         var barColor=fill>=100?'#FF6B6B':fill>70?'#FFD700':'#5CFF8A';
-        var gc=gmColor(t.game_mode);
         list.innerHTML+='<div class="t-card">'
-          +'<div class="t-header">'
-          +'<div><div class="t-title">'+t.title+'</div>'
+          +'<div class="t-header"><div>'
+          +'<div class="t-title">'+t.title+'</div>'
           +'<div class="t-badges">'
           +'<span class="t-badge" style="background:'+tc+'22;color:'+tc+'">'+teamLabel(t.teamType)+'</span>'
-          +(t.game_mode?'<span class="t-badge mode-badge" style="background:'+gc+'22;color:'+gc+'">'+t.game_mode+'</span>':'')
+          +(t.game_mode?'<span class="t-badge" style="background:'+gc+'22;color:'+gc+'">'+t.game_mode+'</span>':'')
           +'</div></div>'
-          +'<button class="btn-delete" onclick="deleteTournament(\''+d.id+'\')">✕ DELETE</button>'
-          +'</div>'
+          +'<button class="btn-delete" onclick="deleteTournament(\''+d.id+'\')">✕ DELETE</button></div>'
           +'<div class="t-prizes">'
-          +'<div><div class="t-prize-lbl">ENTRY</div><div class="t-prize-val" style="color:#FFD700">৳'+t.fee+'</div></div>'
-          +'<div><div class="t-prize-lbl">1ST</div><div class="t-prize-val" style="color:#5CFF8A">৳'+t.prize1+'</div></div>'
+          +'<div><div class="t-prize-lbl">ENTRY/PLAYER</div><div class="t-prize-val" style="color:var(--gold)">৳'+t.fee+'</div></div>'
+          +'<div><div class="t-prize-lbl">1ST</div><div class="t-prize-val" style="color:var(--green)">৳'+t.prize1+'</div></div>'
           +'<div><div class="t-prize-lbl">2ND</div><div class="t-prize-val">৳'+t.prize2+'</div></div>'
           +'<div><div class="t-prize-lbl">3RD</div><div class="t-prize-val" style="color:#CD7F32">৳'+t.prize3+'</div></div>'
           +'</div>'
@@ -450,42 +451,36 @@
   }
 
   window.updateRoom=async function(id){
-    var rid=document.getElementById('room-'+id).value;
-    var rps=document.getElementById('pass-'+id).value;
-    await updateDoc(doc(db,'tournaments',id),{roomID:rid,roomPass:rps});
-    toast('Room Info Updated!');
+    await updateDoc(doc(db,'tournaments',id),{roomID:el('room-'+id).value,roomPass:el('pass-'+id).value});
+    toast('Room info updated!');
   };
   window.deleteTournament=async function(id){
     if(!confirm('Delete this tournament?')) return;
-    await deleteDoc(doc(db,'tournaments',id));
-    toast('Match deleted','warn');
+    await deleteDoc(doc(db,'tournaments',id)); toast('Deleted','warn');
   };
 
   // ─── WINNERS ──────────────────────────────────────────────────────────────
   window.updatePrizePreview=async function(){
-    var mId=document.getElementById('winner-match-select').value;
-    var preview=document.getElementById('prize-preview');
+    var mId=el('winner-match-select').value, preview=el('prize-preview');
     if(!mId){preview.style.display='none';return;}
     var snap=await getDoc(doc(db,'tournaments',mId));
     if(!snap.exists()) return;
     var t=snap.data();
-    document.getElementById('pp1').textContent='৳'+(t.prize1||0);
-    document.getElementById('pp2').textContent='৳'+(t.prize2||0);
-    document.getElementById('pp3').textContent='৳'+(t.prize3||0);
+    el('pp1').textContent='৳'+(t.prize1||0);
+    el('pp2').textContent='৳'+(t.prize2||0);
+    el('pp3').textContent='৳'+(t.prize3||0);
     preview.style.display='flex';
   };
 
   window.distributePrizes=async function(){
-    var mId=document.getElementById('winner-match-select').value;
-    if(!mId){ toast('Select a match first!','error'); return; }
-    var wUIDs=[document.getElementById('w1').value.trim(),document.getElementById('w2').value.trim(),document.getElementById('w3').value.trim()];
-    if(!wUIDs[0]&&!wUIDs[1]&&!wUIDs[2]){ toast('Enter at least 1 winner UID!','error'); return; }
+    var mId=el('winner-match-select').value;
+    if(!mId){toast('Select a match first!','error');return;}
+    var wUIDs=[el('w1').value.trim(),el('w2').value.trim(),el('w3').value.trim()];
+    if(!wUIDs[0]&&!wUIDs[1]&&!wUIDs[2]){toast('Enter at least 1 winner UID!','error');return;}
     var tSnap=await getDoc(doc(db,'tournaments',mId));
-    if(!tSnap.exists()){ toast('Match not found!','error'); return; }
-    var t=tSnap.data();
-    var prizes=[t.prize1||0,t.prize2||0,t.prize3||0];
-    var positions=['🥇 1st','🥈 2nd','🥉 3rd'];
-    var logEntries=[];
+    if(!tSnap.exists()){toast('Match not found!','error');return;}
+    var t=tSnap.data(), prizes=[t.prize1||0,t.prize2||0,t.prize3||0];
+    var positions=['🥇 1st','🥈 2nd','🥉 3rd'], logEntries=[];
     var allUsers=await getDocs(collection(db,'users'));
     for(var i=0;i<3;i++){
       if(!wUIDs[i]||prizes[i]===0) continue;
@@ -499,15 +494,13 @@
       logEntries.push({uid:wUIDs[i],prize:prizes[i],position:positions[i],match:t.title});
     }
     await deleteDoc(doc(db,'tournaments',mId));
-    document.getElementById('dist-log-wrap').style.display='block';
-    var logDiv=document.getElementById('dist-log');
+    el('dist-log-wrap').style.display='block';
+    var logDiv=el('dist-log');
     logEntries.forEach(function(e){
-      var now=new Date().toLocaleTimeString();
-      logDiv.innerHTML='<div class="log-entry"><div><div class="log-uid">UID: '+e.uid+'</div><div class="log-meta">'+e.match+' · '+e.position+' · '+now+'</div></div><div class="log-prize">+৳'+e.prize+'</div></div>'+logDiv.innerHTML;
+      logDiv.innerHTML='<div class="log-entry"><div><div class="log-uid">UID: '+e.uid+'</div><div class="log-meta">'+e.match+' · '+e.position+' · '+new Date().toLocaleTimeString()+'</div></div><div class="log-prize">+৳'+e.prize+'</div></div>'+logDiv.innerHTML;
     });
-    ['w1','w2','w3'].forEach(function(id){document.getElementById(id).value='';});
-    document.getElementById('winner-match-select').value='';
-    document.getElementById('prize-preview').style.display='none';
+    ['w1','w2','w3'].forEach(function(id){el(id).value='';});
+    el('winner-match-select').value=''; el('prize-preview').style.display='none';
     toast('🏆 Prizes distributed to '+logEntries.length+' winner(s)!');
   };
 
@@ -517,73 +510,100 @@
     try{
       var ns=await getDoc(doc(db,'settings','notice'));
       if(ns.exists()&&ns.data().text){
-        document.getElementById('current-notice-display').textContent=ns.data().text;
-        document.getElementById('notice-input').value=ns.data().text;
+        var txt=ns.data().text;
+        el('current-notice-display').textContent=txt;
+        el('notice-input').value=txt;
       }
     }catch(e){}
-
-    // Payment — per method: settings/payment doc has { bkash:{number,send_type}, nagad:{...}, rocket:{...} }
+    // Payment per-method
     try{
       var ps=await getDoc(doc(db,'settings','payment'));
       if(ps.exists()){
         var p=ps.data();
         ['bkash','nagad','rocket'].forEach(function(m){
           if(p[m]){
-            document.getElementById('cur-'+m+'-number').textContent=p[m].number||'—';
-            document.getElementById('cur-'+m+'-type').textContent=p[m].send_type||'—';
-            if(p[m].number) document.getElementById('pay-'+m+'-number').value=p[m].number;
-            if(p[m].send_type) document.getElementById('pay-'+m+'-type').value=p[m].send_type;
+            el('cur-'+m+'-number').textContent=p[m].number||'—';
+            el('cur-'+m+'-type').textContent=p[m].send_type||'—';
+            if(p[m].number) el('pay-'+m+'-number').value=p[m].number;
+            if(p[m].send_type) el('pay-'+m+'-type').value=p[m].send_type;
           }
         });
       }
     }catch(e){}
+    // Support
+    try{
+      var ss=await getDoc(doc(db,'settings','support'));
+      if(ss.exists()){
+        var s=ss.data();
+        el('cur-wa').textContent=s.whatsapp||'—';
+        el('cur-tg').textContent=s.telegram_link||'—';
+        el('cur-ph').textContent=s.phone||'—';
+        if(s.whatsapp)          el('support-whatsapp').value=s.whatsapp;
+        if(s.telegram_link)     el('support-telegram-link').value=s.telegram_link;
+        if(s.telegram_number)   el('support-telegram-number').value=s.telegram_number;
+        if(s.phone)             el('support-phone').value=s.phone;
+      }
+    }catch(e){}
   }
 
-  // Per-method payment tabs
+  // Payment method tabs
   window.switchPayTab=function(m){
     document.querySelectorAll('.pay-method-tab').forEach(function(t){t.classList.remove('active');});
     document.querySelectorAll('.pay-method-panel').forEach(function(p){p.classList.remove('active');});
-    // find which tab button corresponds
     var tabs=document.querySelectorAll('.pay-method-tab');
     var idx=m==='bkash'?0:m==='nagad'?1:2;
     tabs[idx].classList.add('active');
-    document.getElementById('pay-panel-'+m).classList.add('active');
+    el('pay-panel-'+m).classList.add('active');
   };
 
   window.savePayMethod=async function(m){
-    var number=document.getElementById('pay-'+m+'-number').value.trim();
-    var send_type=document.getElementById('pay-'+m+'-type').value;
-    if(!number||number.replace(/\D/g,'').length<11){ toast('Enter valid 11-digit number for '+m+'!','error'); return; }
+    var number=el('pay-'+m+'-number').value.trim();
+    var send_type=el('pay-'+m+'-type').value;
+    if(!number||number.replace(/\D/g,'').length<11){toast('Enter valid 11-digit number for '+m+'!','error');return;}
     try{
-      // Save as nested object under method key
-      var update={};
-      update[m]={ number:number, send_type:send_type };
-      await setDoc(doc(db,'settings','payment'), update, {merge:true});
-      document.getElementById('cur-'+m+'-number').textContent=number;
-      document.getElementById('cur-'+m+'-type').textContent=send_type;
-      toast('💳 '+m.charAt(0).toUpperCase()+m.slice(1)+' payment details saved!');
-    }catch(e){ toast('Failed to save','error'); }
+      var update={}; update[m]={number:number,send_type:send_type};
+      await setDoc(doc(db,'settings','payment'),update,{merge:true});
+      el('cur-'+m+'-number').textContent=number;
+      el('cur-'+m+'-type').textContent=send_type;
+      toast('💳 '+m.charAt(0).toUpperCase()+m.slice(1)+' details saved!');
+    }catch(e){toast('Failed to save','error');}
   };
 
+  // Notice
   window.saveNotice=async function(){
-    var text=document.getElementById('notice-input').value.trim();
+    var text=el('notice-input').value.trim();
     try{
       await setDoc(doc(db,'settings','notice'),{text:text,updated_at:serverTimestamp()},{merge:true});
-      if(text){
-        document.getElementById('current-notice-display').textContent=text;
-      } else {
-        document.getElementById('current-notice-display').innerHTML='<span style="color:var(--muted);font-style:italic">No notice set</span>';
-      }
+      if(text){el('current-notice-display').textContent=text;el('current-notice-display').className='cur-display';}
+      else{el('current-notice-display').innerHTML='<span style="color:var(--muted);font-style:italic">No notice set</span>';}
       toast('📢 Notice saved!');
-    }catch(e){ toast('Failed','error'); }
+    }catch(e){toast('Failed','error');}
   };
   window.clearNotice=async function(){
     try{
       await setDoc(doc(db,'settings','notice'),{text:'',updated_at:serverTimestamp()},{merge:true});
-      document.getElementById('notice-input').value='';
-      document.getElementById('current-notice-display').innerHTML='<span style="color:var(--muted);font-style:italic">No notice set</span>';
+      el('notice-input').value='';
+      el('current-notice-display').innerHTML='<span style="color:var(--muted);font-style:italic">No notice set</span>';
       toast('Notice cleared');
-    }catch(e){ toast('Failed','error'); }
+    }catch(e){toast('Failed','error');}
+  };
+
+  // Support contacts
+  window.saveSupportContacts=async function(){
+    var wa  =el('support-whatsapp').value.trim();
+    var tgL =el('support-telegram-link').value.trim();
+    var tgN =el('support-telegram-number').value.trim();
+    var ph  =el('support-phone').value.trim();
+    try{
+      await setDoc(doc(db,'settings','support'),{
+        whatsapp:wa, telegram_link:tgL, telegram_number:tgN, phone:ph,
+        updated_at:serverTimestamp()
+      },{merge:true});
+      el('cur-wa').textContent=wa||'—';
+      el('cur-tg').textContent=tgL||'—';
+      el('cur-ph').textContent=ph||'—';
+      toast('🎧 Support contacts saved!');
+    }catch(e){toast('Failed to save','error');}
   };
 </script>
 </body>
