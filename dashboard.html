@@ -120,20 +120,18 @@
     .teammate-uid{color:var(--muted);font-size:11px;margin-left:auto}
     .hist-meta{font-size:12px;color:var(--muted);display:flex;gap:10px;flex-wrap:wrap}
     .hist-meta span{color:#888}
+    /* Queue waiting message */
+    .queue-wait-msg{font-size:12px;color:var(--green);padding:8px 10px;background:rgba(92,255,138,0.06);border:1px solid rgba(92,255,138,0.2);border-radius:7px;margin-bottom:9px;line-height:1.6}
 
-    /* MODALS — fixed height, submit always visible */
+    /* MODALS */
     .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:500;align-items:flex-end;justify-content:center}
     .modal-overlay.open{display:flex}
     .modal{background:#111;border:1px solid var(--gold);border-radius:16px 16px 0 0;width:100%;max-width:500px;animation:slideUp 0.28s ease both;border-top:3px solid var(--gold);height:88vh;display:flex;flex-direction:column}
     @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-    /* Header bar — title left, X top-right */
     .modal-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 12px;border-bottom:1px solid var(--border);flex-shrink:0}
     .modal-title{font-family:'Teko',sans-serif;font-size:24px;color:var(--gold);letter-spacing:3px;text-transform:uppercase;margin:0;line-height:1}
     .modal-x{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,0.05);border:1px solid #444;color:#888;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-    .modal-x:active{background:rgba(255,107,107,0.2);border-color:var(--danger);color:var(--danger)}
-    /* Scrollable middle */
     .modal-scroll{overflow-y:auto;padding:16px;flex:1}
-    /* Submit always visible at bottom */
     .modal-foot{padding:12px 16px 16px;border-top:1px solid var(--border);flex-shrink:0;background:#111}
     .m-btn{width:100%;padding:14px;border:1px solid var(--gold);border-radius:7px;background:linear-gradient(180deg,var(--amber),var(--amber-deep));color:var(--gold);font-family:'Teko';font-size:20px;letter-spacing:2px;cursor:pointer;text-transform:uppercase}
     .m-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:6px;display:block}
@@ -208,8 +206,7 @@
       <input type="tel"  class="e-input" id="input-whatsapp" placeholder="01XXXXXXXXX"/>
       <div class="uid-box">
         <div class="uid-box-title">🎮 Game UID &amp; Name</div>
-        <div class="uid-note" id="uid-note">Enter your 10-digit UID. Your in-game name will be fetched automatically from Garena servers.</div>
-        <!-- Game name: read-only, auto-fetched -->
+        <div class="uid-note" id="uid-note">Enter your 10-digit Free Fire UID. Your in-game name will be fetched automatically.</div>
         <span class="e-label">Game Name (auto-fetched, read-only)</span>
         <input type="text" class="e-input" id="input-game-name" placeholder="Will fill after UID lookup" readonly/>
         <span class="e-label">Game UID (10 digits)</span>
@@ -383,28 +380,30 @@
     loadTournamentHistory(user.uid);
   });
 
-  // ─── UID → Game Name via Garena shop APIs ────────────────────────────────
+  // ─── UID → Game Name via Garena shop APIs ─────────────────────────────────
   async function lookupGameName(uid){
-    var endpoints=[
-      'https://shop.garena.my/api/profile?app_id=100067&tp_id='+uid+'&region=BD',
-      'https://shop2game.com/api/user/profile?app_id=100067&tp_id='+uid
+    const targets = [
+      'https://shop.garena.my/api/profile?app_id=100067&tp_id=' + uid + '&region=BD',
+      'https://shop2game.com/api/user/profile?app_id=100067&tp_id=' + uid,
+      'https://shop.garena.sg/api/profile?app_id=100067&tp_id=' + uid + '&region=SG',
     ];
-    var proxies=[
-      'https://corsproxy.io/?',
-      'https://api.allorigins.win/raw?url='
+    const proxies = [
+      ['https://corsproxy.io/?url=', true],
+      ['https://corsproxy.io/?', false],
+      ['https://api.allorigins.win/raw?url=', true],
+      ['https://api.codetabs.com/v1/proxy?quest=', true],
+      ['https://thingproxy.freeboard.io/fetch/', false],
     ];
     for(var pi=0;pi<proxies.length;pi++){
-      for(var ei=0;ei<endpoints.length;ei++){
+      for(var ti=0;ti<targets.length;ti++){
         try{
-          var url=proxies[pi]+(pi===1?encodeURIComponent(endpoints[ei]):endpoints[ei]);
-          var res=await fetch(url,{signal:AbortSignal.timeout(6000)});
+          var url = proxies[pi][0] + (proxies[pi][1] ? encodeURIComponent(targets[ti]) : targets[ti]);
+          var res=await fetch(url,{signal:AbortSignal.timeout(7000)});
           if(!res.ok) continue;
-          var data=await res.json();
-          var name=null;
-          if(data&&data.model&&data.model.nickname) name=data.model.nickname;
-          else if(data&&data.nickname) name=data.nickname;
-          else if(data&&data.name) name=data.name;
-          if(name&&name.trim()&&name.trim()!=='null') return name.trim();
+          var text=await res.text();
+          var data; try{ data=JSON.parse(text); }catch(e){ continue; }
+          var name=(data&&data.model&&data.model.nickname)||(data&&data.nickname)||(data&&data.name)||(data&&data.data&&data.data.nickname);
+          if(name&&name.trim()&&name.trim()!=='null'&&name.trim()!=='undefined') return name.trim();
         }catch(e){ continue; }
       }
     }
@@ -432,7 +431,7 @@
         el('uid-fetch-status').textContent='';
       } else {
         el('uid-fetch-status').style.color='var(--muted)';
-        el('uid-fetch-status').textContent='Name lookup unavailable — UID will be saved as-is.';
+        el('uid-fetch-status').textContent='UID format valid — name lookup unavailable right now.';
       }
     },800);
   };
@@ -493,18 +492,19 @@
           +'<div class="tx-right"><div class="tx-amount '+(plus?'plus':'minus')+'">'+(plus?'+':'-')+'৳'+tx.amount+'</div>'
           +'<span class="status-pill '+stCls+'">'+stTxt+'</span></div></div>';
       });
-    }catch(e){list.innerHTML='<div class="no-tx" style="color:var(--danger)">Could not load.</div>';}
+    }catch(e){list.innerHTML='<div class="no-tx" style="color:var(--danger)">Could not load. Try refreshing.</div>';}
   }
 
-  // ─── TOURNAMENT HISTORY (with teammates) ──────────────────────────────────
+  // ─── TOURNAMENT HISTORY — Fixed: single query, no duplicates ──────────────
   async function loadTournamentHistory(uid){
     var list=el('tournament-history');
     try{
+      // Only query registrations — no separate solo_queue query needed
+      // grouped field tells us the current state
       var regSnap=await getDocs(query(collection(db,'registrations'),where('uid','==',uid)));
-      // Also check solo_queue for ungrouped
-      var sqSnap=await getDocs(query(collection(db,'solo_queue'),where('firebase_uid','==',uid),where('grouped','==',false)));
-      if(regSnap.empty&&sqSnap.empty){list.innerHTML='<div class="no-tx">No tournaments joined yet</div>';return;}
+      if(regSnap.empty){list.innerHTML='<div class="no-tx">No tournaments joined yet</div>';return;}
 
+      // Load tournament details for room IDs etc.
       var tSnap=await getDocs(collection(db,'tournaments'));
       var tMap={}; tSnap.forEach(function(d){tMap[d.id]=d.data();});
 
@@ -512,17 +512,6 @@
       items.sort(function(a,b){return (b.created_at&&b.created_at.toMillis?b.created_at.toMillis():0)-(a.created_at&&a.created_at.toMillis?a.created_at.toMillis():0);});
 
       var now=new Date(); list.innerHTML='';
-
-      // Solo queue (ungrouped) items first
-      sqSnap.forEach(function(d){
-        var sq=d.data();
-        list.innerHTML='<div class="history-item queued">'
-          +'<div class="hist-top"><div class="hist-name">'+(sq.tournament_name||'Tournament')+'</div>'
-          +'<span class="hist-badge queued-badge">⏳ Solo Queue</span></div>'
-          +'<div style="font-size:12px;color:var(--green);margin-bottom:8px">Waiting for more solo players to form a team...</div>'
-          +'<div class="hist-meta"><span>🎮 UID: '+sq.game_uid+'</span><span>💵 ৳'+sq.fee_paid+'</span></div>'
-          +'</div>'+list.innerHTML;
-      });
 
       items.forEach(function(r){
         var t=tMap[r.tournament_id]||{};
@@ -542,17 +531,25 @@
           +'<div class="ui-item"><span class="ui-label">🗺️ Mode</span><span class="ui-val">'+mode+'</span></div>'
           +'<div class="ui-item"><span class="ui-label">🏆 1st</span><span class="ui-val">৳'+(t.prize1||0)+'</span></div>'+ri+rp+'</div>':'';
 
-        // Build teammates block if grouped
+        // Solo queue waiting message — shown when not yet grouped
+        var isSoloQueue = r.registration_type==='solo_queue';
+        var isGrouped   = r.grouped===true;
+        var waitBlock='';
+        if(isSoloQueue && !isGrouped){
+          waitBlock='<div class="queue-wait-msg">⏳ <b>Waiting for more solo players to form a team.</b> Once enough players join, your team will be auto-formed and teammates will appear here. No action needed!</div>';
+        }
+
+        // Teammates block — only shown when grouped AND all_group_uids is set
         var teammatesBlock='';
-        if(r.all_group_uids&&r.all_group_uids.length>1){
+        if(isGrouped && r.all_group_uids && r.all_group_uids.length>1){
           var tmHtml='<div class="teammates-block"><div class="teammates-title">👥 Your Teammates</div>';
           for(var i=0;i<r.all_group_uids.length;i++){
             var gUid=r.all_group_uids[i];
-            var gName=r.all_group_names&&r.all_group_names[i]?r.all_group_names[i]:gUid;
+            var gName=(r.all_group_names&&r.all_group_names[i]&&r.all_group_names[i]!=='')?r.all_group_names[i]:gUid;
             var isSelf=r.game_uids&&r.game_uids.indexOf(gUid)>=0;
             tmHtml+='<div class="teammate-row">'
               +'<div class="teammate-avatar">'+gName.charAt(0).toUpperCase()+'</div>'
-              +'<span class="teammate-name">'+gName+(isSelf?' (You)':'')+'</span>'
+              +'<span class="teammate-name">'+gName+(isSelf?' <span style="color:var(--gold);font-size:11px">(You)</span>':'')+'</span>'
               +'<span class="teammate-uid">'+gUid+'</span>'
               +'</div>';
           }
@@ -560,22 +557,24 @@
           teammatesBlock=tmHtml;
         }
 
-        var isQueued=r.registration_type==='solo_queue'&&!r.grouped;
-        var itemCls='history-item'+(upcoming?' upcoming':isQueued?' queued':'');
-        var badge=upcoming?'upcoming-badge':isQueued?'queued-badge':'played-badge';
-        var badgeTxt=upcoming?'⏰ Upcoming':isQueued?'⏳ Solo Queue':'Played';
+        var itemCls='history-item'+(upcoming?' upcoming':isSoloQueue&&!isGrouped?' queued':'');
+        var badge=upcoming?'upcoming-badge':isSoloQueue&&!isGrouped?'queued-badge':'played-badge';
+        var badgeTxt=upcoming?'⏰ Upcoming':isSoloQueue&&!isGrouped?'⏳ Queued':isSoloQueue&&isGrouped?'🎮 Grouped':'Played';
 
         list.innerHTML+='<div class="'+itemCls+'">'
           +'<div class="hist-top"><div class="hist-name">'+(r.tournament_name||'Tournament')+'</div>'
           +'<span class="hist-badge '+badge+'">'+badgeTxt+'</span></div>'
-          +upBlock+teammatesBlock
+          +upBlock+waitBlock+teammatesBlock
           +'<div class="hist-meta"><span>📅 '+date+'</span><span>💵 ৳'+(r.entry_paid||0)+'</span>'
           +(r.team_name?'<span>👥 '+r.team_name+'</span>':'')
           +(r.game_uids&&r.game_uids[0]?'<span>🎮 '+r.game_uids[0]+'</span>':'')
-          +(r.registration_type==='solo_queue'?'<span>🎲 Solo Queue</span>':'')
+          +(isSoloQueue?'<span>🎲 Solo Queue</span>':'')
           +'</div></div>';
       });
-    }catch(e){list.innerHTML='<div class="no-tx" style="color:var(--danger)">Could not load.</div>';}
+    }catch(e){
+      console.error('History load error:',e);
+      list.innerHTML='<div class="no-tx" style="color:var(--danger)">Could not load. Try refreshing.</div>';
+    }
   }
 
   // ─── EDIT PROFILE ─────────────────────────────────────────────────────────
@@ -601,7 +600,7 @@
         try{
           if(reauthMethod==='password'){var pw=el('input-password').value;if(!pw){showMsg('edit-msg','Enter password.','error');return;}await reauthenticateWithCredential(currentUser,EmailAuthProvider.credential(currentUser.email,pw));}
           else{await reauthenticateWithPopup(currentUser,new GoogleAuthProvider());}
-        }catch(e){showMsg('edit-msg','Verification failed!','error');return;}
+        }catch(e){showMsg('edit-msg','Verification failed! '+e.message,'error');return;}
       }
       upd.uid_game=nu; upd.uid_changed=true;
       if(fetchedGameName) upd.game_name=fetchedGameName;
@@ -630,7 +629,6 @@
     ['btn-bkash','btn-nagad','btn-rocket'].forEach(function(i){el(i).classList.remove('selected');});
     el('btn-'+m).classList.add('selected');
     el('dep-method-name').textContent=m==='bkash'?'bKash':m==='nagad'?'Nagad':'Rocket';
-    // Per-method settings from admin
     var mData=paySettings[m]||{};
     el('dep-send-type').textContent=mData.send_type||'Send Money';
     el('dep-number').textContent   =mData.number   ||'Not configured yet';
@@ -643,7 +641,7 @@
     if(!txid)         {showMsg2('deposit-msg','Enter Transaction ID.','error');return;}
     try{
       await addDoc(collection(db,'transactions'),{uid:currentUser.uid,email:currentUser.email,name:userData.name||'',whatsapp:userData.whatsapp||'',amount:amt,method:selDepMethod,txid:txid,type:'deposit',status:'pending',created_at:serverTimestamp()});
-      showMsg2('deposit-msg','✅ Submitted! Admin will verify.','success');
+      showMsg2('deposit-msg','✅ Submitted! Admin will verify shortly.','success');
       setTimeout(function(){closeModal('deposit-modal');loadTransactions(currentUser.uid);},1800);
     }catch(e){showMsg2('deposit-msg','Failed. Try again.','error');}
   };
@@ -668,7 +666,7 @@
     if(!amt||amt<50)                          {showMsg2('withdraw-msg','Minimum 50 TK.','error');return;}
     if(!selWdMethod)                          {showMsg2('withdraw-msg','Select a method.','error');return;}
     if(!num||num.replace(/\D/g,'').length<11) {showMsg2('withdraw-msg','Enter valid number.','error');return;}
-    if(amt>bal)                               {showMsg2('withdraw-msg','Insufficient balance!','error');return;}
+    if(amt>bal)                               {showMsg2('withdraw-msg','Insufficient balance! You have ৳'+bal+'.','error');return;}
     try{
       await addDoc(collection(db,'transactions'),{uid:currentUser.uid,email:currentUser.email,name:userData.name||'',whatsapp:userData.whatsapp||'',amount:amt,method:selWdMethod,number:num,type:'withdraw',status:'pending',created_at:serverTimestamp()});
       await updateDoc(doc(db,'users',currentUser.uid),{balance:bal-amt});
@@ -700,4 +698,4 @@
   function showMsg2(id,msg,type){ var e=el(id); e.textContent=msg; e.className='msg2 '+type; setTimeout(function(){e.className='msg2';},4500); }
 </script>
 </body>
-  </html>
+</html>
