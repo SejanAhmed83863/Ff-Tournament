@@ -82,6 +82,25 @@
     .tagline{text-align:center;font-family:'Teko',sans-serif;font-size:14px;color:var(--muted);letter-spacing:3px;padding:16px 0 8px;text-transform:uppercase}
     .tagline span{color:var(--gold)}
 
+    /* SUPPORT FAB */
+    .support-fab{position:fixed;bottom:80px;right:16px;z-index:150;background:linear-gradient(135deg,var(--amber),var(--gold));border:none;width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;box-shadow:0 4px 16px rgba(254,203,0,0.4);transition:transform 0.2s}
+    .support-fab:active{transform:scale(0.9)}
+
+    /* SUPPORT MODAL */
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:500;align-items:flex-end;justify-content:center}
+    .modal-overlay.open{display:flex}
+    .support-modal-inner{background:#111;border:1px solid var(--gold);border-radius:16px 16px 0 0;width:100%;max-width:500px;animation:slideUp 0.28s ease both;border-top:3px solid var(--gold)}
+    @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+    .support-hdr{display:flex;align-items:center;justify-content:space-between;padding:15px 18px 13px;border-bottom:1px solid var(--border)}
+    .support-title{font-family:'Teko',sans-serif;font-size:24px;color:var(--gold);letter-spacing:3px;text-transform:uppercase}
+    .support-x{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,0.05);border:1px solid #444;color:#888;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+    .support-links{padding:18px;display:flex;flex-direction:column;gap:12px}
+    .support-link{display:flex;align-items:center;gap:14px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;padding:14px 16px;text-decoration:none;color:var(--text);transition:0.2s}
+    .support-link:active{background:rgba(254,203,0,0.08);border-color:var(--gold)}
+    .support-link-icon{font-size:28px;flex-shrink:0}
+    .support-link-label{font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:3px}
+    .support-link-val{font-family:'Teko';font-size:18px;color:#fff;letter-spacing:1px}
+
     /* BOTTOM NAV */
     .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(0,0,0,0.97);border-top:2px solid var(--gold);display:flex;z-index:200}
     .nav-item{flex:1;padding:12px 8px;text-align:center;cursor:pointer;color:var(--muted);font-family:'Teko';font-size:13px;letter-spacing:2px;text-transform:uppercase;text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:3px;border:none;background:none;transition:0.2s}
@@ -112,7 +131,6 @@
 </div>
 
 <div class="content">
-
   <div class="welcome">
     <div>Hello, <span id="welcome-name">Player</span> 👋</div>
     <div class="sub">Play Fair · Play Hard · Win Glory</div>
@@ -125,7 +143,7 @@
     <div class="qs"><div class="qs-val" id="my-played">0</div><div class="qs-label">🎮 My Plays</div></div>
   </div>
 
-  <!-- GAME MODE SECTION — clicking each card navigates to tournaments filtered by mode -->
+  <!-- GAME MODE SECTION -->
   <div class="sec-head">
     <div class="sec-title">🎯 Game Modes</div>
     <a class="sec-link" href="tournaments.html">Browse All →</a>
@@ -164,6 +182,22 @@
   <div class="tagline">PLAY HARD • STAY PRO • <span>BOOYAH!</span></div>
 </div>
 
+<!-- SUPPORT FAB -->
+<button class="support-fab" onclick="openSupport()" title="Support">🎧</button>
+
+<!-- SUPPORT MODAL -->
+<div class="modal-overlay" id="support-modal">
+  <div class="support-modal-inner">
+    <div class="support-hdr">
+      <div class="support-title">🎧 Support</div>
+      <button class="support-x" onclick="document.getElementById('support-modal').classList.remove('open')">✕</button>
+    </div>
+    <div class="support-links" id="support-links">
+      <div style="text-align:center;color:var(--muted);padding:20px;font-size:13px">Loading...</div>
+    </div>
+  </div>
+</div>
+
 <nav class="bottom-nav">
   <button class="nav-item active" onclick="window.location.href='home.html'"><span class="nav-icon">🏆</span>Tournaments</button>
   <div class="nav-divider"></div>
@@ -176,10 +210,18 @@
   import { getFirestore, doc, getDoc, getDocs, collection, query, orderBy }
     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-  const cfg = { apiKey:"AIzaSyBgMroBilivfk7bJxoz93HjxSt6yU7Ura0", authDomain:"tournament-app-4a050.firebaseapp.com", projectId:"tournament-app-4a050", storageBucket:"tournament-app-4a050.firebasestorage.app", messagingSenderId:"811957533858", appId:"1:811957533858:web:1d1f0f916c0aba5eccebfb" };
+  const cfg = {
+    apiKey:"AIzaSyBgMroBilivfk7bJxoz93HjxSt6yU7Ura0",
+    authDomain:"tournament-app-4a050.firebaseapp.com",
+    projectId:"tournament-app-4a050",
+    storageBucket:"tournament-app-4a050.firebasestorage.app",
+    messagingSenderId:"811957533858",
+    appId:"1:811957533858:web:1d1f0f916c0aba5eccebfb"
+  };
   const app  = initializeApp(cfg);
   const auth = getAuth(app);
   const db   = getFirestore(app);
+  var supportSettings = null;
 
   function $(id){ return document.getElementById(id); }
 
@@ -206,6 +248,12 @@
       }
     } catch(e) {}
 
+    // Load support settings
+    try {
+      const ss = await getDoc(doc(db, 'settings', 'support'));
+      if (ss.exists()) supportSettings = ss.data();
+    } catch(e) {}
+
     // Load tournaments → fills counts + live list
     await loadTournaments();
 
@@ -217,27 +265,24 @@
   });
 
   async function loadTournaments() {
-    const now  = new Date();
+    const now = new Date();
     let snap;
     try {
       snap = await getDocs(query(collection(db, 'tournaments'), orderBy('time', 'asc')));
     } catch(e) {
-      // orderBy may fail if no index; fall back
       snap = await getDocs(collection(db, 'tournaments'));
     }
 
     const active = [];
-    let classic=0, clash=0, lone=0;
+    let classic = 0, clash = 0, lone = 0;
 
     snap.forEach(d => {
       const t = d.data();
       if (t.status !== 'open') return;
-      // Count by game mode
       const m = (t.game_mode || '').toLowerCase();
-      if      (m.includes('clash'))                   clash++;
+      if      (m.includes('clash'))                       clash++;
       else if (m.includes('lone') || m.includes('wolf')) lone++;
-      else                                             classic++;
-      // Active = future or no time set
+      else                                                classic++;
       if (t.time) {
         const diff = (now - new Date(t.time)) / 60000;
         if (diff < 60) active.push({ id: d.id, ...t });
@@ -246,13 +291,11 @@
       }
     });
 
-    // Update mode counts
     $('mode-classic').textContent = classic;
     $('mode-clash').textContent   = clash;
     $('mode-lone').textContent    = lone;
     $('t-count').textContent      = active.length;
 
-    // Render live list
     const list = $('live-list');
     if (active.length === 0) {
       list.innerHTML = '<div class="empty-state">🎮 No active tournaments right now.<br><span style="color:var(--gold)">Check back soon!</span></div>';
@@ -281,6 +324,26 @@
         </a>`;
     });
   }
+
+  // ─── SUPPORT ──────────────────────────────────────────────────────────────
+  window.openSupport = function() {
+    const linksEl = document.getElementById('support-links');
+    if (!supportSettings || (!supportSettings.whatsapp && !supportSettings.telegram_link && !supportSettings.phone)) {
+      linksEl.innerHTML = '<div style="text-align:center;color:var(--muted);padding:20px;font-size:13px">No support contacts configured yet.</div>';
+    } else {
+      let html = '';
+      if (supportSettings.whatsapp)
+        html += `<a class="support-link" href="https://wa.me/${supportSettings.whatsapp.replace(/\D/g,'')}" target="_blank"><span class="support-link-icon">💬</span><div><div class="support-link-label">WhatsApp</div><div class="support-link-val">${supportSettings.whatsapp}</div></div></a>`;
+      if (supportSettings.telegram_link)
+        html += `<a class="support-link" href="https://t.me/${supportSettings.telegram_link.replace('@','')}" target="_blank"><span class="support-link-icon">✈️</span><div><div class="support-link-label">Telegram</div><div class="support-link-val">@${supportSettings.telegram_link.replace('@','')}</div></div></a>`;
+      if (supportSettings.telegram_number)
+        html += `<a class="support-link" href="https://t.me/${supportSettings.telegram_number.replace(/\D/g,'')}" target="_blank"><span class="support-link-icon">📱</span><div><div class="support-link-label">Telegram (Phone)</div><div class="support-link-val">${supportSettings.telegram_number}</div></div></a>`;
+      if (supportSettings.phone)
+        html += `<a class="support-link" href="tel:${supportSettings.phone}" target="_blank"><span class="support-link-icon">📞</span><div><div class="support-link-label">Phone Call</div><div class="support-link-val">${supportSettings.phone}</div></div></a>`;
+      linksEl.innerHTML = html || '<div style="text-align:center;color:var(--muted);padding:20px;font-size:13px">No contacts set.</div>';
+    }
+    document.getElementById('support-modal').classList.add('open');
+  };
 </script>
 </body>
 </html>
