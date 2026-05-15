@@ -380,47 +380,115 @@
     loadTournamentHistory(user.uid);
   });
 
-  // ─── UID → Game Name via Garena shop APIs ─────────────────────────────────
-  async function lookupGameName(uid){
-    const targets = [
-      'https://shop.garena.my/api/profile?app_id=100067&tp_id=' + uid + '&region=BD',
-      'https://shop2game.com/api/user/profile?app_id=100067&tp_id=' + uid,
-      'https://shop.garena.sg/api/profile?app_id=100067&tp_id=' + uid + '&region=SG',
-    ];
-    const proxies = [
-      ['https://corsproxy.io/?url=', true],
-      ['https://corsproxy.io/?', false],
-      ['https://api.allorigins.win/raw?url=', true],
-      ['https://api.codetabs.com/v1/proxy?quest=', true],
-      ['https://thingproxy.freeboard.io/fetch/', false],
-    ];
-    for(var pi=0;pi<proxies.length;pi++){
-      for(var ti=0;ti<targets.length;ti++){
-        try{
-          var url = proxies[pi][0] + (proxies[pi][1] ? encodeURIComponent(targets[ti]) : targets[ti]);
-          var res=await fetch(url,{signal:AbortSignal.timeout(7000)});
-          if(!res.ok) continue;
-          var text=await res.text();
-          var data; try{ data=JSON.parse(text); }catch(e){ continue; }
-          var name=(data&&data.model&&data.model.nickname)||(data&&data.nickname)||(data&&data.name)||(data&&data.data&&data.data.nickname);
-          if(name&&name.trim()&&name.trim()!=='null'&&name.trim()!=='undefined') return name.trim();
-        }catch(e){ continue; }
-      }
+  // ─── UID → Game Name — Garena shop API (same method as shop.garena.my) ────
+  function extractGarenaName(data) {
+    if (!data || typeof data !== 'object') return null;
+    var name = (data.model && data.model.nickname)
+            || data.nickname
+            || data.player_name
+            || data.name
+            || (data.data && data.data.nickname)
+            || (data.result && data.result.nickname);
+    if (name && String(name).trim() &&
+        !['null','undefined',''].includes(String(name).trim())) {
+      return String(name).trim();
     }
+    return null;
+  }
+
+  async function lookupGameName(uid){
+    var endpoints = [
+      'https://shop.garena.my/api/profile?app_id=100067&tp_id=' + uid + '&region=BD',
+      'https://shop.garena.my/api/profile?app_id=100067&tp_id=' + uid + '&region=SG',
+      'https://shop2game.com/api/user/profile?app_id=100067&tp_id=' + uid,
+      'https://shop.garena.sg/api/profile?app_id=100067&tp_id=' + uid + '&region=BD',
+    ];
+
+    // Strategy 1: allorigins /get — wraps in {contents:"...",status:{http_code:200}}
+    for (var i = 0; i < endpoints.length; i++) {
+      try {
+        var r = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent(endpoints[i]),
+                            { signal: AbortSignal.timeout(9000) });
+        if (r.ok) {
+          var w = await r.json();
+          if (w && w.status && w.status.http_code === 200 && w.contents) {
+            var d; try { d = JSON.parse(w.contents); } catch(e) {}
+            var n = extractGarenaName(d); if (n) return n;
+          }
+        }
+      } catch(e) {}
+    }
+
+    // Strategy 2: corsproxy.io (?url= encoded)
+    for (var i = 0; i < endpoints.length; i++) {
+      try {
+        var r = await fetch('https://corsproxy.io/?url=' + encodeURIComponent(endpoints[i]),
+                            { signal: AbortSignal.timeout(9000) });
+        if (r.ok) {
+          var t = await r.text();
+          var d; try { d = JSON.parse(t); } catch(e) { continue; }
+          var n = extractGarenaName(d); if (n) return n;
+        }
+      } catch(e) {}
+    }
+
+    // Strategy 3: allorigins /raw
+    for (var i = 0; i < endpoints.length; i++) {
+      try {
+        var r = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent(endpoints[i]),
+                            { signal: AbortSignal.timeout(9000) });
+        if (r.ok) {
+          var t = await r.text();
+          var d; try { d = JSON.parse(t); } catch(e) { continue; }
+          var n = extractGarenaName(d); if (n) return n;
+        }
+      } catch(e) {}
+    }
+
+    // Strategy 4: codetabs
+    for (var i = 0; i < endpoints.length; i++) {
+      try {
+        var r = await fetch('https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(endpoints[i]),
+                            { signal: AbortSignal.timeout(9000) });
+        if (r.ok) {
+          var t = await r.text();
+          var d; try { d = JSON.parse(t); } catch(e) { continue; }
+          var n = extractGarenaName(d); if (n) return n;
+        }
+      } catch(e) {}
+    }
+
+    // Strategy 5: thingproxy
+    for (var i = 0; i < endpoints.length; i++) {
+      try {
+        var r = await fetch('https://thingproxy.freeboard.io/fetch/' + endpoints[i],
+                            { signal: AbortSignal.timeout(9000) });
+        if (r.ok) {
+          var t = await r.text();
+          var d; try { d = JSON.parse(t); } catch(e) { continue; }
+          var n = extractGarenaName(d); if (n) return n;
+        }
+      } catch(e) {}
+    }
+
     return null;
   }
 
   window.onUidInput=function(val){
     el('uid-fetch-status').textContent='';
     el('uid-name-found').classList.remove('show');
+    el('uid-name-found').textContent='';
     fetchedGameName='';
+    // Hide any manual fallback input
+    var fb=document.getElementById('manual-name-fallback');
+    if(fb) fb.style.display='none';
     if(uidFetchTimer) clearTimeout(uidFetchTimer);
     if(!/^\d{10}$/.test(val)){
       if(val.length>0){ el('uid-fetch-status').style.color='var(--danger)'; el('uid-fetch-status').textContent='Must be exactly 10 digits'; }
       return;
     }
     el('uid-fetch-status').style.color='var(--muted)';
-    el('uid-fetch-status').textContent='🔍 Fetching player name from Garena...';
+    el('uid-fetch-status').textContent='🔍 Searching Garena servers for your name...';
     uidFetchTimer=setTimeout(async function(){
       var name=await lookupGameName(val);
       if(name){
@@ -431,7 +499,21 @@
         el('uid-fetch-status').textContent='';
       } else {
         el('uid-fetch-status').style.color='var(--muted)';
-        el('uid-fetch-status').textContent='UID format valid — name lookup unavailable right now.';
+        el('uid-fetch-status').textContent='⚠️ Auto-fetch unavailable. Enter your game name manually:';
+        // Show manual fallback input
+        var fb=document.getElementById('manual-name-fallback');
+        if(!fb){
+          fb=document.createElement('input');
+          fb.id='manual-name-fallback';
+          fb.type='text';
+          fb.className='e-input';
+          fb.placeholder='Type your in-game name here';
+          fb.style.marginTop='6px';
+          fb.oninput=function(){ fetchedGameName=this.value.trim(); el('input-game-name').value=fetchedGameName; };
+          el('uid-fetch-status').parentNode.insertBefore(fb, el('uid-fetch-status').nextSibling);
+        }
+        fb.style.display='block';
+        fb.focus();
       }
     },800);
   };
