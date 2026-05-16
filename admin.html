@@ -17,13 +17,11 @@
     .live-dot{display:flex;align-items:center;gap:6px}
     .live-dot span:first-child{width:8px;height:8px;background:var(--green);border-radius:50%;box-shadow:0 0 6px var(--green);display:inline-block}
     .live-dot span:last-child{font-size:12px;color:var(--green);font-weight:600}
-
     .tabs{display:flex;background:var(--card);border-bottom:1px solid var(--border);overflow-x:auto}
     .tab{flex:1;min-width:65px;padding:13px 4px;text-align:center;cursor:pointer;font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:1px;color:var(--muted);border-bottom:2px solid transparent;position:relative;background:none;border-top:none;border-left:none;border-right:none;white-space:nowrap}
     .tab.active{color:var(--orange);border-bottom:2px solid var(--orange)}
     .tab-icon{font-size:15px;display:block;margin-bottom:1px}
     .badge{position:absolute;top:8px;right:50%;transform:translateX(14px);background:var(--red);color:white;border-radius:50%;width:18px;height:18px;font-size:11px;display:flex;align-items:center;justify-content:center;font-family:'Rajdhani',sans-serif;font-weight:700}
-
     .tab-content{display:none;padding:16px;max-width:600px;margin:0 auto}
     .tab-content.active{display:block}
     .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px}
@@ -70,7 +68,7 @@
     .w-uid-wrap{position:relative;margin-bottom:10px}
     .w-uid-wrap input{padding-left:40px}
     .w-uid-num{position:absolute;left:14px;top:50%;transform:translateY(-60%);font-weight:700;font-size:14px}
-    .prize-preview{background:#0A0A0F;border-radius:8px;padding:12px;margin-bottom:14px;display:flex;gap:20px}
+    .prize-preview{background:#0A0A0F;border-radius:8px;padding:12px;margin-bottom:14px;display:flex;gap:20px;flex-wrap:wrap}
     .pp-item{text-align:center}
     .pp-val{font-family:'Bebas Neue';font-size:20px;letter-spacing:1px}
     .pp-lbl{color:var(--muted);font-size:11px}
@@ -79,16 +77,18 @@
     .log-meta{color:var(--muted);font-size:12px}
     .log-prize{color:var(--green);font-family:'Bebas Neue';font-size:20px}
     #toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);padding:11px 26px;border-radius:8px;font-family:'Rajdhani';font-weight:700;font-size:14px;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.5);display:none;white-space:nowrap}
-
+    /* per-kill winner inputs */
+    .winner-row{background:#0A0A0F;border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:10px}
+    .winner-row-title{font-size:12px;font-weight:700;letter-spacing:1px;margin-bottom:8px}
+    .winner-row .row{margin-bottom:0}
+    .winner-row input{margin-bottom:6px}
+    .winner-row input:last-child{margin-bottom:0}
     /* SETTINGS */
     .settings-section{margin-bottom:20px}
     .settings-section-title{font-family:'Bebas Neue';font-size:15px;letter-spacing:2px;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:8px}
     .settings-section-title::after{content:'';flex:1;height:1px;background:var(--border)}
     .field-hint{font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.6;padding:10px;background:rgba(255,255,255,0.03);border-radius:7px;border:1px solid var(--border)}
     .cur-display{background:#0A0A0F;border:1px solid var(--border);border-radius:7px;padding:10px 13px;font-size:13px;color:var(--gold);margin-bottom:10px;min-height:38px;word-break:break-word;line-height:1.5}
-    .cur-display.empty{color:var(--muted);font-style:italic}
-
-    /* Per-method payment tabs */
     .pay-method-tabs{display:flex;border-radius:8px 8px 0 0;overflow:hidden;border:1px solid var(--border);border-bottom:none;margin-bottom:0}
     .pay-method-tab{flex:1;padding:10px;text-align:center;font-family:'Bebas Neue';font-size:14px;letter-spacing:1px;color:var(--muted);cursor:pointer;background:var(--dark);border:none;border-bottom:2px solid transparent}
     .pay-method-tab.active{color:var(--orange);background:rgba(255,107,0,0.08);border-bottom:2px solid var(--orange)}
@@ -142,15 +142,16 @@
     </div>
     <div class="row">
       <input type="number" id="t-fee" placeholder="Entry Fee ৳ (per player) *">
-      <select id="t-type"><option value="1">Solo</option><option value="2">Duo</option><option value="4">Squad</option></select>
+      <input type="number" id="t-per-kill" placeholder="Per Kill Prize ৳ (optional)">
     </div>
-    <!-- GAME MODE — Classic / Clash Squad / Lone Wolf -->
-    <label class="fld-label">Game Mode</label>
-    <select id="t-game-mode">
-      <option value="Classic">🗺️ Classic (Battle Royale)</option>
-      <option value="Clash Squad">⚔️ Clash Squad</option>
-      <option value="Lone Wolf">🐺 Lone Wolf</option>
-    </select>
+    <div class="row">
+      <select id="t-type"><option value="1">Solo</option><option value="2">Duo</option><option value="4">Squad</option></select>
+      <select id="t-game-mode">
+        <option value="Classic">🗺️ Classic (Battle Royale)</option>
+        <option value="Clash Squad">⚔️ Clash Squad</option>
+        <option value="Lone Wolf">🐺 Lone Wolf</option>
+      </select>
+    </div>
     <div class="row">
       <input type="number" id="t-max" placeholder="Max Players *">
       <input type="datetime-local" id="t-time">
@@ -170,11 +171,37 @@
       <div class="pp-item"><div class="pp-val" id="pp1" style="color:var(--gold)">৳0</div><div class="pp-lbl">1ST</div></div>
       <div class="pp-item"><div class="pp-val" id="pp2" style="color:#C0C0C0">৳0</div><div class="pp-lbl">2ND</div></div>
       <div class="pp-item"><div class="pp-val" id="pp3" style="color:#CD7F32">৳0</div><div class="pp-lbl">3RD</div></div>
+      <div class="pp-item" id="pp-kill-wrap" style="display:none"><div class="pp-val" id="pp-kill" style="color:var(--orange)">৳0</div><div class="pp-lbl">PER KILL</div></div>
     </div>
-    <p style="color:var(--muted);font-size:13px;margin-bottom:12px">⚠️ Enter the Game UID registered in each player's profile.</p>
-    <div class="w-uid-wrap"><span class="w-uid-num" style="color:var(--gold)">#1</span><input type="text" id="w1" placeholder="1st Place Game UID 🥇"></div>
-    <div class="w-uid-wrap"><span class="w-uid-num" style="color:#C0C0C0">#2</span><input type="text" id="w2" placeholder="2nd Place Game UID 🥈"></div>
-    <div class="w-uid-wrap"><span class="w-uid-num" style="color:#CD7F32">#3</span><input type="text" id="w3" placeholder="3rd Place Game UID 🥉"></div>
+    <p style="color:var(--muted);font-size:13px;margin-bottom:12px">⚠️ Enter Game UID registered in each player's profile.</p>
+
+    <!-- Winner 1 -->
+    <div class="winner-row">
+      <div class="winner-row-title" style="color:var(--gold)">🥇 1st Place</div>
+      <div class="w-uid-wrap"><span class="w-uid-num" style="color:var(--gold)">#1</span><input type="text" id="w1" placeholder="Game UID"></div>
+      <div id="kills-row-1" style="display:none">
+        <input type="number" id="kills1" placeholder="Number of kills (for per-kill bonus)" min="0">
+      </div>
+    </div>
+
+    <!-- Winner 2 -->
+    <div class="winner-row">
+      <div class="winner-row-title" style="color:#C0C0C0">🥈 2nd Place</div>
+      <div class="w-uid-wrap"><span class="w-uid-num" style="color:#C0C0C0">#2</span><input type="text" id="w2" placeholder="Game UID"></div>
+      <div id="kills-row-2" style="display:none">
+        <input type="number" id="kills2" placeholder="Number of kills" min="0">
+      </div>
+    </div>
+
+    <!-- Winner 3 -->
+    <div class="winner-row">
+      <div class="winner-row-title" style="color:#CD7F32">🥉 3rd Place</div>
+      <div class="w-uid-wrap"><span class="w-uid-num" style="color:#CD7F32">#3</span><input type="text" id="w3" placeholder="Game UID"></div>
+      <div id="kills-row-3" style="display:none">
+        <input type="number" id="kills3" placeholder="Number of kills" min="0">
+      </div>
+    </div>
+
     <button class="btn-gold" onclick="distributePrizes()">DISTRIBUTE PRIZES &amp; CLOSE MATCH</button>
   </div>
   <div id="dist-log-wrap" style="display:none">
@@ -185,7 +212,6 @@
 
 <!-- SETTINGS -->
 <div class="tab-content" id="tab-settings">
-
   <!-- NOTICE -->
   <div class="card">
     <div class="card-title"><div class="card-title-bar" style="background:var(--gold)"></div><span style="color:var(--gold)">📢 GLOBAL NOTICE BAR</span></div>
@@ -204,52 +230,31 @@
     </div>
   </div>
 
-  <!-- PAYMENT DETAILS — per method -->
+  <!-- PAYMENT DETAILS -->
   <div class="card">
     <div class="card-title"><div class="card-title-bar" style="background:var(--green)"></div><span style="color:var(--green)">💳 DEPOSIT PAYMENT DETAILS</span></div>
-    <p class="field-hint">Set a <b>separate number &amp; send type for each method</b>. Users see the correct number when they select bKash, Nagad, or Rocket in the Deposit screen.</p>
+    <p class="field-hint">Set a <b>separate number &amp; send type for each method</b>.</p>
     <div class="pay-method-tabs">
       <button class="pay-method-tab active" onclick="switchPayTab('bkash')">📱 bKash</button>
       <button class="pay-method-tab"        onclick="switchPayTab('nagad')">💳 Nagad</button>
       <button class="pay-method-tab"        onclick="switchPayTab('rocket')">🚀 Rocket</button>
     </div>
-
-    <!-- bKash -->
     <div class="pay-method-panel active" id="pay-panel-bkash">
-      <div class="pay-cur">
-        <div class="pay-cur-box"><div class="pay-cur-lbl">Number</div><div class="pay-cur-val" id="cur-bkash-number">—</div></div>
-        <div class="pay-cur-box"><div class="pay-cur-lbl">Send Type</div><div class="pay-cur-val" id="cur-bkash-type">—</div></div>
-      </div>
-      <label class="fld-label">bKash Receiving Number</label>
-      <input type="tel" id="pay-bkash-number" placeholder="01XXXXXXXXX">
-      <label class="fld-label">Send Type</label>
-      <select id="pay-bkash-type"><option value="Send Money">Send Money</option><option value="Cashout">Cashout</option><option value="Payment">Payment</option></select>
+      <div class="pay-cur"><div class="pay-cur-box"><div class="pay-cur-lbl">Number</div><div class="pay-cur-val" id="cur-bkash-number">—</div></div><div class="pay-cur-box"><div class="pay-cur-lbl">Send Type</div><div class="pay-cur-val" id="cur-bkash-type">—</div></div></div>
+      <label class="fld-label">bKash Receiving Number</label><input type="tel" id="pay-bkash-number" placeholder="01XXXXXXXXX">
+      <label class="fld-label">Send Type</label><select id="pay-bkash-type"><option value="Send Money">Send Money</option><option value="Cashout">Cashout</option><option value="Payment">Payment</option></select>
       <button class="btn-green" onclick="savePayMethod('bkash')">SAVE bKash DETAILS</button>
     </div>
-
-    <!-- Nagad -->
     <div class="pay-method-panel" id="pay-panel-nagad">
-      <div class="pay-cur">
-        <div class="pay-cur-box"><div class="pay-cur-lbl">Number</div><div class="pay-cur-val" id="cur-nagad-number">—</div></div>
-        <div class="pay-cur-box"><div class="pay-cur-lbl">Send Type</div><div class="pay-cur-val" id="cur-nagad-type">—</div></div>
-      </div>
-      <label class="fld-label">Nagad Receiving Number</label>
-      <input type="tel" id="pay-nagad-number" placeholder="01XXXXXXXXX">
-      <label class="fld-label">Send Type</label>
-      <select id="pay-nagad-type"><option value="Send Money">Send Money</option><option value="Cashout">Cashout</option><option value="Payment">Payment</option></select>
+      <div class="pay-cur"><div class="pay-cur-box"><div class="pay-cur-lbl">Number</div><div class="pay-cur-val" id="cur-nagad-number">—</div></div><div class="pay-cur-box"><div class="pay-cur-lbl">Send Type</div><div class="pay-cur-val" id="cur-nagad-type">—</div></div></div>
+      <label class="fld-label">Nagad Receiving Number</label><input type="tel" id="pay-nagad-number" placeholder="01XXXXXXXXX">
+      <label class="fld-label">Send Type</label><select id="pay-nagad-type"><option value="Send Money">Send Money</option><option value="Cashout">Cashout</option><option value="Payment">Payment</option></select>
       <button class="btn-green" onclick="savePayMethod('nagad')">SAVE NAGAD DETAILS</button>
     </div>
-
-    <!-- Rocket -->
     <div class="pay-method-panel" id="pay-panel-rocket">
-      <div class="pay-cur">
-        <div class="pay-cur-box"><div class="pay-cur-lbl">Number</div><div class="pay-cur-val" id="cur-rocket-number">—</div></div>
-        <div class="pay-cur-box"><div class="pay-cur-lbl">Send Type</div><div class="pay-cur-val" id="cur-rocket-type">—</div></div>
-      </div>
-      <label class="fld-label">Rocket Receiving Number</label>
-      <input type="tel" id="pay-rocket-number" placeholder="01XXXXXXXXX">
-      <label class="fld-label">Send Type</label>
-      <select id="pay-rocket-type"><option value="Send Money">Send Money</option><option value="Cashout">Cashout</option><option value="Payment">Payment</option></select>
+      <div class="pay-cur"><div class="pay-cur-box"><div class="pay-cur-lbl">Number</div><div class="pay-cur-val" id="cur-rocket-number">—</div></div><div class="pay-cur-box"><div class="pay-cur-lbl">Send Type</div><div class="pay-cur-val" id="cur-rocket-type">—</div></div></div>
+      <label class="fld-label">Rocket Receiving Number</label><input type="tel" id="pay-rocket-number" placeholder="01XXXXXXXXX">
+      <label class="fld-label">Send Type</label><select id="pay-rocket-type"><option value="Send Money">Send Money</option><option value="Cashout">Cashout</option><option value="Payment">Payment</option></select>
       <button class="btn-green" onclick="savePayMethod('rocket')">SAVE ROCKET DETAILS</button>
     </div>
   </div>
@@ -257,8 +262,7 @@
   <!-- SUPPORT CONTACTS -->
   <div class="card">
     <div class="card-title"><div class="card-title-bar" style="background:#4facfe"></div><span style="color:#4facfe">🎧 SUPPORT CONTACTS</span></div>
-    <p class="field-hint">These contacts appear in the Support button on every page. Users can reach you via WhatsApp, Telegram, or phone call.</p>
-
+    <p class="field-hint">These contacts appear in the Support button on every page.</p>
     <div class="settings-section">
       <div class="settings-section-title">CURRENT SUPPORT INFO</div>
       <div class="pay-cur">
@@ -267,27 +271,16 @@
         <div class="pay-cur-box"><div class="pay-cur-lbl">Phone</div><div class="pay-cur-val" id="cur-ph">—</div></div>
       </div>
     </div>
-
     <div class="settings-section">
       <div class="settings-section-title">UPDATE SUPPORT CONTACTS</div>
-
-      <label class="fld-label">WhatsApp Number (with country code, e.g. +8801XXXXXXXXX)</label>
-      <input type="tel" id="support-whatsapp" placeholder="+8801XXXXXXXXX">
-
-      <label class="fld-label">Telegram Username (e.g. @yourusername)</label>
-      <input type="text" id="support-telegram-link" placeholder="@yourusername">
-
-      <label class="fld-label">Telegram Phone Number (optional, e.g. +8801XXXXXXXXX)</label>
-      <input type="tel" id="support-telegram-number" placeholder="+8801XXXXXXXXX">
-
-      <label class="fld-label">Phone Number (for direct call)</label>
-      <input type="tel" id="support-phone" placeholder="01XXXXXXXXX">
-
+      <label class="fld-label">WhatsApp Number (with country code)</label><input type="tel" id="support-whatsapp" placeholder="+8801XXXXXXXXX">
+      <label class="fld-label">Telegram Username</label><input type="text" id="support-telegram-link" placeholder="@yourusername">
+      <label class="fld-label">Telegram Phone Number (optional)</label><input type="tel" id="support-telegram-number" placeholder="+8801XXXXXXXXX">
+      <label class="fld-label">Phone Number (for direct call)</label><input type="tel" id="support-phone" placeholder="01XXXXXXXXX">
       <button class="btn-blue" onclick="saveSupportContacts()">SAVE SUPPORT CONTACTS</button>
     </div>
   </div>
-
-</div><!-- end settings -->
+</div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
@@ -306,6 +299,7 @@
     appId:"1:811957533858:web:1d1f0f916c0aba5eccebfb"
   };
   const app=initializeApp(cfg), db=getFirestore(app), auth=getAuth(app);
+  var selectedMatchData = null; // holds tournament data for prize distribution
 
   onAuthStateChanged(auth, function(user){
     if(!user){ window.location.href='index.html'; return; }
@@ -395,17 +389,19 @@
     var time=el('t-time').value;
     var max=Number(el('t-max').value);
     var gameMode=el('t-game-mode').value;
-    if(!title||fee===undefined||isNaN(fee)||!time||!max){toast('Fill all required fields!','error');return;}
+    var perKill=Number(el('t-per-kill').value)||0;
+    if(!title||isNaN(fee)||!time||!max){toast('Fill all required fields!','error');return;}
     await addDoc(collection(db,'tournaments'),{
       title:title,
       prize1:Number(el('t-prize1').value)||0,
       prize2:Number(el('t-prize2').value)||0,
       prize3:Number(el('t-prize3').value)||0,
-      fee:fee, teamType:Number(el('t-type').value),
+      fee:fee, per_kill:perKill,
+      teamType:Number(el('t-type').value),
       game_mode:gameMode, maxPlayers:max, joined:0,
       time:time, status:'open', created_at:serverTimestamp()
     });
-    ['t-title','t-prize1','t-prize2','t-prize3','t-fee','t-max','t-time'].forEach(function(id){el(id).value='';});
+    ['t-title','t-prize1','t-prize2','t-prize3','t-fee','t-per-kill','t-max','t-time'].forEach(function(id){el(id).value='';});
     el('t-type').value='1'; el('t-game-mode').value='Classic';
     toast('🏆 Tournament created!');
   };
@@ -423,6 +419,7 @@
         var t=d.data(), tc=teamColor(t.teamType), gc=gmColor(t.game_mode);
         var fill=Math.min(Math.round(((t.joined||0)/(t.maxPlayers||1))*100),100);
         var barColor=fill>=100?'#FF6B6B':fill>70?'#FFD700':'#5CFF8A';
+        var pkLabel=t.per_kill&&t.per_kill>0?'<div><div class="t-prize-lbl">PER KILL</div><div class="t-prize-val" style="color:var(--orange)">৳'+t.per_kill+'</div></div>':'';
         list.innerHTML+='<div class="t-card">'
           +'<div class="t-header"><div>'
           +'<div class="t-title">'+t.title+'</div>'
@@ -436,6 +433,7 @@
           +'<div><div class="t-prize-lbl">1ST</div><div class="t-prize-val" style="color:var(--green)">৳'+t.prize1+'</div></div>'
           +'<div><div class="t-prize-lbl">2ND</div><div class="t-prize-val">৳'+t.prize2+'</div></div>'
           +'<div><div class="t-prize-lbl">3RD</div><div class="t-prize-val" style="color:#CD7F32">৳'+t.prize3+'</div></div>'
+          +pkLabel
           +'</div>'
           +'<div class="fill-label"><span>PLAYERS</span><span style="color:'+barColor+'">'+t.joined+'/'+t.maxPlayers+'</span></div>'
           +'<div class="fill-bar-bg"><div class="fill-bar" style="width:'+fill+'%;background:'+barColor+'"></div></div>'
@@ -462,13 +460,20 @@
   // ─── WINNERS ──────────────────────────────────────────────────────────────
   window.updatePrizePreview=async function(){
     var mId=el('winner-match-select').value, preview=el('prize-preview');
-    if(!mId){preview.style.display='none';return;}
+    if(!mId){preview.style.display='none'; selectedMatchData=null; return;}
     var snap=await getDoc(doc(db,'tournaments',mId));
     if(!snap.exists()) return;
-    var t=snap.data();
+    var t=snap.data(); selectedMatchData=t;
     el('pp1').textContent='৳'+(t.prize1||0);
     el('pp2').textContent='৳'+(t.prize2||0);
     el('pp3').textContent='৳'+(t.prize3||0);
+    // Show per kill info & kills inputs
+    var hasPerKill = t.per_kill && t.per_kill > 0;
+    el('pp-kill-wrap').style.display = hasPerKill ? 'block' : 'none';
+    if(hasPerKill) el('pp-kill').textContent='৳'+t.per_kill;
+    ['kills-row-1','kills-row-2','kills-row-3'].forEach(function(id){
+      el(id).style.display = hasPerKill ? 'block' : 'none';
+    });
     preview.style.display='flex';
   };
 
@@ -476,46 +481,60 @@
     var mId=el('winner-match-select').value;
     if(!mId){toast('Select a match first!','error');return;}
     var wUIDs=[el('w1').value.trim(),el('w2').value.trim(),el('w3').value.trim()];
+    var kills=[Number(el('kills1').value)||0, Number(el('kills2').value)||0, Number(el('kills3').value)||0];
     if(!wUIDs[0]&&!wUIDs[1]&&!wUIDs[2]){toast('Enter at least 1 winner UID!','error');return;}
     var tSnap=await getDoc(doc(db,'tournaments',mId));
     if(!tSnap.exists()){toast('Match not found!','error');return;}
-    var t=tSnap.data(), prizes=[t.prize1||0,t.prize2||0,t.prize3||0];
+    var t=tSnap.data();
+    var basePrizes=[t.prize1||0,t.prize2||0,t.prize3||0];
+    var perKill=t.per_kill||0;
     var positions=['🥇 1st','🥈 2nd','🥉 3rd'], logEntries=[];
     var allUsers=await getDocs(collection(db,'users'));
     for(var i=0;i<3;i++){
-      if(!wUIDs[i]||prizes[i]===0) continue;
+      if(!wUIDs[i]) continue;
+      var killBonus=kills[i]*perKill;
+      var totalPrize=basePrizes[i]+killBonus;
+      if(totalPrize===0) continue;
       allUsers.forEach(async function(uDoc){
         var uData=uDoc.data();
         if(uData.uid_game&&uData.uid_game.trim()===wUIDs[i].trim()){
-          await updateDoc(doc(db,'users',uDoc.id),{balance:increment(prizes[i]),total_earned:increment(prizes[i]),wins:increment(i===0?1:0)});
-          await addDoc(collection(db,'transactions'),{uid:uDoc.id,email:uData.email,amount:prizes[i],type:'prize',status:'approved',reason:t.title+' - '+positions[i],created_at:serverTimestamp()});
+          await updateDoc(doc(db,'users',uDoc.id),{
+            balance:increment(totalPrize),
+            total_earned:increment(totalPrize),
+            wins:increment(i===0?1:0)
+          });
+          var reasonText=t.title+' — '+positions[i]+(killBonus>0?' + '+kills[i]+' kills (৳'+killBonus+')':'');
+          await addDoc(collection(db,'transactions'),{
+            uid:uDoc.id, email:uData.email,
+            amount:totalPrize, type:'prize', status:'approved',
+            reason:reasonText,
+            tournament_id:mId, position:positions[i],
+            base_prize:basePrizes[i], kill_bonus:killBonus, kills:kills[i],
+            created_at:serverTimestamp()
+          });
+          logEntries.push({uid:wUIDs[i],prize:totalPrize,killBonus:killBonus,kills:kills[i],position:positions[i],match:t.title});
         }
       });
-      logEntries.push({uid:wUIDs[i],prize:prizes[i],position:positions[i],match:t.title});
     }
     await deleteDoc(doc(db,'tournaments',mId));
     el('dist-log-wrap').style.display='block';
     var logDiv=el('dist-log');
     logEntries.forEach(function(e){
-      logDiv.innerHTML='<div class="log-entry"><div><div class="log-uid">UID: '+e.uid+'</div><div class="log-meta">'+e.match+' · '+e.position+' · '+new Date().toLocaleTimeString()+'</div></div><div class="log-prize">+৳'+e.prize+'</div></div>'+logDiv.innerHTML;
+      var killTxt=e.killBonus>0?' <span style="color:var(--orange);font-size:13px">(+৳'+e.killBonus+' kills)</span>':'';
+      logDiv.innerHTML='<div class="log-entry"><div><div class="log-uid">UID: '+e.uid+'</div><div class="log-meta">'+e.match+' · '+e.position+' · '+new Date().toLocaleTimeString()+'</div></div><div class="log-prize">+৳'+e.prize+killTxt+'</div></div>'+logDiv.innerHTML;
     });
-    ['w1','w2','w3'].forEach(function(id){el(id).value='';});
+    ['w1','w2','w3','kills1','kills2','kills3'].forEach(function(id){if(el(id))el(id).value='';});
     el('winner-match-select').value=''; el('prize-preview').style.display='none';
+    selectedMatchData=null;
     toast('🏆 Prizes distributed to '+logEntries.length+' winner(s)!');
   };
 
   // ─── SETTINGS ─────────────────────────────────────────────────────────────
   async function loadSettingsData(){
-    // Notice
     try{
       var ns=await getDoc(doc(db,'settings','notice'));
-      if(ns.exists()&&ns.data().text){
-        var txt=ns.data().text;
-        el('current-notice-display').textContent=txt;
-        el('notice-input').value=txt;
-      }
+      if(ns.exists()&&ns.data().text){var txt=ns.data().text;el('current-notice-display').textContent=txt;el('notice-input').value=txt;}
     }catch(e){}
-    // Payment per-method
     try{
       var ps=await getDoc(doc(db,'settings','payment'));
       if(ps.exists()){
@@ -530,7 +549,6 @@
         });
       }
     }catch(e){}
-    // Support
     try{
       var ss=await getDoc(doc(db,'settings','support'));
       if(ss.exists()){
@@ -538,15 +556,14 @@
         el('cur-wa').textContent=s.whatsapp||'—';
         el('cur-tg').textContent=s.telegram_link||'—';
         el('cur-ph').textContent=s.phone||'—';
-        if(s.whatsapp)          el('support-whatsapp').value=s.whatsapp;
-        if(s.telegram_link)     el('support-telegram-link').value=s.telegram_link;
-        if(s.telegram_number)   el('support-telegram-number').value=s.telegram_number;
-        if(s.phone)             el('support-phone').value=s.phone;
+        if(s.whatsapp) el('support-whatsapp').value=s.whatsapp;
+        if(s.telegram_link) el('support-telegram-link').value=s.telegram_link;
+        if(s.telegram_number) el('support-telegram-number').value=s.telegram_number;
+        if(s.phone) el('support-phone').value=s.phone;
       }
     }catch(e){}
   }
 
-  // Payment method tabs
   window.switchPayTab=function(m){
     document.querySelectorAll('.pay-method-tab').forEach(function(t){t.classList.remove('active');});
     document.querySelectorAll('.pay-method-panel').forEach(function(p){p.classList.remove('active');});
@@ -569,12 +586,11 @@
     }catch(e){toast('Failed to save','error');}
   };
 
-  // Notice
   window.saveNotice=async function(){
     var text=el('notice-input').value.trim();
     try{
       await setDoc(doc(db,'settings','notice'),{text:text,updated_at:serverTimestamp()},{merge:true});
-      if(text){el('current-notice-display').textContent=text;el('current-notice-display').className='cur-display';}
+      if(text){el('current-notice-display').textContent=text;}
       else{el('current-notice-display').innerHTML='<span style="color:var(--muted);font-style:italic">No notice set</span>';}
       toast('📢 Notice saved!');
     }catch(e){toast('Failed','error');}
@@ -588,17 +604,13 @@
     }catch(e){toast('Failed','error');}
   };
 
-  // Support contacts
   window.saveSupportContacts=async function(){
-    var wa  =el('support-whatsapp').value.trim();
-    var tgL =el('support-telegram-link').value.trim();
-    var tgN =el('support-telegram-number').value.trim();
-    var ph  =el('support-phone').value.trim();
+    var wa=el('support-whatsapp').value.trim();
+    var tgL=el('support-telegram-link').value.trim();
+    var tgN=el('support-telegram-number').value.trim();
+    var ph=el('support-phone').value.trim();
     try{
-      await setDoc(doc(db,'settings','support'),{
-        whatsapp:wa, telegram_link:tgL, telegram_number:tgN, phone:ph,
-        updated_at:serverTimestamp()
-      },{merge:true});
+      await setDoc(doc(db,'settings','support'),{whatsapp:wa,telegram_link:tgL,telegram_number:tgN,phone:ph,updated_at:serverTimestamp()},{merge:true});
       el('cur-wa').textContent=wa||'—';
       el('cur-tg').textContent=tgL||'—';
       el('cur-ph').textContent=ph||'—';
