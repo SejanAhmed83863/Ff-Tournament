@@ -97,12 +97,9 @@
     .solo-queue-info b{color:var(--green)}
     .solo-queue-counter{text-align:center;font-family:'Teko';font-size:18px;color:var(--green);margin-bottom:4px;letter-spacing:1px}
 
-    /* UID lookup result */
+    /* UID & IGN inputs */
     .uid-row{position:relative;margin-bottom:12px}
-    .uid-row .m-input{margin-bottom:0}
-    .uid-name-tag{display:none;font-size:12px;color:var(--green);font-weight:600;padding:4px 10px;background:rgba(92,255,138,0.08);border:1px solid rgba(92,255,138,0.25);border-radius:0 0 7px 7px;letter-spacing:0.5px}
-    .uid-name-tag.show{display:block}
-    .uid-status{font-size:11px;min-height:16px;margin-bottom:8px;letter-spacing:0.5px}
+    .uid-row .m-input{margin-bottom:4px}
 
     /* RULES */
     .rules-list{list-style:none;padding:0}
@@ -198,7 +195,7 @@
         <div class="fee-note" id="fee-note"></div>
       </div>
       <div class="profile-warn" id="profile-warn">
-        ⚠️ Set your <b>Game UID</b> in profile first.<br>
+        ⚠️ Set your <b>Game UID & IGN</b> in profile first.<br>
         <a href="dashboard.html">Go to Profile →</a>
       </div>
       <!-- Solo/Team toggle — only shown for Duo/Squad -->
@@ -224,7 +221,7 @@
       <div class="modal-title">📋 Rules</div>
       <div class="modal-sub" style="margin-bottom:16px">Read carefully before joining</div>
       <ul class="rules-list">
-        <li><span class="rule-num">1</span><span>Use your <b style="color:var(--gold)">exact registered Game UID</b>. Mismatches = disqualification.</span></li>
+        <li><span class="rule-num">1</span><span>Use your <b style="color:var(--gold)">exact registered Game UID & IGN</b>. Mismatches = disqualification.</span></li>
         <li><span class="rule-num">2</span><span>Join the room <b style="color:var(--gold)">5 minutes before</b> start. Late = no entry.</span></li>
         <li><span class="rule-num">3</span><span>Room ID & Password sent to your <b style="color:var(--gold)">WhatsApp</b> before match.</span></li>
         <li><span class="rule-num">4</span><span><b style="color:var(--danger)">Hacking, teaming, toxic behavior</b> = permanent ban.</span></li>
@@ -266,7 +263,7 @@
   var currentUser=null, userData=null, userBalance=0;
   var allTournaments=[], joinedIds=new Set(), selectedT=null;
   var typeFilter='all', modeFilter='all', regType='team';
-  var uidLookupTimers={}, supportSettings=null;
+  var supportSettings=null;
 
   function el(id){ return document.getElementById(id); }
 
@@ -289,7 +286,6 @@
     try{
       var snap=await getDocs(query(collection(db,'registrations'),where('uid','==',currentUser.uid)));
       snap.forEach(function(d){ joinedIds.add(d.data().tournament_id); });
-      // Also check solo queue
       var sq=await getDocs(query(collection(db,'solo_queue'),where('firebase_uid','==',currentUser.uid)));
       sq.forEach(function(d){ joinedIds.add(d.data().tournament_id); });
     }catch(e){}
@@ -329,7 +325,7 @@
       var joined=t.joined||0, max=t.maxPlayers||99;
       var fill=Math.min((joined/max)*100,100), isFull=joined>=max, isFree=!t.fee||t.fee===0;
       var hasJoined=joinedIds.has(t.id), gk=gmKey(t), gl=gmLabel(t);
-      var canSolo=t.teamType>1; // solo queue only for Duo/Squad
+      var canSolo=t.teamType>1;
       var btnCls='btn-join'+(hasJoined?' joined':'');
       var btnTxt=hasJoined?'✅ JOINED':isFull?'🔒 FULL':'JOIN · '+(isFree?'FREE':'৳'+t.fee);
       var btnDis=(hasJoined||isFull)?'disabled':'';
@@ -404,77 +400,21 @@
     var html='';
     if(count>1) html+='<span class="m-label">Team Name</span><input type="text" class="m-input" id="team-name-input" placeholder="Your team name"/>';
     for(var i=1;i<=count;i++){
-      var ph=i===1?'Your Game UID (10 digits)':'Player '+i+' Game UID (10 digits)';
-      var pre=(i===1&&userData&&userData.uid_game)?userData.uid_game:'';
-      var ro=pre?'readonly style="opacity:0.7;cursor:not-allowed"':'';
+      var phUid=i===1?'Your Game UID (10 digits)':'Player '+i+' Game UID (10 digits)';
+      var phIgn=i===1?'Your In-Game Name (IGN)':'Player '+i+' IGN';
+      var preUid=(i===1&&userData&&userData.uid_game)?userData.uid_game:'';
+      var preIgn=(i===1&&userData&&userData.game_name)?userData.game_name:'';
+      var roUid=preUid?'readonly style="opacity:0.7;cursor:not-allowed"':'';
+      var roIgn=preIgn?'readonly style="opacity:0.7;cursor:not-allowed"':'';
       html+='<div class="uid-row">'
+        +'<span class="m-label">'+(i===1?'Your':'Player '+i)+' In-Game Name (IGN)</span>'
+        +'<input type="text" class="m-input ign-val" id="ign-inp-'+i+'" placeholder="'+phIgn+'" value="'+preIgn+'" '+roIgn+'/>'
         +'<span class="m-label">'+(i===1?'Your':'Player '+i)+' Game UID</span>'
-        +'<input type="text" class="m-input uid-val" id="uid-inp-'+i+'" placeholder="'+ph+'" value="'+pre+'" maxlength="12" '+(pre?ro:'oninput="onUidType(this,'+i+')"')+'/>'
-        +'<div class="uid-status" id="uid-status-'+i+'" style="color:var(--muted)"></div>'
-        +'<div class="uid-name-tag" id="uid-name-'+i+'"></div>'
+        +'<input type="text" class="m-input uid-val" id="uid-inp-'+i+'" placeholder="'+phUid+'" value="'+preUid+'" maxlength="12" '+roUid+'/>'
         +'</div>';
     }
     el('uid-inputs').innerHTML=html;
-    // Auto-lookup for pre-filled UID
-    if(userData&&userData.uid_game&&userData.game_name){
-      var tag=el('uid-name-1');
-      if(tag){ tag.textContent='🎮 '+userData.game_name; tag.classList.add('show'); }
-    }
   }
-
-  // ─── UID NAME LOOKUP via Garena topup APIs + CORS proxies ─────────────────
-  // Tries multiple proxies + endpoints for best reliability
-  async function lookupGameName(uid){
-    var endpoints=[
-      'https://shop.garena.my/api/profile?app_id=100067&tp_id='+uid+'&region=BD',
-      'https://shop2game.com/api/user/profile?app_id=100067&tp_id='+uid
-    ];
-    var proxies=[
-      'https://corsproxy.io/?',
-      'https://api.allorigins.win/raw?url='
-    ];
-    for(var pi=0;pi<proxies.length;pi++){
-      for(var ei=0;ei<endpoints.length;ei++){
-        try{
-          var url=proxies[pi]+(pi===1?encodeURIComponent(endpoints[ei]):endpoints[ei]);
-          var res=await fetch(url,{signal:AbortSignal.timeout(6000)});
-          if(!res.ok) continue;
-          var data=await res.json();
-          // Garena API response: { model: { nickname: "..." } }
-          // shop2game response: { name: "..." } or { nickname: "..." }
-          var name=null;
-          if(data&&data.model&&data.model.nickname) name=data.model.nickname;
-          else if(data&&data.nickname) name=data.nickname;
-          else if(data&&data.name) name=data.name;
-          if(name&&name.trim()&&name.trim()!=='null') return name.trim();
-        }catch(e){ continue; }
-      }
-    }
-    return null;
-  }
-
-  window.onUidType=function(input, idx){
-    var uid=input.value.trim();
-    var statusEl=el('uid-status-'+idx);
-    var nameEl=el('uid-name-'+idx);
-    nameEl.classList.remove('show');
-    statusEl.textContent='';
-    if(uidLookupTimers[idx]) clearTimeout(uidLookupTimers[idx]);
-    if(!/^\d{10}$/.test(uid)){ if(uid.length>0) statusEl.style.color='var(--danger)'; statusEl.textContent=uid.length>0?'Must be exactly 10 digits':''; return; }
-    statusEl.style.color='var(--muted)';
-    statusEl.textContent='🔍 Looking up player name...';
-    uidLookupTimers[idx]=setTimeout(async function(){
-      var name=await lookupGameName(uid);
-      if(name){
-        nameEl.textContent='🎮 '+name;
-        nameEl.classList.add('show');
-        statusEl.textContent='';
-      } else {
-        statusEl.style.color='var(--muted)';
-        statusEl.textContent='UID valid — name lookup unavailable';
-      }
-    },700);
-  };
 
   window.openJoin=async function(tId){
     var t=allTournaments.find(function(x){return x.id===tId;}); if(!t) return;
@@ -484,18 +424,16 @@
     el('join-sub').textContent=modeLabel(t.teamType)+' · '+gmLabel(t)+' · '+fmt12(t.time);
     el('join-name').value    = userData&&userData.name    ?userData.name    :'';
     el('join-whatsapp').value= userData&&userData.whatsapp?userData.whatsapp:'';
-    var hasProfile=userData&&userData.uid_game;
+    var hasProfile=userData&&userData.uid_game&&userData.game_name;
     el('profile-warn').style.display    = hasProfile?'none':'block';
     el('confirm-join-btn').disabled      = !hasProfile;
     el('confirm-join-btn').style.opacity = hasProfile?'1':'0.4';
-    // Show Solo/Team toggle only for Duo or Squad
     var showToggle=t.teamType>1;
     el('reg-type-wrap').style.display=showToggle?'block':'none';
     el('btn-team-reg').classList.add('active'); el('btn-solo-reg').classList.remove('active');
     el('solo-queue-info').style.display='none';
     buildUidInputs();
     updateFeeDisplay();
-    // Load solo queue count
     if(showToggle) await countSoloQueue(t.id, t.teamType);
     el('join-modal').classList.add('open');
   };
@@ -516,10 +454,12 @@
 
   async function joinAsTeam(t, name, whatsapp){
     var uids=Array.from(document.querySelectorAll('.uid-val')).map(function(i){return i.value.trim();});
+    var igns=Array.from(document.querySelectorAll('.ign-val')).map(function(i){return i.value.trim();});
     var teamName=el('team-name-input')?el('team-name-input').value.trim():'';
     for(var i=0;i<uids.length;i++){
       if(!uids[i]){showMsg('join-msg','Player '+(i+1)+' UID required.','error');return;}
       if(!/^\d{10}$/.test(uids[i])){showMsg('join-msg','Player '+(i+1)+' UID must be exactly 10 digits.','error');return;}
+      if(!igns[i]){showMsg('join-msg','Player '+(i+1)+' IGN required.','error');return;}
     }
     var teamSize=t.teamType||1;
     var totalFee=(t.fee||0)*teamSize;
@@ -538,7 +478,7 @@
         tournament_id:t.id, tournament_name:t.title,
         uid:currentUser.uid, email:currentUser.email, name:name, whatsapp:whatsapp,
         team_name:teamName, game_uids:uids, group_id:groupId,
-        all_group_uids:uids, all_group_names:uids.map(function(){ return ''; }),
+        all_group_uids:uids, all_group_names:igns, grouped:true,
         entry_paid:totalFee, registration_type:'team', status:'joined', created_at:serverTimestamp()
       });
       await updateDoc(doc(db,'users',currentUser.uid),{played:increment(1),name:name,whatsapp:whatsapp});
@@ -550,41 +490,38 @@
 
   async function joinSoloQueue(t, name, whatsapp){
     var myUid=el('uid-inp-1')?el('uid-inp-1').value.trim():(userData&&userData.uid_game?userData.uid_game:'');
+    var myIgn=el('ign-inp-1')?el('ign-inp-1').value.trim():(userData&&userData.game_name?userData.game_name:'');
     if(!myUid||!/^\d{10}$/.test(myUid)){showMsg('join-msg','Enter valid 10-digit Game UID.','error');return;}
+    if(!myIgn){showMsg('join-msg','Enter your In-Game Name (IGN).','error');return;}
     var fee=t.fee||0;
     if(fee>0&&userBalance<fee){showMsg('join-msg','Not enough balance! Need ৳'+fee+'.','error');return;}
     if(joinedIds.has(t.id)){showMsg('join-msg','You already joined this tournament!','error');return;}
     el('confirm-join-btn').disabled=true; el('confirm-join-btn').textContent='Joining Queue...';
     try{
-      // Deduct fee
       if(fee>0){
         await updateDoc(doc(db,'users',currentUser.uid),{balance:increment(-fee)});
         await addDoc(collection(db,'transactions'),{uid:currentUser.uid,email:currentUser.email,name:name,whatsapp:whatsapp,amount:fee,type:'entry',status:'approved',reason:t.title+' (Solo Queue)',tournament_id:t.id,created_at:serverTimestamp()});
         userBalance-=fee; el('nav-balance').textContent=userBalance;
       }
-      // Increment slot for this individual player
       await updateDoc(doc(db,'tournaments',t.id),{joined:increment(1)});
-      // Add to solo queue
       var sqRef=await addDoc(collection(db,'solo_queue'),{
         tournament_id:t.id, tournament_name:t.title,
         firebase_uid:currentUser.uid, email:currentUser.email||'',
-        game_uid:myUid, game_name:userData&&userData.game_name?userData.game_name:name,
+        game_uid:myUid, game_name:myIgn,
         name:name, whatsapp:whatsapp, fee_paid:fee, grouped:false,
         created_at:serverTimestamp()
       });
       await updateDoc(doc(db,'users',currentUser.uid),{played:increment(1),name:name,whatsapp:whatsapp});
       joinedIds.add(t.id);
-      // Check if we can form a group now
       var teamSize=t.teamType||4;
       var qSnap=await getDocs(query(collection(db,'solo_queue'),where('tournament_id','==',t.id),where('grouped','==',false)));
       if(qSnap.size>=teamSize){
-        await autoGroupPlayers(t, qSnap, teamSize, name, whatsapp, myUid);
+        await autoGroupPlayers(t, qSnap, teamSize, name, whatsapp, myUid, myIgn);
       } else {
-        // Save individual registration as solo_queue type
         await addDoc(collection(db,'registrations'),{
           tournament_id:t.id, tournament_name:t.title,
           uid:currentUser.uid, email:currentUser.email||'', name:name, whatsapp:whatsapp,
-          game_uids:[myUid], game_name:userData&&userData.game_name?userData.game_name:name,
+          game_uids:[myUid], all_group_uids:[myUid], all_group_names:[myIgn],
           entry_paid:fee, registration_type:'solo_queue', grouped:false,
           solo_queue_id:sqRef.id, status:'joined', created_at:serverTimestamp()
         });
@@ -595,8 +532,7 @@
     }catch(e){ console.error(e); el('confirm-join-btn').disabled=false; el('confirm-join-btn').textContent='Confirm & Join'; showMsg('join-msg','Failed. Try again.','error'); }
   }
 
-  async function autoGroupPlayers(t, qSnap, teamSize, curName, curWhatsapp, curUid){
-    // Sort by creation time and take first teamSize
+  async function autoGroupPlayers(t, qSnap, teamSize, curName, curWhatsapp, curUid, curIgn){
     var entries=[];
     qSnap.forEach(function(d){ entries.push(Object.assign({docId:d.id},d.data())); });
     entries.sort(function(a,b){return (a.created_at&&a.created_at.toMillis?a.created_at.toMillis():0)-(b.created_at&&b.created_at.toMillis?b.created_at.toMillis():0);});
@@ -604,14 +540,11 @@
     var groupId='grp_'+Date.now()+'_'+Math.random().toString(36).substr(2,5);
     var gameUids=group.map(function(e){return e.game_uid;});
     var gameNames=group.map(function(e){return e.game_name||e.name;});
-    // Mark all as grouped
     for(var i=0;i<group.length;i++){
       try{ await updateDoc(doc(db,'solo_queue',group[i].docId),{grouped:true,group_id:groupId}); }catch(e){}
     }
-    // Create/update a registration for each player in the group with full teammate info
     for(var j=0;j<group.length;j++){
       var p=group[j];
-      // Try to update existing registration if exists, else create new
       try{
         var existing=await getDocs(query(collection(db,'registrations'),where('uid','==',p.firebase_uid),where('tournament_id','==',t.id)));
         if(!existing.empty){
@@ -620,8 +553,7 @@
           await addDoc(collection(db,'registrations'),{
             tournament_id:t.id, tournament_name:t.title,
             uid:p.firebase_uid, email:p.email||'', name:p.name, whatsapp:p.whatsapp,
-            game_uids:[p.game_uid], game_name:p.game_name||p.name,
-            group_id:groupId, all_group_uids:gameUids, all_group_names:gameNames,
+            game_uids:[p.game_uid], group_id:groupId, all_group_uids:gameUids, all_group_names:gameNames,
             entry_paid:p.fee_paid, registration_type:'solo_queue', grouped:true,
             status:'joined', created_at:serverTimestamp()
           });
@@ -632,7 +564,6 @@
     setTimeout(function(){ el('join-modal').classList.remove('open'); loadTournaments(); },3000);
   }
 
-  // ─── SUPPORT ──────────────────────────────────────────────────────────────
   window.openSupport=function(){
     var linksEl=el('support-links');
     if(!supportSettings||(!supportSettings.whatsapp&&!supportSettings.telegram_link&&!supportSettings.phone)){
