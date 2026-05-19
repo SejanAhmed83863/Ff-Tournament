@@ -543,7 +543,7 @@
       });
       await updateDoc(doc(db,'users',currentUser.uid),{played:increment(1),name:name,whatsapp:whatsapp});
       joinedIds.add(t.id);
-      showMsg('join-msg','🎉 Joined! Room ID sent on WhatsApp. BOOYAH!','success');
+      showMsg('join-msg','🎉 Joined! Room ID Will be send to Profile. BOOYAH!','success');
       setTimeout(function(){ el('join-modal').classList.remove('open'); loadTournaments(); },2200);
     }catch(e){ console.error(e); el('confirm-join-btn').disabled=false; el('confirm-join-btn').textContent='Confirm & Join'; showMsg('join-msg','Failed. Try again.','error'); }
   }
