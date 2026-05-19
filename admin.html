@@ -99,6 +99,16 @@
     .pay-cur-lbl{font-size:10px;color:var(--muted);letter-spacing:1px;margin-bottom:4px;text-transform:uppercase}
     .pay-cur-val{font-family:'Bebas Neue';font-size:16px;color:var(--green);letter-spacing:1px;word-break:break-all}
     .fld-label{font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;display:block;margin-bottom:6px}
+
+    /* PER-KILL PROFIT STYLES */
+    .kill-player-row{background:#0A0A0F;border:1px solid var(--border);border-radius:7px;padding:10px 12px;margin-bottom:8px;display:flex;align-items:center;gap:10px;justify-content:space-between}
+    .kill-player-uid{font-weight:700;flex:1;font-size:13px}
+    .kill-player-kills{color:var(--gold);font-family:'Bebas Neue';font-size:18px;letter-spacing:1px}
+    .kill-player-profit{color:var(--green);font-family:'Bebas Neue';font-size:18px;letter-spacing:1px}
+    .kill-remove-btn{background:transparent;border:1px solid var(--red);color:var(--red);padding:4px 10px;border-radius:5px;cursor:pointer;font-size:11px;font-weight:700}
+    .kill-total-box{background:linear-gradient(135deg,rgba(92,255,138,0.1),rgba(0,201,106,0.05));border:2px solid var(--green);border-radius:8px;padding:14px;text-align:center;margin-top:12px}
+    .kill-total-label{font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase}
+    .kill-total-val{font-family:'Bebas Neue';font-size:32px;color:var(--green);letter-spacing:2px}
   </style>
 </head>
 <body>
@@ -144,7 +154,6 @@
       <input type="number" id="t-fee" placeholder="Entry Fee ৳ (per player) *">
       <select id="t-type"><option value="1">Solo</option><option value="2">Duo</option><option value="4">Squad</option></select>
     </div>
-    <!-- GAME MODE — Classic / Clash Squad / Lone Wolf -->
     <label class="fld-label">Game Mode</label>
     <select id="t-game-mode">
       <option value="Classic">🗺️ Classic (Battle Royale)</option>
@@ -164,7 +173,7 @@
 <!-- WINNERS -->
 <div class="tab-content" id="tab-winners">
   <div class="card">
-    <div class="card-title"><div class="card-title-bar" style="background:var(--gold)"></div><span style="color:var(--gold)">DISTRIBUTE PRIZES</span></div>
+    <div class="card-title"><div class="card-title-bar" style="background:var(--gold)"></div><span style="color:var(--gold)">DISTRIBUTE PRIZES (Top 3)</span></div>
     <select id="winner-match-select" onchange="updatePrizePreview()"><option value="">— Select Match —</option></select>
     <div id="prize-preview" style="display:none" class="prize-preview">
       <div class="pp-item"><div class="pp-val" id="pp1" style="color:var(--gold)">৳0</div><div class="pp-lbl">1ST</div></div>
@@ -177,6 +186,30 @@
     <div class="w-uid-wrap"><span class="w-uid-num" style="color:#CD7F32">#3</span><input type="text" id="w3" placeholder="3rd Place Game UID 🥉"></div>
     <button class="btn-gold" onclick="distributePrizes()">DISTRIBUTE PRIZES &amp; CLOSE MATCH</button>
   </div>
+
+  <!-- PER-KILL PROFIT DISTRIBUTION -->
+  <div class="card">
+    <div class="card-title"><div class="card-title-bar" style="background:var(--green)"></div><span style="color:var(--green)">💰 PER-KILL PROFIT (All Players)</span></div>
+    <p class="field-hint">Distribute kill-based profits to ALL players. Add each player's UID and kill count. The match does NOT close after this.</p>
+    <select id="kill-match-select" onchange="updateKillMatchInfo()"><option value="">— Select Match —</option></select>
+    <div id="kill-match-info" style="display:none">
+      <label class="fld-label">Per Kill Amount (৳)</label>
+      <input type="number" id="kill-per-amount" placeholder="Amount per kill (e.g. 50)" value="50">
+      <div class="section-label">ADD PLAYER</div>
+      <div class="row">
+        <input type="text" id="kill-uid-input" placeholder="Player Game UID">
+        <input type="number" id="kill-count-input" placeholder="Kills" style="max-width:90px">
+      </div>
+      <button class="btn-green" style="margin-top:0;padding:10px" onclick="addKillPlayer()">+ ADD PLAYER</button>
+      <div id="kill-players-list" style="margin-top:16px"></div>
+      <div id="kill-total-display" style="display:none" class="kill-total-box">
+        <div class="kill-total-label">Total Payout</div>
+        <div class="kill-total-val">৳ <span id="kill-total-amount">0</span></div>
+      </div>
+      <button id="distribute-kill-btn" class="btn-main" onclick="distributeKillProfits()" style="display:none;margin-top:12px">DISTRIBUTE KILL PROFITS</button>
+    </div>
+  </div>
+
   <div id="dist-log-wrap" style="display:none">
     <div class="section-label">DISTRIBUTION LOG</div>
     <div id="dist-log"></div>
@@ -185,8 +218,6 @@
 
 <!-- SETTINGS -->
 <div class="tab-content" id="tab-settings">
-
-  <!-- NOTICE -->
   <div class="card">
     <div class="card-title"><div class="card-title-bar" style="background:var(--gold)"></div><span style="color:var(--gold)">📢 GLOBAL NOTICE BAR</span></div>
     <div class="settings-section">
@@ -204,7 +235,7 @@
     </div>
   </div>
 
-  <!-- PAYMENT DETAILS — per method -->
+  <!-- PAYMENT DETAILS -->
   <div class="card">
     <div class="card-title"><div class="card-title-bar" style="background:var(--green)"></div><span style="color:var(--green)">💳 DEPOSIT PAYMENT DETAILS</span></div>
     <p class="field-hint">Set a <b>separate number &amp; send type for each method</b>. Users see the correct number when they select bKash, Nagad, or Rocket in the Deposit screen.</p>
@@ -214,7 +245,6 @@
       <button class="pay-method-tab"        onclick="switchPayTab('rocket')">🚀 Rocket</button>
     </div>
 
-    <!-- bKash -->
     <div class="pay-method-panel active" id="pay-panel-bkash">
       <div class="pay-cur">
         <div class="pay-cur-box"><div class="pay-cur-lbl">Number</div><div class="pay-cur-val" id="cur-bkash-number">—</div></div>
@@ -227,7 +257,6 @@
       <button class="btn-green" onclick="savePayMethod('bkash')">SAVE bKash DETAILS</button>
     </div>
 
-    <!-- Nagad -->
     <div class="pay-method-panel" id="pay-panel-nagad">
       <div class="pay-cur">
         <div class="pay-cur-box"><div class="pay-cur-lbl">Number</div><div class="pay-cur-val" id="cur-nagad-number">—</div></div>
@@ -240,7 +269,6 @@
       <button class="btn-green" onclick="savePayMethod('nagad')">SAVE NAGAD DETAILS</button>
     </div>
 
-    <!-- Rocket -->
     <div class="pay-method-panel" id="pay-panel-rocket">
       <div class="pay-cur">
         <div class="pay-cur-box"><div class="pay-cur-lbl">Number</div><div class="pay-cur-val" id="cur-rocket-number">—</div></div>
@@ -287,7 +315,7 @@
     </div>
   </div>
 
-</div><!-- end settings -->
+</div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
@@ -306,6 +334,8 @@
     appId:"1:811957533858:web:1d1f0f916c0aba5eccebfb"
   };
   const app=initializeApp(cfg), db=getFirestore(app), auth=getAuth(app);
+
+  var killPlayers = []; // Store players for kill profit: [{uid, kills, profit}, ...]
 
   onAuthStateChanged(auth, function(user){
     if(!user){ window.location.href='index.html'; return; }
@@ -416,8 +446,9 @@
 
   function loadTournaments(){
     onSnapshot(collection(db,'tournaments'),function(snap){
-      var list=el('tournament-list'), sel=el('winner-match-select');
+      var list=el('tournament-list'), sel=el('winner-match-select'), ksel=el('kill-match-select');
       list.innerHTML=''; sel.innerHTML='<option value="">— Select Match —</option>';
+      ksel.innerHTML='<option value="">— Select Match —</option>';
       el('match-count-label').textContent='ACTIVE MATCHES ('+snap.size+')';
       snap.forEach(function(d){
         var t=d.data(), tc=teamColor(t.teamType), gc=gmColor(t.game_mode);
@@ -446,6 +477,7 @@
           +'<button class="btn-main" style="padding:10px;font-size:13px;margin-top:2px" onclick="updateRoom(\''+d.id+'\')">Update Room Info</button>'
           +'</div>';
         sel.innerHTML+='<option value="'+d.id+'">'+t.title+(t.game_mode?' ['+t.game_mode+']':'')+'</option>';
+        ksel.innerHTML+='<option value="'+d.id+'">'+t.title+(t.game_mode?' ['+t.game_mode+']':'')+'</option>';
       });
     });
   }
@@ -459,7 +491,7 @@
     await deleteDoc(doc(db,'tournaments',id)); toast('Deleted','warn');
   };
 
-  // ─── WINNERS ──────────────────────────────────────────────────────────────
+  // ─── WINNERS (Top 3 only) ────────────────────────────────────────────────
   window.updatePrizePreview=async function(){
     var mId=el('winner-match-select').value, preview=el('prize-preview');
     if(!mId){preview.style.display='none';return;}
@@ -482,17 +514,31 @@
     var t=tSnap.data(), prizes=[t.prize1||0,t.prize2||0,t.prize3||0];
     var positions=['🥇 1st','🥈 2nd','🥉 3rd'], logEntries=[];
     var allUsers=await getDocs(collection(db,'users'));
+    
+    // Update winners & registrations with winner_position and winner_prize
     for(var i=0;i<3;i++){
       if(!wUIDs[i]||prizes[i]===0) continue;
+      var winnerFound = false;
       allUsers.forEach(async function(uDoc){
         var uData=uDoc.data();
         if(uData.uid_game&&uData.uid_game.trim()===wUIDs[i].trim()){
+          winnerFound = true;
           await updateDoc(doc(db,'users',uDoc.id),{balance:increment(prizes[i]),total_earned:increment(prizes[i]),wins:increment(i===0?1:0)});
           await addDoc(collection(db,'transactions'),{uid:uDoc.id,email:uData.email,amount:prizes[i],type:'prize',status:'approved',reason:t.title+' - '+positions[i],created_at:serverTimestamp()});
+          
+          // Update registration with winner info
+          var regSnap = await getDocs(collection(db,'registrations'));
+          regSnap.forEach(async function(rDoc){
+            var reg = rDoc.data();
+            if(reg.tournament_id === mId && reg.game_uids && reg.game_uids.indexOf(wUIDs[i]) >= 0){
+              await updateDoc(doc(db,'registrations',rDoc.id),{winner_position:(i+1),winner_prize:prizes[i]});
+            }
+          });
         }
       });
       logEntries.push({uid:wUIDs[i],prize:prizes[i],position:positions[i],match:t.title});
     }
+    
     await deleteDoc(doc(db,'tournaments',mId));
     el('dist-log-wrap').style.display='block';
     var logDiv=el('dist-log');
@@ -504,9 +550,124 @@
     toast('🏆 Prizes distributed to '+logEntries.length+' winner(s)!');
   };
 
+  // ─── PER-KILL PROFIT DISTRIBUTION (All Players) ──────────────────────────
+  window.updateKillMatchInfo=function(){
+    var mId=el('kill-match-select').value;
+    if(!mId){
+      el('kill-match-info').style.display='none';
+      killPlayers = [];
+      renderKillPlayers();
+      return;
+    }
+    el('kill-match-info').style.display='block';
+    killPlayers = [];
+    renderKillPlayers();
+  };
+
+  window.addKillPlayer=function(){
+    var uid = el('kill-uid-input').value.trim();
+    var kills = parseInt(el('kill-count-input').value);
+    var perKill = parseInt(el('kill-per-amount').value) || 50;
+    
+    if(!uid){toast('Enter player UID!','error');return;}
+    if(!kills || kills < 0){toast('Enter valid kill count!','error');return;}
+    if(killPlayers.find(function(p){return p.uid===uid;})){toast('Player already added!','error');return;}
+    
+    var profit = kills * perKill;
+    killPlayers.push({uid: uid, kills: kills, profit: profit});
+    
+    el('kill-uid-input').value = '';
+    el('kill-count-input').value = '';
+    renderKillPlayers();
+    toast('Player added!');
+  };
+
+  function renderKillPlayers(){
+    var list = el('kill-players-list');
+    var totalDisplay = el('kill-total-display');
+    var distributeBtn = el('distribute-kill-btn');
+    
+    if(killPlayers.length === 0){
+      list.innerHTML = '';
+      totalDisplay.style.display = 'none';
+      distributeBtn.style.display = 'none';
+      return;
+    }
+    
+    var html = '<div class="section-label">PLAYERS ADDED ('+killPlayers.length+')</div>';
+    var totalPayout = 0;
+    
+    killPlayers.forEach(function(p, idx){
+      totalPayout += p.profit;
+      html += '<div class="kill-player-row">'
+        +'<div class="kill-player-uid">🎮 '+p.uid+'</div>'
+        +'<div class="kill-player-kills">'+p.kills+' kills</div>'
+        +'<div class="kill-player-profit">৳'+p.profit+'</div>'
+        +'<button class="kill-remove-btn" onclick="removeKillPlayer('+idx+')">✕</button>'
+        +'</div>';
+    });
+    
+    list.innerHTML = html;
+    el('kill-total-amount').textContent = totalPayout;
+    totalDisplay.style.display = 'block';
+    distributeBtn.style.display = 'block';
+  }
+
+  window.removeKillPlayer=function(idx){
+    killPlayers.splice(idx, 1);
+    renderKillPlayers();
+    toast('Player removed');
+  };
+
+  window.distributeKillProfits=async function(){
+    var mId = el('kill-match-select').value;
+    if(!mId){toast('Select a match first!','error');return;}
+    if(killPlayers.length === 0){toast('Add at least one player!','error');return;}
+    
+    var tSnap = await getDoc(doc(db,'tournaments',mId));
+    if(!tSnap.exists()){toast('Match not found!','error');return;}
+    var t = tSnap.data();
+    
+    var allUsers = await getDocs(collection(db,'users'));
+    var distributed = 0;
+    
+    for(var i=0; i<killPlayers.length; i++){
+      var kp = killPlayers[i];
+      var userFound = false;
+      
+      allUsers.forEach(async function(uDoc){
+        var uData = uDoc.data();
+        if(uData.uid_game && uData.uid_game.trim() === kp.uid.trim()){
+          userFound = true;
+          await updateDoc(doc(db,'users',uDoc.id),{balance:increment(kp.profit),total_earned:increment(kp.profit)});
+          await addDoc(collection(db,'transactions'),{
+            uid:uDoc.id,
+            email:uData.email,
+            amount:kp.profit,
+            type:'kill_profit',
+            status:'approved',
+            reason:t.title+' - '+kp.kills+' kills',
+            created_at:serverTimestamp()
+          });
+          distributed++;
+        }
+      });
+      
+      // Log to distribution log
+      var logDiv=el('dist-log');
+      logDiv.innerHTML='<div class="log-entry"><div><div class="log-uid">UID: '+kp.uid+' ('+kp.kills+' kills)</div><div class="log-meta">'+t.title+' · Kill Profit · '+new Date().toLocaleTimeString()+'</div></div><div class="log-prize">+৳'+kp.profit+'</div></div>'+logDiv.innerHTML;
+    }
+    
+    el('dist-log-wrap').style.display='block';
+    killPlayers = [];
+    renderKillPlayers();
+    el('kill-match-select').value = '';
+    el('kill-match-info').style.display = 'none';
+    toast('💰 Kill profits distributed to '+distributed+' player(s)!');
+  };
+
   // ─── SETTINGS ─────────────────────────────────────────────────────────────
   async function loadSettingsData(){
-    // Notice
     try{
       var ns=await getDoc(doc(db,'settings','notice'));
       if(ns.exists()&&ns.data().text){
@@ -515,7 +676,6 @@
         el('notice-input').value=txt;
       }
     }catch(e){}
-    // Payment per-method
     try{
       var ps=await getDoc(doc(db,'settings','payment'));
       if(ps.exists()){
@@ -530,7 +690,6 @@
         });
       }
     }catch(e){}
-    // Support
     try{
       var ss=await getDoc(doc(db,'settings','support'));
       if(ss.exists()){
@@ -546,7 +705,6 @@
     }catch(e){}
   }
 
-  // Payment method tabs
   window.switchPayTab=function(m){
     document.querySelectorAll('.pay-method-tab').forEach(function(t){t.classList.remove('active');});
     document.querySelectorAll('.pay-method-panel').forEach(function(p){p.classList.remove('active');});
@@ -569,7 +727,6 @@
     }catch(e){toast('Failed to save','error');}
   };
 
-  // Notice
   window.saveNotice=async function(){
     var text=el('notice-input').value.trim();
     try{
@@ -588,7 +745,6 @@
     }catch(e){toast('Failed','error');}
   };
 
-  // Support contacts
   window.saveSupportContacts=async function(){
     var wa  =el('support-whatsapp').value.trim();
     var tgL =el('support-telegram-link').value.trim();
