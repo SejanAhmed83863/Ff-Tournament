@@ -142,22 +142,18 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, doc, getDoc, updateDoc, getDocs, addDoc, collection, query, where, orderBy, increment, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, doc, getDoc, updateDoc, getDocs, addDoc, collection, query, orderBy, increment, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = { apiKey:"AIzaSyBgMroBilivfk7bJxoz93HjxSt6yU7Ura0", authDomain:"tournament-app-4a050.firebaseapp.com", projectId:"tournament-app-4a050", storageBucket:"tournament-app-4a050.firebasestorage.app", messagingSenderId:"811957533858", appId:"1:811957533858:web:1d1f0f916c0aba5eccebfb" };
 
   const app=initializeApp(firebaseConfig), auth=getAuth(app), db=getFirestore(app);
-  let currentUser=null, userBalance=0, allTournaments=[], selectedT=null, userData=null;
+  let currentUser=null, userBalance=0, allTournaments=[], selectedT=null;
 
   onAuthStateChanged(auth, async (user) => {
     if (!user) { window.location.href='index.html'; return; }
     currentUser=user;
     const snap=await getDoc(doc(db,'users',user.uid));
-    if(snap.exists()){
-      userData=snap.data();
-      userBalance=userData.balance||0;
-      document.getElementById('nav-balance').textContent=userBalance;
-    }
+    if(snap.exists()){ userBalance=snap.data().balance||0; document.getElementById('nav-balance').textContent=userBalance; }
     await loadTournaments();
     // Refresh every minute to auto-remove expired tournaments
     setInterval(()=>renderTournaments(allTournaments), 60000);
@@ -238,14 +234,6 @@
   window.openJoin = (tId) => {
     const t=allTournaments.find(x=>x.id===tId);
     if(!t) return;
-    
-    // Check if user has set their UID and in-game name
-    if(!userData.uid_game || !userData.in_game_name){
-      alert('⚠️ Please set your Game UID and In-Game Name in your Profile first before joining tournaments!');
-      window.location.href='dashboard.html';
-      return;
-    }
-    
     selectedT=t;
     document.getElementById('join-title').textContent=t.title;
     document.getElementById('join-sub').textContent=`${modeLabel(t.teamType)} · ${t.time?new Date(t.time).toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):''}`;
@@ -253,11 +241,7 @@
     const count=t.teamType||1;
     let inputs='';
     if(count>1) inputs+=`<span class="m-label">Team Name</span><input type="text" class="m-input" id="team-name-input" placeholder="Your team name"/>`;
-    for(let i=1;i<=count;i++){
-      const defaultUid = i===1 ? userData.uid_game : ''; // Auto-fill first UID only
-      const readonly = i===1 ? 'readonly style="background:#1a1a1a;color:#888"' : '';
-      inputs+=`<span class="m-label">Player ${i} Game UID ${i===1?'(You)':''}</span><input type="text" class="m-input uid-val" placeholder="Enter Game UID" value="${defaultUid}" ${readonly}/>`;
-    }
+    for(let i=1;i<=count;i++) inputs+=`<span class="m-label">Player ${i} Game UID</span><input type="text" class="m-input uid-val" placeholder="Enter Game UID"/>`;
     document.getElementById('uid-inputs').innerHTML=inputs;
     document.getElementById('join-modal').classList.add('open');
   };
@@ -280,36 +264,12 @@
 
     await updateDoc(doc(db,'tournaments',t.id),{joined:increment(1)});
 
-    // For solo tournaments, handle auto-team formation
-    let autoTeamId = null;
-    if(t.teamType === 1) {
-      // Check if there's space in existing teams
-      const regSnap = await getDocs(query(collection(db,'registrations'), where('tournament_id','==',t.id), where('team_status','==','forming')));
-      if(!regSnap.empty) {
-        // Join existing team
-        const existingReg = regSnap.docs[0];
-        autoTeamId = existingReg.data().auto_team_id;
-        const currentTeammates = existingReg.data().teammates || [];
-        currentTeammates.push({name: userData.game_name, uid: userData.uid_game});
-        await updateDoc(doc(db,'registrations',existingReg.id), {
-          teammates: currentTeammates,
-          team_status: currentTeammates.length >= 4 ? 'full' : 'forming'
-        });
-      } else {
-        // Create new team
-        autoTeamId = 'team_' + Date.now();
-      }
-    }
-
     // Save registration - this becomes history
     await addDoc(collection(db,'registrations'),{
       tournament_id:t.id, tournament_name:t.title,
       uid:currentUser.uid, email:currentUser.email,
       team_name:teamName, game_uids:uids, whatsapp,
-      entry_paid:t.fee, created_at:serverTimestamp(),
-      auto_team_id: autoTeamId,
-      team_status: t.teamType === 1 ? 'forming' : 'complete',
-      teammates: t.teamType === 1 ? [{name: userData.game_name, uid: userData.uid_game}] : []
+      entry_paid:t.fee, created_at:serverTimestamp()
     });
 
     await updateDoc(doc(db,'users',currentUser.uid),{played:increment(1)});

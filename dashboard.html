@@ -100,9 +100,6 @@
     .hist-name{font-family:'Teko';font-size:17px;color:#fff;letter-spacing:1px;margin-bottom:3px}
     .hist-meta{font-size:12px;color:var(--muted);display:flex;gap:10px;flex-wrap:wrap}
     .hist-meta span{color:var(--gold)}
-    .teammates-box{background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:6px;padding:8px;margin-top:8px;font-size:11px}
-    .teammates-title{color:var(--gold);font-weight:700;margin-bottom:4px;letter-spacing:1px}
-    .teammate-tag{display:inline-block;background:rgba(254,203,0,0.1);border:1px solid rgba(254,203,0,0.3);padding:2px 8px;border-radius:4px;margin:2px;font-size:10px;color:var(--text)}
 
     /* MODALS */
     .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:200;align-items:flex-end;justify-content:center}
@@ -159,13 +156,12 @@
 
       <!-- UID SECTION with password protection -->
       <div class="uid-box">
-        <div class="uid-box-title">🔒 Game UID (In-Game Name)</div>
-        <div class="uid-note" id="uid-note">Set your Game UID. This will also be used as your In-Game Name. After changing once, you'll need to re-login with Google or provide your password.</div>
-        <input type="text" class="e-input" id="input-uid" placeholder="Enter your Game UID"/>
+        <div class="uid-box-title">🔒 Change Game UID</div>
+        <div class="uid-note" id="uid-note">Enter your current password to change your UID. You can only change UID once without restriction — after that, a password is required.</div>
+        <input type="text" class="e-input" id="input-uid" placeholder="New Game UID"/>
         <div id="password-field" style="display:none">
-          <span class="e-label">Confirm with Password or Re-login</span>
-          <input type="password" class="e-input" id="input-password" placeholder="Enter your password (email login users)"/>
-          <button class="save-btn" onclick="reauthWithGoogle()" style="margin-bottom:8px;background:linear-gradient(180deg,#4285f4,#3367d6)">🔐 RE-LOGIN WITH GOOGLE</button>
+          <span class="e-label">Confirm Password</span>
+          <input type="password" class="e-input" id="input-password" placeholder="Enter your password to confirm"/>
         </div>
       </div>
 
@@ -258,7 +254,7 @@
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged, EmailAuthProvider, reauthenticateWithCredential, GoogleAuthProvider, reauthenticateWithPopup } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getAuth, onAuthStateChanged, EmailAuthProvider, reauthenticateWithCredential } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
   import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, addDoc, query, where, orderBy, getDocs, serverTimestamp, increment } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = { apiKey:"AIzaSyBgMroBilivfk7bJxoz93HjxSt6yU7Ura0", authDomain:"tournament-app-4a050.firebaseapp.com", projectId:"tournament-app-4a050", storageBucket:"tournament-app-4a050.firebasestorage.app", messagingSenderId:"811957533858", appId:"1:811957533858:web:1d1f0f916c0aba5eccebfb" };
@@ -356,15 +352,6 @@
       snap.forEach(d => {
         const r=d.data();
         const date=r.created_at?.toDate?.()?.toLocaleDateString('en-GB')||'—';
-        const teammates = r.teammates || [];
-        let teammatesHtml = '';
-        if(teammates.length > 1) {
-          teammatesHtml = `<div class="teammates-box"><div class="teammates-title">👥 TEAMMATES</div>`;
-          teammates.forEach(tm => {
-            teammatesHtml += `<span class="teammate-tag">${tm.name} (${tm.uid})</span>`;
-          });
-          teammatesHtml += `</div>`;
-        }
         list.innerHTML+=`
           <div class="history-item">
             <div class="hist-name">${r.tournament_name||'Tournament'}</div>
@@ -373,10 +360,7 @@
               <span>💵 Entry: ৳${r.entry_paid||0}</span>
               ${r.team_name?`<span>👥 ${r.team_name}</span>`:''}
               ${r.game_uids?`<span>🎮 UID: ${r.game_uids[0]}</span>`:''}
-              ${r.position?`<span style="color:var(--gold)">🏆 ${r.position}</span>`:''}
-              ${r.prize_won?`<span style="color:var(--green)">💰 Won: ৳${r.prize_won}</span>`:''}
             </div>
-            ${teammatesHtml}
           </div>`;
       });
     } catch(e) { console.log(e); }
@@ -394,22 +378,24 @@
     const gameName=document.getElementById('input-game-name').value.trim();
     const newUid=document.getElementById('input-uid').value.trim();
     if (!gameName) { showMsg('edit-msg','Please enter your game name.','error'); return; }
-    if (!newUid) { showMsg('edit-msg','Please enter your Game UID (In-Game Name).','error'); return; }
 
     const ref=doc(db,'users',currentUser.uid);
     const updates={ game_name:gameName };
 
     // Handle UID change
-    if (newUid !== (userData.uid_game||'')) {
+    if (newUid && newUid !== (userData.uid_game||'')) {
       if (userData.uid_changed) {
-        // Needs re-authentication
-        if (!window.reauthenticated) {
-          showMsg('edit-msg','Please re-login with Google or enter your password to change UID.','error');
-          return;
+        // Needs password verification
+        const password=document.getElementById('input-password').value;
+        if (!password) { showMsg('edit-msg','Please enter your password to change UID.','error'); return; }
+        try {
+          const credential=EmailAuthProvider.credential(currentUser.email, password);
+          await reauthenticateWithCredential(currentUser, credential);
+        } catch(e) {
+          showMsg('edit-msg','Wrong password! UID not changed.','error'); return;
         }
       }
       updates.uid_game=newUid;
-      updates.in_game_name=newUid; // UID is also the in-game name
       updates.uid_changed=true;
     }
 
@@ -420,23 +406,10 @@
     if(updates.uid_game) {
       document.getElementById('display-uid').textContent='🎮 UID: '+newUid;
       document.getElementById('password-field').style.display='block';
-      document.getElementById('uid-note').textContent='You have changed your UID before. Re-login with Google or enter your password to change it again.';
+      document.getElementById('uid-note').textContent='You have changed your UID before. Enter your password to change it again.';
     }
-    window.reauthenticated = false; // Reset flag
     showMsg('edit-msg','Profile saved! ✅','success');
     setTimeout(()=>toggleEdit(), 1500);
-  };
-
-  // Google re-authentication
-  window.reauthWithGoogle = async () => {
-    try {
-      const provider = new GoogleAuthProvider();
-      await reauthenticateWithPopup(currentUser, provider);
-      window.reauthenticated = true;
-      showMsg('edit-msg','✅ Re-authenticated with Google! You can now change your UID.','success');
-    } catch(e) {
-      showMsg('edit-msg','Google re-login failed. Try password instead.','error');
-    }
   };
 
   // Deposit

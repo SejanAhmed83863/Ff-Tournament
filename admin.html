@@ -72,10 +72,6 @@
     .log-uid{font-weight:700;font-size:14px}
     .log-meta{color:var(--muted);font-size:12px}
     .log-prize{color:var(--green);font-family:'Bebas Neue',sans-serif;font-size:20px}
-    .kill-entry{display:flex;gap:8px;margin-bottom:8px;}
-    .kill-uid,.kill-count,.kill-amount{padding:10px;background:#0A0A0F;border:1px solid var(--border);color:var(--text);border-radius:7px;font-family:'Rajdhani',sans-serif;font-size:14px;outline:none}
-    .kill-uid{flex:2}
-    .kill-count,.kill-amount{flex:1}
     #toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);padding:11px 26px;border-radius:8px;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.5);display:none;white-space:nowrap}
   </style>
 </head>
@@ -133,7 +129,7 @@
 <!-- WINNERS -->
 <div class="tab-content" id="tab-winners">
   <div class="card">
-    <div class="card-title"><div class="card-title-bar" style="background:#FFD700"></div><span style="color:#FFD700">DISTRIBUTE POSITION PRIZES</span></div>
+    <div class="card-title"><div class="card-title-bar" style="background:#FFD700"></div><span style="color:#FFD700">DISTRIBUTE PRIZES</span></div>
     <select id="winner-match-select" onchange="updatePrizePreview()"><option value="">— Select Match —</option></select>
     <div id="prize-preview" style="display:none" class="prize-preview">
       <div class="pp-item"><div class="pp-val" id="pp1" style="color:#FFD700">৳0</div><div class="pp-lbl">1ST</div></div>
@@ -144,26 +140,8 @@
     <div class="w-uid-wrap"><span class="w-uid-num" style="color:#FFD700">#1</span><input type="text" id="w1" placeholder="1st Place Game UID 🥇"></div>
     <div class="w-uid-wrap"><span class="w-uid-num" style="color:#C0C0C0">#2</span><input type="text" id="w2" placeholder="2nd Place Game UID 🥈"></div>
     <div class="w-uid-wrap"><span class="w-uid-num" style="color:#CD7F32">#3</span><input type="text" id="w3" placeholder="3rd Place Game UID 🥉"></div>
-    <button class="btn-gold" onclick="distributePrizes()">DISTRIBUTE POSITION PRIZES</button>
+    <button class="btn-gold" onclick="distributePrizes()">DISTRIBUTE PRIZES & CLOSE MATCH</button>
   </div>
-
-  <!-- PER-KILL PROFIT DISTRIBUTION -->
-  <div class="card" style="margin-top:14px;border:2px solid #5CFF8A">
-    <div class="card-title"><div class="card-title-bar" style="background:#5CFF8A"></div><span style="color:#5CFF8A">PER-KILL PROFIT (BY UID)</span></div>
-    <p style="color:var(--muted);font-size:13px;margin-bottom:12px;">💰 Distribute per-kill profits to individual players by their Game UID. This is separate from position prizes.</p>
-    <select id="kill-match-select"><option value="">— Select Match —</option></select>
-    <p style="color:var(--muted);font-size:12px;margin-top:8px;margin-bottom:8px;">Enter Game UID and kill count for each player:</p>
-    <div id="kill-entries">
-      <div class="kill-entry" style="display:flex;gap:8px;margin-bottom:8px;">
-        <input type="text" class="kill-uid" placeholder="Game UID" style="flex:2">
-        <input type="number" class="kill-count" placeholder="Kills" style="flex:1">
-        <input type="number" class="kill-amount" placeholder="₹ per kill" style="flex:1">
-      </div>
-    </div>
-    <button class="btn-main" onclick="addKillEntry()" style="margin-top:4px;margin-bottom:10px">+ Add More Players</button>
-    <button class="btn-gold" onclick="distributeKillProfits()">DISTRIBUTE KILL PROFITS</button>
-  </div>
-
   <div id="dist-log-wrap" style="display:none">
     <div class="section-label">DISTRIBUTION LOG</div>
     <div id="dist-log"></div>
@@ -296,36 +274,9 @@
     onSnapshot(collection(db,'tournaments'),(snap)=>{
       const list=document.getElementById('tournament-list');
       const select=document.getElementById('winner-match-select');
-      const killSelect=document.getElementById('kill-match-select');
       list.innerHTML='';
       select.innerHTML='<option value="">— Select Match —</option>';
-      killSelect.innerHTML='<option value="">— Select Match —</option>';
       document.getElementById('match-count-label').textContent=`ACTIVE MATCHES (${snap.size})`;
-      snap.forEach(d=>{
-        const t=d.data();
-        const tc=teamColor(t.teamType);
-        const fill=Math.min(Math.round((t.joined/t.maxPlayers)*100),100);
-        const barColor=fill>=100?'#FF6B6B':fill>70?'#FFD700':'#5CFF8A';
-        list.innerHTML+=`
-          <div class="t-card">
-            <div class="t-header">
-              <div><div class="t-title">${t.title}</div><span class="t-badge" style="background:${tc}22;color:${tc}">${teamLabel(t.teamType)}</span></div>
-              <button class="btn-delete" onclick="deleteTournament('${d.id}')">✕ DELETE</button>
-            </div>
-            <div class="t-prizes">
-              <div><div class="t-prize-lbl">ENTRY</div><div class="t-prize-val" style="color:#FFD700">৳${t.fee}</div></div>
-              <div><div class="t-prize-lbl">1ST</div><div class="t-prize-val" style="color:#5CFF8A">৳${t.prize1}</div></div>
-              <div><div class="t-prize-lbl">2ND</div><div class="t-prize-val">৳${t.prize2}</div></div>
-              <div><div class="t-prize-lbl">3RD</div><div class="t-prize-val" style="color:#CD7F32">৳${t.prize3}</div></div>
-            </div>
-            <div class="fill-label"><span>PLAYERS</span><span style="color:${barColor}">${t.joined}/${t.maxPlayers}</span></div>
-            <div class="fill-bar-bg"><div class="fill-bar" style="width:${fill}%;background:${barColor}"></div></div>
-          </div>`;
-        select.innerHTML+=`<option value="${d.id}">${t.title}</option>`;
-        killSelect.innerHTML+=`<option value="${d.id}">${t.title}</option>`;
-      });
-    });
-  }
       snap.forEach(d=>{
         const t=d.data();
         const tc=teamColor(t.teamType);
@@ -418,21 +369,6 @@
       logEntries.push({uid:wUIDs[i],prize:prizes[i],position:positions[i],match:t.title});
     }
 
-    // Update registrations with position and prize info
-    const regSnap = await getDocs(query(collection(db,'registrations'), where('tournament_id','==',mId)));
-    for(let i=0;i<3;i++){
-      if(!wUIDs[i]) continue;
-      regSnap.forEach(async (regDoc)=>{
-        const regData = regDoc.data();
-        if(regData.game_uids && regData.game_uids.includes(wUIDs[i])){
-          await updateDoc(doc(db,'registrations',regDoc.id),{
-            position: positions[i],
-            prize_won: prizes[i]
-          });
-        }
-      });
-    }
-
     // Close the tournament
     await deleteDoc(doc(db,'tournaments',mId));
 
@@ -453,89 +389,6 @@
     document.getElementById('winner-match-select').value='';
     document.getElementById('prize-preview').style.display='none';
     toast(`🏆 Prizes distributed to ${logEntries.length} winner(s)!`);
-  };
-
-  // Add more kill entry rows
-  window.addKillEntry = () => {
-    const container = document.getElementById('kill-entries');
-    const newEntry = document.createElement('div');
-    newEntry.className = 'kill-entry';
-    newEntry.style.cssText = 'display:flex;gap:8px;margin-bottom:8px;';
-    newEntry.innerHTML = `
-      <input type="text" class="kill-uid" placeholder="Game UID" style="flex:2">
-      <input type="number" class="kill-count" placeholder="Kills" style="flex:1">
-      <input type="number" class="kill-amount" placeholder="৳ per kill" style="flex:1">
-    `;
-    container.appendChild(newEntry);
-  };
-
-  // Distribute kill profits
-  window.distributeKillProfits = async () => {
-    const mId = document.getElementById('kill-match-select').value;
-    if(!mId) return toast('Select a match first!','error');
-
-    const entries = document.querySelectorAll('.kill-entry');
-    const killData = [];
-    entries.forEach(entry => {
-      const uid = entry.querySelector('.kill-uid').value.trim();
-      const kills = parseInt(entry.querySelector('.kill-count').value) || 0;
-      const perKill = parseInt(entry.querySelector('.kill-amount').value) || 0;
-      if(uid && kills > 0 && perKill > 0) {
-        killData.push({uid, kills, perKill, total: kills * perKill});
-      }
-    });
-
-    if(killData.length === 0) return toast('Enter at least one valid kill entry!','error');
-
-    const tSnap = await getDoc(doc(db,'tournaments',mId));
-    if(!tSnap.exists()) return toast('Match not found!','error');
-    const t = tSnap.data();
-
-    // Get all users
-    const allUsers = await getDocs(collection(db,'users'));
-    const logEntries = [];
-
-    for(const kd of killData) {
-      allUsers.forEach(async (uDoc) => {
-        const uData = uDoc.data();
-        if(uData.uid_game && uData.uid_game.trim() === kd.uid.trim()) {
-          // Add kill profit
-          await updateDoc(doc(db,'users',uDoc.id), {
-            balance: increment(kd.total),
-            total_earned: increment(kd.total)
-          });
-          // Add transaction record
-          await addDoc(collection(db,'transactions'), {
-            uid: uDoc.id,
-            email: uData.email,
-            amount: kd.total,
-            type: 'prize',
-            status: 'approved',
-            reason: `${t.title} - Kill Profit (${kd.kills} kills × ৳${kd.perKill})`,
-            created_at: serverTimestamp()
-          });
-          logEntries.push({uid: kd.uid, kills: kd.kills, amount: kd.total, match: t.title});
-        }
-      });
-    }
-
-    // Show log
-    const logWrap = document.getElementById('dist-log-wrap');
-    const logDiv = document.getElementById('dist-log');
-    logWrap.style.display = 'block';
-    logEntries.forEach(e => {
-      const now = new Date().toLocaleTimeString();
-      logDiv.innerHTML = `
-        <div class="log-entry">
-          <div><div class="log-uid">UID: ${e.uid}</div><div class="log-meta">${e.match} · ${e.kills} kills · ${now}</div></div>
-          <div class="log-prize">+৳${e.amount}</div>
-        </div>` + logDiv.innerHTML;
-    });
-
-    // Clear inputs
-    document.querySelectorAll('.kill-uid, .kill-count, .kill-amount').forEach(input => input.value = '');
-    document.getElementById('kill-match-select').value = '';
-    toast(`💰 Kill profits distributed to ${logEntries.length} player(s)!`);
   };
 </script>
 </body>
