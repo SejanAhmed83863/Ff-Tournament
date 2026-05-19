@@ -462,7 +462,7 @@
     if(uidLookupTimers[idx]) clearTimeout(uidLookupTimers[idx]);
     if(!/^\d{10}$/.test(uid)){ if(uid.length>0) statusEl.style.color='var(--danger)'; statusEl.textContent=uid.length>0?'Must be exactly 10 digits':''; return; }
     statusEl.style.color='var(--muted)';
-    statusEl.textContent='🔍 Looking up player name...';
+    statusEl.textContent='';
     uidLookupTimers[idx]=setTimeout(async function(){
       var name=await lookupGameName(uid);
       if(name){
