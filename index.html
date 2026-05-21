@@ -39,24 +39,6 @@
     .message { margin-top: 14px; padding: 11px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; text-align: center; display: none; }
     .message.error { display: block; background: rgba(255,50,50,0.1); border: 1px solid rgba(255,50,50,0.3); color: #FF6B6B; }
     .message.success { display: block; background: rgba(50,255,100,0.1); border: 1px solid rgba(50,255,100,0.3); color: #5CFF8A; }
-    .message.info { display: block; background: rgba(255,215,0,0.08); border: 1px solid rgba(255,215,0,0.3); color: var(--gold); }
-    .forgot-link { text-align: right; margin-top: -6px; margin-bottom: 10px; }
-    .forgot-link button { background: none; border: none; color: var(--gold); font-family: 'Rajdhani'; font-size: 13px; font-weight: 600; cursor: pointer; letter-spacing: 0.5px; padding: 0; }
-    .forgot-link button:hover { text-decoration: underline; }
-    .resend-link { text-align: center; margin-top: 8px; }
-    .resend-link button { background: none; border: none; color: var(--amber); font-family: 'Rajdhani'; font-size: 13px; font-weight: 600; cursor: pointer; letter-spacing: 0.5px; padding: 0; display: none; }
-    .resend-link button.show { display: inline-block; }
-    .resend-link button:hover { text-decoration: underline; }
-    /* Verification pending overlay */
-    .verify-box { display: none; text-align: center; padding: 20px 0; }
-    .verify-box.show { display: block; }
-    .verify-icon { font-size: 48px; margin-bottom: 12px; }
-    .verify-title { font-family: 'Bebas Neue'; font-size: 24px; color: var(--gold); letter-spacing: 2px; margin-bottom: 8px; }
-    .verify-text { color: var(--muted); font-size: 13px; line-height: 1.7; margin-bottom: 16px; }
-    .verify-email-highlight { color: var(--text); font-weight: 700; }
-    .btn-small { padding: 10px 20px; border: 1px solid var(--border); border-radius: 8px; background: transparent; color: var(--muted); font-family: 'Rajdhani'; font-size: 14px; font-weight: 700; cursor: pointer; margin: 4px; }
-    .btn-small:hover { border-color: var(--gold); color: var(--gold); }
-    /* Google extra-info modal */
     .gname-modal-bg { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:1000; align-items:center; justify-content:center; padding:20px; }
     .gname-modal-bg.open { display:flex; }
     .gname-modal { background:#12121A; border:1px solid var(--gold); border-radius:14px; padding:24px; width:100%; max-width:380px; }
@@ -76,18 +58,10 @@
       <button class="tab active" onclick="switchTab('login')">Login</button>
       <button class="tab" onclick="switchTab('register')">Register</button>
     </div>
-
-    <!-- LOGIN FORM -->
     <div class="form active" id="login-form">
       <div class="field"><label>Email</label><input type="email" id="login-email" placeholder="your@email.com"/></div>
       <div class="field"><label>Password</label><input type="password" id="login-pass" placeholder="••••••••"/></div>
-      <div class="forgot-link">
-        <button onclick="forgotPassword()">🔑 Forgot Password?</button>
-      </div>
-      <button class="btn" id="login-btn" onclick="loginEmail()">Enter JTC</button>
-      <div class="resend-link">
-        <button id="resend-btn" onclick="resendVerification()">📧 Resend Verification Email</button>
-      </div>
+      <button class="btn" onclick="loginEmail()">Enter Arena</button>
       <div class="divider">or</div>
       <button class="btn-google" onclick="loginGoogle()">
         <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
@@ -95,39 +69,20 @@
       </button>
       <div class="message" id="login-msg"></div>
     </div>
-
-    <!-- REGISTER FORM -->
     <div class="form" id="register-form">
-      <!-- Normal registration fields -->
-      <div id="reg-fields">
-        <div class="field"><label>Full Name</label><input type="text" id="reg-name" placeholder="Your Name"/></div>
-        <div class="field"><label>WhatsApp Number</label><input type="tel" id="reg-whatsapp" placeholder="01XXXXXXXXX"/></div>
-        <div class="field"><label>Email</label><input type="email" id="reg-email" placeholder="your@email.com"/></div>
-        <div class="field"><label>Password</label><input type="password" id="reg-pass" placeholder="Min 6 characters"/></div>
-        <div class="field"><label>Confirm Password</label><input type="password" id="reg-pass2" placeholder="Repeat password"/></div>
-        <button class="btn" id="reg-btn" onclick="registerEmail()">Join Tournament</button>
-        <div class="divider">or</div>
-        <button class="btn-google" onclick="loginGoogle()">
-          <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-          Continue with Google
-        </button>
-        <div class="message" id="reg-msg"></div>
-      </div>
-      <!-- Email verification pending box -->
-      <div class="verify-box" id="verify-box">
-        <div class="verify-icon">📧</div>
-        <div class="verify-title">Check Your Email</div>
-        <div class="verify-text">
-          We sent a verification link to<br>
-          <span class="verify-email-highlight" id="verify-email-display"></span><br><br>
-          Click the link in the email to activate your account, then come back and log in.
-        </div>
-        <button class="btn-small" onclick="switchTab('login')">Go to Login</button>
-        <button class="btn-small" onclick="resendRegVerification()">Resend Email</button>
-        <div class="message" id="verify-msg"></div>
-      </div>
+      <div class="field"><label>Full Name</label><input type="text" id="reg-name" placeholder="Your Name"/></div>
+      <div class="field"><label>WhatsApp Number</label><input type="tel" id="reg-whatsapp" placeholder="01XXXXXXXXX"/></div>
+      <div class="field"><label>Email</label><input type="email" id="reg-email" placeholder="your@email.com"/></div>
+      <div class="field"><label>Password</label><input type="password" id="reg-pass" placeholder="Min 6 characters"/></div>
+      <div class="field"><label>Confirm Password</label><input type="password" id="reg-pass2" placeholder="Repeat password"/></div>
+      <button class="btn" id="reg-btn" onclick="registerEmail()">Join Tournament</button>
+      <div class="divider">or</div>
+      <button class="btn-google" onclick="loginGoogle()">
+        <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        Continue with Google
+      </button>
+      <div class="message" id="reg-msg"></div>
     </div>
-
   </div>
 </div>
 
@@ -136,8 +91,8 @@
   <div class="gname-modal">
     <h3>Complete Your Profile</h3>
     <p>We need a few more details before you continue.</p>
-    <div class="field"><label>Full Name</label><input type="text" id="g-name" placeholder="Your Name"/></div>
-    <div class="field"><label>WhatsApp Number</label><input type="tel" id="g-whatsapp" placeholder="01XXXXXXXXX"/></div>
+    <div class="field"><label>Full Name</label><input type="text" class="field input" id="g-name" placeholder="Your Name" style="width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-family:'Rajdhani';font-size:15px;margin-bottom:14px"/></div>
+    <div class="field"><label>WhatsApp Number</label><input type="tel" id="g-whatsapp" placeholder="01XXXXXXXXX" style="width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-family:'Rajdhani';font-size:15px;margin-bottom:14px"/></div>
     <div class="message" id="g-msg"></div>
     <button class="btn" onclick="saveGoogleExtra()">Continue</button>
   </div>
@@ -145,305 +100,201 @@
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import {
-    getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
-    GoogleAuthProvider, signInWithPopup, onAuthStateChanged, updateProfile,
-    sendPasswordResetEmail, sendEmailVerification, fetchSignInMethodsForEmail,
-    signOut
-  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-  const ADMIN_EMAIL = 'sejansasker@gmail.com';
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyBgMroBilivfk7bJxoz93HjxSt6yU7Ura0",
-    authDomain: "tournament-app-4a050.firebaseapp.com",
-    projectId: "tournament-app-4a050",
-    storageBucket: "tournament-app-4a050.firebasestorage.app",
-    messagingSenderId: "811957533858",
-    appId: "1:811957533858:web:1d1f0f916c0aba5eccebfb"
+  const firebaseConfig = { 
+    apiKey: "AIzaSyBgMroBilivfk7bJxoz93HjxSt6yU7Ura0", 
+    authDomain: "tournament-app-4a050.firebaseapp.com", 
+    projectId: "tournament-app-4a050", 
+    storageBucket: "tournament-app-4a050.firebasestorage.app", 
+    messagingSenderId: "811957533858", 
+    appId: "1:811957533858:web:1d1f0f916c0aba5eccebfb" 
   };
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
   const provider = new GoogleAuthProvider();
-
+  
   let pendingRegInfo = null;
   let pendingGoogleUser = null;
-  let unverifiedUser = null; // holds the user object for resend verification
+  let isProcessingAuth = false;
 
-  // ─── Auth state listener ───────────────────────────────────────────────────
   onAuthStateChanged(auth, async (user) => {
-    if (!user) return;
-
-    // Email/password user — enforce verification (skip for admin)
-    const isEmailProvider = user.providerData.some(p => p.providerId === 'password');
-    if (isEmailProvider && !user.emailVerified && user.email !== ADMIN_EMAIL) {
-      // Don't redirect — show verification UI or error handled in loginEmail
-      // If they just registered, pendingRegInfo is still set
-      if (!pendingRegInfo) {
-        // Existing user tried to log in but not verified
-        await signOut(auth);
-      }
-      return;
-    }
-
+    if (!user || isProcessingAuth) return;
+    
+    isProcessingAuth = true;
     const ref = doc(db, 'users', user.uid);
     const snap = await getDoc(ref);
 
     // Email/password registration just happened
     if (pendingRegInfo) {
-      await setDoc(ref, {
-        name: pendingRegInfo.name,
-        whatsapp: pendingRegInfo.whatsapp,
-        game_name: '',
-        uid_game: '',
-        email: user.email,
-        provider: 'password',
-        balance: 0, played: 0, wins: 0, total_earned: 0,
-        uid_changed: false,
-        created_at: new Date().toISOString()
-      }, { merge: true });
-      // Send verification email
       try {
-        await sendEmailVerification(user);
-      } catch(e) { console.warn('Verification email failed:', e); }
-      unverifiedUser = user;
-      document.getElementById('verify-email-display').textContent = user.email;
-      document.getElementById('reg-fields').style.display = 'none';
-      document.getElementById('verify-box').classList.add('show');
-      pendingRegInfo = null;
-      // Sign out so they can't browse without verifying
-      await signOut(auth);
+        await setDoc(ref, {
+          name: pendingRegInfo.name,
+          whatsapp: pendingRegInfo.whatsapp,
+          game_name: '',
+          uid_game: '',
+          email: user.email,
+          provider: 'password',
+          balance: 0, 
+          played: 0, 
+          wins: 0, 
+          total_earned: 0,
+          uid_changed: false,
+          game_name_changed: false,
+          created_at: new Date().toISOString()
+        }, { merge: true });
+        pendingRegInfo = null;
+        isProcessingAuth = false;
+        window.location.href = 'home.html';
+      } catch(e) {
+        console.error('Error saving user data:', e);
+        isProcessingAuth = false;
+      }
       return;
     }
 
-    // Google sign-in — needs Name + WhatsApp for first time
+    // First-time Google sign-in
     if (!snap.exists() || !snap.data().name || !snap.data().whatsapp) {
       pendingGoogleUser = user;
       document.getElementById('g-name').value = (snap.exists() && snap.data().name) || user.displayName || '';
       document.getElementById('g-whatsapp').value = (snap.exists() && snap.data().whatsapp) || '';
       document.getElementById('gname-modal').classList.add('open');
+      isProcessingAuth = false;
       return;
     }
 
-    // All good — go home
+    // Existing user
+    isProcessingAuth = false;
     window.location.href = 'home.html';
   });
 
-  // ─── Tab switch ───────────────────────────────────────────────────────────
   window.switchTab = (tab) => {
-    document.querySelectorAll('.tab').forEach((t, i) =>
-      t.classList.toggle('active', (tab === 'login' && i === 0) || (tab === 'register' && i === 1))
-    );
-    document.getElementById('login-form').classList.toggle('active', tab === 'login');
-    document.getElementById('register-form').classList.toggle('active', tab === 'register');
-    // Reset verify box
-    if (tab === 'register') {
-      document.getElementById('reg-fields').style.display = 'block';
-      document.getElementById('verify-box').classList.remove('show');
-    }
+    document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', (tab==='login'&&i===0)||(tab==='register'&&i===1)));
+    document.getElementById('login-form').classList.toggle('active', tab==='login');
+    document.getElementById('register-form').classList.toggle('active', tab==='register');
   };
-
-  function showMsg(id, msg, type) {
-    const el = document.getElementById(id);
-    el.textContent = msg;
-    el.className = `message ${type}`;
+  
+  function showMsg(id, msg, type) { 
+    const el=document.getElementById(id); 
+    el.textContent=msg; 
+    el.className=`message ${type}`; 
+    setTimeout(() => { el.className = 'message'; }, 5000);
   }
 
-  // ─── Login with email ─────────────────────────────────────────────────────
   window.loginEmail = async () => {
-    const email = document.getElementById('login-email').value.trim();
-    const pass  = document.getElementById('login-pass').value;
-    if (!email || !pass) return showMsg('login-msg', 'Please fill in all fields.', 'error');
-
-    document.getElementById('login-btn').disabled = true;
-    document.getElementById('login-btn').textContent = 'Signing In...';
-    document.getElementById('resend-btn').classList.remove('show');
-
-    try {
-      const cred = await signInWithEmailAndPassword(auth, email, pass);
-      const user = cred.user;
-
-      // Skip verification for admin
-      if (user.email === ADMIN_EMAIL) {
-        window.location.href = 'home.html';
-        return;
-      }
-
-      if (!user.emailVerified) {
-        unverifiedUser = user;
-        await signOut(auth);
-        showMsg('login-msg', '📧 Please verify your email first. Check your inbox!', 'info');
-        document.getElementById('resend-btn').classList.add('show');
-        document.getElementById('login-btn').disabled = false;
-        document.getElementById('login-btn').textContent = 'Enter Arena';
-        return;
-      }
-      // Verified — onAuthStateChanged will redirect
-    } catch(e) {
-      document.getElementById('login-btn').disabled = false;
-      document.getElementById('login-btn').textContent = 'Enter Arena';
-      if (e.code === 'auth/invalid-credential' || e.code === 'auth/wrong-password' || e.code === 'auth/user-not-found') {
-        showMsg('login-msg', '❌ Invalid email or password.', 'error');
-      } else if (e.code === 'auth/too-many-requests') {
-        showMsg('login-msg', '⏳ Too many attempts. Wait a moment and try again.', 'error');
-      } else {
-        showMsg('login-msg', e.message, 'error');
-      }
+    const email=document.getElementById('login-email').value.trim();
+    const pass=document.getElementById('login-pass').value;
+    if(!email||!pass) return showMsg('login-msg','Please fill in all fields.','error');
+    try { 
+      await signInWithEmailAndPassword(auth,email,pass); 
+    } catch(e) { 
+      console.error('Login error:', e);
+      showMsg('login-msg','Invalid email or password.','error'); 
     }
   };
 
-  // ─── Register with email ──────────────────────────────────────────────────
   window.registerEmail = async () => {
-    const name     = document.getElementById('reg-name').value.trim();
+    const name = document.getElementById('reg-name').value.trim();
     const whatsapp = document.getElementById('reg-whatsapp').value.trim();
-    const email    = document.getElementById('reg-email').value.trim();
-    const pass     = document.getElementById('reg-pass').value;
-    const pass2    = document.getElementById('reg-pass2').value;
-
-    if (!name || !whatsapp || !email || !pass || !pass2)
-      return showMsg('reg-msg', 'Please fill in all fields.', 'error');
-    if (whatsapp.replace(/\D/g,'').length < 11)
-      return showMsg('reg-msg', 'Enter a valid 11-digit WhatsApp number.', 'error');
-    if (pass !== pass2)
-      return showMsg('reg-msg', 'Passwords do not match!', 'error');
-    if (pass.length < 6)
-      return showMsg('reg-msg', 'Password must be at least 6 characters.', 'error');
-
-    // Check if this email is already linked to a Google account
-    try {
-      const methods = await fetchSignInMethodsForEmail(auth, email);
-      if (methods.includes('google.com')) {
-        return showMsg('reg-msg', '⚠️ This email is already linked to a Google account. Use "Continue with Google" instead.', 'error');
-      }
-    } catch(e) { /* non-critical check */ }
-
-    document.getElementById('reg-btn').disabled = true;
-    document.getElementById('reg-btn').textContent = 'Creating Account...';
-
+    const email = document.getElementById('reg-email').value.trim();
+    const pass = document.getElementById('reg-pass').value;
+    const pass2 = document.getElementById('reg-pass2').value;
+    
+    // Validation
+    if(!name||!whatsapp||!email||!pass||!pass2) {
+      return showMsg('reg-msg','Please fill in all fields.','error');
+    }
+    if(whatsapp.replace(/\D/g,'').length<11) {
+      return showMsg('reg-msg','Enter a valid 11-digit WhatsApp number.','error');
+    }
+    if(pass!==pass2) {
+      return showMsg('reg-msg','Passwords do not match!','error');
+    }
+    if(pass.length<6) {
+      return showMsg('reg-msg','Password must be at least 6 characters.','error');
+    }
+    
+    // Disable button to prevent double-click
+    const btn = document.getElementById('reg-btn');
+    btn.disabled = true;
+    btn.textContent = 'Creating Account...';
+    
     try {
       pendingRegInfo = { name, whatsapp };
       const cred = await createUserWithEmailAndPassword(auth, email, pass);
-      try { await updateProfile(cred.user, { displayName: name }); } catch(_) {}
-      // onAuthStateChanged handles the rest
+      try { 
+        await updateProfile(cred.user, { displayName: name }); 
+      } catch(e) {
+        console.error('Profile update error:', e);
+      }
+      // Don't need to do anything else - onAuthStateChanged will handle the rest
     } catch(e) {
+      console.error('Registration error:', e);
       pendingRegInfo = null;
-      document.getElementById('reg-btn').disabled = false;
-      document.getElementById('reg-btn').textContent = 'Join Tournament';
-      if (e.code === 'auth/email-already-in-use') {
-        showMsg('reg-msg', '📧 Email already registered. Try logging in, or use "Forgot Password".', 'error');
-      } else if (e.code === 'auth/weak-password') {
-        showMsg('reg-msg', '🔒 Password too weak. Use at least 6 characters.', 'error');
-      } else if (e.code === 'auth/invalid-email') {
-        showMsg('reg-msg', '❌ Invalid email address.', 'error');
+      btn.disabled = false;
+      btn.textContent = 'Join Tournament';
+      
+      if(e.code === 'auth/email-already-in-use') {
+        showMsg('reg-msg', 'Email already registered.', 'error');
+      } else if(e.code === 'auth/invalid-email') {
+        showMsg('reg-msg', 'Invalid email format.', 'error');
+      } else if(e.code === 'auth/weak-password') {
+        showMsg('reg-msg', 'Password is too weak.', 'error');
       } else {
         showMsg('reg-msg', 'Registration failed. Please try again.', 'error');
       }
     }
   };
 
-  // ─── Google sign-in ───────────────────────────────────────────────────────
   window.loginGoogle = async () => {
-    try {
-      await signInWithPopup(auth, provider);
-      // onAuthStateChanged handles redirect
-    } catch(e) {
-      if (e.code === 'auth/account-exists-with-different-credential') {
-        const email = e.customData?.email;
-        showMsg('login-msg',
-          `⚠️ An account already exists with ${email || 'this email'} using a different sign-in method. Try logging in with email & password.`,
-          'error'
-        );
-      } else if (e.code === 'auth/popup-closed-by-user') {
-        // User closed popup — no error needed
-      } else {
-        showMsg('login-msg', 'Google sign-in failed. Try again.', 'error');
-      }
+    try { 
+      await signInWithPopup(auth,provider); 
+    } catch(e) { 
+      console.error('Google sign-in error:', e);
+      showMsg('login-msg','Google sign-in failed. Try again.','error'); 
     }
   };
 
-  // ─── Forgot Password ──────────────────────────────────────────────────────
-  window.forgotPassword = async () => {
-    const email = document.getElementById('login-email').value.trim();
-    if (!email) {
-      showMsg('login-msg', '📧 Enter your email address above first.', 'error');
-      document.getElementById('login-email').focus();
-      return;
-    }
-    try {
-      await sendPasswordResetEmail(auth, email);
-      showMsg('login-msg', `✅ Password reset link sent to ${email}. Check your inbox!`, 'success');
-    } catch(e) {
-      if (e.code === 'auth/user-not-found') {
-        showMsg('login-msg', '❌ No account found with this email.', 'error');
-      } else {
-        showMsg('login-msg', 'Could not send reset email. Check the email address.', 'error');
-      }
-    }
-  };
-
-  // ─── Resend Verification (from login page) ────────────────────────────────
-  window.resendVerification = async () => {
-    if (!unverifiedUser) {
-      showMsg('login-msg', 'Please login first to resend verification.', 'error');
-      return;
-    }
-    try {
-      // Re-sign in to get a fresh user object
-      const email = document.getElementById('login-email').value.trim();
-      const pass  = document.getElementById('login-pass').value;
-      if (!email || !pass) {
-        showMsg('login-msg', 'Enter your email and password to resend verification.', 'error');
-        return;
-      }
-      const cred = await signInWithEmailAndPassword(auth, email, pass);
-      await sendEmailVerification(cred.user);
-      await signOut(auth);
-      showMsg('login-msg', '✅ Verification email resent! Check your inbox.', 'success');
-    } catch(e) {
-      showMsg('login-msg', 'Failed to resend. Try again.', 'error');
-    }
-  };
-
-  // ─── Resend Verification (from register verify box) ──────────────────────
-  window.resendRegVerification = async () => {
-    if (!unverifiedUser) {
-      showMsg('verify-msg', 'Session expired. Please register again.', 'error');
-      return;
-    }
-    try {
-      // We need to sign in briefly to send the email
-      const email = document.getElementById('reg-email').value.trim();
-      showMsg('verify-msg', 'Resending...', 'info');
-      // Just show message — user can go to login and use resend there
-      showMsg('verify-msg', '📧 Go to Login and use "Resend Verification Email" after entering your credentials.', 'info');
-    } catch(e) {
-      showMsg('verify-msg', 'Failed. Try again.', 'error');
-    }
-  };
-
-  // ─── Google Extra Info ────────────────────────────────────────────────────
   window.saveGoogleExtra = async () => {
-    const name     = document.getElementById('g-name').value.trim();
-    const whatsapp = document.getElementById('g-whatsapp').value.trim();
-    if (!name) return showMsg('g-msg', 'Please enter your name.', 'error');
-    if (whatsapp.replace(/\D/g,'').length < 11) return showMsg('g-msg', 'Enter a valid 11-digit WhatsApp number.', 'error');
-    if (!pendingGoogleUser) return;
-
-    const ref  = doc(db, 'users', pendingGoogleUser.uid);
+    const name=document.getElementById('g-name').value.trim();
+    const whatsapp=document.getElementById('g-whatsapp').value.trim();
+    
+    if(!name) return showMsg('g-msg','Please enter your name.','error');
+    if(whatsapp.replace(/\D/g,'').length<11) {
+      return showMsg('g-msg','Enter a valid 11-digit WhatsApp number.','error');
+    }
+    if(!pendingGoogleUser) return;
+    
+    const ref = doc(db,'users',pendingGoogleUser.uid);
     const snap = await getDoc(ref);
-    const base = snap.exists() ? snap.data() : {
-      game_name: '', uid_game: '', balance: 0, played: 0, wins: 0, total_earned: 0, uid_changed: false
+    const base = snap.exists() ? snap.data() : { 
+      game_name:'', 
+      uid_game:'', 
+      balance:0, 
+      played:0, 
+      wins:0, 
+      total_earned:0, 
+      uid_changed:false,
+      game_name_changed:false
     };
-    await setDoc(ref, {
-      ...base, name, whatsapp,
-      email: pendingGoogleUser.email,
-      provider: 'google',
-      created_at: base.created_at || new Date().toISOString()
-    }, { merge: true });
-    window.location.href = 'home.html';
+    
+    try {
+      await setDoc(ref, { 
+        ...base, 
+        name, 
+        whatsapp, 
+        email: pendingGoogleUser.email, 
+        provider:'google', 
+        created_at: base.created_at || new Date().toISOString() 
+      }, { merge: true });
+      window.location.href = 'home.html';
+    } catch(e) {
+      console.error('Save error:', e);
+      showMsg('g-msg', 'Failed to save. Please try again.', 'error');
+    }
   };
 </script>
 </body>
