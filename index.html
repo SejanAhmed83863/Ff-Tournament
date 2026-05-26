@@ -116,7 +116,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, 
-           GoogleAuthProvider, signInWithPopup, onAuthStateChanged, updateProfile, 
+           GoogleAuthProvider, signInWithRedirect, getRedirectResult, onAuthStateChanged, updateProfile, 
            sendEmailVerification, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
   import { getFirestore, doc, getDoc, setDoc, query, collection, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
@@ -137,8 +137,19 @@
   let isRegistering = false;
   let pendingGoogleUser = null;
 
-  onAuthStateChanged(auth, async (user) => {
-    if (!user) return;
+  const provider = new GoogleAuthProvider();
+  
+  // Handle redirect result from Google Sign-In
+  getRedirectResult(auth).then((result) => {
+    if (result) {
+      console.log('Google sign-in successful');
+    }
+  }).catch((error) => {
+    console.error('Redirect result error:', error);
+    showMsg('login-msg', 'Google sign-in failed. Try again.', 'error');
+  });
+  
+  let isRegistering = false;
     
     // Skip if currently in registration flow
     if (isRegistering) return;
@@ -296,7 +307,7 @@
 
   window.loginGoogle = async () => {
     try { 
-      await signInWithPopup(auth, provider); 
+      await signInWithRedirect(auth, provider); 
     } catch(e) { 
       console.error('Google sign-in error:', e);
       showMsg('login-msg', 'Google sign-in failed. Try again.', 'error'); 
