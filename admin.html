@@ -339,9 +339,10 @@
     <!-- TRANSACTIONS -->
     <div class="pay-method-panel" id="db-panel-transactions" style="border-radius:0 0 12px 12px">
       <div class="prize-preview" style="margin-bottom:14px">
+        <div class="pp-item"><div class="pp-val" id="db-tx-today" style="color:var(--gold)">৳0</div><div class="pp-lbl">TODAY'S ADDED MONEY</div></div>
         <div class="pp-item"><div class="pp-val" id="db-tx-deposited" style="color:var(--green)">৳0</div><div class="pp-lbl">TOTAL MONEY ADDED</div></div>
         <div class="pp-item"><div class="pp-val" id="db-tx-withdrawn" style="color:var(--red)">৳0</div><div class="pp-lbl">TOTAL WITHDRAWN</div></div>
-        <div class="pp-item"><div class="pp-val" id="db-tx-net" style="color:var(--gold)">৳0</div><div class="pp-lbl">NET IN DATABASE</div></div>
+        <div class="pp-item"><div class="pp-val" id="db-tx-net" style="color:var(--orange)">৳0</div><div class="pp-lbl">NET IN DATABASE</div></div>
       </div>
       <div class="stats-row">
         <div class="stat-box"><div class="stat-val" id="db-tx-count" style="color:var(--orange)">0</div><div class="stat-lbl">TOTAL TX</div></div>
@@ -516,6 +517,8 @@
           +'</div>'
           +'<div class="fill-label"><span>PLAYERS</span><span style="color:'+barColor+'">'+t.joined+'/'+t.maxPlayers+'</span></div>'
           +'<div class="fill-bar-bg"><div class="fill-bar" style="width:'+fill+'%;background:'+barColor+'"></div></div>'
+          +'<button type="button" class="btn-main" style="padding:9px;font-size:13px;margin-top:10px;background:linear-gradient(90deg,#2a2a3a,#1a1a28);border:1px solid var(--border)" onclick="toggleParticipants(\''+d.id+'\')">👥 VIEW PARTICIPANTS ('+(t.joined||0)+')</button>'
+          +'<div id="participants-'+d.id+'" style="display:none;margin-top:8px"></div>'
           +'<div class="row" style="margin-top:12px">'
           +'<input type="text" id="room-'+d.id+'" placeholder="Room ID" value="'+(t.roomID||'')+'">'
           +'<input type="text" id="pass-'+d.id+'" placeholder="Password" value="'+(t.roomPass||'')+'">'
@@ -527,6 +530,44 @@
       });
     });
   }
+
+  window.toggleParticipants=async function(id){
+    var box=el('participants-'+id);
+    if(!box) return;
+    if(box.style.display==='block'){ box.style.display='none'; return; }
+    box.style.display='block';
+    box.innerHTML='<div class="log-meta">Loading participants…</div>';
+    try{
+      var txSnap=await getDocs(collection(db,'transactions'));
+      var rows=[];
+      txSnap.forEach(function(d){
+        var tx=d.data();
+        if(tx.type!=='entry') return;
+        var ref=tx.tournamentId||tx.matchId||tx.tid||tx.tournament_id;
+        if(ref!==id) return;
+        rows.push(tx);
+      });
+      rows.sort(function(a,b){ var at=a.created_at&&a.created_at.seconds||0, bt=b.created_at&&b.created_at.seconds||0; return at-bt; });
+      if(!rows.length){
+        box.innerHTML='<div class="log-meta">No participant records found yet. (If players have joined but nothing shows here, your join code may tag the match with a different field than tournamentId/matchId/tid — let me know and I\'ll point it correctly.)</div>';
+        return;
+      }
+      var usersSnap=await getDocs(collection(db,'users'));
+      var uMap={};
+      usersSnap.forEach(function(u){ uMap[u.id]=u.data(); });
+      var html='<div class="section-label">JOINED PLAYERS ('+rows.length+')</div>';
+      rows.forEach(function(tx,i){
+        var u=uMap[tx.uid]||{};
+        html+='<div class="log-entry"><div>'
+          +'<div class="log-uid">#'+(i+1)+' · '+(u.uid_game||tx.uid_game||'No UID')+'</div>'
+          +'<div class="log-meta">'+(u.name||tx.email||tx.uid||'')+(u.email&&u.name?' · '+u.email:'')+' · Paid ৳'+(tx.amount||0)+' · '+fmtTime(tx.created_at)+'</div>'
+          +'</div></div>';
+      });
+      box.innerHTML=html;
+    }catch(e){
+      box.innerHTML='<div class="log-meta" style="color:var(--red)">Failed to load participants: '+e.message+'</div>';
+    }
+  };
 
   window.updateRoom=async function(id){
     await updateDoc(doc(db,'tournaments',id),{roomID:el('room-'+id).value,roomPass:el('pass-'+id).value});
@@ -775,6 +816,14 @@
     return '';
   }
 
+  function isToday(ts){
+    try{
+      if(!ts||!ts.toDate) return false;
+      var d=ts.toDate(), now=new Date();
+      return d.getFullYear()===now.getFullYear() && d.getMonth()===now.getMonth() && d.getDate()===now.getDate();
+    }catch(e){ return false; }
+  }
+
   window.toggleUserBlock=async function(uid,isBlocked){
     try{
       await updateDoc(doc(db,'users',uid),{blocked:!isBlocked, blocked_at: !isBlocked?serverTimestamp():null});
@@ -808,22 +857,33 @@
     });
 
     // All transactions
-    onSnapshot(collection(db,'transactions'), function(snap){
-      var rows=[]; var approved=0,pending=0,rejected=0,deposited=0,withdrawn=0;
-      snap.forEach(function(d){
-        var tx=Object.assign({id:d.id},d.data()); rows.push(tx);
+    var txRowsCache=[];
+    function recomputeTxStats(){
+      var approved=0,pending=0,rejected=0,deposited=0,withdrawn=0,today=0;
+      txRowsCache.forEach(function(tx){
         if(tx.status==='approved') approved++; else if(tx.status==='pending') pending++; else rejected++;
-        if(tx.status==='approved'&&tx.type==='deposit') deposited+=tx.amount||0;
+        if(tx.status==='approved'&&tx.type==='deposit'){
+          deposited+=tx.amount||0;
+          if(isToday(tx.created_at)) today+=tx.amount||0;
+        }
         if(tx.status==='approved'&&tx.type==='withdraw') withdrawn+=tx.amount||0;
       });
-      rows.sort(function(a,b){ var at=a.created_at&&a.created_at.seconds||0, bt=b.created_at&&b.created_at.seconds||0; return bt-at; });
-      el('db-tx-count').textContent=rows.length;
+      el('db-tx-count').textContent=txRowsCache.length;
       el('db-tx-approved').textContent=approved;
       el('db-tx-pending').textContent=pending;
       el('db-tx-rejected').textContent=rejected;
+      el('db-tx-today').textContent='৳'+today;
       el('db-tx-deposited').textContent='৳'+deposited;
       el('db-tx-withdrawn').textContent='৳'+withdrawn;
       el('db-tx-net').textContent='৳'+(deposited-withdrawn);
+    }
+    setInterval(recomputeTxStats,60000); // keeps "today" accurate across midnight even with no new transactions
+    onSnapshot(collection(db,'transactions'), function(snap){
+      var rows=[];
+      snap.forEach(function(d){ rows.push(Object.assign({id:d.id},d.data())); });
+      rows.sort(function(a,b){ var at=a.created_at&&a.created_at.seconds||0, bt=b.created_at&&b.created_at.seconds||0; return bt-at; });
+      txRowsCache=rows;
+      recomputeTxStats();
       var list=el('db-transactions-list');
       if(!rows.length){list.innerHTML='<div class="empty-state"><div class="tick">∅</div><div>NO TRANSACTIONS YET</div></div>';return;}
       list.innerHTML='';
