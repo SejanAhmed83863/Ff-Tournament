@@ -99,16 +99,6 @@
     .pay-cur-lbl{font-size:10px;color:var(--muted);letter-spacing:1px;margin-bottom:4px;text-transform:uppercase}
     .pay-cur-val{font-family:'Bebas Neue';font-size:16px;color:var(--green);letter-spacing:1px;word-break:break-all}
     .fld-label{font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;display:block;margin-bottom:6px}
-
-    /* PER-KILL PROFIT STYLES */
-    .kill-player-row{background:#0A0A0F;border:1px solid var(--border);border-radius:7px;padding:10px 12px;margin-bottom:8px;display:flex;align-items:center;gap:10px;justify-content:space-between}
-    .kill-player-uid{font-weight:700;flex:1;font-size:13px}
-    .kill-player-kills{color:var(--gold);font-family:'Bebas Neue';font-size:18px;letter-spacing:1px}
-    .kill-player-profit{color:var(--green);font-family:'Bebas Neue';font-size:18px;letter-spacing:1px}
-    .kill-remove-btn{background:transparent;border:1px solid var(--red);color:var(--red);padding:4px 10px;border-radius:5px;cursor:pointer;font-size:11px;font-weight:700}
-    .kill-total-box{background:linear-gradient(135deg,rgba(92,255,138,0.1),rgba(0,201,106,0.05));border:2px solid var(--green);border-radius:8px;padding:14px;text-align:center;margin-top:12px}
-    .kill-total-label{font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase}
-    .kill-total-val{font-family:'Bebas Neue';font-size:32px;color:var(--green);letter-spacing:2px}
   </style>
 </head>
 <body>
@@ -127,6 +117,7 @@
   <button class="tab"        onclick="switchTab('tournaments')" id="tab-btn-tournaments"><span class="tab-icon">🎮</span>MATCHES</button>
   <button class="tab"        onclick="switchTab('winners')"     id="tab-btn-winners"><span class="tab-icon">🏆</span>WINNERS</button>
   <button class="tab"        onclick="switchTab('settings')"    id="tab-btn-settings"><span class="tab-icon">⚙️</span>SETTINGS</button>
+  <button class="tab"        onclick="switchTab('database')"    id="tab-btn-database"><span class="tab-icon">🗄️</span>DATABASE</button>
 </div>
 
 <!-- REQUESTS -->
@@ -154,6 +145,10 @@
       <input type="number" id="t-fee" placeholder="Entry Fee ৳ (per player) *">
       <select id="t-type"><option value="1">Solo</option><option value="2">Duo</option><option value="4">Squad</option></select>
     </div>
+    <label class="fld-label">Per Kill Prize (optional)</label>
+    <input type="number" id="t-perkill" placeholder="৳ per kill, e.g. 10">
+    <div class="field-hint">If set, every confirmed kill earns the player this amount on top of any placement prize when winners are distributed.</div>
+    <!-- GAME MODE — Classic / Clash Squad / Lone Wolf -->
     <label class="fld-label">Game Mode</label>
     <select id="t-game-mode">
       <option value="Classic">🗺️ Classic (Battle Royale)</option>
@@ -173,43 +168,23 @@
 <!-- WINNERS -->
 <div class="tab-content" id="tab-winners">
   <div class="card">
-    <div class="card-title"><div class="card-title-bar" style="background:var(--gold)"></div><span style="color:var(--gold)">DISTRIBUTE PRIZES (Top 3)</span></div>
+    <div class="card-title"><div class="card-title-bar" style="background:var(--gold)"></div><span style="color:var(--gold)">DISTRIBUTE PRIZES</span></div>
     <select id="winner-match-select" onchange="updatePrizePreview()"><option value="">— Select Match —</option></select>
     <div id="prize-preview" style="display:none" class="prize-preview">
       <div class="pp-item"><div class="pp-val" id="pp1" style="color:var(--gold)">৳0</div><div class="pp-lbl">1ST</div></div>
       <div class="pp-item"><div class="pp-val" id="pp2" style="color:#C0C0C0">৳0</div><div class="pp-lbl">2ND</div></div>
       <div class="pp-item"><div class="pp-val" id="pp3" style="color:#CD7F32">৳0</div><div class="pp-lbl">3RD</div></div>
+      <div class="pp-item" id="pp-perkill-wrap" style="display:none"><div class="pp-val" id="pp-perkill" style="color:var(--red)">৳0</div><div class="pp-lbl">PER KILL</div></div>
     </div>
     <p style="color:var(--muted);font-size:13px;margin-bottom:12px">⚠️ Enter the Game UID registered in each player's profile.</p>
     <div class="w-uid-wrap"><span class="w-uid-num" style="color:var(--gold)">#1</span><input type="text" id="w1" placeholder="1st Place Game UID 🥇"></div>
+    <input type="number" id="k1" placeholder="Kills (optional, for per-kill bonus)">
     <div class="w-uid-wrap"><span class="w-uid-num" style="color:#C0C0C0">#2</span><input type="text" id="w2" placeholder="2nd Place Game UID 🥈"></div>
+    <input type="number" id="k2" placeholder="Kills (optional, for per-kill bonus)">
     <div class="w-uid-wrap"><span class="w-uid-num" style="color:#CD7F32">#3</span><input type="text" id="w3" placeholder="3rd Place Game UID 🥉"></div>
+    <input type="number" id="k3" placeholder="Kills (optional, for per-kill bonus)">
     <button class="btn-gold" onclick="distributePrizes()">DISTRIBUTE PRIZES &amp; CLOSE MATCH</button>
   </div>
-
-  <!-- PER-KILL PROFIT DISTRIBUTION -->
-  <div class="card">
-    <div class="card-title"><div class="card-title-bar" style="background:var(--green)"></div><span style="color:var(--green)">💰 PER-KILL PROFIT (All Players)</span></div>
-    <p class="field-hint">Distribute kill-based profits to ALL players. Add each player's UID and kill count. The match does NOT close after this.</p>
-    <select id="kill-match-select" onchange="updateKillMatchInfo()"><option value="">— Select Match —</option></select>
-    <div id="kill-match-info" style="display:none">
-      <label class="fld-label">Per Kill Amount (৳)</label>
-      <input type="number" id="kill-per-amount" placeholder="Amount per kill (e.g. 50)" value="50">
-      <div class="section-label">ADD PLAYER</div>
-      <div class="row">
-        <input type="text" id="kill-uid-input" placeholder="Player Game UID">
-        <input type="number" id="kill-count-input" placeholder="Kills" style="max-width:90px">
-      </div>
-      <button class="btn-green" style="margin-top:0;padding:10px" onclick="addKillPlayer()">+ ADD PLAYER</button>
-      <div id="kill-players-list" style="margin-top:16px"></div>
-      <div id="kill-total-display" style="display:none" class="kill-total-box">
-        <div class="kill-total-label">Total Payout</div>
-        <div class="kill-total-val">৳ <span id="kill-total-amount">0</span></div>
-      </div>
-      <button id="distribute-kill-btn" class="btn-main" onclick="distributeKillProfits()" style="display:none;margin-top:12px">DISTRIBUTE KILL PROFITS</button>
-    </div>
-  </div>
-
   <div id="dist-log-wrap" style="display:none">
     <div class="section-label">DISTRIBUTION LOG</div>
     <div id="dist-log"></div>
@@ -218,6 +193,8 @@
 
 <!-- SETTINGS -->
 <div class="tab-content" id="tab-settings">
+
+  <!-- NOTICE -->
   <div class="card">
     <div class="card-title"><div class="card-title-bar" style="background:var(--gold)"></div><span style="color:var(--gold)">📢 GLOBAL NOTICE BAR</span></div>
     <div class="settings-section">
@@ -235,7 +212,7 @@
     </div>
   </div>
 
-  <!-- PAYMENT DETAILS -->
+  <!-- PAYMENT DETAILS — per method -->
   <div class="card">
     <div class="card-title"><div class="card-title-bar" style="background:var(--green)"></div><span style="color:var(--green)">💳 DEPOSIT PAYMENT DETAILS</span></div>
     <p class="field-hint">Set a <b>separate number &amp; send type for each method</b>. Users see the correct number when they select bKash, Nagad, or Rocket in the Deposit screen.</p>
@@ -245,6 +222,7 @@
       <button class="pay-method-tab"        onclick="switchPayTab('rocket')">🚀 Rocket</button>
     </div>
 
+    <!-- bKash -->
     <div class="pay-method-panel active" id="pay-panel-bkash">
       <div class="pay-cur">
         <div class="pay-cur-box"><div class="pay-cur-lbl">Number</div><div class="pay-cur-val" id="cur-bkash-number">—</div></div>
@@ -257,6 +235,7 @@
       <button class="btn-green" onclick="savePayMethod('bkash')">SAVE bKash DETAILS</button>
     </div>
 
+    <!-- Nagad -->
     <div class="pay-method-panel" id="pay-panel-nagad">
       <div class="pay-cur">
         <div class="pay-cur-box"><div class="pay-cur-lbl">Number</div><div class="pay-cur-val" id="cur-nagad-number">—</div></div>
@@ -269,6 +248,7 @@
       <button class="btn-green" onclick="savePayMethod('nagad')">SAVE NAGAD DETAILS</button>
     </div>
 
+    <!-- Rocket -->
     <div class="pay-method-panel" id="pay-panel-rocket">
       <div class="pay-cur">
         <div class="pay-cur-box"><div class="pay-cur-lbl">Number</div><div class="pay-cur-val" id="cur-rocket-number">—</div></div>
@@ -315,7 +295,47 @@
     </div>
   </div>
 
-</div>
+</div><!-- end settings -->
+
+<!-- DATABASE -->
+<div class="tab-content" id="tab-database">
+  <div class="card" style="padding:0;overflow:hidden">
+    <div class="pay-method-tabs" style="border-radius:12px 12px 0 0">
+      <button class="pay-method-tab active" onclick="switchDbTab('history')">🏆 History</button>
+      <button class="pay-method-tab"        onclick="switchDbTab('transactions')">💸 Transactions</button>
+      <button class="pay-method-tab"        onclick="switchDbTab('users')">👥 Users</button>
+    </div>
+
+    <!-- MATCH HISTORY -->
+    <div class="pay-method-panel active" id="db-panel-history" style="border-radius:0 0 12px 12px">
+      <div class="stats-row">
+        <div class="stat-box"><div class="stat-val" id="db-hist-count" style="color:var(--orange)">0</div><div class="stat-lbl">MATCHES PLAYED</div></div>
+        <div class="stat-box"><div class="stat-val" id="db-hist-paid" style="color:var(--gold)">৳0</div><div class="stat-lbl">PRIZES PAID</div></div>
+      </div>
+      <div id="db-history-list"></div>
+    </div>
+
+    <!-- TRANSACTIONS -->
+    <div class="pay-method-panel" id="db-panel-transactions" style="border-radius:0 0 12px 12px">
+      <div class="stats-row">
+        <div class="stat-box"><div class="stat-val" id="db-tx-count" style="color:var(--orange)">0</div><div class="stat-lbl">TOTAL TX</div></div>
+        <div class="stat-box"><div class="stat-val" id="db-tx-approved" style="color:var(--green)">0</div><div class="stat-lbl">APPROVED</div></div>
+        <div class="stat-box"><div class="stat-val" id="db-tx-pending" style="color:var(--gold)">0</div><div class="stat-lbl">PENDING</div></div>
+        <div class="stat-box"><div class="stat-val" id="db-tx-rejected" style="color:var(--red)">0</div><div class="stat-lbl">REJECTED</div></div>
+      </div>
+      <div id="db-transactions-list"></div>
+    </div>
+
+    <!-- USERS -->
+    <div class="pay-method-panel" id="db-panel-users" style="border-radius:0 0 12px 12px">
+      <div class="stats-row">
+        <div class="stat-box"><div class="stat-val" id="db-user-count" style="color:var(--orange)">0</div><div class="stat-lbl">TOTAL USERS</div></div>
+        <div class="stat-box"><div class="stat-val" id="db-user-balance" style="color:var(--gold)">৳0</div><div class="stat-lbl">TOTAL BALANCE</div></div>
+      </div>
+      <div id="db-users-list"></div>
+    </div>
+  </div>
+</div><!-- end database -->
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
@@ -335,14 +355,13 @@
   };
   const app=initializeApp(cfg), db=getFirestore(app), auth=getAuth(app);
 
-  var killPlayers = []; // Store players for kill profit: [{uid, kills, profit}, ...]
-
   onAuthStateChanged(auth, function(user){
     if(!user){ window.location.href='index.html'; return; }
     if(user.email!==ADMIN_EMAIL){ alert('Access Denied!'); window.location.href='home.html'; return; }
     loadRequests();
     loadTournaments();
     loadSettingsData();
+    loadDatabaseData();
   });
 
   function el(id){ return document.getElementById(id); }
@@ -431,11 +450,12 @@
       prize1:Number(el('t-prize1').value)||0,
       prize2:Number(el('t-prize2').value)||0,
       prize3:Number(el('t-prize3').value)||0,
+      perKill:Number(el('t-perkill').value)||0,
       fee:fee, teamType:Number(el('t-type').value),
       game_mode:gameMode, maxPlayers:max, joined:0,
       time:time, status:'open', created_at:serverTimestamp()
     });
-    ['t-title','t-prize1','t-prize2','t-prize3','t-fee','t-max','t-time'].forEach(function(id){el(id).value='';});
+    ['t-title','t-prize1','t-prize2','t-prize3','t-fee','t-max','t-time','t-perkill'].forEach(function(id){el(id).value='';});
     el('t-type').value='1'; el('t-game-mode').value='Classic';
     toast('🏆 Tournament created!');
   };
@@ -446,9 +466,8 @@
 
   function loadTournaments(){
     onSnapshot(collection(db,'tournaments'),function(snap){
-      var list=el('tournament-list'), sel=el('winner-match-select'), ksel=el('kill-match-select');
+      var list=el('tournament-list'), sel=el('winner-match-select');
       list.innerHTML=''; sel.innerHTML='<option value="">— Select Match —</option>';
-      ksel.innerHTML='<option value="">— Select Match —</option>';
       el('match-count-label').textContent='ACTIVE MATCHES ('+snap.size+')';
       snap.forEach(function(d){
         var t=d.data(), tc=teamColor(t.teamType), gc=gmColor(t.game_mode);
@@ -467,6 +486,7 @@
           +'<div><div class="t-prize-lbl">1ST</div><div class="t-prize-val" style="color:var(--green)">৳'+t.prize1+'</div></div>'
           +'<div><div class="t-prize-lbl">2ND</div><div class="t-prize-val">৳'+t.prize2+'</div></div>'
           +'<div><div class="t-prize-lbl">3RD</div><div class="t-prize-val" style="color:#CD7F32">৳'+t.prize3+'</div></div>'
+          +(t.perKill?'<div><div class="t-prize-lbl">PER KILL</div><div class="t-prize-val" style="color:var(--red)">৳'+t.perKill+'</div></div>':'')
           +'</div>'
           +'<div class="fill-label"><span>PLAYERS</span><span style="color:'+barColor+'">'+t.joined+'/'+t.maxPlayers+'</span></div>'
           +'<div class="fill-bar-bg"><div class="fill-bar" style="width:'+fill+'%;background:'+barColor+'"></div></div>'
@@ -477,7 +497,6 @@
           +'<button class="btn-main" style="padding:10px;font-size:13px;margin-top:2px" onclick="updateRoom(\''+d.id+'\')">Update Room Info</button>'
           +'</div>';
         sel.innerHTML+='<option value="'+d.id+'">'+t.title+(t.game_mode?' ['+t.game_mode+']':'')+'</option>';
-        ksel.innerHTML+='<option value="'+d.id+'">'+t.title+(t.game_mode?' ['+t.game_mode+']':'')+'</option>';
       });
     });
   }
@@ -487,11 +506,34 @@
     toast('Room info updated!');
   };
   window.deleteTournament=async function(id){
-    if(!confirm('Delete this tournament?')) return;
-    await deleteDoc(doc(db,'tournaments',id)); toast('Deleted','warn');
+    if(!confirm('Delete this tournament? Entry fees will be refunded to every joined participant.')) return;
+    try{
+      var tSnap=await getDoc(doc(db,'tournaments',id));
+      var t=tSnap.exists()?tSnap.data():{};
+      var refundCount=0, refundTotal=0;
+
+      // Find entry-fee transactions tied to this match and refund each one (skips any already refunded)
+      var txSnap=await getDocs(collection(db,'transactions'));
+      for(var i=0;i<txSnap.docs.length;i++){
+        var txDoc=txSnap.docs[i], tx=txDoc.data();
+        if(tx.type!=='entry'||tx.refunded) continue;
+        var ref=tx.tournamentId||tx.matchId||tx.tid||tx.tournament_id;
+        if(ref!==id) continue;
+        var amt=tx.amount||t.fee||0;
+        if(amt>0&&tx.uid){
+          await updateDoc(doc(db,'users',tx.uid),{balance:increment(amt)});
+          await addDoc(collection(db,'transactions'),{uid:tx.uid,email:tx.email||'',amount:amt,type:'refund',status:'approved',reason:(t.title||'Match')+' cancelled - entry fee refunded',created_at:serverTimestamp()});
+          await updateDoc(doc(db,'transactions',txDoc.id),{refunded:true});
+          refundCount++; refundTotal+=amt;
+        }
+      }
+
+      await deleteDoc(doc(db,'tournaments',id));
+      toast(refundCount?('🗑️ Deleted — ৳'+refundTotal+' refunded to '+refundCount+' player(s)'):'Deleted','warn');
+    }catch(e){ toast('Failed: '+e.message,'error'); }
   };
 
-  // ─── WINNERS (Top 3 only) ────────────────────────────────────────────────
+  // ─── WINNERS ──────────────────────────────────────────────────────────────
   window.updatePrizePreview=async function(){
     var mId=el('winner-match-select').value, preview=el('prize-preview');
     if(!mId){preview.style.display='none';return;}
@@ -501,6 +543,9 @@
     el('pp1').textContent='৳'+(t.prize1||0);
     el('pp2').textContent='৳'+(t.prize2||0);
     el('pp3').textContent='৳'+(t.prize3||0);
+    var pkWrap=el('pp-perkill-wrap');
+    if(t.perKill){ el('pp-perkill').textContent='৳'+t.perKill; pkWrap.style.display='block'; }
+    else{ pkWrap.style.display='none'; }
     preview.style.display='flex';
   };
 
@@ -508,166 +553,49 @@
     var mId=el('winner-match-select').value;
     if(!mId){toast('Select a match first!','error');return;}
     var wUIDs=[el('w1').value.trim(),el('w2').value.trim(),el('w3').value.trim()];
+    var kills=[Number(el('k1').value)||0,Number(el('k2').value)||0,Number(el('k3').value)||0];
     if(!wUIDs[0]&&!wUIDs[1]&&!wUIDs[2]){toast('Enter at least 1 winner UID!','error');return;}
     var tSnap=await getDoc(doc(db,'tournaments',mId));
     if(!tSnap.exists()){toast('Match not found!','error');return;}
-    var t=tSnap.data(), prizes=[t.prize1||0,t.prize2||0,t.prize3||0];
-    var positions=['🥇 1st','🥈 2nd','🥉 3rd'], logEntries=[];
+    var t=tSnap.data(), basePrizes=[t.prize1||0,t.prize2||0,t.prize3||0], perKill=t.perKill||0;
+    var positions=['🥇 1st','🥈 2nd','🥉 3rd'], logEntries=[], historyWinners=[], totalPaid=0;
     var allUsers=await getDocs(collection(db,'users'));
-    
-    // Update winners & registrations with winner_position and winner_prize
     for(var i=0;i<3;i++){
-      if(!wUIDs[i]||prizes[i]===0) continue;
-      var winnerFound = false;
+      if(!wUIDs[i]) continue;
+      var killBonus=kills[i]*perKill;
+      var prize=basePrizes[i]+killBonus;
+      if(prize===0&&kills[i]===0) continue;
       allUsers.forEach(async function(uDoc){
         var uData=uDoc.data();
         if(uData.uid_game&&uData.uid_game.trim()===wUIDs[i].trim()){
-          winnerFound = true;
-          await updateDoc(doc(db,'users',uDoc.id),{balance:increment(prizes[i]),total_earned:increment(prizes[i]),wins:increment(i===0?1:0)});
-          await addDoc(collection(db,'transactions'),{uid:uDoc.id,email:uData.email,amount:prizes[i],type:'prize',status:'approved',reason:t.title+' - '+positions[i],created_at:serverTimestamp()});
-          
-          // Update registration with winner info
-          var regSnap = await getDocs(collection(db,'registrations'));
-          regSnap.forEach(async function(rDoc){
-            var reg = rDoc.data();
-            if(reg.tournament_id === mId && reg.game_uids && reg.game_uids.indexOf(wUIDs[i]) >= 0){
-              await updateDoc(doc(db,'registrations',rDoc.id),{winner_position:(i+1),winner_prize:prizes[i]});
-            }
-          });
+          await updateDoc(doc(db,'users',uDoc.id),{balance:increment(prize),total_earned:increment(prize),wins:increment(i===0?1:0)});
+          await addDoc(collection(db,'transactions'),{uid:uDoc.id,email:uData.email,amount:prize,type:'prize',status:'approved',reason:t.title+' - '+positions[i]+(kills[i]?' ('+kills[i]+' kills)':''),created_at:serverTimestamp()});
         }
       });
-      logEntries.push({uid:wUIDs[i],prize:prizes[i],position:positions[i],match:t.title});
+      logEntries.push({uid:wUIDs[i],prize:prize,position:positions[i],match:t.title});
+      historyWinners.push({uid:wUIDs[i],place:i+1,basePrize:basePrizes[i],kills:kills[i],killBonus:killBonus,prize:prize});
+      totalPaid+=prize;
     }
-    
+    await addDoc(collection(db,'match_history'),{
+      title:t.title, teamType:t.teamType||1, game_mode:t.game_mode||'', fee:t.fee||0,
+      prize1:t.prize1||0, prize2:t.prize2||0, prize3:t.prize3||0, perKill:perKill,
+      maxPlayers:t.maxPlayers||0, joined:t.joined||0,
+      winners:historyWinners, totalPaid:totalPaid, closed_at:serverTimestamp()
+    });
     await deleteDoc(doc(db,'tournaments',mId));
     el('dist-log-wrap').style.display='block';
     var logDiv=el('dist-log');
     logEntries.forEach(function(e){
       logDiv.innerHTML='<div class="log-entry"><div><div class="log-uid">UID: '+e.uid+'</div><div class="log-meta">'+e.match+' · '+e.position+' · '+new Date().toLocaleTimeString()+'</div></div><div class="log-prize">+৳'+e.prize+'</div></div>'+logDiv.innerHTML;
     });
-    ['w1','w2','w3'].forEach(function(id){el(id).value='';});
+    ['w1','w2','w3','k1','k2','k3'].forEach(function(id){el(id).value='';});
     el('winner-match-select').value=''; el('prize-preview').style.display='none';
     toast('🏆 Prizes distributed to '+logEntries.length+' winner(s)!');
   };
 
-  // ─── PER-KILL PROFIT DISTRIBUTION (All Players) ──────────────────────────
-  window.updateKillMatchInfo=function(){
-    var mId=el('kill-match-select').value;
-    if(!mId){
-      el('kill-match-info').style.display='none';
-      killPlayers = [];
-      renderKillPlayers();
-      return;
-    }
-    el('kill-match-info').style.display='block';
-    killPlayers = [];
-    renderKillPlayers();
-  };
-
-  window.addKillPlayer=function(){
-    var uid = el('kill-uid-input').value.trim();
-    var kills = parseInt(el('kill-count-input').value);
-    var perKill = parseInt(el('kill-per-amount').value) || 50;
-    
-    if(!uid){toast('Enter player UID!','error');return;}
-    if(!kills || kills < 0){toast('Enter valid kill count!','error');return;}
-    if(killPlayers.find(function(p){return p.uid===uid;})){toast('Player already added!','error');return;}
-    
-    var profit = kills * perKill;
-    killPlayers.push({uid: uid, kills: kills, profit: profit});
-    
-    el('kill-uid-input').value = '';
-    el('kill-count-input').value = '';
-    renderKillPlayers();
-    toast('Player added!');
-  };
-
-  function renderKillPlayers(){
-    var list = el('kill-players-list');
-    var totalDisplay = el('kill-total-display');
-    var distributeBtn = el('distribute-kill-btn');
-    
-    if(killPlayers.length === 0){
-      list.innerHTML = '';
-      totalDisplay.style.display = 'none';
-      distributeBtn.style.display = 'none';
-      return;
-    }
-    
-    var html = '<div class="section-label">PLAYERS ADDED ('+killPlayers.length+')</div>';
-    var totalPayout = 0;
-    
-    killPlayers.forEach(function(p, idx){
-      totalPayout += p.profit;
-      html += '<div class="kill-player-row">'
-        +'<div class="kill-player-uid">🎮 '+p.uid+'</div>'
-        +'<div class="kill-player-kills">'+p.kills+' kills</div>'
-        +'<div class="kill-player-profit">৳'+p.profit+'</div>'
-        +'<button class="kill-remove-btn" onclick="removeKillPlayer('+idx+')">✕</button>'
-        +'</div>';
-    });
-    
-    list.innerHTML = html;
-    el('kill-total-amount').textContent = totalPayout;
-    totalDisplay.style.display = 'block';
-    distributeBtn.style.display = 'block';
-  }
-
-  window.removeKillPlayer=function(idx){
-    killPlayers.splice(idx, 1);
-    renderKillPlayers();
-    toast('Player removed');
-  };
-
-  window.distributeKillProfits=async function(){
-    var mId = el('kill-match-select').value;
-    if(!mId){toast('Select a match first!','error');return;}
-    if(killPlayers.length === 0){toast('Add at least one player!','error');return;}
-    
-    var tSnap = await getDoc(doc(db,'tournaments',mId));
-    if(!tSnap.exists()){toast('Match not found!','error');return;}
-    var t = tSnap.data();
-    
-    var allUsers = await getDocs(collection(db,'users'));
-    var distributed = 0;
-    
-    for(var i=0; i<killPlayers.length; i++){
-      var kp = killPlayers[i];
-      var userFound = false;
-      
-      allUsers.forEach(async function(uDoc){
-        var uData = uDoc.data();
-        if(uData.uid_game && uData.uid_game.trim() === kp.uid.trim()){
-          userFound = true;
-          await updateDoc(doc(db,'users',uDoc.id),{balance:increment(kp.profit),total_earned:increment(kp.profit)});
-          await addDoc(collection(db,'transactions'),{
-            uid:uDoc.id,
-            email:uData.email,
-            amount:kp.profit,
-            type:'kill_profit',
-            status:'approved',
-            reason:t.title+' - '+kp.kills+' kills',
-            created_at:serverTimestamp()
-          });
-          distributed++;
-        }
-      });
-      
-      // Log to distribution log
-      var logDiv=el('dist-log');
-      logDiv.innerHTML='<div class="log-entry"><div><div class="log-uid">UID: '+kp.uid+' ('+kp.kills+' kills)</div><div class="log-meta">'+t.title+' · Kill Profit · '+new Date().toLocaleTimeString()+'</div></div><div class="log-prize">+৳'+kp.profit+'</div></div>'+logDiv.innerHTML;
-    }
-    
-    el('dist-log-wrap').style.display='block';
-    killPlayers = [];
-    renderKillPlayers();
-    el('kill-match-select').value = '';
-    el('kill-match-info').style.display = 'none';
-    toast('💰 Kill profits distributed to '+distributed+' player(s)!');
-  };
-
   // ─── SETTINGS ─────────────────────────────────────────────────────────────
   async function loadSettingsData(){
+    // Notice
     try{
       var ns=await getDoc(doc(db,'settings','notice'));
       if(ns.exists()&&ns.data().text){
@@ -676,6 +604,7 @@
         el('notice-input').value=txt;
       }
     }catch(e){}
+    // Payment per-method
     try{
       var ps=await getDoc(doc(db,'settings','payment'));
       if(ps.exists()){
@@ -690,6 +619,7 @@
         });
       }
     }catch(e){}
+    // Support
     try{
       var ss=await getDoc(doc(db,'settings','support'));
       if(ss.exists()){
@@ -705,6 +635,7 @@
     }catch(e){}
   }
 
+  // Payment method tabs
   window.switchPayTab=function(m){
     document.querySelectorAll('.pay-method-tab').forEach(function(t){t.classList.remove('active');});
     document.querySelectorAll('.pay-method-panel').forEach(function(p){p.classList.remove('active');});
@@ -727,6 +658,7 @@
     }catch(e){toast('Failed to save','error');}
   };
 
+  // Notice
   window.saveNotice=async function(){
     var text=el('notice-input').value.trim();
     try{
@@ -745,22 +677,87 @@
     }catch(e){toast('Failed','error');}
   };
 
-  window.saveSupportContacts=async function(){
-    var wa  =el('support-whatsapp').value.trim();
-    var tgL =el('support-telegram-link').value.trim();
-    var tgN =el('support-telegram-number').value.trim();
-    var ph  =el('support-phone').value.trim();
-    try{
-      await setDoc(doc(db,'settings','support'),{
-        whatsapp:wa, telegram_link:tgL, telegram_number:tgN, phone:ph,
-        updated_at:serverTimestamp()
-      },{merge:true});
-      el('cur-wa').textContent=wa||'—';
-      el('cur-tg').textContent=tgL||'—';
-      el('cur-ph').textContent=ph||'—';
-      toast('🎧 Support contacts saved!');
-    }catch(e){toast('Failed to save','error');}
+  // Support contacts
+  // ─── DATABASE SECTION ─────────────────────────────────────────────────────
+  window.switchDbTab=function(name){
+    document.querySelectorAll('#tab-database .pay-method-tab').forEach(function(t){t.classList.remove('active');});
+    document.querySelectorAll('#tab-database .pay-method-panel').forEach(function(p){p.classList.remove('active');});
+    var idx=name==='history'?0:name==='transactions'?1:2;
+    document.querySelectorAll('#tab-database .pay-method-tab')[idx].classList.add('active');
+    el('db-panel-'+name).classList.add('active');
   };
+
+  function fmtTime(ts){
+    try{ if(ts&&ts.toDate) return ts.toDate().toLocaleString(); }catch(e){}
+    return '';
+  }
+
+  function loadDatabaseData(){
+    // Match history
+    onSnapshot(collection(db,'match_history'), function(snap){
+      var rows=[]; var totalPaid=0;
+      snap.forEach(function(d){ rows.push(Object.assign({id:d.id},d.data())); totalPaid+=d.data().totalPaid||0; });
+      rows.sort(function(a,b){ var at=a.closed_at&&a.closed_at.seconds||0, bt=b.closed_at&&b.closed_at.seconds||0; return bt-at; });
+      el('db-hist-count').textContent=rows.length;
+      el('db-hist-paid').textContent='৳'+totalPaid;
+      var list=el('db-history-list');
+      if(!rows.length){list.innerHTML='<div class="empty-state"><div class="tick">🏁</div><div>NO MATCH HISTORY YET</div></div>';return;}
+      list.innerHTML='';
+      rows.forEach(function(t){
+        var winnersHtml=(t.winners||[]).map(function(w){
+          return '<div class="log-meta">'+['🥇','🥈','🥉'][w.place-1]+' UID '+w.uid+' — ৳'+w.prize+(w.kills?' ('+w.kills+' kills × ৳'+(t.perKill||0)+')':'')+'</div>';
+        }).join('');
+        list.innerHTML+='<div class="t-card">'
+          +'<div class="t-title">'+t.title+'</div>'
+          +'<div class="req-meta" style="margin-bottom:8px">'+(t.game_mode?t.game_mode+' · ':'')+teamLabel(t.teamType)+' · Entry ৳'+(t.fee||0)+' · '+t.joined+'/'+t.maxPlayers+' players</div>'
+          +winnersHtml
+          +'<div class="fill-label" style="margin-top:8px"><span>TOTAL PAID</span><span style="color:var(--green)">৳'+(t.totalPaid||0)+'</span></div>'
+          +'<div class="log-meta" style="margin-top:4px">'+fmtTime(t.closed_at)+'</div>'
+          +'</div>';
+      });
+    });
+
+    // All transactions
+    onSnapshot(collection(db,'transactions'), function(snap){
+      var rows=[]; var approved=0,pending=0,rejected=0;
+      snap.forEach(function(d){
+        var tx=Object.assign({id:d.id},d.data()); rows.push(tx);
+        if(tx.status==='approved') approved++; else if(tx.status==='pending') pending++; else rejected++;
+      });
+      rows.sort(function(a,b){ var at=a.created_at&&a.created_at.seconds||0, bt=b.created_at&&b.created_at.seconds||0; return bt-at; });
+      el('db-tx-count').textContent=rows.length;
+      el('db-tx-approved').textContent=approved;
+      el('db-tx-pending').textContent=pending;
+      el('db-tx-rejected').textContent=rejected;
+      var list=el('db-transactions-list');
+      if(!rows.length){list.innerHTML='<div class="empty-state"><div class="tick">∅</div><div>NO TRANSACTIONS YET</div></div>';return;}
+      list.innerHTML='';
+      rows.forEach(function(tx){
+        var sc=tx.status==='approved'?'var(--green)':tx.status==='pending'?'var(--gold)':'var(--red)';
+        list.innerHTML+='<div class="log-entry"><div>'
+          +'<div class="log-uid">'+(tx.type||'').toUpperCase()+' · '+(tx.email||tx.uid||'')+'</div>'
+          +'<div class="log-meta">'+(tx.reason?tx.reason+' · ':'')+(tx.method?tx.method.toUpperCase()+' · ':'')+fmtTime(tx.created_at)+'</div>'
+          +'</div><div class="log-prize" style="color:'+sc+'">৳'+(tx.amount||0)+'</div></div>';
+      });
+    });
+
+    // All users
+    onSnapshot(collection(db,'users'), function(snap){
+      var rows=[]; var totalBal=0;
+      snap.forEach(function(d){ var u=Object.assign({id:d.id},d.data()); rows.push(u); totalBal+=u.balance||0; });
+      el('db-user-count').textContent=rows.length;
+      el('db-user-balance').textContent='৳'+totalBal;
+      var list=el('db-users-list');
+      if(!rows.length){list.innerHTML='<div class="empty-state"><div class="tick">∅</div><div>NO USERS YET</div></div>';return;}
+      list.innerHTML='';
+      rows.forEach(function(u){
+        list.innerHTML+='<div class="log-entry"><div>'
+          +'<div class="log-uid">'+(u.name||u.email||u.id)+'</div>'
+          +'<div class="log-meta">'+(u.email?u.email+' · ':'')+'Game UID: '+(u.uid_game||'—')+' · Wins: '+(u.wins||0)+' · Earned: ৳'+(u.total_earned||0)+'</div>'
+          +'</div><div class="log-prize" style="color:var(--gold)">৳'+(u.balance||0)+'</div></div>';
+      });
+    });
+  }
 </script>
 </body>
 </html>
