@@ -189,6 +189,27 @@
     <div class="section-label">DISTRIBUTION LOG</div>
     <div id="dist-log"></div>
   </div>
+
+  <!-- PER KILL DISTRIBUTION — ALL PARTICIPANTS -->
+  <div class="card">
+    <div class="card-title"><div class="card-title-bar" style="background:var(--red)"></div><span style="color:var(--red)">PER KILL PRIZE DISTRIBUTION</span></div>
+    <p class="field-hint">Pay kill-based prize money to <b>any</b> participant in a match — not just the top 3. Add as many players as needed.</p>
+    <select id="kill-match-select" onchange="updateKillRateDisplay()"><option value="">— Select Match —</option></select>
+    <div class="cur-display" id="kill-rate-display" style="display:none">Per Kill Rate: <b id="kill-rate-val">৳0</b></div>
+    <div id="kill-rows">
+      <div class="row kill-row" style="align-items:center">
+        <input type="text" class="kill-uid" placeholder="Game UID">
+        <input type="number" class="kill-count" placeholder="Kills" style="max-width:90px">
+        <button type="button" onclick="this.parentElement.remove()" style="padding:11px 14px;background:transparent;border:1px solid var(--red);color:var(--red);border-radius:7px;cursor:pointer;font-weight:700;margin-bottom:10px">✕</button>
+      </div>
+    </div>
+    <button type="button" onclick="addKillRow()" style="width:100%;padding:10px;background:transparent;border:1px dashed var(--border);color:var(--muted);border-radius:7px;cursor:pointer;font-family:'Rajdhani';font-weight:700;margin-bottom:10px">+ ADD PLAYER</button>
+    <button class="btn-main" style="background:linear-gradient(90deg,#FF6B6B,#FF3B00)" onclick="distributeKillPrizes()">DISTRIBUTE KILL PRIZES</button>
+    <div id="kill-log-wrap" style="display:none;margin-top:14px">
+      <div class="section-label">KILL PRIZE LOG</div>
+      <div id="kill-log"></div>
+    </div>
+  </div>
 </div>
 
 <!-- SETTINGS -->
@@ -317,6 +338,11 @@
 
     <!-- TRANSACTIONS -->
     <div class="pay-method-panel" id="db-panel-transactions" style="border-radius:0 0 12px 12px">
+      <div class="prize-preview" style="margin-bottom:14px">
+        <div class="pp-item"><div class="pp-val" id="db-tx-deposited" style="color:var(--green)">৳0</div><div class="pp-lbl">TOTAL MONEY ADDED</div></div>
+        <div class="pp-item"><div class="pp-val" id="db-tx-withdrawn" style="color:var(--red)">৳0</div><div class="pp-lbl">TOTAL WITHDRAWN</div></div>
+        <div class="pp-item"><div class="pp-val" id="db-tx-net" style="color:var(--gold)">৳0</div><div class="pp-lbl">NET IN DATABASE</div></div>
+      </div>
       <div class="stats-row">
         <div class="stat-box"><div class="stat-val" id="db-tx-count" style="color:var(--orange)">0</div><div class="stat-lbl">TOTAL TX</div></div>
         <div class="stat-box"><div class="stat-val" id="db-tx-approved" style="color:var(--green)">0</div><div class="stat-lbl">APPROVED</div></div>
@@ -466,8 +492,8 @@
 
   function loadTournaments(){
     onSnapshot(collection(db,'tournaments'),function(snap){
-      var list=el('tournament-list'), sel=el('winner-match-select');
-      list.innerHTML=''; sel.innerHTML='<option value="">— Select Match —</option>';
+      var list=el('tournament-list'), sel=el('winner-match-select'), ksel=el('kill-match-select');
+      list.innerHTML=''; sel.innerHTML='<option value="">— Select Match —</option>'; ksel.innerHTML='<option value="">— Select Match —</option>';
       el('match-count-label').textContent='ACTIVE MATCHES ('+snap.size+')';
       snap.forEach(function(d){
         var t=d.data(), tc=teamColor(t.teamType), gc=gmColor(t.game_mode);
@@ -497,6 +523,7 @@
           +'<button class="btn-main" style="padding:10px;font-size:13px;margin-top:2px" onclick="updateRoom(\''+d.id+'\')">Update Room Info</button>'
           +'</div>';
         sel.innerHTML+='<option value="'+d.id+'">'+t.title+(t.game_mode?' ['+t.game_mode+']':'')+'</option>';
+        ksel.innerHTML+='<option value="'+d.id+'">'+t.title+(t.game_mode?' ['+t.game_mode+']':'')+(t.perKill?' — ৳'+t.perKill+'/kill':'')+'</option>';
       });
     });
   }
@@ -591,6 +618,62 @@
     ['w1','w2','w3','k1','k2','k3'].forEach(function(id){el(id).value='';});
     el('winner-match-select').value=''; el('prize-preview').style.display='none';
     toast('🏆 Prizes distributed to '+logEntries.length+' winner(s)!');
+  };
+
+  // ─── PER KILL DISTRIBUTION (ALL PARTICIPANTS) ──────────────────────────────
+  window.addKillRow=function(){
+    var wrap=el('kill-rows');
+    var row=document.createElement('div');
+    row.className='row kill-row';
+    row.style.alignItems='center';
+    row.innerHTML='<input type="text" class="kill-uid" placeholder="Game UID">'
+      +'<input type="number" class="kill-count" placeholder="Kills" style="max-width:90px">'
+      +'<button type="button" onclick="this.parentElement.remove()" style="padding:11px 14px;background:transparent;border:1px solid var(--red);color:var(--red);border-radius:7px;cursor:pointer;font-weight:700;margin-bottom:10px">✕</button>';
+    wrap.appendChild(row);
+  };
+
+  window.updateKillRateDisplay=async function(){
+    var mId=el('kill-match-select').value, disp=el('kill-rate-display');
+    if(!mId){disp.style.display='none';return;}
+    var snap=await getDoc(doc(db,'tournaments',mId));
+    if(!snap.exists()){disp.style.display='none';return;}
+    el('kill-rate-val').textContent='৳'+((snap.data().perKill)||0);
+    disp.style.display='block';
+  };
+
+  window.distributeKillPrizes=async function(){
+    var mId=el('kill-match-select').value;
+    if(!mId){toast('Select a match first!','error');return;}
+    var tSnap=await getDoc(doc(db,'tournaments',mId));
+    if(!tSnap.exists()){toast('Match not found!','error');return;}
+    var t=tSnap.data(), perKill=t.perKill||0;
+    if(!perKill){toast('This match has no per-kill rate set!','error');return;}
+    var entries=[];
+    document.querySelectorAll('#kill-rows .kill-row').forEach(function(r){
+      var uid=r.querySelector('.kill-uid').value.trim();
+      var kills=Number(r.querySelector('.kill-count').value)||0;
+      if(uid&&kills>0) entries.push({uid:uid,kills:kills});
+    });
+    if(!entries.length){toast('Add at least one player with kills!','error');return;}
+    var allUsers=await getDocs(collection(db,'users'));
+    var paidCount=0, paidTotal=0, logDiv=el('kill-log');
+    for(var i=0;i<entries.length;i++){
+      var entry=entries[i], amt=entry.kills*perKill, found=false;
+      allUsers.forEach(async function(uDoc){
+        var uData=uDoc.data();
+        if(uData.uid_game&&uData.uid_game.trim()===entry.uid){
+          found=true;
+          await updateDoc(doc(db,'users',uDoc.id),{balance:increment(amt),total_earned:increment(amt)});
+          await addDoc(collection(db,'transactions'),{uid:uDoc.id,email:uData.email,amount:amt,type:'kill_prize',status:'approved',reason:t.title+' - '+entry.kills+' kills',created_at:serverTimestamp()});
+        }
+      });
+      paidCount++; paidTotal+=amt;
+      logDiv.innerHTML='<div class="log-entry"><div><div class="log-uid">UID: '+entry.uid+'</div><div class="log-meta">'+t.title+' · '+entry.kills+' kills × ৳'+perKill+' · '+new Date().toLocaleTimeString()+'</div></div><div class="log-prize">+৳'+amt+'</div></div>'+logDiv.innerHTML;
+    }
+    el('kill-log-wrap').style.display='block';
+    el('kill-rows').innerHTML='';
+    addKillRow();
+    toast('🔫 ৳'+paidTotal+' in kill prizes distributed to '+paidCount+' entr'+(paidCount===1?'y':'ies')+'!');
   };
 
   // ─── SETTINGS ─────────────────────────────────────────────────────────────
@@ -692,6 +775,13 @@
     return '';
   }
 
+  window.toggleUserBlock=async function(uid,isBlocked){
+    try{
+      await updateDoc(doc(db,'users',uid),{blocked:!isBlocked, blocked_at: !isBlocked?serverTimestamp():null});
+      toast(!isBlocked?'🚫 User blocked':'✅ User unblocked', !isBlocked?'error':undefined);
+    }catch(e){ toast('Failed: '+e.message,'error'); }
+  };
+
   function loadDatabaseData(){
     // Match history
     onSnapshot(collection(db,'match_history'), function(snap){
@@ -719,16 +809,21 @@
 
     // All transactions
     onSnapshot(collection(db,'transactions'), function(snap){
-      var rows=[]; var approved=0,pending=0,rejected=0;
+      var rows=[]; var approved=0,pending=0,rejected=0,deposited=0,withdrawn=0;
       snap.forEach(function(d){
         var tx=Object.assign({id:d.id},d.data()); rows.push(tx);
         if(tx.status==='approved') approved++; else if(tx.status==='pending') pending++; else rejected++;
+        if(tx.status==='approved'&&tx.type==='deposit') deposited+=tx.amount||0;
+        if(tx.status==='approved'&&tx.type==='withdraw') withdrawn+=tx.amount||0;
       });
       rows.sort(function(a,b){ var at=a.created_at&&a.created_at.seconds||0, bt=b.created_at&&b.created_at.seconds||0; return bt-at; });
       el('db-tx-count').textContent=rows.length;
       el('db-tx-approved').textContent=approved;
       el('db-tx-pending').textContent=pending;
       el('db-tx-rejected').textContent=rejected;
+      el('db-tx-deposited').textContent='৳'+deposited;
+      el('db-tx-withdrawn').textContent='৳'+withdrawn;
+      el('db-tx-net').textContent='৳'+(deposited-withdrawn);
       var list=el('db-transactions-list');
       if(!rows.length){list.innerHTML='<div class="empty-state"><div class="tick">∅</div><div>NO TRANSACTIONS YET</div></div>';return;}
       list.innerHTML='';
@@ -751,10 +846,15 @@
       if(!rows.length){list.innerHTML='<div class="empty-state"><div class="tick">∅</div><div>NO USERS YET</div></div>';return;}
       list.innerHTML='';
       rows.forEach(function(u){
-        list.innerHTML+='<div class="log-entry"><div>'
-          +'<div class="log-uid">'+(u.name||u.email||u.id)+'</div>'
-          +'<div class="log-meta">'+(u.email?u.email+' · ':'')+'Game UID: '+(u.uid_game||'—')+' · Wins: '+(u.wins||0)+' · Earned: ৳'+(u.total_earned||0)+'</div>'
-          +'</div><div class="log-prize" style="color:var(--gold)">৳'+(u.balance||0)+'</div></div>';
+        var blocked=!!u.blocked;
+        list.innerHTML+='<div class="log-entry" style="flex-direction:column;align-items:stretch;gap:8px">'
+          +'<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">'
+          +'<div><div class="log-uid">'+(u.name||u.email||u.id)+(blocked?' <span style="color:var(--red);font-size:11px;font-weight:700">● BLOCKED</span>':'')+'</div>'
+          +'<div class="log-meta">'+(u.email?u.email+' · ':'')+'Game UID: '+(u.uid_game||'—')+' · Wins: '+(u.wins||0)+' · Earned: ৳'+(u.total_earned||0)+'</div></div>'
+          +'<div class="log-prize" style="color:var(--gold);white-space:nowrap">৳'+(u.balance||0)+'</div>'
+          +'</div>'
+          +'<button onclick="toggleUserBlock(\''+u.id+'\','+blocked+')" style="padding:9px;border-radius:7px;font-weight:700;font-family:Rajdhani,sans-serif;font-size:13px;letter-spacing:1px;cursor:pointer;border:1px solid '+(blocked?'var(--green)':'var(--red)')+';background:transparent;color:'+(blocked?'var(--green)':'var(--red)')+'">'+(blocked?'✅ UNBLOCK USER':'🚫 BLOCK USER')+'</button>'
+          +'</div>';
       });
     });
   }
