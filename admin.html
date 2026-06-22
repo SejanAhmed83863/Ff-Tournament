@@ -323,6 +323,7 @@
   <div class="card" style="padding:0;overflow:hidden">
     <div class="pay-method-tabs" style="border-radius:12px 12px 0 0">
       <button class="pay-method-tab active" onclick="switchDbTab('history')">🏆 History</button>
+      <button class="pay-method-tab"        onclick="switchDbTab('participants')">🧍 Participants</button>
       <button class="pay-method-tab"        onclick="switchDbTab('transactions')">💸 Transactions</button>
       <button class="pay-method-tab"        onclick="switchDbTab('users')">👥 Users</button>
     </div>
@@ -334,6 +335,12 @@
         <div class="stat-box"><div class="stat-val" id="db-hist-paid" style="color:var(--gold)">৳0</div><div class="stat-lbl">PRIZES PAID</div></div>
       </div>
       <div id="db-history-list"></div>
+    </div>
+
+    <!-- PARTICIPANTS (RUNNING + PAST MATCHES) -->
+    <div class="pay-method-panel" id="db-panel-participants" style="border-radius:0 0 12px 12px">
+      <input type="text" id="db-participants-search" placeholder="🔍 Search by match, game name, UID or WhatsApp…" oninput="renderParticipantsOverview()" style="margin-bottom:12px">
+      <div id="db-participants-list"></div>
     </div>
 
     <!-- TRANSACTIONS -->
@@ -645,7 +652,7 @@
       totalPaid+=prize;
     }
     await addDoc(collection(db,'match_history'),{
-      title:t.title, teamType:t.teamType||1, game_mode:t.game_mode||'', fee:t.fee||0,
+      original_id:mId, title:t.title, teamType:t.teamType||1, game_mode:t.game_mode||'', fee:t.fee||0,
       prize1:t.prize1||0, prize2:t.prize2||0, prize3:t.prize3||0, perKill:perKill,
       maxPlayers:t.maxPlayers||0, joined:t.joined||0,
       winners:historyWinners, totalPaid:totalPaid, closed_at:serverTimestamp()
@@ -806,7 +813,7 @@
   window.switchDbTab=function(name){
     document.querySelectorAll('#tab-database .pay-method-tab').forEach(function(t){t.classList.remove('active');});
     document.querySelectorAll('#tab-database .pay-method-panel').forEach(function(p){p.classList.remove('active');});
-    var idx=name==='history'?0:name==='transactions'?1:2;
+    var idx=name==='history'?0:name==='participants'?1:name==='transactions'?2:3;
     document.querySelectorAll('#tab-database .pay-method-tab')[idx].classList.add('active');
     el('db-panel-'+name).classList.add('active');
   };
@@ -832,28 +839,42 @@
   };
 
   function loadDatabaseData(){
+    var historyCache=[], runningCache=[], usersCache={};
+
     // Match history
     onSnapshot(collection(db,'match_history'), function(snap){
       var rows=[]; var totalPaid=0;
       snap.forEach(function(d){ rows.push(Object.assign({id:d.id},d.data())); totalPaid+=d.data().totalPaid||0; });
       rows.sort(function(a,b){ var at=a.closed_at&&a.closed_at.seconds||0, bt=b.closed_at&&b.closed_at.seconds||0; return bt-at; });
+      historyCache=rows;
       el('db-hist-count').textContent=rows.length;
       el('db-hist-paid').textContent='৳'+totalPaid;
       var list=el('db-history-list');
-      if(!rows.length){list.innerHTML='<div class="empty-state"><div class="tick">🏁</div><div>NO MATCH HISTORY YET</div></div>';return;}
-      list.innerHTML='';
-      rows.forEach(function(t){
-        var winnersHtml=(t.winners||[]).map(function(w){
-          return '<div class="log-meta">'+['🥇','🥈','🥉'][w.place-1]+' UID '+w.uid+' — ৳'+w.prize+(w.kills?' ('+w.kills+' kills × ৳'+(t.perKill||0)+')':'')+'</div>';
-        }).join('');
-        list.innerHTML+='<div class="t-card">'
-          +'<div class="t-title">'+t.title+'</div>'
-          +'<div class="req-meta" style="margin-bottom:8px">'+(t.game_mode?t.game_mode+' · ':'')+teamLabel(t.teamType)+' · Entry ৳'+(t.fee||0)+' · '+t.joined+'/'+t.maxPlayers+' players</div>'
-          +winnersHtml
-          +'<div class="fill-label" style="margin-top:8px"><span>TOTAL PAID</span><span style="color:var(--green)">৳'+(t.totalPaid||0)+'</span></div>'
-          +'<div class="log-meta" style="margin-top:4px">'+fmtTime(t.closed_at)+'</div>'
-          +'</div>';
-      });
+      if(!rows.length){list.innerHTML='<div class="empty-state"><div class="tick">🏁</div><div>NO MATCH HISTORY YET</div></div>';}
+      else{
+        list.innerHTML='';
+        rows.forEach(function(t){
+          var winnersHtml=(t.winners||[]).map(function(w){
+            return '<div class="log-meta">'+['🥇','🥈','🥉'][w.place-1]+' UID '+w.uid+' — ৳'+w.prize+(w.kills?' ('+w.kills+' kills × ৳'+(t.perKill||0)+')':'')+'</div>';
+          }).join('');
+          list.innerHTML+='<div class="t-card">'
+            +'<div class="t-title">'+t.title+'</div>'
+            +'<div class="req-meta" style="margin-bottom:8px">'+(t.game_mode?t.game_mode+' · ':'')+teamLabel(t.teamType)+' · Entry ৳'+(t.fee||0)+' · '+t.joined+'/'+t.maxPlayers+' players</div>'
+            +winnersHtml
+            +'<div class="fill-label" style="margin-top:8px"><span>TOTAL PAID</span><span style="color:var(--green)">৳'+(t.totalPaid||0)+'</span></div>'
+            +'<div class="log-meta" style="margin-top:4px">'+fmtTime(t.closed_at)+'</div>'
+            +'</div>';
+        });
+      }
+      renderParticipantsOverview();
+    });
+
+    // Running tournaments (separate live cache for the participants overview)
+    onSnapshot(collection(db,'tournaments'), function(snap){
+      var rows=[];
+      snap.forEach(function(d){ rows.push(Object.assign({id:d.id},d.data())); });
+      runningCache=rows;
+      renderParticipantsOverview();
     });
 
     // All transactions
@@ -885,38 +906,112 @@
       txRowsCache=rows;
       recomputeTxStats();
       var list=el('db-transactions-list');
-      if(!rows.length){list.innerHTML='<div class="empty-state"><div class="tick">∅</div><div>NO TRANSACTIONS YET</div></div>';return;}
-      list.innerHTML='';
-      rows.forEach(function(tx){
-        var sc=tx.status==='approved'?'var(--green)':tx.status==='pending'?'var(--gold)':'var(--red)';
-        list.innerHTML+='<div class="log-entry"><div>'
-          +'<div class="log-uid">'+(tx.type||'').toUpperCase()+' · '+(tx.email||tx.uid||'')+'</div>'
-          +'<div class="log-meta">'+(tx.reason?tx.reason+' · ':'')+(tx.method?tx.method.toUpperCase()+' · ':'')+fmtTime(tx.created_at)+'</div>'
-          +'</div><div class="log-prize" style="color:'+sc+'">৳'+(tx.amount||0)+'</div></div>';
-      });
+      if(!rows.length){list.innerHTML='<div class="empty-state"><div class="tick">∅</div><div>NO TRANSACTIONS YET</div></div>';}
+      else{
+        list.innerHTML='';
+        rows.forEach(function(tx){
+          var sc=tx.status==='approved'?'var(--green)':tx.status==='pending'?'var(--gold)':'var(--red)';
+          list.innerHTML+='<div class="log-entry"><div>'
+            +'<div class="log-uid">'+(tx.type||'').toUpperCase()+' · '+(tx.email||tx.uid||'')+'</div>'
+            +'<div class="log-meta">'+(tx.reason?tx.reason+' · ':'')+(tx.method?tx.method.toUpperCase()+' · ':'')+fmtTime(tx.created_at)+'</div>'
+            +'</div><div class="log-prize" style="color:'+sc+'">৳'+(tx.amount||0)+'</div></div>';
+        });
+      }
+      renderParticipantsOverview();
     });
 
     // All users
     onSnapshot(collection(db,'users'), function(snap){
-      var rows=[]; var totalBal=0;
-      snap.forEach(function(d){ var u=Object.assign({id:d.id},d.data()); rows.push(u); totalBal+=u.balance||0; });
+      var rows=[]; var totalBal=0; usersCache={};
+      snap.forEach(function(d){ var u=Object.assign({id:d.id},d.data()); rows.push(u); totalBal+=u.balance||0; usersCache[d.id]=u; });
       el('db-user-count').textContent=rows.length;
       el('db-user-balance').textContent='৳'+totalBal;
       var list=el('db-users-list');
-      if(!rows.length){list.innerHTML='<div class="empty-state"><div class="tick">∅</div><div>NO USERS YET</div></div>';return;}
-      list.innerHTML='';
-      rows.forEach(function(u){
-        var blocked=!!u.blocked;
-        list.innerHTML+='<div class="log-entry" style="flex-direction:column;align-items:stretch;gap:8px">'
-          +'<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">'
-          +'<div><div class="log-uid">'+(u.name||u.email||u.id)+(blocked?' <span style="color:var(--red);font-size:11px;font-weight:700">● BLOCKED</span>':'')+'</div>'
-          +'<div class="log-meta">'+(u.email?u.email+' · ':'')+'Game UID: '+(u.uid_game||'—')+' · Wins: '+(u.wins||0)+' · Earned: ৳'+(u.total_earned||0)+'</div></div>'
-          +'<div class="log-prize" style="color:var(--gold);white-space:nowrap">৳'+(u.balance||0)+'</div>'
-          +'</div>'
-          +'<button onclick="toggleUserBlock(\''+u.id+'\','+blocked+')" style="padding:9px;border-radius:7px;font-weight:700;font-family:Rajdhani,sans-serif;font-size:13px;letter-spacing:1px;cursor:pointer;border:1px solid '+(blocked?'var(--green)':'var(--red)')+';background:transparent;color:'+(blocked?'var(--green)':'var(--red)')+'">'+(blocked?'✅ UNBLOCK USER':'🚫 BLOCK USER')+'</button>'
-          +'</div>';
-      });
+      if(!rows.length){list.innerHTML='<div class="empty-state"><div class="tick">∅</div><div>NO USERS YET</div></div>';}
+      else{
+        list.innerHTML='';
+        rows.forEach(function(u){
+          var blocked=!!u.blocked;
+          list.innerHTML+='<div class="log-entry" style="flex-direction:column;align-items:stretch;gap:8px">'
+            +'<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">'
+            +'<div><div class="log-uid">'+(u.name||u.email||u.id)+(blocked?' <span style="color:var(--red);font-size:11px;font-weight:700">● BLOCKED</span>':'')+'</div>'
+            +'<div class="log-meta">'+(u.email?u.email+' · ':'')+'Game UID: '+(u.uid_game||'—')+' · Wins: '+(u.wins||0)+' · Earned: ৳'+(u.total_earned||0)+'</div></div>'
+            +'<div class="log-prize" style="color:var(--gold);white-space:nowrap">৳'+(u.balance||0)+'</div>'
+            +'</div>'
+            +'<button onclick="toggleUserBlock(\''+u.id+'\','+blocked+')" style="padding:9px;border-radius:7px;font-weight:700;font-family:Rajdhani,sans-serif;font-size:13px;letter-spacing:1px;cursor:pointer;border:1px solid '+(blocked?'var(--green)':'var(--red)')+';background:transparent;color:'+(blocked?'var(--green)':'var(--red)')+'">'+(blocked?'✅ UNBLOCK USER':'🚫 BLOCK USER')+'</button>'
+            +'</div>';
+        });
+      }
+      renderParticipantsOverview();
     });
+
+    // ─── ORGANISED PARTICIPANTS LIST (running + past matches) ────────────────
+    function entryRefMatches(tx,refId){
+      var ref=tx.tournamentId||tx.matchId||tx.tid||tx.tournament_id;
+      return ref===refId;
+    }
+    function participantInfo(tx){
+      var u=usersCache[tx.uid]||{};
+      return {
+        gameName: u.game_name||u.ign||u.gameName||u.name||'—',
+        uid: u.uid_game||tx.uid_game||'—',
+        whatsapp: u.whatsapp||u.whatsapp_number||u.phone||u.phone_number||tx.whatsapp||'—',
+        paid: tx.amount||0,
+        time: fmtTime(tx.created_at)
+      };
+    }
+    window.renderParticipantsOverview=function(){
+      var list=el('db-participants-list');
+      if(!list) return;
+      var q=(el('db-participants-search')&&el('db-participants-search').value||'').trim().toLowerCase();
+      var matches=[];
+      runningCache.forEach(function(t){
+        matches.push({title:t.title,status:'RUNNING',statusColor:'var(--green)',game_mode:t.game_mode,teamType:t.teamType,fee:t.fee,joined:t.joined,maxPlayers:t.maxPlayers,refId:t.id,sortKey:1e15});
+      });
+      historyCache.forEach(function(h){
+        matches.push({title:h.title,status:'COMPLETED',statusColor:'var(--muted)',game_mode:h.game_mode,teamType:h.teamType,fee:h.fee,joined:h.joined,maxPlayers:h.maxPlayers,refId:h.original_id||h.id,sortKey:(h.closed_at&&h.closed_at.seconds)||0});
+      });
+      matches.sort(function(a,b){ return b.sortKey-a.sortKey; });
+
+      var html='';
+      matches.forEach(function(m){
+        var parts=txRowsCacheRef().filter(function(tx){ return tx.type==='entry'&&entryRefMatches(tx,m.refId); })
+          .sort(function(a,b){ var at=a.created_at&&a.created_at.seconds||0, bt=b.created_at&&b.created_at.seconds||0; return at-bt; })
+          .map(participantInfo);
+
+        if(q){
+          var titleHit=m.title.toLowerCase().indexOf(q)!==-1;
+          var partHit=parts.some(function(p){ return (p.gameName+p.uid+p.whatsapp).toLowerCase().indexOf(q)!==-1; });
+          if(!titleHit&&!partHit) return;
+        }
+
+        html+='<div class="t-card">'
+          +'<div class="t-header"><div>'
+          +'<div class="t-title">'+m.title+'</div>'
+          +'<div class="t-badges"><span class="t-badge" style="background:'+m.statusColor+'22;color:'+m.statusColor+'">'+m.status+'</span>'
+          +(m.game_mode?'<span class="t-badge">'+m.game_mode+'</span>':'')+'</div>'
+          +'</div></div>'
+          +'<div class="req-meta" style="margin-bottom:8px">'+teamLabel(m.teamType)+' · Entry ৳'+(m.fee||0)+' · '+(m.joined||0)+'/'+(m.maxPlayers||0)+' players</div>'
+          +'<div class="section-label">PARTICIPANTS ('+parts.length+')</div>';
+
+        if(!parts.length){
+          html+='<div class="log-meta" style="margin-bottom:6px">No participant records found for this match.</div>';
+        }else{
+          parts.forEach(function(p,i){
+            html+='<div class="log-entry"><div>'
+              +'<div class="log-uid">#'+(i+1)+' · '+p.gameName+'</div>'
+              +'<div class="log-meta">UID: '+p.uid+' · WhatsApp: '+p.whatsapp+' · Paid ৳'+p.paid+' · '+p.time+'</div>'
+              +'</div></div>';
+          });
+        }
+        html+='</div>';
+      });
+
+      if(!matches.length){ list.innerHTML='<div class="empty-state"><div class="tick">🧍</div><div>NO MATCHES YET</div></div>'; return; }
+      if(!html){ list.innerHTML='<div class="empty-state"><div class="tick">🔍</div><div>NO MATCHES FOUND</div></div>'; return; }
+      list.innerHTML=html;
+    };
+    function txRowsCacheRef(){ return txRowsCache; }
   }
 </script>
 </body>
