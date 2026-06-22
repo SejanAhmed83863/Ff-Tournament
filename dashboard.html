@@ -551,8 +551,9 @@
         // Winner / prize block
         var prizeBlock='';
         if(prizeData){
-          var posColor=prizeData.position==='🥇 1st'?'var(--gold)':prizeData.position==='🥈 2nd'?'#C0C0C0':'#CD7F32';
-          var posLabel=prizeData.position||(prizeData.reason?prizeData.reason.split(' - ')[1]:'');
+          // position field may not exist — parse from reason "Title - 🥇 1st"
+          var posLabel=prizeData.position||(prizeData.reason&&prizeData.reason.indexOf(' - ')>-1?prizeData.reason.split(' - ').slice(1).join(' - ').trim():'Winner');
+          var posColor=posLabel.indexOf('1st')>-1?'var(--gold)':posLabel.indexOf('2nd')>-1?'#C0C0C0':'#CD7F32';
           // Kill bonus line — from kill_bonus transaction if exists, else from prize data
           var killLine='';
           if(killBonusData&&killBonusData.amount>0){
@@ -611,7 +612,8 @@
         // Badge
         var itemCls,badge,badgeTxt;
         var hasWon=prizeData||killBonusData;
-        if(hasWon&&prizeData){itemCls='history-item won';badge='won-badge';badgeTxt='🏆 '+(prizeData.position||'Winner');}
+        var badgePosLabel=prizeData?(prizeData.position||(prizeData.reason&&prizeData.reason.indexOf(' - ')>-1?prizeData.reason.split(' - ').slice(1).join(' - ').trim():'Winner')):'';
+        if(hasWon&&prizeData){itemCls='history-item won';badge='won-badge';badgeTxt='🏆 '+badgePosLabel;}
         else if(hasWon){itemCls='history-item won';badge='won-badge';badgeTxt='⚔️ Kill Bonus';}
         else if(matchEnded){itemCls='history-item';badge='played-badge';badgeTxt='✅ Ended';}
         else if(upcoming){itemCls='history-item upcoming';badge='upcoming-badge';badgeTxt='⏰ Upcoming';}
