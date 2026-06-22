@@ -843,6 +843,18 @@
     }catch(e){ return false; }
   }
 
+  window.copyText=function(txt){
+    var decoded=txt.replace(/&#39;/g,"'");
+    navigator.clipboard.writeText(decoded).then(function(){
+      toast('📋 Copied!');
+    }).catch(function(){
+      var ta=document.createElement('textarea');
+      ta.value=decoded; ta.style.position='fixed'; ta.style.opacity='0';
+      document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+      document.body.removeChild(ta); toast('📋 Copied!');
+    });
+  };
+
   window.toggleUserBlock=async function(uid,isBlocked){
     try{
       await updateDoc(doc(db,'users',uid),{blocked:!isBlocked, blocked_at: !isBlocked?serverTimestamp():null});
@@ -939,6 +951,7 @@
     onSnapshot(collection(db,'users'), function(snap){
       var rows=[]; var totalBal=0; usersCache={};
       snap.forEach(function(d){ var u=Object.assign({id:d.id},d.data()); rows.push(u); totalBal+=u.balance||0; usersCache[d.id]=u; });
+      window.__adminUsersCache=usersCache;
       el('db-user-count').textContent=rows.length;
       el('db-user-balance').textContent='৳'+totalBal;
       var list=el('db-users-list');
@@ -1012,9 +1025,16 @@
         if(!parts.length){
           html+='<div class="log-meta" style="margin-bottom:6px">No participant records found for this match.</div>';
         }else{
+          // build safe escaped lists for copy
+          var namesEsc=parts.map(function(p){return p.gameName!=='—'?p.gameName:p.uid;}).join('\n').replace(/'/g,"&#39;");
+          var waEsc=parts.map(function(p){return p.whatsapp;}).join('\n').replace(/'/g,"&#39;");
+          html+='<div class="row" style="margin-bottom:10px">'
+            +'<button onclick="copyText(\''+namesEsc+'\')" style="flex:1;padding:9px;border-radius:7px;font-weight:700;font-family:Rajdhani,sans-serif;font-size:12px;letter-spacing:1px;cursor:pointer;border:1px solid var(--orange);background:transparent;color:var(--orange)">📋 COPY GAME NAMES</button>'
+            +'<button onclick="copyText(\''+waEsc+'\')" style="flex:1;padding:9px;border-radius:7px;font-weight:700;font-family:Rajdhani,sans-serif;font-size:12px;letter-spacing:1px;cursor:pointer;border:1px solid var(--green);background:transparent;color:var(--green)">📋 COPY WHATSAPP NOs</button>'
+            +'</div>';
           parts.forEach(function(p,i){
             html+='<div class="log-entry"><div>'
-              +'<div class="log-uid">#'+(i+1)+' · '+p.gameName+'</div>'
+              +'<div class="log-uid">#'+(i+1)+' · '+(p.gameName!=='—'?p.gameName:p.uid)+'</div>'
               +'<div class="log-meta">UID: '+p.uid+' · WhatsApp: '+p.whatsapp+' · Paid ৳'+p.paid+' · '+p.time+'</div>'
               +'</div></div>';
           });
@@ -1032,7 +1052,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <script>
-// Set today's date as default
 (function(){
   var d=document.getElementById('report-date');
   if(d) d.value=new Date().toISOString().slice(0,10);
@@ -1046,14 +1065,30 @@ window.downloadReport=async function(fmt){
   var dayEnd  =new Date(sel.getFullYear(),sel.getMonth(),sel.getDate(),23,59,59);
   var label=sel.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
 
-  // Grab all cached data from module scope via exposed window vars
   var allTx    = window.__adminTxCache    || [];
   var allTours = window.__adminTourCache  || [];
   var allHist  = window.__adminHistCache  || [];
+  var allUsers = window.__adminUsersCache || {};
 
   function inDay(ts){
     if(!ts||!ts.toDate) return false;
     var d=ts.toDate(); return d>=dayStart && d<=dayEnd;
+  }
+  function fmtTs(ts){ try{ if(ts&&ts.toDate) return ts.toDate().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}); }catch(e){} return '—'; }
+
+  function getParticipants(refId){
+    return allTx.filter(function(tx){
+      if(tx.type!=='entry') return false;
+      var ref=tx.tournamentId||tx.matchId||tx.tid||tx.tournament_id;
+      return ref===refId;
+    }).map(function(tx){
+      var u=allUsers[tx.uid]||{};
+      return {
+        name: u.game_name||u.ign||u.gameName||u.name||tx.uid||'—',
+        uid:  u.uid_game||tx.uid_game||'—',
+        wa:   u.whatsapp||u.whatsapp_number||u.phone||u.phone_number||tx.whatsapp||'—'
+      };
+    });
   }
 
   var txDay   = allTx.filter(function(t){ return inDay(t.created_at); });
@@ -1064,18 +1099,26 @@ window.downloadReport=async function(fmt){
   var withdraws = txDay.filter(function(t){return t.type==='withdraw' &&t.status==='approved';});
   var entries   = txDay.filter(function(t){return t.type==='entry';});
   var prizes    = txDay.filter(function(t){return t.type==='prize'||t.type==='kill_prize';});
-  var refunds   = txDay.filter(function(t){return t.type==='refund';});
 
-  var totalDep =deposits.reduce(function(s,t){return s+(t.amount||0);},0);
-  var totalWd  =withdraws.reduce(function(s,t){return s+(t.amount||0);},0);
+  var totalDep  =deposits.reduce(function(s,t){return s+(t.amount||0);},0);
+  var totalWd   =withdraws.reduce(function(s,t){return s+(t.amount||0);},0);
   var totalPrize=prizes.reduce(function(s,t){return s+(t.amount||0);},0);
 
-  function fmtTs(ts){ try{ if(ts&&ts.toDate) return ts.toDate().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}); }catch(e){} return '—'; }
-
+  // ── CSV ──────────────────────────────────────────────────────────────────
   if(fmt==='csv'){
-    var rows=[['TYPE','EMAIL/UID','AMOUNT','STATUS','REASON','TIME']];
+    var rows=[['TYPE','EMAIL/UID','AMOUNT (BDT)','STATUS','REASON','TIME']];
     txDay.forEach(function(t){
       rows.push([t.type||'',t.email||t.uid||'',t.amount||0,t.status||'',t.reason||'',fmtTs(t.created_at)]);
+    });
+    rows.push([]);
+    rows.push(['MATCH','STATUS','GAME NAME / UID','WHATSAPP','ENTRY FEE']);
+    allTours.concat(allHist).forEach(function(m){
+      var isHist=!!m.closed_at;
+      var parts=getParticipants(isHist?(m.original_id||m.id):m.id);
+      if(!parts.length) return;
+      parts.forEach(function(p){
+        rows.push([m.title||'—',isHist?'COMPLETED':'RUNNING',p.name+' / '+p.uid,p.wa,m.fee||0]);
+      });
     });
     var csv=rows.map(function(r){return r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"';}).join(',');}).join('\r\n');
     var blob=new Blob([csv],{type:'text/csv'});
@@ -1090,116 +1133,138 @@ window.downloadReport=async function(fmt){
   var W=210, margin=14, y=20, col=W-margin*2;
 
   function heading(txt,size,color){
-    doc.setFontSize(size||14);
-    doc.setTextColor(color||'#FF6B00');
-    doc.setFont('helvetica','bold');
-    doc.text(txt,margin,y); y+=size?(size*0.5):7;
+    doc.setFontSize(size||14); doc.setTextColor(color||'#FF6B00');
+    doc.setFont('helvetica','bold'); doc.text(txt,margin,y); y+=(size||14)*0.5;
   }
-  function sub(txt,size){
-    doc.setFontSize(size||9);
-    doc.setTextColor('#aaaaaa');
-    doc.setFont('helvetica','normal');
-    doc.text(txt,margin,y); y+=5;
+  function body(txt,size,color){
+    doc.setFontSize(size||9); doc.setTextColor(color||'#aaaaaa');
+    doc.setFont('helvetica','normal'); doc.text(txt,margin,y); y+=5;
   }
-  function hr(){ doc.setDrawColor('#333333'); doc.line(margin,y,W-margin,y); y+=4; }
+  function hr(){ doc.setDrawColor('#333333'); doc.line(margin,y,W-margin,y); y+=5; }
   function gap(n){ y+=(n||4); }
-  function checkPage(){ if(y>270){ doc.addPage(); y=18; } }
+  function checkPage(need){ if(y+(need||10)>276){ doc.addPage(); y=18; } }
 
-  // Header bar
-  doc.setFillColor('#FF6B00');
-  doc.rect(0,0,W,14,'F');
+  // Orange header bar
+  doc.setFillColor('#FF6B00'); doc.rect(0,0,W,14,'F');
   doc.setFontSize(13); doc.setTextColor('#ffffff'); doc.setFont('helvetica','bold');
-  doc.text('FREE FIRE TOURNAMENT — DAILY REPORT',margin,9);
-  doc.setFontSize(9); doc.setTextColor('#ffffff');
-  doc.text(label, W-margin-doc.getTextWidth(label)-2, 9);
+  doc.text('FREE FIRE TOURNAMENT - DAILY REPORT',margin,9);
+  doc.setFontSize(9); doc.text(label, W-margin-doc.getTextWidth(label)-2, 9);
   y=22;
 
   // Summary boxes
   heading('SUMMARY',12,'#FF6B00'); gap(2);
   var summary=[
-    ['Total Deposited','৳'+totalDep,'#27ae60'],
-    ['Total Withdrawn','৳'+totalWd,'#e74c3c'],
-    ['Prizes Paid','৳'+totalPrize,'#f39c12'],
-    ['Entry Transactions',entries.length,'#3498db'],
+    ['Total Deposited','BDT '+totalDep,'#27ae60'],
+    ['Total Withdrawn','BDT '+totalWd,'#e74c3c'],
+    ['Prizes Paid','BDT '+totalPrize,'#f39c12'],
+    ['Entries',entries.length,'#3498db'],
     ['New Tournaments',tourDay.length,'#9b59b6'],
     ['Closed Matches',histDay.length,'#1abc9c'],
   ];
-  var bx=margin, bw=(col/3)-3, bh=12;
+  var bw=(col/3)-3, bh=13;
   summary.forEach(function(s,i){
     var bxPos=margin+(i%3)*(bw+4);
     if(i%3===0 && i>0){ y+=bh+4; checkPage(); }
     doc.setFillColor('#1a1a28'); doc.roundedRect(bxPos,y,bw,bh,2,2,'F');
-    doc.setFontSize(13); doc.setTextColor(s[2]); doc.setFont('helvetica','bold');
+    doc.setFontSize(11); doc.setTextColor(s[2]); doc.setFont('helvetica','bold');
     doc.text(String(s[1]),bxPos+bw/2,y+7,{align:'center'});
-    doc.setFontSize(7); doc.setTextColor('#888888'); doc.setFont('helvetica','normal');
-    doc.text(s[0],bxPos+bw/2,y+11,{align:'center'});
+    doc.setFontSize(6.5); doc.setTextColor('#888888'); doc.setFont('helvetica','normal');
+    doc.text(s[0],bxPos+bw/2,y+11.5,{align:'center'});
   });
   y+=bh+8; hr();
 
   // Transactions table
   if(txDay.length){
-    checkPage(); heading('TRANSACTIONS ('+txDay.length+')',11,'#e67e22'); gap(2);
+    checkPage(20); heading('TRANSACTIONS ('+txDay.length+')',11,'#e67e22'); gap(2);
     doc.autoTable({
-      startY:y,
-      margin:{left:margin,right:margin},
-      styles:{fillColor:'#111120',textColor:'#cccccc',fontSize:8,cellPadding:2},
-      headStyles:{fillColor:'#FF6B00',textColor:'#ffffff',fontStyle:'bold'},
+      startY:y, margin:{left:margin,right:margin},
+      styles:{fillColor:'#111120',textColor:'#cccccc',fontSize:8,cellPadding:2.5},
+      headStyles:{fillColor:'#e67e22',textColor:'#ffffff',fontStyle:'bold'},
       alternateRowStyles:{fillColor:'#1a1a28'},
-      head:[['TYPE','EMAIL / UID','AMOUNT','STATUS','TIME']],
+      head:[['TYPE','EMAIL / UID','AMOUNT (BDT)','STATUS','TIME']],
       body:txDay.map(function(t){
-        return [(t.type||'').toUpperCase(), t.email||t.uid||'—', '৳'+(t.amount||0), (t.status||'').toUpperCase(), fmtTs(t.created_at)];
+        return [(t.type||'').toUpperCase(), t.email||t.uid||'—', t.amount||0, (t.status||'').toUpperCase(), fmtTs(t.created_at)];
       })
     });
-    y=doc.lastAutoTable.finalY+6;
+    y=doc.lastAutoTable.finalY+7;
   }
 
-  // Running tournaments today
+  // Running tournaments + participants
   if(tourDay.length){
-    checkPage(); heading('NEW TOURNAMENTS CREATED ('+tourDay.length+')',11,'#9b59b6'); gap(2);
-    doc.autoTable({
-      startY:y,
-      margin:{left:margin,right:margin},
-      styles:{fillColor:'#111120',textColor:'#cccccc',fontSize:8,cellPadding:2},
-      headStyles:{fillColor:'#9b59b6',textColor:'#ffffff',fontStyle:'bold'},
-      alternateRowStyles:{fillColor:'#1a1a28'},
-      head:[['TITLE','MODE','ENTRY FEE','PLAYERS','STATUS']],
-      body:tourDay.map(function(t){
-        return [t.title||'—', t.game_mode||'—', '৳'+(t.fee||0), (t.joined||0)+'/'+(t.maxPlayers||0), (t.status||'').toUpperCase()];
-      })
+    checkPage(20); heading('NEW TOURNAMENTS CREATED ('+tourDay.length+')',11,'#9b59b6'); gap(2);
+    tourDay.forEach(function(t){
+      checkPage(20);
+      var parts=getParticipants(t.id);
+      doc.autoTable({
+        startY:y, margin:{left:margin,right:margin},
+        styles:{fillColor:'#111120',textColor:'#cccccc',fontSize:8,cellPadding:2.5},
+        headStyles:{fillColor:'#9b59b6',textColor:'#ffffff',fontStyle:'bold'},
+        alternateRowStyles:{fillColor:'#1a1a28'},
+        head:[[(t.title||'—')+'   |   '+( t.game_mode||'')+'   Entry: BDT '+(t.fee||0)+'   Players: '+(t.joined||0)+'/'+(t.maxPlayers||0),'','']],
+        body:[['','','']].slice(0,0), // header only row, then participants below
+        columnStyles:{0:{cellWidth:60},1:{cellWidth:60},2:{cellWidth:col-120}}
+      });
+      if(parts.length){
+        doc.autoTable({
+          startY:doc.lastAutoTable.finalY,
+          margin:{left:margin,right:margin},
+          styles:{fillColor:'#111120',textColor:'#cccccc',fontSize:8,cellPadding:2.5},
+          headStyles:{fillColor:'#2c1654',textColor:'#ccaaff',fontStyle:'bold'},
+          alternateRowStyles:{fillColor:'#1a1a28'},
+          head:[['#','GAME NAME / UID','WHATSAPP']],
+          body:parts.map(function(p,i){
+            return [i+1, p.name+(p.uid!=='—'?' / '+p.uid:''), p.wa];
+          })
+        });
+      }
+      y=doc.lastAutoTable.finalY+5;
     });
-    y=doc.lastAutoTable.finalY+6;
+    hr();
   }
 
-  // Closed matches today
+  // Closed matches + participants
   if(histDay.length){
-    checkPage(); heading('CLOSED MATCHES ('+histDay.length+')',11,'#1abc9c'); gap(2);
-    doc.autoTable({
-      startY:y,
-      margin:{left:margin,right:margin},
-      styles:{fillColor:'#111120',textColor:'#cccccc',fontSize:8,cellPadding:2},
-      headStyles:{fillColor:'#1abc9c',textColor:'#ffffff',fontStyle:'bold'},
-      alternateRowStyles:{fillColor:'#1a1a28'},
-      head:[['TITLE','PLAYERS','TOTAL PRIZES PAID','TIME']],
-      body:histDay.map(function(t){
-        return [t.title||'—', (t.joined||0)+'/'+(t.maxPlayers||0), '৳'+(t.totalPaid||0), fmtTs(t.closed_at)];
-      })
+    checkPage(20); heading('CLOSED MATCHES ('+histDay.length+')',11,'#1abc9c'); gap(2);
+    histDay.forEach(function(t){
+      checkPage(20);
+      var parts=getParticipants(t.original_id||t.id);
+      var winnersStr=(t.winners||[]).map(function(w,i){return ['1st','2nd','3rd'][i]+': '+w.uid+' BDT '+w.prize;}).join('   ');
+      doc.autoTable({
+        startY:y, margin:{left:margin,right:margin},
+        styles:{fillColor:'#111120',textColor:'#cccccc',fontSize:8,cellPadding:2.5},
+        headStyles:{fillColor:'#1abc9c',textColor:'#0d1f1b',fontStyle:'bold'},
+        head:[[(t.title||'—')+'   |   Prizes: BDT '+(t.totalPaid||0)+'   '+fmtTs(t.closed_at)]],
+        body:winnersStr?[[winnersStr]]:[]
+      });
+      if(parts.length){
+        doc.autoTable({
+          startY:doc.lastAutoTable.finalY,
+          margin:{left:margin,right:margin},
+          styles:{fillColor:'#111120',textColor:'#cccccc',fontSize:8,cellPadding:2.5},
+          headStyles:{fillColor:'#0d3328',textColor:'#aaffdd',fontStyle:'bold'},
+          alternateRowStyles:{fillColor:'#1a1a28'},
+          head:[['#','GAME NAME / UID','WHATSAPP']],
+          body:parts.map(function(p,i){
+            return [i+1, p.name+(p.uid!=='—'?' / '+p.uid:''), p.wa];
+          })
+        });
+      }
+      y=doc.lastAutoTable.finalY+5;
     });
-    y=doc.lastAutoTable.finalY+6;
   }
 
-  if(!txDay.length && !tourDay.length && !histDay.length){
-    gap(6); sub('No data found for this date.',10);
+  if(!txDay.length&&!tourDay.length&&!histDay.length){
+    gap(6); body('No data found for this date.',10,'#888888');
   }
 
-  // Footer
+  // Page footers
   var pages=doc.internal.getNumberOfPages();
   for(var p=1;p<=pages;p++){
     doc.setPage(p);
     doc.setFontSize(7); doc.setTextColor('#555555');
-    doc.text('Generated by FF Tournament Admin · '+new Date().toLocaleString(), margin, 292);
-    doc.text('Page '+p+' of '+pages, W-margin-10, 292);
+    doc.text('Generated by FF Tournament Admin - '+new Date().toLocaleString(), margin, 292);
+    doc.text('Page '+p+' of '+pages, W-margin-14, 292);
   }
-
   doc.save('Report_'+dateVal+'.pdf');
 };
 </script>
