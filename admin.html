@@ -843,13 +843,23 @@
     }catch(e){ return false; }
   }
 
-  window.copyText=function(txt){
-    var decoded=txt.replace(/&#39;/g,"'");
-    navigator.clipboard.writeText(decoded).then(function(){
-      toast('📋 Copied!');
+  window.copyByKey=function(cid,field){
+    var data=window.__cpData&&window.__cpData[cid];
+    if(!data||!data[field]||!data[field].length){ toast('Nothing to copy','error'); return; }
+    var txt=data[field].join('\n');
+    navigator.clipboard.writeText(txt).then(function(){
+      toast('📋 Copied '+data[field].length+' item(s)!');
     }).catch(function(){
       var ta=document.createElement('textarea');
-      ta.value=decoded; ta.style.position='fixed'; ta.style.opacity='0';
+      ta.value=txt; ta.style.position='fixed'; ta.style.opacity='0';
+      document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+      document.body.removeChild(ta); toast('📋 Copied '+data[field].length+' item(s)!');
+    });
+  };
+
+  window.copyText=function(txt){
+    navigator.clipboard.writeText(txt).then(function(){ toast('📋 Copied!'); }).catch(function(){
+      var ta=document.createElement('textarea'); ta.value=txt; ta.style.position='fixed'; ta.style.opacity='0';
       document.body.appendChild(ta); ta.select(); document.execCommand('copy');
       document.body.removeChild(ta); toast('📋 Copied!');
     });
@@ -978,16 +988,48 @@
       var ref=tx.tournamentId||tx.matchId||tx.tid||tx.tournament_id;
       return ref===refId;
     }
-    function participantInfo(tx){
+
+    // Returns an ARRAY of players — 1 for solo, multiple for squad/duo
+    function expandParticipants(tx){
       var u=usersCache[tx.uid]||{};
-      return {
-        gameName: u.game_name||u.ign||u.gameName||u.name||'—',
-        uid: u.uid_game||tx.uid_game||'—',
-        whatsapp: u.whatsapp||u.whatsapp_number||u.phone||u.phone_number||tx.whatsapp||'—',
-        paid: tx.amount||0,
-        time: fmtTime(tx.created_at)
+      // Main registrant
+      var leader={
+        gameName: u.game_name||u.ign||u.gameName||u.name||tx.game_name||tx.ign||tx.player_name||'—',
+        uid:      u.uid_game||u.game_uid||tx.uid_game||tx.game_uid||'—',
+        whatsapp: u.whatsapp||u.whatsapp_number||u.phone||u.phone_number||tx.whatsapp||tx.phone||'—',
+        paid:     tx.amount||0,
+        time:     fmtTime(tx.created_at)
       };
+      // Try common field names for additional squad/duo members stored in the transaction
+      var extras=tx.members||tx.squad||tx.players||tx.team_members||tx.teammates||[];
+      if(!Array.isArray(extras)||!extras.length) return [leader];
+      var all=[leader];
+      extras.forEach(function(m){
+        if(!m) return;
+        // member can be a string (uid) or object {uid,name,whatsapp,...}
+        if(typeof m==='string'){
+          var mu=usersCache[m]||{};
+          all.push({
+            gameName: mu.game_name||mu.ign||mu.gameName||mu.name||m,
+            uid:      mu.uid_game||mu.game_uid||m,
+            whatsapp: mu.whatsapp||mu.whatsapp_number||mu.phone||'—',
+            paid:0, time:''
+          });
+        } else {
+          var mu2=usersCache[m.uid||m.id||'']||{};
+          all.push({
+            gameName: m.game_name||m.ign||m.gameName||m.name||mu2.game_name||mu2.ign||mu2.gameName||mu2.name||m.uid||'—',
+            uid:      m.uid_game||m.game_uid||m.uid||mu2.uid_game||mu2.game_uid||'—',
+            whatsapp: m.whatsapp||m.phone||mu2.whatsapp||mu2.phone||'—',
+            paid:0, time:''
+          });
+        }
+      });
+      return all;
     }
+
+    window.__cpData={};
+
     window.renderParticipantsOverview=function(){
       var list=el('db-participants-list');
       if(!list) return;
@@ -1001,17 +1043,29 @@
       });
       matches.sort(function(a,b){ return b.sortKey-a.sortKey; });
 
+      window.__cpData={};
       var html='';
+      var matchIdx=0;
+
       matches.forEach(function(m){
-        var parts=txRowsCacheRef().filter(function(tx){ return tx.type==='entry'&&entryRefMatches(tx,m.refId); })
-          .sort(function(a,b){ var at=a.created_at&&a.created_at.seconds||0, bt=b.created_at&&b.created_at.seconds||0; return at-bt; })
-          .map(participantInfo);
+        var rawTx=txRowsCacheRef().filter(function(tx){ return tx.type==='entry'&&entryRefMatches(tx,m.refId); })
+          .sort(function(a,b){ var at=a.created_at&&a.created_at.seconds||0, bt=b.created_at&&b.created_at.seconds||0; return at-bt; });
+
+        // Expand each transaction into its player list
+        var players=[];
+        rawTx.forEach(function(tx){ expandParticipants(tx).forEach(function(p){ players.push(p); }); });
 
         if(q){
           var titleHit=m.title.toLowerCase().indexOf(q)!==-1;
-          var partHit=parts.some(function(p){ return (p.gameName+p.uid+p.whatsapp).toLowerCase().indexOf(q)!==-1; });
+          var partHit=players.some(function(p){ return (p.gameName+p.uid+p.whatsapp).toLowerCase().indexOf(q)!==-1; });
           if(!titleHit&&!partHit) return;
         }
+
+        var cid='m'+matchIdx++; // safe key — no special chars
+        window.__cpData[cid]={
+          names:  players.map(function(p){ return p.gameName!=='—'?p.gameName:p.uid; }),
+          phones: players.map(function(p){ return p.whatsapp; })
+        };
 
         html+='<div class="t-card">'
           +'<div class="t-header"><div>'
@@ -1020,22 +1074,19 @@
           +(m.game_mode?'<span class="t-badge">'+m.game_mode+'</span>':'')+'</div>'
           +'</div></div>'
           +'<div class="req-meta" style="margin-bottom:8px">'+teamLabel(m.teamType)+' · Entry ৳'+(m.fee||0)+' · '+(m.joined||0)+'/'+(m.maxPlayers||0)+' players</div>'
-          +'<div class="section-label">PARTICIPANTS ('+parts.length+')</div>';
+          +'<div class="section-label">PARTICIPANTS ('+players.length+')</div>';
 
-        if(!parts.length){
+        if(!players.length){
           html+='<div class="log-meta" style="margin-bottom:6px">No participant records found for this match.</div>';
         }else{
-          // build safe escaped lists for copy
-          var namesEsc=parts.map(function(p){return p.gameName!=='—'?p.gameName:p.uid;}).join('\n').replace(/'/g,"&#39;");
-          var waEsc=parts.map(function(p){return p.whatsapp;}).join('\n').replace(/'/g,"&#39;");
           html+='<div class="row" style="margin-bottom:10px">'
-            +'<button onclick="copyText(\''+namesEsc+'\')" style="flex:1;padding:9px;border-radius:7px;font-weight:700;font-family:Rajdhani,sans-serif;font-size:12px;letter-spacing:1px;cursor:pointer;border:1px solid var(--orange);background:transparent;color:var(--orange)">📋 COPY GAME NAMES</button>'
-            +'<button onclick="copyText(\''+waEsc+'\')" style="flex:1;padding:9px;border-radius:7px;font-weight:700;font-family:Rajdhani,sans-serif;font-size:12px;letter-spacing:1px;cursor:pointer;border:1px solid var(--green);background:transparent;color:var(--green)">📋 COPY WHATSAPP NOs</button>'
+            +'<button onclick="copyByKey(\''+cid+'\',\'names\')" style="flex:1;padding:9px;border-radius:7px;font-weight:700;font-family:Rajdhani,sans-serif;font-size:12px;letter-spacing:1px;cursor:pointer;border:1px solid var(--orange);background:transparent;color:var(--orange)">📋 COPY GAME NAMES</button>'
+            +'<button onclick="copyByKey(\''+cid+'\',\'phones\')" style="flex:1;padding:9px;border-radius:7px;font-weight:700;font-family:Rajdhani,sans-serif;font-size:12px;letter-spacing:1px;cursor:pointer;border:1px solid var(--green);background:transparent;color:var(--green)">📋 COPY WHATSAPP NOs</button>'
             +'</div>';
-          parts.forEach(function(p,i){
+          players.forEach(function(p,i){
             html+='<div class="log-entry"><div>'
               +'<div class="log-uid">#'+(i+1)+' · '+(p.gameName!=='—'?p.gameName:p.uid)+'</div>'
-              +'<div class="log-meta">UID: '+p.uid+' · WhatsApp: '+p.whatsapp+' · Paid ৳'+p.paid+' · '+p.time+'</div>'
+              +'<div class="log-meta">UID: '+p.uid+' · WhatsApp: '+p.whatsapp+(p.paid?' · Paid ৳'+p.paid:'')+( p.time?' · '+p.time:'')+'</div>'
               +'</div></div>';
           });
         }
@@ -1074,37 +1125,54 @@ window.downloadReport=async function(fmt){
     if(!ts||!ts.toDate) return false;
     var d=ts.toDate(); return d>=dayStart && d<=dayEnd;
   }
-  function fmtTs(ts){ try{ if(ts&&ts.toDate) return ts.toDate().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}); }catch(e){} return '—'; }
+  function fmtTs(ts){ try{ if(ts&&ts.toDate) return ts.toDate().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}); }catch(e){} return '-'; }
 
-  function getParticipants(refId){
-    return allTx.filter(function(tx){
+  // Expand one entry-tx into all players (leader + squad members)
+  function expandPlayers(refId){
+    var txList=allTx.filter(function(tx){
       if(tx.type!=='entry') return false;
       var ref=tx.tournamentId||tx.matchId||tx.tid||tx.tournament_id;
       return ref===refId;
-    }).map(function(tx){
-      var u=allUsers[tx.uid]||{};
-      return {
-        name: u.game_name||u.ign||u.gameName||u.name||tx.uid||'—',
-        uid:  u.uid_game||tx.uid_game||'—',
-        wa:   u.whatsapp||u.whatsapp_number||u.phone||u.phone_number||tx.whatsapp||'—'
-      };
     });
+    var out=[];
+    txList.forEach(function(tx){
+      var u=allUsers[tx.uid]||{};
+      out.push({
+        name: u.game_name||u.ign||u.gameName||u.name||tx.game_name||tx.ign||tx.player_name||tx.uid||'-',
+        uid:  u.uid_game||u.game_uid||tx.uid_game||tx.game_uid||'-',
+        wa:   u.whatsapp||u.whatsapp_number||u.phone||u.phone_number||tx.whatsapp||tx.phone||'-'
+      });
+      var extras=tx.members||tx.squad||tx.players||tx.team_members||tx.teammates||[];
+      if(Array.isArray(extras)) extras.forEach(function(m){
+        if(!m) return;
+        if(typeof m==='string'){
+          var mu=allUsers[m]||{};
+          out.push({ name:mu.game_name||mu.ign||mu.gameName||mu.name||m, uid:mu.uid_game||mu.game_uid||m, wa:mu.whatsapp||mu.phone||'-' });
+        } else {
+          var mu2=allUsers[m.uid||m.id||'']||{};
+          out.push({
+            name: m.game_name||m.ign||m.name||mu2.game_name||mu2.ign||mu2.name||m.uid||'-',
+            uid:  m.uid_game||m.game_uid||m.uid||mu2.uid_game||mu2.game_uid||'-',
+            wa:   m.whatsapp||m.phone||mu2.whatsapp||mu2.phone||'-'
+          });
+        }
+      });
+    });
+    return out;
   }
 
   var txDay   = allTx.filter(function(t){ return inDay(t.created_at); });
   var tourDay = allTours.filter(function(t){ return inDay(t.created_at); });
   var histDay = allHist.filter(function(t){ return inDay(t.closed_at); });
-
-  var deposits  = txDay.filter(function(t){return t.type==='deposit'  &&t.status==='approved';});
-  var withdraws = txDay.filter(function(t){return t.type==='withdraw' &&t.status==='approved';});
+  var deposits  = txDay.filter(function(t){return t.type==='deposit'&&t.status==='approved';});
+  var withdraws = txDay.filter(function(t){return t.type==='withdraw'&&t.status==='approved';});
   var entries   = txDay.filter(function(t){return t.type==='entry';});
   var prizes    = txDay.filter(function(t){return t.type==='prize'||t.type==='kill_prize';});
+  var totalDep  = deposits.reduce(function(s,t){return s+(t.amount||0);},0);
+  var totalWd   = withdraws.reduce(function(s,t){return s+(t.amount||0);},0);
+  var totalPrize= prizes.reduce(function(s,t){return s+(t.amount||0);},0);
 
-  var totalDep  =deposits.reduce(function(s,t){return s+(t.amount||0);},0);
-  var totalWd   =withdraws.reduce(function(s,t){return s+(t.amount||0);},0);
-  var totalPrize=prizes.reduce(function(s,t){return s+(t.amount||0);},0);
-
-  // ── CSV ──────────────────────────────────────────────────────────────────
+  // CSV
   if(fmt==='csv'){
     var rows=[['TYPE','EMAIL/UID','AMOUNT (BDT)','STATUS','REASON','TIME']];
     txDay.forEach(function(t){
@@ -1114,45 +1182,56 @@ window.downloadReport=async function(fmt){
     rows.push(['MATCH','STATUS','GAME NAME / UID','WHATSAPP','ENTRY FEE']);
     allTours.concat(allHist).forEach(function(m){
       var isHist=!!m.closed_at;
-      var parts=getParticipants(isHist?(m.original_id||m.id):m.id);
-      if(!parts.length) return;
-      parts.forEach(function(p){
-        rows.push([m.title||'—',isHist?'COMPLETED':'RUNNING',p.name+' / '+p.uid,p.wa,m.fee||0]);
+      var players=expandPlayers(isHist?(m.original_id||m.id):m.id);
+      if(!players.length) return;
+      players.forEach(function(p){
+        rows.push([m.title||'-',isHist?'COMPLETED':'RUNNING',p.name+' / '+p.uid,p.wa,m.fee||0]);
       });
     });
     var csv=rows.map(function(r){return r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"';}).join(',');}).join('\r\n');
-    var blob=new Blob([csv],{type:'text/csv'});
+    var blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
     var a=document.createElement('a'); a.href=URL.createObjectURL(blob);
     a.download='Report_'+dateVal+'.csv'; a.click();
     return;
   }
 
-  // ── PDF ──────────────────────────────────────────────────────────────────
-  var { jsPDF } = window.jspdf;
-  var doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-  var W=210, margin=14, y=20, col=W-margin*2;
+  // PDF
+  var jsPDF=window.jspdf.jsPDF;
+  var doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
 
-  function heading(txt,size,color){
+  // Try to load a Unicode font so Bengali / special-char IGNs render correctly
+  var uFont='helvetica';
+  try{
+    var fontResp=await fetch('https://cdn.jsdelivr.net/npm/@fontsource/noto-sans@5.0.1/files/noto-sans-all-400-normal.woff');
+    if(fontResp.ok){
+      var buf=await fontResp.arrayBuffer();
+      var bytes=new Uint8Array(buf); var bin='';
+      for(var bi=0;bi<bytes.length;bi++) bin+=String.fromCharCode(bytes[bi]);
+      var b64=btoa(bin);
+      doc.addFileToVFS('NotoSans.woff',b64);
+      doc.addFont('NotoSans.woff','NotoSans','normal');
+      uFont='NotoSans';
+    }
+  }catch(fe){}
+
+  var W=210,margin=14,y=20,col=W-margin*2;
+  function hd(txt,size,color){
     doc.setFontSize(size||14); doc.setTextColor(color||'#FF6B00');
     doc.setFont('helvetica','bold'); doc.text(txt,margin,y); y+=(size||14)*0.5;
-  }
-  function body(txt,size,color){
-    doc.setFontSize(size||9); doc.setTextColor(color||'#aaaaaa');
-    doc.setFont('helvetica','normal'); doc.text(txt,margin,y); y+=5;
   }
   function hr(){ doc.setDrawColor('#333333'); doc.line(margin,y,W-margin,y); y+=5; }
   function gap(n){ y+=(n||4); }
   function checkPage(need){ if(y+(need||10)>276){ doc.addPage(); y=18; } }
 
-  // Orange header bar
+  // Header
   doc.setFillColor('#FF6B00'); doc.rect(0,0,W,14,'F');
   doc.setFontSize(13); doc.setTextColor('#ffffff'); doc.setFont('helvetica','bold');
   doc.text('FREE FIRE TOURNAMENT - DAILY REPORT',margin,9);
-  doc.setFontSize(9); doc.text(label, W-margin-doc.getTextWidth(label)-2, 9);
+  doc.setFontSize(9); doc.text(label,W-margin-doc.getTextWidth(label)-2,9);
   y=22;
 
   // Summary boxes
-  heading('SUMMARY',12,'#FF6B00'); gap(2);
+  hd('SUMMARY',12,'#FF6B00'); gap(2);
   var summary=[
     ['Total Deposited','BDT '+totalDep,'#27ae60'],
     ['Total Withdrawn','BDT '+totalWd,'#e74c3c'],
@@ -1161,10 +1240,10 @@ window.downloadReport=async function(fmt){
     ['New Tournaments',tourDay.length,'#9b59b6'],
     ['Closed Matches',histDay.length,'#1abc9c'],
   ];
-  var bw=(col/3)-3, bh=13;
+  var bw=(col/3)-3,bh=13;
   summary.forEach(function(s,i){
     var bxPos=margin+(i%3)*(bw+4);
-    if(i%3===0 && i>0){ y+=bh+4; checkPage(); }
+    if(i%3===0&&i>0){ y+=bh+4; checkPage(); }
     doc.setFillColor('#1a1a28'); doc.roundedRect(bxPos,y,bw,bh,2,2,'F');
     doc.setFontSize(11); doc.setTextColor(s[2]); doc.setFont('helvetica','bold');
     doc.text(String(s[1]),bxPos+bw/2,y+7,{align:'center'});
@@ -1173,97 +1252,82 @@ window.downloadReport=async function(fmt){
   });
   y+=bh+8; hr();
 
-  // Transactions table
+  function partTable(players,sy){
+    if(!players.length) return sy;
+    doc.autoTable({
+      startY:sy, margin:{left:margin,right:margin},
+      styles:{fillColor:'#111120',textColor:'#cccccc',fontSize:8,cellPadding:2.5},
+      headStyles:{fillColor:'#2c1654',textColor:'#ccaaff',fontStyle:'bold'},
+      alternateRowStyles:{fillColor:'#1a1a28'},
+      head:[['#','GAME NAME / UID','WHATSAPP']],
+      body:players.map(function(p,i){ return [i+1, p.name+(p.uid!=='-'?' / '+p.uid:''), p.wa]; }),
+      columnStyles:{ 0:{cellWidth:8}, 1:{cellWidth:100,font:uFont}, 2:{cellWidth:col-108} }
+    });
+    return doc.lastAutoTable.finalY+5;
+  }
+
+  // Transactions
   if(txDay.length){
-    checkPage(20); heading('TRANSACTIONS ('+txDay.length+')',11,'#e67e22'); gap(2);
+    checkPage(20); hd('TRANSACTIONS ('+txDay.length+')',11,'#e67e22'); gap(2);
     doc.autoTable({
       startY:y, margin:{left:margin,right:margin},
       styles:{fillColor:'#111120',textColor:'#cccccc',fontSize:8,cellPadding:2.5},
       headStyles:{fillColor:'#e67e22',textColor:'#ffffff',fontStyle:'bold'},
       alternateRowStyles:{fillColor:'#1a1a28'},
       head:[['TYPE','EMAIL / UID','AMOUNT (BDT)','STATUS','TIME']],
-      body:txDay.map(function(t){
-        return [(t.type||'').toUpperCase(), t.email||t.uid||'—', t.amount||0, (t.status||'').toUpperCase(), fmtTs(t.created_at)];
-      })
+      body:txDay.map(function(t){ return [(t.type||'').toUpperCase(),t.email||t.uid||'-',t.amount||0,(t.status||'').toUpperCase(),fmtTs(t.created_at)]; })
     });
     y=doc.lastAutoTable.finalY+7;
   }
 
-  // Running tournaments + participants
+  // New tournaments + participants
   if(tourDay.length){
-    checkPage(20); heading('NEW TOURNAMENTS CREATED ('+tourDay.length+')',11,'#9b59b6'); gap(2);
+    checkPage(20); hd('NEW TOURNAMENTS ('+tourDay.length+')',11,'#9b59b6'); gap(2);
     tourDay.forEach(function(t){
       checkPage(20);
-      var parts=getParticipants(t.id);
+      var players=expandPlayers(t.id);
       doc.autoTable({
         startY:y, margin:{left:margin,right:margin},
         styles:{fillColor:'#111120',textColor:'#cccccc',fontSize:8,cellPadding:2.5},
         headStyles:{fillColor:'#9b59b6',textColor:'#ffffff',fontStyle:'bold'},
-        alternateRowStyles:{fillColor:'#1a1a28'},
-        head:[[(t.title||'—')+'   |   '+( t.game_mode||'')+'   Entry: BDT '+(t.fee||0)+'   Players: '+(t.joined||0)+'/'+(t.maxPlayers||0),'','']],
-        body:[['','','']].slice(0,0), // header only row, then participants below
-        columnStyles:{0:{cellWidth:60},1:{cellWidth:60},2:{cellWidth:col-120}}
+        head:[[(t.title||'-')+'   |   '+(t.game_mode||'')+'   Entry: BDT '+(t.fee||0)+'   Players: '+(t.joined||0)+'/'+(t.maxPlayers||0)]],
+        body:[]
       });
-      if(parts.length){
-        doc.autoTable({
-          startY:doc.lastAutoTable.finalY,
-          margin:{left:margin,right:margin},
-          styles:{fillColor:'#111120',textColor:'#cccccc',fontSize:8,cellPadding:2.5},
-          headStyles:{fillColor:'#2c1654',textColor:'#ccaaff',fontStyle:'bold'},
-          alternateRowStyles:{fillColor:'#1a1a28'},
-          head:[['#','GAME NAME / UID','WHATSAPP']],
-          body:parts.map(function(p,i){
-            return [i+1, p.name+(p.uid!=='—'?' / '+p.uid:''), p.wa];
-          })
-        });
-      }
-      y=doc.lastAutoTable.finalY+5;
+      y=partTable(players, doc.lastAutoTable.finalY);
     });
     hr();
   }
 
   // Closed matches + participants
   if(histDay.length){
-    checkPage(20); heading('CLOSED MATCHES ('+histDay.length+')',11,'#1abc9c'); gap(2);
+    checkPage(20); hd('CLOSED MATCHES ('+histDay.length+')',11,'#1abc9c'); gap(2);
     histDay.forEach(function(t){
       checkPage(20);
-      var parts=getParticipants(t.original_id||t.id);
-      var winnersStr=(t.winners||[]).map(function(w,i){return ['1st','2nd','3rd'][i]+': '+w.uid+' BDT '+w.prize;}).join('   ');
+      var players=expandPlayers(t.original_id||t.id);
+      var wnr=(t.winners||[]).map(function(w,i){ return ['1st','2nd','3rd'][i]+': '+w.uid+' BDT '+w.prize; }).join('  |  ');
       doc.autoTable({
         startY:y, margin:{left:margin,right:margin},
         styles:{fillColor:'#111120',textColor:'#cccccc',fontSize:8,cellPadding:2.5},
         headStyles:{fillColor:'#1abc9c',textColor:'#0d1f1b',fontStyle:'bold'},
-        head:[[(t.title||'—')+'   |   Prizes: BDT '+(t.totalPaid||0)+'   '+fmtTs(t.closed_at)]],
-        body:winnersStr?[[winnersStr]]:[]
+        head:[[(t.title||'-')+'   |   Total Prizes: BDT '+(t.totalPaid||0)+'   '+fmtTs(t.closed_at)]],
+        body:wnr?[[wnr]]:[]
       });
-      if(parts.length){
-        doc.autoTable({
-          startY:doc.lastAutoTable.finalY,
-          margin:{left:margin,right:margin},
-          styles:{fillColor:'#111120',textColor:'#cccccc',fontSize:8,cellPadding:2.5},
-          headStyles:{fillColor:'#0d3328',textColor:'#aaffdd',fontStyle:'bold'},
-          alternateRowStyles:{fillColor:'#1a1a28'},
-          head:[['#','GAME NAME / UID','WHATSAPP']],
-          body:parts.map(function(p,i){
-            return [i+1, p.name+(p.uid!=='—'?' / '+p.uid:''), p.wa];
-          })
-        });
-      }
-      y=doc.lastAutoTable.finalY+5;
+      y=partTable(players, doc.lastAutoTable.finalY);
     });
   }
 
   if(!txDay.length&&!tourDay.length&&!histDay.length){
-    gap(6); body('No data found for this date.',10,'#888888');
+    gap(6);
+    doc.setFontSize(10); doc.setTextColor('#888888'); doc.setFont('helvetica','normal');
+    doc.text('No data found for this date.',margin,y);
   }
 
-  // Page footers
   var pages=doc.internal.getNumberOfPages();
   for(var p=1;p<=pages;p++){
     doc.setPage(p);
     doc.setFontSize(7); doc.setTextColor('#555555');
-    doc.text('Generated by FF Tournament Admin - '+new Date().toLocaleString(), margin, 292);
-    doc.text('Page '+p+' of '+pages, W-margin-14, 292);
+    doc.text('Generated by FF Tournament Admin - '+new Date().toLocaleString(),margin,292);
+    doc.text('Page '+p+' of '+pages,W-margin-14,292);
   }
   doc.save('Report_'+dateVal+'.pdf');
 };
