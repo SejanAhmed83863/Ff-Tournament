@@ -525,7 +525,8 @@
         var t=tMap[r.tournament_id]||null;
         var matchEnded=!t;
         var tTime=t&&t.time?new Date(t.time):null;
-        var upcoming=!matchEnded&&tTime&&tTime>now&&t.status==='open';
+        // Show upcoming info for any active match (up to 1h after start time)
+        var upcoming=!matchEnded&&tTime&&(tTime.getTime()-now.getTime())>-3600000;
         var date=r.created_at&&r.created_at.toDate?r.created_at.toDate().toLocaleDateString('en-GB'):'—';
         var tName=r.tournament_name||'';
         var prizeData=prizeMap[r.tournament_id]||prizeByName[tName]||null;
@@ -536,24 +537,36 @@
         // Upcoming block
         var upBlock='';
         if(upcoming){
-          var diff=tTime-now,h=Math.floor(diff/3600000),m=Math.floor(diff%3600000/60000);
-          var cd=h>0?h+'h '+m+'m':m>0?m+' min':'Starting soon!';
-          var mode=t.teamType==1?'Solo':t.teamType==2?'Duo':'Squad';
+          var diff=tTime.getTime()-now.getTime();
+          var cdTxt;
+          if(diff<=0){cdTxt='Starting now!';}
+          else{var hh=Math.floor(diff/3600000),mm=Math.floor(diff%3600000/60000);cdTxt=hh>0?hh+'h '+mm+'m':mm>0?mm+' min':'Starting soon!';}
+          var modeStr=t.teamType==1?'Solo':t.teamType==2?'Duo':'Squad';
           var timeStr=tTime.toLocaleString('en-US',{weekday:'short',day:'2-digit',month:'short',hour:'numeric',minute:'2-digit',hour12:true});
           var ri=t.roomID?'<div class="ui-item"><span class="ui-label">🔑 Room ID</span><span class="ui-val">'+t.roomID+'</span></div>':'';
           var rp=t.roomPass?'<div class="ui-item"><span class="ui-label">🔒 Password</span><span class="ui-val">'+t.roomPass+'</span></div>':'';
-          upBlock='<div class="countdown-chip"><span class="cdot"></span>Starts in '+cd+'</div>'
-            +'<div class="upcoming-info-grid"><div class="ui-item"><span class="ui-label">📅 Time</span><span class="ui-val">'+timeStr+'</span></div>'
-            +'<div class="ui-item"><span class="ui-label">Mode</span><span class="ui-val">'+mode+'</span></div>'
-            +'<div class="ui-item"><span class="ui-label">🏆 1st</span><span class="ui-val">৳'+(t.prize1||0)+'</span></div>'+ri+rp+'</div>';
+          var pkUpItem=t.per_kill&&t.per_kill>0?'<div class="ui-item"><span class="ui-label">⚔️ Per Kill</span><span class="ui-val">৳'+t.per_kill+'</span></div>':'';
+          upBlock='<div class="countdown-chip"><span class="cdot"></span>'+cdTxt+'</div>'
+            +'<div class="upcoming-info-grid">'
+            +'<div class="ui-item"><span class="ui-label">📅 Time</span><span class="ui-val">'+timeStr+'</span></div>'
+            +'<div class="ui-item"><span class="ui-label">Mode</span><span class="ui-val">'+modeStr+'</span></div>'
+            +'<div class="ui-item"><span class="ui-label">🏆 1st Prize</span><span class="ui-val">৳'+(t.prize1||0)+'</span></div>'
+            +pkUpItem+ri+rp+'</div>';
         }
 
         // Winner / prize block
         var prizeBlock='';
         if(prizeData){
-          // position field may not exist — parse from reason "Title - 🥇 1st"
-          var posLabel=prizeData.position||(prizeData.reason&&prizeData.reason.indexOf(' - ')>-1?prizeData.reason.split(' - ').slice(1).join(' - ').trim():'Winner');
-          var posColor=posLabel.indexOf('1st')>-1?'var(--gold)':posLabel.indexOf('2nd')>-1?'#C0C0C0':'#CD7F32';
+          // Admin stores position in reason as "Match Title - 🥇 1st"
+          // Extract the part after " - " as the position label
+          var rawReason=prizeData.reason||'';
+          var dashIdx=rawReason.indexOf(' - ');
+          var posLabel=prizeData.position||(dashIdx>-1?rawReason.slice(dashIdx+3).trim():'');
+          // Normalise: strip trailing " Place" if already there, then decide color
+          var posForColor=(posLabel||'').toLowerCase();
+          var posColor=posForColor.indexOf('1st')>-1?'var(--gold)':posForColor.indexOf('2nd')>-1?'#C0C0C0':'#CD7F32';
+          // Display label — already contains emoji + ordinal e.g. "🥇 1st"
+          var posDisplay=posLabel||'Winner';
           // Kill bonus line — from kill_bonus transaction if exists, else from prize data
           var killLine='';
           if(killBonusData&&killBonusData.amount>0){
@@ -566,7 +579,7 @@
           var totalPrize=prizeData.amount+(killBonusData?killBonusData.amount:0);
           prizeBlock='<div class="winner-block">'
             +'<div><div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px">🏆 YOU WON</div>'
-            +'<div class="winner-pos" style="color:'+posColor+'">'+(posLabel||'Winner')+' Place</div>'+killLine+'</div>'
+            +'<div class="winner-pos" style="color:'+posColor+'">'+posDisplay+'</div>'+killLine+'</div>'
             +'<div class="winner-prize">+৳'+totalPrize+'</div></div>';
         }
 
@@ -612,7 +625,9 @@
         // Badge
         var itemCls,badge,badgeTxt;
         var hasWon=prizeData||killBonusData;
-        var badgePosLabel=prizeData?(prizeData.position||(prizeData.reason&&prizeData.reason.indexOf(' - ')>-1?prizeData.reason.split(' - ').slice(1).join(' - ').trim():'Winner')):'';
+        var badgeReason=prizeData?prizeData.reason||'':'';
+        var badgeDashIdx=badgeReason.indexOf(' - ');
+        var badgePosLabel=prizeData?(prizeData.position||(badgeDashIdx>-1?badgeReason.slice(badgeDashIdx+3).trim():'Winner')):'';
         if(hasWon&&prizeData){itemCls='history-item won';badge='won-badge';badgeTxt='🏆 '+badgePosLabel;}
         else if(hasWon){itemCls='history-item won';badge='won-badge';badgeTxt='⚔️ Kill Bonus';}
         else if(matchEnded){itemCls='history-item';badge='played-badge';badgeTxt='✅ Ended';}
