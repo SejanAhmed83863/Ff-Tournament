@@ -369,6 +369,18 @@
       <div id="db-users-list"></div>
     </div>
   </div>
+
+  <!-- DOWNLOAD REPORT -->
+  <div class="card" style="margin-top:14px">
+    <div class="card-title"><div class="card-title-bar" style="background:var(--orange)"></div><span style="color:var(--orange)">📥 DOWNLOAD DAILY REPORT</span></div>
+    <p class="field-hint">Generate and download a PDF report of tournaments and transactions for any date.</p>
+    <label class="fld-label">Select Date</label>
+    <input type="date" id="report-date" style="margin-bottom:10px">
+    <div class="row" style="margin-bottom:0">
+      <button class="btn-main" style="background:linear-gradient(90deg,#e67e22,#c0392b)" onclick="downloadReport('pdf')">⬇ DOWNLOAD PDF</button>
+      <button class="btn-main" style="background:linear-gradient(90deg,#27ae60,#1a7a44)" onclick="downloadReport('csv')">⬇ DOWNLOAD CSV</button>
+    </div>
+  </div>
 </div><!-- end database -->
 
 <script type="module">
@@ -847,6 +859,7 @@
       snap.forEach(function(d){ rows.push(Object.assign({id:d.id},d.data())); totalPaid+=d.data().totalPaid||0; });
       rows.sort(function(a,b){ var at=a.closed_at&&a.closed_at.seconds||0, bt=b.closed_at&&b.closed_at.seconds||0; return bt-at; });
       historyCache=rows;
+      window.__adminHistCache=rows;
       el('db-hist-count').textContent=rows.length;
       el('db-hist-paid').textContent='৳'+totalPaid;
       var list=el('db-history-list');
@@ -874,6 +887,7 @@
       var rows=[];
       snap.forEach(function(d){ rows.push(Object.assign({id:d.id},d.data())); });
       runningCache=rows;
+      window.__adminTourCache=rows;
       renderParticipantsOverview();
     });
 
@@ -904,6 +918,7 @@
       snap.forEach(function(d){ rows.push(Object.assign({id:d.id},d.data())); });
       rows.sort(function(a,b){ var at=a.created_at&&a.created_at.seconds||0, bt=b.created_at&&b.created_at.seconds||0; return bt-at; });
       txRowsCache=rows;
+      window.__adminTxCache=rows;
       recomputeTxStats();
       var list=el('db-transactions-list');
       if(!rows.length){list.innerHTML='<div class="empty-state"><div class="tick">∅</div><div>NO TRANSACTIONS YET</div></div>';}
@@ -1013,6 +1028,180 @@
     };
     function txRowsCacheRef(){ return txRowsCache; }
   }
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script>
+// Set today's date as default
+(function(){
+  var d=document.getElementById('report-date');
+  if(d) d.value=new Date().toISOString().slice(0,10);
+})();
+
+window.downloadReport=async function(fmt){
+  var dateVal=document.getElementById('report-date').value;
+  if(!dateVal){ alert('Please select a date first.'); return; }
+  var sel=new Date(dateVal);
+  var dayStart=new Date(sel.getFullYear(),sel.getMonth(),sel.getDate(),0,0,0);
+  var dayEnd  =new Date(sel.getFullYear(),sel.getMonth(),sel.getDate(),23,59,59);
+  var label=sel.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+
+  // Grab all cached data from module scope via exposed window vars
+  var allTx    = window.__adminTxCache    || [];
+  var allTours = window.__adminTourCache  || [];
+  var allHist  = window.__adminHistCache  || [];
+
+  function inDay(ts){
+    if(!ts||!ts.toDate) return false;
+    var d=ts.toDate(); return d>=dayStart && d<=dayEnd;
+  }
+
+  var txDay   = allTx.filter(function(t){ return inDay(t.created_at); });
+  var tourDay = allTours.filter(function(t){ return inDay(t.created_at); });
+  var histDay = allHist.filter(function(t){ return inDay(t.closed_at); });
+
+  var deposits  = txDay.filter(function(t){return t.type==='deposit'  &&t.status==='approved';});
+  var withdraws = txDay.filter(function(t){return t.type==='withdraw' &&t.status==='approved';});
+  var entries   = txDay.filter(function(t){return t.type==='entry';});
+  var prizes    = txDay.filter(function(t){return t.type==='prize'||t.type==='kill_prize';});
+  var refunds   = txDay.filter(function(t){return t.type==='refund';});
+
+  var totalDep =deposits.reduce(function(s,t){return s+(t.amount||0);},0);
+  var totalWd  =withdraws.reduce(function(s,t){return s+(t.amount||0);},0);
+  var totalPrize=prizes.reduce(function(s,t){return s+(t.amount||0);},0);
+
+  function fmtTs(ts){ try{ if(ts&&ts.toDate) return ts.toDate().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}); }catch(e){} return '—'; }
+
+  if(fmt==='csv'){
+    var rows=[['TYPE','EMAIL/UID','AMOUNT','STATUS','REASON','TIME']];
+    txDay.forEach(function(t){
+      rows.push([t.type||'',t.email||t.uid||'',t.amount||0,t.status||'',t.reason||'',fmtTs(t.created_at)]);
+    });
+    var csv=rows.map(function(r){return r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"';}).join(',');}).join('\r\n');
+    var blob=new Blob([csv],{type:'text/csv'});
+    var a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+    a.download='Report_'+dateVal+'.csv'; a.click();
+    return;
+  }
+
+  // ── PDF ──────────────────────────────────────────────────────────────────
+  var { jsPDF } = window.jspdf;
+  var doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  var W=210, margin=14, y=20, col=W-margin*2;
+
+  function heading(txt,size,color){
+    doc.setFontSize(size||14);
+    doc.setTextColor(color||'#FF6B00');
+    doc.setFont('helvetica','bold');
+    doc.text(txt,margin,y); y+=size?(size*0.5):7;
+  }
+  function sub(txt,size){
+    doc.setFontSize(size||9);
+    doc.setTextColor('#aaaaaa');
+    doc.setFont('helvetica','normal');
+    doc.text(txt,margin,y); y+=5;
+  }
+  function hr(){ doc.setDrawColor('#333333'); doc.line(margin,y,W-margin,y); y+=4; }
+  function gap(n){ y+=(n||4); }
+  function checkPage(){ if(y>270){ doc.addPage(); y=18; } }
+
+  // Header bar
+  doc.setFillColor('#FF6B00');
+  doc.rect(0,0,W,14,'F');
+  doc.setFontSize(13); doc.setTextColor('#ffffff'); doc.setFont('helvetica','bold');
+  doc.text('FREE FIRE TOURNAMENT — DAILY REPORT',margin,9);
+  doc.setFontSize(9); doc.setTextColor('#ffffff');
+  doc.text(label, W-margin-doc.getTextWidth(label)-2, 9);
+  y=22;
+
+  // Summary boxes
+  heading('SUMMARY',12,'#FF6B00'); gap(2);
+  var summary=[
+    ['Total Deposited','৳'+totalDep,'#27ae60'],
+    ['Total Withdrawn','৳'+totalWd,'#e74c3c'],
+    ['Prizes Paid','৳'+totalPrize,'#f39c12'],
+    ['Entry Transactions',entries.length,'#3498db'],
+    ['New Tournaments',tourDay.length,'#9b59b6'],
+    ['Closed Matches',histDay.length,'#1abc9c'],
+  ];
+  var bx=margin, bw=(col/3)-3, bh=12;
+  summary.forEach(function(s,i){
+    var bxPos=margin+(i%3)*(bw+4);
+    if(i%3===0 && i>0){ y+=bh+4; checkPage(); }
+    doc.setFillColor('#1a1a28'); doc.roundedRect(bxPos,y,bw,bh,2,2,'F');
+    doc.setFontSize(13); doc.setTextColor(s[2]); doc.setFont('helvetica','bold');
+    doc.text(String(s[1]),bxPos+bw/2,y+7,{align:'center'});
+    doc.setFontSize(7); doc.setTextColor('#888888'); doc.setFont('helvetica','normal');
+    doc.text(s[0],bxPos+bw/2,y+11,{align:'center'});
+  });
+  y+=bh+8; hr();
+
+  // Transactions table
+  if(txDay.length){
+    checkPage(); heading('TRANSACTIONS ('+txDay.length+')',11,'#e67e22'); gap(2);
+    doc.autoTable({
+      startY:y,
+      margin:{left:margin,right:margin},
+      styles:{fillColor:'#111120',textColor:'#cccccc',fontSize:8,cellPadding:2},
+      headStyles:{fillColor:'#FF6B00',textColor:'#ffffff',fontStyle:'bold'},
+      alternateRowStyles:{fillColor:'#1a1a28'},
+      head:[['TYPE','EMAIL / UID','AMOUNT','STATUS','TIME']],
+      body:txDay.map(function(t){
+        return [(t.type||'').toUpperCase(), t.email||t.uid||'—', '৳'+(t.amount||0), (t.status||'').toUpperCase(), fmtTs(t.created_at)];
+      })
+    });
+    y=doc.lastAutoTable.finalY+6;
+  }
+
+  // Running tournaments today
+  if(tourDay.length){
+    checkPage(); heading('NEW TOURNAMENTS CREATED ('+tourDay.length+')',11,'#9b59b6'); gap(2);
+    doc.autoTable({
+      startY:y,
+      margin:{left:margin,right:margin},
+      styles:{fillColor:'#111120',textColor:'#cccccc',fontSize:8,cellPadding:2},
+      headStyles:{fillColor:'#9b59b6',textColor:'#ffffff',fontStyle:'bold'},
+      alternateRowStyles:{fillColor:'#1a1a28'},
+      head:[['TITLE','MODE','ENTRY FEE','PLAYERS','STATUS']],
+      body:tourDay.map(function(t){
+        return [t.title||'—', t.game_mode||'—', '৳'+(t.fee||0), (t.joined||0)+'/'+(t.maxPlayers||0), (t.status||'').toUpperCase()];
+      })
+    });
+    y=doc.lastAutoTable.finalY+6;
+  }
+
+  // Closed matches today
+  if(histDay.length){
+    checkPage(); heading('CLOSED MATCHES ('+histDay.length+')',11,'#1abc9c'); gap(2);
+    doc.autoTable({
+      startY:y,
+      margin:{left:margin,right:margin},
+      styles:{fillColor:'#111120',textColor:'#cccccc',fontSize:8,cellPadding:2},
+      headStyles:{fillColor:'#1abc9c',textColor:'#ffffff',fontStyle:'bold'},
+      alternateRowStyles:{fillColor:'#1a1a28'},
+      head:[['TITLE','PLAYERS','TOTAL PRIZES PAID','TIME']],
+      body:histDay.map(function(t){
+        return [t.title||'—', (t.joined||0)+'/'+(t.maxPlayers||0), '৳'+(t.totalPaid||0), fmtTs(t.closed_at)];
+      })
+    });
+    y=doc.lastAutoTable.finalY+6;
+  }
+
+  if(!txDay.length && !tourDay.length && !histDay.length){
+    gap(6); sub('No data found for this date.',10);
+  }
+
+  // Footer
+  var pages=doc.internal.getNumberOfPages();
+  for(var p=1;p<=pages;p++){
+    doc.setPage(p);
+    doc.setFontSize(7); doc.setTextColor('#555555');
+    doc.text('Generated by FF Tournament Admin · '+new Date().toLocaleString(), margin, 292);
+    doc.text('Page '+p+' of '+pages, W-margin-10, 292);
+  }
+
+  doc.save('Report_'+dateVal+'.pdf');
+};
 </script>
 </body>
 </html>
