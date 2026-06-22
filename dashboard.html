@@ -525,8 +525,7 @@
         var t=tMap[r.tournament_id]||null;
         var matchEnded=!t;
         var tTime=t&&t.time?new Date(t.time):null;
-        // Show upcoming info for any active match (up to 1h after start time)
-        var upcoming=!matchEnded&&tTime&&(tTime.getTime()-now.getTime())>-3600000;
+        var upcoming=!matchEnded&&tTime&&tTime>now;
         var date=r.created_at&&r.created_at.toDate?r.created_at.toDate().toLocaleDateString('en-GB'):'—';
         var tName=r.tournament_name||'';
         var prizeData=prizeMap[r.tournament_id]||prizeByName[tName]||null;
@@ -537,21 +536,19 @@
         // Upcoming block
         var upBlock='';
         if(upcoming){
-          var diff=tTime.getTime()-now.getTime();
-          var cdTxt;
-          if(diff<=0){cdTxt='Starting now!';}
-          else{var hh=Math.floor(diff/3600000),mm=Math.floor(diff%3600000/60000);cdTxt=hh>0?hh+'h '+mm+'m':mm>0?mm+' min':'Starting soon!';}
-          var modeStr=t.teamType==1?'Solo':t.teamType==2?'Duo':'Squad';
+          var diff=tTime-now,h=Math.floor(diff/3600000),mn=Math.floor(diff%3600000/60000);
+          var cd=h>0?h+'h '+mn+'m':mn>0?mn+' min':'Starting soon!';
+          var mode=t.teamType==1?'Solo':t.teamType==2?'Duo':'Squad';
           var timeStr=tTime.toLocaleString('en-US',{weekday:'short',day:'2-digit',month:'short',hour:'numeric',minute:'2-digit',hour12:true});
           var ri=t.roomID?'<div class="ui-item"><span class="ui-label">🔑 Room ID</span><span class="ui-val">'+t.roomID+'</span></div>':'';
           var rp=t.roomPass?'<div class="ui-item"><span class="ui-label">🔒 Password</span><span class="ui-val">'+t.roomPass+'</span></div>':'';
-          var pkUpItem=t.per_kill&&t.per_kill>0?'<div class="ui-item"><span class="ui-label">⚔️ Per Kill</span><span class="ui-val">৳'+t.per_kill+'</span></div>':'';
-          upBlock='<div class="countdown-chip"><span class="cdot"></span>'+cdTxt+'</div>'
+          var pkUp=t.per_kill&&t.per_kill>0?'<div class="ui-item"><span class="ui-label">⚔️ Per Kill</span><span class="ui-val">৳'+t.per_kill+'</span></div>':'';
+          upBlock='<div class="countdown-chip"><span class="cdot"></span>Starts in '+cd+'</div>'
             +'<div class="upcoming-info-grid">'
             +'<div class="ui-item"><span class="ui-label">📅 Time</span><span class="ui-val">'+timeStr+'</span></div>'
-            +'<div class="ui-item"><span class="ui-label">Mode</span><span class="ui-val">'+modeStr+'</span></div>'
-            +'<div class="ui-item"><span class="ui-label">🏆 1st Prize</span><span class="ui-val">৳'+(t.prize1||0)+'</span></div>'
-            +pkUpItem+ri+rp+'</div>';
+            +'<div class="ui-item"><span class="ui-label">Mode</span><span class="ui-val">'+mode+'</span></div>'
+            +'<div class="ui-item"><span class="ui-label">🏆 1st</span><span class="ui-val">৳'+(t.prize1||0)+'</span></div>'
+            +pkUp+ri+rp+'</div>';
         }
 
         // Winner / prize block
