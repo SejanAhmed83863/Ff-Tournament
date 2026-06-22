@@ -960,8 +960,15 @@
     // All users
     onSnapshot(collection(db,'users'), function(snap){
       var rows=[]; var totalBal=0; usersCache={};
-      snap.forEach(function(d){ var u=Object.assign({id:d.id},d.data()); rows.push(u); totalBal+=u.balance||0; usersCache[d.id]=u; });
+      var gUidMap={};
+      snap.forEach(function(d){
+        var u=Object.assign({id:d.id},d.data()); rows.push(u); totalBal+=u.balance||0;
+        usersCache[d.id]=u;
+        var gid=u.uid_game||u.game_uid||u.gameUid||'';
+        if(gid) gUidMap[gid]=u;
+      });
       window.__adminUsersCache=usersCache;
+      window.__adminGameUidMap=gUidMap;
       el('db-user-count').textContent=rows.length;
       el('db-user-balance').textContent='৳'+totalBal;
       var list=el('db-users-list');
@@ -989,46 +996,71 @@
       return ref===refId;
     }
 
-    // Returns an ARRAY of players — 1 for solo, multiple for squad/duo
-    function expandParticipants(tx){
-      var u=usersCache[tx.uid]||{};
-      // Main registrant
-      var leader={
-        gameName: u.game_name||u.ign||u.gameName||u.name||tx.game_name||tx.ign||tx.player_name||'—',
-        uid:      u.uid_game||u.game_uid||tx.uid_game||tx.game_uid||'—',
-        whatsapp: u.whatsapp||u.whatsapp_number||u.phone||u.phone_number||tx.whatsapp||tx.phone||'—',
-        paid:     tx.amount||0,
-        time:     fmtTime(tx.created_at)
+    // Look up a user by Firebase UID first, then by game UID as fallback
+    function findUser(uid){
+      if(!uid) return {};
+      return usersCache[uid] || window.__adminGameUidMap[uid] || {};
+    }
+
+    // Extract one player's display info from any object (user doc, member object, or raw string)
+    function playerFromObj(obj, fbUid){
+      var u = fbUid ? findUser(fbUid) : {};
+      // obj can be the transaction itself, a member sub-object, or a user doc
+      var combined = Object.assign({}, u, obj); // obj fields override user fields where present
+      return {
+        gameName: combined.game_name||combined.ign||combined.gameName||combined.player_name||combined.name||fbUid||'—',
+        uid:      combined.uid_game||combined.game_uid||combined.gameUid||combined.playerUid||'—',
+        whatsapp: combined.whatsapp||combined.whatsapp_number||combined.phone||combined.phone_number||'—',
       };
-      // Try common field names for additional squad/duo members stored in the transaction
-      var extras=tx.members||tx.squad||tx.players||tx.team_members||tx.teammates||[];
+    }
+
+    // Returns [{gameName,uid,whatsapp,teamName,paid,time,_raw}] — one entry per player
+    function expandParticipants(tx){
+      var u = findUser(tx.uid);
+      var teamName = tx.team_name||tx.teamName||tx.clan||tx.group_name||'';
+      var paid = tx.amount||0;
+      var time = fmtTime(tx.created_at);
+
+      var leader = Object.assign(playerFromObj(tx, tx.uid), {teamName:teamName, paid:paid, time:time, _raw:tx});
+
+      // Try every common array field name for squad/duo members
+      var extras = tx.members||tx.squad||tx.players||tx.team_members||tx.teammates||
+                   tx.member_list||tx.memberList||tx.member_uids||tx.memberUids||[];
       if(!Array.isArray(extras)||!extras.length) return [leader];
+
       var all=[leader];
       extras.forEach(function(m){
         if(!m) return;
-        // member can be a string (uid) or object {uid,name,whatsapp,...}
+        var p;
         if(typeof m==='string'){
-          var mu=usersCache[m]||{};
-          all.push({
-            gameName: mu.game_name||mu.ign||mu.gameName||mu.name||m,
-            uid:      mu.uid_game||mu.game_uid||m,
-            whatsapp: mu.whatsapp||mu.whatsapp_number||mu.phone||'—',
-            paid:0, time:''
-          });
+          // Could be Firebase UID or game UID — try both
+          var mu=findUser(m)||{};
+          p = Object.assign(playerFromObj(mu, m), {teamName:teamName, paid:0, time:''});
         } else {
-          var mu2=usersCache[m.uid||m.id||'']||{};
-          all.push({
-            gameName: m.game_name||m.ign||m.gameName||m.name||mu2.game_name||mu2.ign||mu2.gameName||mu2.name||m.uid||'—',
-            uid:      m.uid_game||m.game_uid||m.uid||mu2.uid_game||mu2.game_uid||'—',
-            whatsapp: m.whatsapp||m.phone||mu2.whatsapp||mu2.phone||'—',
-            paid:0, time:''
-          });
+          // Object: could have uid (Firebase) or uid_game/game_uid
+          var fbId = m.uid||m.firebase_uid||m.user_id||m.userId||'';
+          p = Object.assign(playerFromObj(m, fbId), {teamName:teamName, paid:0, time:''});
         }
+        all.push(p);
       });
       return all;
     }
 
     window.__cpData={};
+
+    // Show raw Firestore fields of one entry transaction to help diagnose field naming
+    window.showRawTx=function(refId){
+      var tx=txRowsCacheRef().find(function(t){ return t.type==='entry'&&entryRefMatches(t,refId); });
+      if(!tx){ alert('No entry transaction found for this match yet.'); return; }
+      var keys=Object.keys(tx).filter(function(k){return k!=='_raw';});
+      var msg='Entry transaction fields:\n\n'+keys.map(function(k){
+        var v=tx[k];
+        if(v&&v.toDate) v='[Timestamp]';
+        else if(typeof v==='object') v=JSON.stringify(v).slice(0,120);
+        return k+': '+v;
+      }).join('\n');
+      alert(msg);
+    };
 
     window.renderParticipantsOverview=function(){
       var list=el('db-participants-list');
@@ -1051,19 +1083,18 @@
         var rawTx=txRowsCacheRef().filter(function(tx){ return tx.type==='entry'&&entryRefMatches(tx,m.refId); })
           .sort(function(a,b){ var at=a.created_at&&a.created_at.seconds||0, bt=b.created_at&&b.created_at.seconds||0; return at-bt; });
 
-        // Expand each transaction into its player list
         var players=[];
         rawTx.forEach(function(tx){ expandParticipants(tx).forEach(function(p){ players.push(p); }); });
 
         if(q){
           var titleHit=m.title.toLowerCase().indexOf(q)!==-1;
-          var partHit=players.some(function(p){ return (p.gameName+p.uid+p.whatsapp).toLowerCase().indexOf(q)!==-1; });
+          var partHit=players.some(function(p){ return (p.gameName+p.uid+p.whatsapp+p.teamName).toLowerCase().indexOf(q)!==-1; });
           if(!titleHit&&!partHit) return;
         }
 
-        var cid='m'+matchIdx++; // safe key — no special chars
+        var cid='m'+matchIdx++;
         window.__cpData[cid]={
-          names:  players.map(function(p){ return p.gameName!=='—'?p.gameName:p.uid; }),
+          names:  players.map(function(p){ return (p.gameName!=='—'?p.gameName:p.uid)+(p.teamName?' ('+p.teamName+')':''); }),
           phones: players.map(function(p){ return p.whatsapp; })
         };
 
@@ -1077,18 +1108,27 @@
           +'<div class="section-label">PARTICIPANTS ('+players.length+')</div>';
 
         if(!players.length){
-          html+='<div class="log-meta" style="margin-bottom:6px">No participant records found for this match.</div>';
+          html+='<div class="log-meta" style="margin-bottom:6px">No participant records found.'
+            +' <span style="color:var(--orange);cursor:pointer;text-decoration:underline" onclick="showRawTx(\''+m.refId+'\')">🔍 Check raw transaction fields</span></div>';
         }else{
           html+='<div class="row" style="margin-bottom:10px">'
             +'<button onclick="copyByKey(\''+cid+'\',\'names\')" style="flex:1;padding:9px;border-radius:7px;font-weight:700;font-family:Rajdhani,sans-serif;font-size:12px;letter-spacing:1px;cursor:pointer;border:1px solid var(--orange);background:transparent;color:var(--orange)">📋 COPY GAME NAMES</button>'
             +'<button onclick="copyByKey(\''+cid+'\',\'phones\')" style="flex:1;padding:9px;border-radius:7px;font-weight:700;font-family:Rajdhani,sans-serif;font-size:12px;letter-spacing:1px;cursor:pointer;border:1px solid var(--green);background:transparent;color:var(--green)">📋 COPY WHATSAPP NOs</button>'
             +'</div>';
+
+          // Group by team name if present
+          var lastTeam='';
           players.forEach(function(p,i){
+            if(p.teamName&&p.teamName!==lastTeam){
+              lastTeam=p.teamName;
+              html+='<div class="section-label" style="color:var(--gold);font-size:11px;margin:6px 0 4px">🏷 TEAM: '+p.teamName+'</div>';
+            }
             html+='<div class="log-entry"><div>'
               +'<div class="log-uid">#'+(i+1)+' · '+(p.gameName!=='—'?p.gameName:p.uid)+'</div>'
-              +'<div class="log-meta">UID: '+p.uid+' · WhatsApp: '+p.whatsapp+(p.paid?' · Paid ৳'+p.paid:'')+( p.time?' · '+p.time:'')+'</div>'
+              +'<div class="log-meta">UID: '+p.uid+' · WhatsApp: '+p.whatsapp+(p.paid?' · Paid ৳'+p.paid:'')+(p.time?' · '+p.time:'')+'</div>'
               +'</div></div>';
           });
+          html+='<div style="margin-top:6px;text-align:right"><span style="color:var(--muted);font-size:11px;cursor:pointer" onclick="showRawTx(\''+m.refId+'\')">🔍 Raw fields</span></div>';
         }
         html+='</div>';
       });
@@ -1100,15 +1140,45 @@
     function txRowsCacheRef(){ return txRowsCache; }
   }
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <script>
 (function(){
   var d=document.getElementById('report-date');
   if(d) d.value=new Date().toISOString().slice(0,10);
 })();
 
-window.downloadReport=async function(fmt){
+// ── helpers shared between PDF and CSV ──────────────────────────────────────
+function _expandPlayers(refId, allTx, allUsers, gUidMap){
+  var txList=allTx.filter(function(tx){
+    if(tx.type!=='entry') return false;
+    var ref=tx.tournamentId||tx.matchId||tx.tid||tx.tournament_id;
+    return ref===refId;
+  });
+  function findU(id){ return id?(allUsers[id]||gUidMap[id]||{}):{} }
+  function extract(obj, fbId){
+    var u=findU(fbId);
+    var c=Object.assign({},u,obj);
+    return {
+      name: c.game_name||c.ign||c.gameName||c.player_name||c.name||fbId||'—',
+      uid:  c.uid_game||c.game_uid||c.gameUid||c.playerUid||'—',
+      wa:   c.whatsapp||c.whatsapp_number||c.phone||c.phone_number||'—',
+      team: c.team_name||c.teamName||c.clan||c.group_name||''
+    };
+  }
+  var out=[];
+  txList.forEach(function(tx){
+    out.push(Object.assign(extract(tx,tx.uid),{paid:tx.amount||0}));
+    var extras=tx.members||tx.squad||tx.players||tx.team_members||tx.teammates||
+               tx.member_list||tx.memberList||tx.member_uids||tx.memberUids||[];
+    if(Array.isArray(extras)) extras.forEach(function(m){
+      if(!m) return;
+      if(typeof m==='string') out.push(extract(findU(m),m));
+      else out.push(extract(m, m.uid||m.firebase_uid||m.user_id||m.userId||''));
+    });
+  });
+  return out;
+}
+
+window.downloadReport=function(fmt){
   var dateVal=document.getElementById('report-date').value;
   if(!dateVal){ alert('Please select a date first.'); return; }
   var sel=new Date(dateVal);
@@ -1120,72 +1190,34 @@ window.downloadReport=async function(fmt){
   var allTours = window.__adminTourCache  || [];
   var allHist  = window.__adminHistCache  || [];
   var allUsers = window.__adminUsersCache || {};
+  var gUidMap  = window.__adminGameUidMap || {};
 
   function inDay(ts){
     if(!ts||!ts.toDate) return false;
-    var d=ts.toDate(); return d>=dayStart && d<=dayEnd;
+    var d=ts.toDate(); return d>=dayStart&&d<=dayEnd;
   }
   function fmtTs(ts){ try{ if(ts&&ts.toDate) return ts.toDate().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}); }catch(e){} return '-'; }
-
-  // Expand one entry-tx into all players (leader + squad members)
-  function expandPlayers(refId){
-    var txList=allTx.filter(function(tx){
-      if(tx.type!=='entry') return false;
-      var ref=tx.tournamentId||tx.matchId||tx.tid||tx.tournament_id;
-      return ref===refId;
-    });
-    var out=[];
-    txList.forEach(function(tx){
-      var u=allUsers[tx.uid]||{};
-      out.push({
-        name: u.game_name||u.ign||u.gameName||u.name||tx.game_name||tx.ign||tx.player_name||tx.uid||'-',
-        uid:  u.uid_game||u.game_uid||tx.uid_game||tx.game_uid||'-',
-        wa:   u.whatsapp||u.whatsapp_number||u.phone||u.phone_number||tx.whatsapp||tx.phone||'-'
-      });
-      var extras=tx.members||tx.squad||tx.players||tx.team_members||tx.teammates||[];
-      if(Array.isArray(extras)) extras.forEach(function(m){
-        if(!m) return;
-        if(typeof m==='string'){
-          var mu=allUsers[m]||{};
-          out.push({ name:mu.game_name||mu.ign||mu.gameName||mu.name||m, uid:mu.uid_game||mu.game_uid||m, wa:mu.whatsapp||mu.phone||'-' });
-        } else {
-          var mu2=allUsers[m.uid||m.id||'']||{};
-          out.push({
-            name: m.game_name||m.ign||m.name||mu2.game_name||mu2.ign||mu2.name||m.uid||'-',
-            uid:  m.uid_game||m.game_uid||m.uid||mu2.uid_game||mu2.game_uid||'-',
-            wa:   m.whatsapp||m.phone||mu2.whatsapp||mu2.phone||'-'
-          });
-        }
-      });
-    });
-    return out;
-  }
+  function ep(refId){ return _expandPlayers(refId,allTx,allUsers,gUidMap); }
 
   var txDay   = allTx.filter(function(t){ return inDay(t.created_at); });
   var tourDay = allTours.filter(function(t){ return inDay(t.created_at); });
   var histDay = allHist.filter(function(t){ return inDay(t.closed_at); });
-  var deposits  = txDay.filter(function(t){return t.type==='deposit'&&t.status==='approved';});
-  var withdraws = txDay.filter(function(t){return t.type==='withdraw'&&t.status==='approved';});
-  var entries   = txDay.filter(function(t){return t.type==='entry';});
-  var prizes    = txDay.filter(function(t){return t.type==='prize'||t.type==='kill_prize';});
-  var totalDep  = deposits.reduce(function(s,t){return s+(t.amount||0);},0);
-  var totalWd   = withdraws.reduce(function(s,t){return s+(t.amount||0);},0);
-  var totalPrize= prizes.reduce(function(s,t){return s+(t.amount||0);},0);
+  var dep=txDay.filter(function(t){return t.type==='deposit'&&t.status==='approved';}).reduce(function(s,t){return s+(t.amount||0);},0);
+  var wd =txDay.filter(function(t){return t.type==='withdraw'&&t.status==='approved';}).reduce(function(s,t){return s+(t.amount||0);},0);
+  var pr =txDay.filter(function(t){return t.type==='prize'||t.type==='kill_prize';}).reduce(function(s,t){return s+(t.amount||0);},0);
 
-  // CSV
+  // ── CSV ──────────────────────────────────────────────────────────────────
   if(fmt==='csv'){
-    var rows=[['TYPE','EMAIL/UID','AMOUNT (BDT)','STATUS','REASON','TIME']];
+    var rows=[['TYPE','EMAIL/UID','AMOUNT(BDT)','STATUS','REASON','TIME']];
     txDay.forEach(function(t){
       rows.push([t.type||'',t.email||t.uid||'',t.amount||0,t.status||'',t.reason||'',fmtTs(t.created_at)]);
     });
     rows.push([]);
-    rows.push(['MATCH','STATUS','GAME NAME / UID','WHATSAPP','ENTRY FEE']);
+    rows.push(['MATCH','STATUS','TEAM NAME','GAME NAME','GAME UID','WHATSAPP','ENTRY FEE']);
     allTours.concat(allHist).forEach(function(m){
-      var isHist=!!m.closed_at;
-      var players=expandPlayers(isHist?(m.original_id||m.id):m.id);
-      if(!players.length) return;
-      players.forEach(function(p){
-        rows.push([m.title||'-',isHist?'COMPLETED':'RUNNING',p.name+' / '+p.uid,p.wa,m.fee||0]);
+      var isH=!!m.closed_at;
+      ep(isH?(m.original_id||m.id):m.id).forEach(function(p){
+        rows.push([m.title||'-',isH?'COMPLETED':'RUNNING',p.team||'',p.name,p.uid,p.wa,m.fee||0]);
       });
     });
     var csv=rows.map(function(r){return r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"';}).join(',');}).join('\r\n');
@@ -1195,141 +1227,110 @@ window.downloadReport=async function(fmt){
     return;
   }
 
-  // PDF
-  var jsPDF=window.jspdf.jsPDF;
-  var doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-
-  // Try to load a Unicode font so Bengali / special-char IGNs render correctly
-  var uFont='helvetica';
-  try{
-    var fontResp=await fetch('https://cdn.jsdelivr.net/npm/@fontsource/noto-sans@5.0.1/files/noto-sans-all-400-normal.woff');
-    if(fontResp.ok){
-      var buf=await fontResp.arrayBuffer();
-      var bytes=new Uint8Array(buf); var bin='';
-      for(var bi=0;bi<bytes.length;bi++) bin+=String.fromCharCode(bytes[bi]);
-      var b64=btoa(bin);
-      doc.addFileToVFS('NotoSans.woff',b64);
-      doc.addFont('NotoSans.woff','NotoSans','normal');
-      uFont='NotoSans';
-    }
-  }catch(fe){}
-
-  var W=210,margin=14,y=20,col=W-margin*2;
-  function hd(txt,size,color){
-    doc.setFontSize(size||14); doc.setTextColor(color||'#FF6B00');
-    doc.setFont('helvetica','bold'); doc.text(txt,margin,y); y+=(size||14)*0.5;
+  // ── PDF via browser print (handles ALL Unicode including Bengali natively) ─
+  function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function partRows(players){
+    if(!players.length) return '<tr><td colspan="4" style="color:#888;font-style:italic">No participant data</td></tr>';
+    return players.map(function(p,i){
+      return '<tr>'
+        +'<td>'+(i+1)+'</td>'
+        +'<td>'+(p.team?'<span style="color:#f0c040;font-size:11px">['+esc(p.team)+']</span> ':'')
+               +esc(p.name!=='—'?p.name:p.uid)+'</td>'
+        +'<td>'+esc(p.uid)+'</td>'
+        +'<td>'+esc(p.wa)+'</td>'
+        +'</tr>';
+    }).join('');
   }
-  function hr(){ doc.setDrawColor('#333333'); doc.line(margin,y,W-margin,y); y+=5; }
-  function gap(n){ y+=(n||4); }
-  function checkPage(need){ if(y+(need||10)>276){ doc.addPage(); y=18; } }
 
-  // Header
-  doc.setFillColor('#FF6B00'); doc.rect(0,0,W,14,'F');
-  doc.setFontSize(13); doc.setTextColor('#ffffff'); doc.setFont('helvetica','bold');
-  doc.text('FREE FIRE TOURNAMENT - DAILY REPORT',margin,9);
-  doc.setFontSize(9); doc.text(label,W-margin-doc.getTextWidth(label)-2,9);
-  y=22;
-
-  // Summary boxes
-  hd('SUMMARY',12,'#FF6B00'); gap(2);
-  var summary=[
-    ['Total Deposited','BDT '+totalDep,'#27ae60'],
-    ['Total Withdrawn','BDT '+totalWd,'#e74c3c'],
-    ['Prizes Paid','BDT '+totalPrize,'#f39c12'],
-    ['Entries',entries.length,'#3498db'],
-    ['New Tournaments',tourDay.length,'#9b59b6'],
-    ['Closed Matches',histDay.length,'#1abc9c'],
-  ];
-  var bw=(col/3)-3,bh=13;
-  summary.forEach(function(s,i){
-    var bxPos=margin+(i%3)*(bw+4);
-    if(i%3===0&&i>0){ y+=bh+4; checkPage(); }
-    doc.setFillColor('#1a1a28'); doc.roundedRect(bxPos,y,bw,bh,2,2,'F');
-    doc.setFontSize(11); doc.setTextColor(s[2]); doc.setFont('helvetica','bold');
-    doc.text(String(s[1]),bxPos+bw/2,y+7,{align:'center'});
-    doc.setFontSize(6.5); doc.setTextColor('#888888'); doc.setFont('helvetica','normal');
-    doc.text(s[0],bxPos+bw/2,y+11.5,{align:'center'});
+  var tourSection='', histSection='';
+  tourDay.forEach(function(t){
+    var players=ep(t.id);
+    tourSection+='<div class="match-block">'
+      +'<div class="match-title">'+esc(t.title)+'</div>'
+      +'<div class="match-sub">'+(t.game_mode||'')+' · Entry BDT '+(t.fee||0)+' · Players '+(t.joined||0)+'/'+(t.maxPlayers||0)+'</div>'
+      +'<table><thead><tr><th>#</th><th>GAME NAME</th><th>GAME UID</th><th>WHATSAPP</th></tr></thead>'
+      +'<tbody>'+partRows(players)+'</tbody></table></div>';
   });
-  y+=bh+8; hr();
+  histDay.forEach(function(t){
+    var players=ep(t.original_id||t.id);
+    var wnr=(t.winners||[]).map(function(w,i){return ['🥇','🥈','🥉'][i]+' '+esc(w.uid)+' — BDT '+w.prize;}).join('&nbsp;&nbsp;');
+    histSection+='<div class="match-block">'
+      +'<div class="match-title">'+esc(t.title)+' <span style="color:#1abc9c;font-size:12px">COMPLETED</span></div>'
+      +(wnr?'<div class="match-sub winners">'+wnr+'</div>':'')
+      +'<table><thead><tr><th>#</th><th>GAME NAME</th><th>GAME UID</th><th>WHATSAPP</th></tr></thead>'
+      +'<tbody>'+partRows(players)+'</tbody></table></div>';
+  });
 
-  function partTable(players,sy){
-    if(!players.length) return sy;
-    doc.autoTable({
-      startY:sy, margin:{left:margin,right:margin},
-      styles:{fillColor:'#111120',textColor:'#cccccc',fontSize:8,cellPadding:2.5},
-      headStyles:{fillColor:'#2c1654',textColor:'#ccaaff',fontStyle:'bold'},
-      alternateRowStyles:{fillColor:'#1a1a28'},
-      head:[['#','GAME NAME / UID','WHATSAPP']],
-      body:players.map(function(p,i){ return [i+1, p.name+(p.uid!=='-'?' / '+p.uid:''), p.wa]; }),
-      columnStyles:{ 0:{cellWidth:8}, 1:{cellWidth:100,font:uFont}, 2:{cellWidth:col-108} }
-    });
-    return doc.lastAutoTable.finalY+5;
+  var txRows=txDay.map(function(t){
+    var sc=t.status==='approved'?'#27ae60':t.status==='pending'?'#f0c040':'#e74c3c';
+    return '<tr><td>'+(t.type||'').toUpperCase()+'</td><td>'+esc(t.email||t.uid||'')+'</td>'
+      +'<td>BDT '+(t.amount||0)+'</td>'
+      +'<td style="color:'+sc+'">'+(t.status||'').toUpperCase()+'</td>'
+      +'<td>'+fmtTs(t.created_at)+'</td></tr>';
+  }).join('');
+
+  var html='<!DOCTYPE html><html><head><meta charset="utf-8">'
+    +'<title>FF Report '+label+'</title>'
+    +'<style>'
+    +'*{box-sizing:border-box;margin:0;padding:0}'
+    +'body{font-family:\'Segoe UI\',Arial,sans-serif;font-size:12px;color:#111;background:#fff;padding:20px}'
+    +'.header{background:#FF6B00;color:#fff;padding:10px 16px;border-radius:6px;display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}'
+    +'.header h1{font-size:15px;font-weight:700;letter-spacing:1px}'
+    +'.summary{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}'
+    +'.sbox{border:1px solid #ddd;border-radius:6px;padding:8px 14px;min-width:120px;text-align:center}'
+    +'.sbox .val{font-size:16px;font-weight:700}'
+    +'.sbox .lbl{font-size:10px;color:#888;margin-top:2px}'
+    +'h2{font-size:12px;font-weight:700;letter-spacing:1px;margin:14px 0 6px;padding:4px 8px;border-radius:3px}'
+    +'.match-block{margin-bottom:14px;page-break-inside:avoid}'
+    +'.match-title{font-weight:700;font-size:13px;margin-bottom:2px}'
+    +'.match-sub{font-size:10px;color:#666;margin-bottom:6px}'
+    +'.winners{color:#e67e22}'
+    +'table{width:100%;border-collapse:collapse;margin-bottom:4px}'
+    +'th{background:#FF6B00;color:#fff;padding:5px 8px;text-align:left;font-size:10px;letter-spacing:.5px}'
+    +'td{padding:4px 8px;border-bottom:1px solid #eee;font-size:11px}'
+    +'tr:nth-child(even) td{background:#f9f9f9}'
+    +'@media print{'
+    +'  body{padding:10px}'
+    +'  .no-print{display:none!important}'
+    +'  .match-block{page-break-inside:avoid}'
+    +'}'
+    +'</style></head><body>'
+    +'<div class="no-print" style="margin-bottom:12px">'
+    +'<button onclick="window.print()" style="padding:10px 22px;background:#FF6B00;color:#fff;border:none;border-radius:6px;font-weight:700;font-size:14px;cursor:pointer;margin-right:8px">🖨 PRINT / SAVE AS PDF</button>'
+    +'<button onclick="window.close()" style="padding:10px 18px;background:#eee;border:none;border-radius:6px;font-size:13px;cursor:pointer">✕ Close</button>'
+    +'<span style="margin-left:12px;color:#888;font-size:11px">In the print dialog → set Destination to "Save as PDF"</span>'
+    +'</div>'
+    +'<div class="header"><h1>FREE FIRE TOURNAMENT — DAILY REPORT</h1><span>'+label+'</span></div>'
+    +'<div class="summary">'
+    +'<div class="sbox"><div class="val" style="color:#27ae60">BDT '+dep+'</div><div class="lbl">TOTAL DEPOSITED</div></div>'
+    +'<div class="sbox"><div class="val" style="color:#e74c3c">BDT '+wd+'</div><div class="lbl">TOTAL WITHDRAWN</div></div>'
+    +'<div class="sbox"><div class="val" style="color:#f39c12">BDT '+pr+'</div><div class="lbl">PRIZES PAID</div></div>'
+    +'<div class="sbox"><div class="val" style="color:#3498db">'+txDay.filter(function(t){return t.type==='entry';}).length+'</div><div class="lbl">ENTRIES</div></div>'
+    +'<div class="sbox"><div class="val" style="color:#9b59b6">'+tourDay.length+'</div><div class="lbl">NEW TOURNAMENTS</div></div>'
+    +'<div class="sbox"><div class="val" style="color:#1abc9c">'+histDay.length+'</div><div class="lbl">CLOSED MATCHES</div></div>'
+    +'</div>';
+
+  if(txRows){
+    html+='<h2 style="background:#e67e22;color:#fff">TRANSACTIONS ('+txDay.length+')</h2>'
+      +'<table><thead><tr><th>TYPE</th><th>EMAIL / UID</th><th>AMOUNT</th><th>STATUS</th><th>TIME</th></tr></thead>'
+      +'<tbody>'+txRows+'</tbody></table>';
   }
-
-  // Transactions
-  if(txDay.length){
-    checkPage(20); hd('TRANSACTIONS ('+txDay.length+')',11,'#e67e22'); gap(2);
-    doc.autoTable({
-      startY:y, margin:{left:margin,right:margin},
-      styles:{fillColor:'#111120',textColor:'#cccccc',fontSize:8,cellPadding:2.5},
-      headStyles:{fillColor:'#e67e22',textColor:'#ffffff',fontStyle:'bold'},
-      alternateRowStyles:{fillColor:'#1a1a28'},
-      head:[['TYPE','EMAIL / UID','AMOUNT (BDT)','STATUS','TIME']],
-      body:txDay.map(function(t){ return [(t.type||'').toUpperCase(),t.email||t.uid||'-',t.amount||0,(t.status||'').toUpperCase(),fmtTs(t.created_at)]; })
-    });
-    y=doc.lastAutoTable.finalY+7;
+  if(tourSection){
+    html+='<h2 style="background:#9b59b6;color:#fff">NEW TOURNAMENTS ('+tourDay.length+')</h2>'+tourSection;
   }
-
-  // New tournaments + participants
-  if(tourDay.length){
-    checkPage(20); hd('NEW TOURNAMENTS ('+tourDay.length+')',11,'#9b59b6'); gap(2);
-    tourDay.forEach(function(t){
-      checkPage(20);
-      var players=expandPlayers(t.id);
-      doc.autoTable({
-        startY:y, margin:{left:margin,right:margin},
-        styles:{fillColor:'#111120',textColor:'#cccccc',fontSize:8,cellPadding:2.5},
-        headStyles:{fillColor:'#9b59b6',textColor:'#ffffff',fontStyle:'bold'},
-        head:[[(t.title||'-')+'   |   '+(t.game_mode||'')+'   Entry: BDT '+(t.fee||0)+'   Players: '+(t.joined||0)+'/'+(t.maxPlayers||0)]],
-        body:[]
-      });
-      y=partTable(players, doc.lastAutoTable.finalY);
-    });
-    hr();
+  if(histSection){
+    html+='<h2 style="background:#1abc9c;color:#0d1f1b">CLOSED MATCHES ('+histDay.length+')</h2>'+histSection;
   }
-
-  // Closed matches + participants
-  if(histDay.length){
-    checkPage(20); hd('CLOSED MATCHES ('+histDay.length+')',11,'#1abc9c'); gap(2);
-    histDay.forEach(function(t){
-      checkPage(20);
-      var players=expandPlayers(t.original_id||t.id);
-      var wnr=(t.winners||[]).map(function(w,i){ return ['1st','2nd','3rd'][i]+': '+w.uid+' BDT '+w.prize; }).join('  |  ');
-      doc.autoTable({
-        startY:y, margin:{left:margin,right:margin},
-        styles:{fillColor:'#111120',textColor:'#cccccc',fontSize:8,cellPadding:2.5},
-        headStyles:{fillColor:'#1abc9c',textColor:'#0d1f1b',fontStyle:'bold'},
-        head:[[(t.title||'-')+'   |   Total Prizes: BDT '+(t.totalPaid||0)+'   '+fmtTs(t.closed_at)]],
-        body:wnr?[[wnr]]:[]
-      });
-      y=partTable(players, doc.lastAutoTable.finalY);
-    });
-  }
-
   if(!txDay.length&&!tourDay.length&&!histDay.length){
-    gap(6);
-    doc.setFontSize(10); doc.setTextColor('#888888'); doc.setFont('helvetica','normal');
-    doc.text('No data found for this date.',margin,y);
+    html+='<p style="color:#888;padding:20px 0">No data found for this date.</p>';
   }
+  html+='<div style="margin-top:20px;font-size:10px;color:#aaa">Generated by FF Tournament Admin · '+new Date().toLocaleString()+'</div>';
+  html+='</body></html>';
 
-  var pages=doc.internal.getNumberOfPages();
-  for(var p=1;p<=pages;p++){
-    doc.setPage(p);
-    doc.setFontSize(7); doc.setTextColor('#555555');
-    doc.text('Generated by FF Tournament Admin - '+new Date().toLocaleString(),margin,292);
-    doc.text('Page '+p+' of '+pages,W-margin-14,292);
-  }
-  doc.save('Report_'+dateVal+'.pdf');
+  var w=window.open('','_blank','width=900,height=700');
+  if(!w){ alert('Please allow popups for this site to open the PDF preview.'); return; }
+  w.document.write(html);
+  w.document.close();
 };
 </script>
 </body>
