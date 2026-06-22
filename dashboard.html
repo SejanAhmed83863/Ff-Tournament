@@ -456,19 +456,25 @@
       var items=[]; snap.forEach(function(d){items.push(d.data());});
       items.sort(function(a,b){return (b.created_at&&b.created_at.toMillis?b.created_at.toMillis():0)-(a.created_at&&a.created_at.toMillis?a.created_at.toMillis():0);});
       list.innerHTML='';
-      items.slice(0,10).forEach(function(tx){
-        var plus=tx.type==='deposit'||tx.type==='prize';
-        var icon=tx.type==='deposit'?'💰':tx.type==='prize'?'🏆':tx.type==='withdraw'?'💸':'🎮';
-        var label=tx.type==='deposit'?'Deposit':tx.type==='prize'?'Prize Won':tx.type==='withdraw'?'Withdrawal':'Entry Fee';
-        var txCls=tx.type==='deposit'?'deposit':tx.type==='withdraw'?'withdraw':tx.type==='prize'?'prize':'entry';
+      items.slice(0,15).forEach(function(tx){
+        var isKillBonus=tx.type==='kill_bonus';
+        var isPrize=tx.type==='prize'||isKillBonus;
+        var plus=tx.type==='deposit'||isPrize;
+        var icon=tx.type==='deposit'?'💰':isPrize?'🏆':tx.type==='withdraw'?'💸':'🎮';
+        var label=tx.type==='deposit'?'Deposit':tx.type==='prize'?'Prize Won':isKillBonus?'Kill Bonus':tx.type==='withdraw'?'Withdrawal':'Entry Fee';
+        var txCls=tx.type==='deposit'?'deposit':tx.type==='withdraw'?'withdraw':isPrize?'prize':'entry';
         var date=tx.created_at&&tx.created_at.toDate?tx.created_at.toDate().toLocaleDateString('en-GB'):'—';
         var stCls=tx.status==='pending'?'pending':tx.status==='approved'?'approved':'rejected';
         var stTxt=tx.status==='pending'?'⏳ Pending':tx.status==='approved'?'✅ Approved':'❌ Rejected';
         var sub=tx.reason?tx.reason:date+(tx.txid?' · '+tx.txid:'');
+        // For prize/kill_bonus, show position info if available
+        var extraLine='';
+        if(tx.type==='prize'&&tx.position) extraLine='<div style="font-size:10px;color:var(--gold);margin-top:2px;letter-spacing:0.5px">'+tx.position+' Place</div>';
+        if(isKillBonus&&tx.kills) extraLine='<div style="font-size:10px;color:#FF9500;margin-top:2px">⚔️ '+tx.kills+' kills</div>';
         list.innerHTML+='<div class="tx-item '+txCls+'">'
           +'<div class="tx-left"><div class="tx-icon">'+icon+'</div>'
           +'<div><div class="tx-desc">'+label+(tx.method?' · '+tx.method.toUpperCase():'')+'</div>'
-          +'<div class="tx-date">'+sub+'</div></div></div>'
+          +'<div class="tx-date">'+sub+'</div>'+extraLine+'</div></div>'
           +'<div class="tx-right"><div class="tx-amount '+(plus?'plus':'minus')+'">'+(plus?'+':'-')+'৳'+tx.amount+'</div>'
           +'<span class="status-pill '+stCls+'">'+stTxt+'</span></div></div>';
       });
@@ -485,12 +491,28 @@
       var tSnap=await getDocs(collection(db,'tournaments'));
       var tMap={}; tSnap.forEach(function(d){tMap[d.id]=d.data();});
 
-      // Prize transactions keyed by tournament_id
+      // Prize transactions keyed by tournament_id OR by tournament name in reason
       var prizeSnap=await getDocs(query(collection(db,'transactions'),where('uid','==',uid),where('type','==','prize')));
+      var killBonusSnap=await getDocs(query(collection(db,'transactions'),where('uid','==',uid),where('type','==','kill_bonus')));
       var prizeMap={};
+      // Index by tournament_id first
       prizeSnap.forEach(function(d){
         var p=d.data();
         if(p.tournament_id&&!prizeMap[p.tournament_id]) prizeMap[p.tournament_id]=p;
+      });
+      // Also build a name-based index as fallback
+      var prizeByName={};
+      prizeSnap.forEach(function(d){
+        var p=d.data();
+        if(p.reason){var name=p.reason.split(' - ')[0].trim(); if(!prizeByName[name]) prizeByName[name]=p;}
+      });
+      // Kill bonus by tournament_id or name
+      var killBonusMap={};
+      var killBonusByName={};
+      killBonusSnap.forEach(function(d){
+        var p=d.data();
+        if(p.tournament_id&&!killBonusMap[p.tournament_id]) killBonusMap[p.tournament_id]=p;
+        if(p.reason){var name=p.reason.split(' - ')[0].trim(); if(!killBonusByName[name]) killBonusByName[name]=p;}
       });
 
       var items=[]; regSnap.forEach(function(d){items.push(d.data());});
@@ -505,7 +527,9 @@
         var tTime=t&&t.time?new Date(t.time):null;
         var upcoming=!matchEnded&&tTime&&tTime>now&&t.status==='open';
         var date=r.created_at&&r.created_at.toDate?r.created_at.toDate().toLocaleDateString('en-GB'):'—';
-        var prizeData=prizeMap[r.tournament_id]||null;
+        var tName=r.tournament_name||'';
+        var prizeData=prizeMap[r.tournament_id]||prizeByName[tName]||null;
+        var killBonusData=killBonusMap[r.tournament_id]||killBonusByName[tName]||null;
         var isSoloQueue=r.registration_type==='solo_queue';
         var isGrouped=r.grouped===true;
 
@@ -528,14 +552,21 @@
         var prizeBlock='';
         if(prizeData){
           var posColor=prizeData.position==='🥇 1st'?'var(--gold)':prizeData.position==='🥈 2nd'?'#C0C0C0':'#CD7F32';
+          var posLabel=prizeData.position||(prizeData.reason?prizeData.reason.split(' - ')[1]:'');
+          // Kill bonus line — from kill_bonus transaction if exists, else from prize data
           var killLine='';
-          if(prizeData.kill_bonus&&prizeData.kill_bonus>0){
-            killLine='<div class="winner-kill-bonus">⚔️ '+prizeData.kills+' kills × ৳'+Math.round(prizeData.kill_bonus/prizeData.kills)+' = ৳'+prizeData.kill_bonus+' bonus</div>';
+          if(killBonusData&&killBonusData.amount>0){
+            var perKill=killBonusData.per_kill_prize||(killBonusData.kills?Math.round(killBonusData.amount/killBonusData.kills):0);
+            killLine='<div class="winner-kill-bonus">⚔️ '+killBonusData.kills+' kills'+(perKill?' × ৳'+perKill:'')+' = ৳'+killBonusData.amount+' bonus</div>';
+          } else if(prizeData.kill_bonus&&prizeData.kill_bonus>0&&prizeData.kills){
+            var perK=Math.round(prizeData.kill_bonus/prizeData.kills);
+            killLine='<div class="winner-kill-bonus">⚔️ '+prizeData.kills+' kills × ৳'+perK+' = ৳'+prizeData.kill_bonus+' bonus</div>';
           }
+          var totalPrize=prizeData.amount+(killBonusData?killBonusData.amount:0);
           prizeBlock='<div class="winner-block">'
             +'<div><div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px">🏆 YOU WON</div>'
-            +'<div class="winner-pos" style="color:'+posColor+'">'+prizeData.position+' Place</div>'+killLine+'</div>'
-            +'<div class="winner-prize">+৳'+prizeData.amount+'</div></div>';
+            +'<div class="winner-pos" style="color:'+posColor+'">'+(posLabel||'Winner')+' Place</div>'+killLine+'</div>'
+            +'<div class="winner-prize">+৳'+totalPrize+'</div></div>';
         }
 
         // Solo queue: show queue members (only if match still active)
@@ -579,13 +610,17 @@
 
         // Badge
         var itemCls,badge,badgeTxt;
-        if(prizeData){itemCls='history-item won';badge='won-badge';badgeTxt='🏆 '+prizeData.position;}
+        var hasWon=prizeData||killBonusData;
+        if(hasWon&&prizeData){itemCls='history-item won';badge='won-badge';badgeTxt='🏆 '+(prizeData.position||'Winner');}
+        else if(hasWon){itemCls='history-item won';badge='won-badge';badgeTxt='⚔️ Kill Bonus';}
         else if(matchEnded){itemCls='history-item';badge='played-badge';badgeTxt='✅ Ended';}
         else if(upcoming){itemCls='history-item upcoming';badge='upcoming-badge';badgeTxt='⏰ Upcoming';}
         else if(isSoloQueue&&!isGrouped){itemCls='history-item queued';badge='queued-badge';badgeTxt='⏳ Queued';}
         else{itemCls='history-item';badge='played-badge';badgeTxt='Played';}
 
-        var pkInfo=t&&t.per_kill&&t.per_kill>0?'<span>⚔️ ৳'+t.per_kill+'/kill</span>':'';
+        // Per-kill info: show if stored in registration or if t still has the field
+        var pkAmount=r.per_kill_prize||(t&&t.per_kill)||0;
+        var pkInfo=pkAmount>0?'<span>⚔️ ৳'+pkAmount+'/kill</span>':'';
 
         list.innerHTML+='<div class="'+itemCls+'">'
           +'<div class="hist-top"><div class="hist-name">'+(r.tournament_name||'Tournament')+'</div>'
