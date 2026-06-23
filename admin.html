@@ -316,6 +316,18 @@
     </div>
   </div>
 
+  <!-- TOURNAMENT RULES -->
+  <div class="card">
+    <div class="card-title"><div class="card-title-bar" style="background:var(--orange)"></div><span style="color:var(--orange)">📋 TOURNAMENT RULES</span></div>
+    <p class="field-hint">Add unlimited rules. Players will see these before joining. Drag to reorder.</p>
+    <div id="rules-list" style="margin-bottom:10px"></div>
+    <div class="row" style="margin-bottom:0">
+      <input type="text" id="new-rule-input" placeholder="Type a new rule…" onkeydown="if(event.key==='Enter')addRule()">
+      <button class="btn-main" style="white-space:nowrap;padding:0 18px" onclick="addRule()">+ ADD RULE</button>
+    </div>
+    <button class="btn-blue" style="margin-top:10px" onclick="saveRules()">💾 SAVE RULES</button>
+  </div>
+
 </div><!-- end settings -->
 
 <!-- DATABASE -->
@@ -776,7 +788,66 @@
         if(s.phone)             el('support-phone').value=s.phone;
       }
     }catch(e){}
+    // Rules
+    try{
+      var rs=await getDoc(doc(db,'settings','rules'));
+      if(rs.exists()&&rs.data().list){
+        window.__rulesArr=rs.data().list;
+        renderRulesList();
+      }
+    }catch(e){}
   }
+
+  // ─── RULES ──────────────────────────────────────────────────────────────────
+  window.__rulesArr=[];
+
+  function renderRulesList(){
+    var wrap=el('rules-list');
+    if(!wrap) return;
+    if(!window.__rulesArr.length){
+      wrap.innerHTML='<div class="log-meta" style="color:var(--muted)">No rules yet. Add your first rule below.</div>';
+      return;
+    }
+    wrap.innerHTML=window.__rulesArr.map(function(r,i){
+      return '<div class="log-entry" style="align-items:center;gap:8px">'
+        +'<span style="color:var(--orange);font-weight:700;min-width:24px">'+(i+1)+'.</span>'
+        +'<div style="flex:1;font-size:13px">'+r+'</div>'
+        +'<div style="display:flex;gap:6px">'
+        +(i>0?'<button onclick="moveRule('+i+',-1)" style="padding:5px 9px;background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:5px;cursor:pointer;font-size:12px">▲</button>':'')
+        +(i<window.__rulesArr.length-1?'<button onclick="moveRule('+i+',1)" style="padding:5px 9px;background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:5px;cursor:pointer;font-size:12px">▼</button>':'')
+        +'<button onclick="deleteRule('+i+')" style="padding:5px 10px;background:transparent;border:1px solid var(--red);color:var(--red);border-radius:5px;cursor:pointer;font-size:12px">✕</button>'
+        +'</div></div>';
+    }).join('');
+  }
+
+  window.addRule=function(){
+    var inp=el('new-rule-input');
+    var txt=(inp.value||'').trim();
+    if(!txt){ toast('Enter a rule first!','error'); return; }
+    window.__rulesArr.push(txt);
+    inp.value='';
+    renderRulesList();
+  };
+
+  window.deleteRule=function(i){
+    window.__rulesArr.splice(i,1);
+    renderRulesList();
+  };
+
+  window.moveRule=function(i,dir){
+    var arr=window.__rulesArr;
+    var ni=i+dir;
+    if(ni<0||ni>=arr.length) return;
+    var tmp=arr[i]; arr[i]=arr[ni]; arr[ni]=tmp;
+    renderRulesList();
+  };
+
+  window.saveRules=async function(){
+    try{
+      await setDoc(doc(db,'settings','rules'),{list:window.__rulesArr,updated_at:serverTimestamp()},{merge:true});
+      toast('📋 Rules saved! ('+window.__rulesArr.length+' rules)');
+    }catch(e){ toast('Failed: '+e.message,'error'); }
+  };
 
   // Payment method tabs
   window.switchPayTab=function(m){
@@ -1047,7 +1118,7 @@
       return uids.map(function(uid,i){
         return {
           teamName:teamName,
-          gameName:names[i]||uid||'—',
+          gameName:names[i]||reg.name||'—',
           uid:uid||'—',
           whatsapp:i===0?whatsapp:'—',
           paid:i===0?paid:0,
@@ -1093,9 +1164,26 @@
         }
 
         var cid='m'+matchIdx++;
+        // Build moderator-friendly copy text grouped by team/solo
+        var copyLines=[];
+        regs.forEach(function(reg,ri){
+          var rUids=reg.all_group_uids||reg.game_uids||[];
+          var rNames=reg.all_group_names||[];
+          var tname=reg.team_name||'';
+          if(tname) copyLines.push('['+(ri+1)+'] TEAM: '+tname+' | WA: '+(reg.whatsapp||'—'));
+          else       copyLines.push('['+(ri+1)+'] SOLO | WA: '+(reg.whatsapp||'—'));
+          if(!rUids.length){
+            copyLines.push('  • '+(reg.game_name||reg.name||'—'));
+          } else {
+            rUids.forEach(function(uid,i){
+              var gn=rNames[i]||(i===0?(reg.game_name||reg.name||'—'):'—');
+              copyLines.push('  '+(i+1)+'. '+gn+' ('+uid+')');
+            });
+          }
+        });
         window.__cpData[cid]={
-          names:  players.map(function(p){ return (p.gameName!=='—'?p.gameName:p.uid)+(p.teamName?' ('+p.teamName+')':''); }),
-          phones: players.map(function(p){ return p.whatsapp!=='—'?p.whatsapp:''; }).filter(Boolean)
+          names: copyLines,   // full organized text
+          phones: regs.map(function(r){ return r.whatsapp||''; }).filter(Boolean)
         };
 
         html+='<div class="t-card">'
@@ -1111,7 +1199,7 @@
           html+='<div class="log-meta" style="margin-bottom:6px;color:var(--muted)">No registrations found for this match yet.</div>';
         }else{
           html+='<div class="row" style="margin-bottom:10px">'
-            +'<button onclick="copyByKey(\''+cid+'\',\'names\')" style="flex:1;padding:9px;border-radius:7px;font-weight:700;font-family:Rajdhani,sans-serif;font-size:12px;letter-spacing:1px;cursor:pointer;border:1px solid var(--orange);background:transparent;color:var(--orange)">📋 COPY GAME NAMES</button>'
+            +'<button onclick="copyByKey(\''+cid+'\',\'names\')" style="flex:1;padding:9px;border-radius:7px;font-weight:700;font-family:Rajdhani,sans-serif;font-size:12px;letter-spacing:1px;cursor:pointer;border:1px solid var(--orange);background:transparent;color:var(--orange)">📋 COPY PLAYER LIST</button>'
             +'<button onclick="copyByKey(\''+cid+'\',\'phones\')" style="flex:1;padding:9px;border-radius:7px;font-weight:700;font-family:Rajdhani,sans-serif;font-size:12px;letter-spacing:1px;cursor:pointer;border:1px solid var(--green);background:transparent;color:var(--green)">📋 COPY WHATSAPP NOs</button>'
             +'</div>';
 
@@ -1137,7 +1225,7 @@
             } else {
               uids.forEach(function(uid,i){
                 playerNum++;
-                var gname=names[i]||uid||'—';
+                var gname=names[i]||(i===0?reg.name||'—':'—');
                 var wa=i===0?(reg.whatsapp||'—'):'—';
                 html+='<div class="log-entry"><div>'
                   +'<div class="log-uid">#'+playerNum+' · '+gname+'</div>'
@@ -1178,7 +1266,7 @@ function _expandPlayers(refId, allRegs){
       uids.forEach(function(uid,i){
         out.push({
           team:teamName,
-          name:names[i]||uid||'—',
+          name:names[i]||(i===0?reg.name||'—':'—'),
           uid:uid||'—',
           wa:i===0?(reg.whatsapp||'—'):'—'
         });
