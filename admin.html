@@ -1164,25 +1164,28 @@
         }
 
         var cid='m'+matchIdx++;
-        // Build moderator-friendly copy text grouped by team/solo
         var copyLines=[];
-        regs.forEach(function(reg,ri){
+        var entryNum=0;
+        var romans=['i','ii','iii','iv','v','vi','vii','viii'];
+        regs.forEach(function(reg){
+          entryNum++;
           var rUids=reg.all_group_uids||reg.game_uids||[];
           var rNames=reg.all_group_names||[];
           var tname=reg.team_name||'';
-          if(tname) copyLines.push('['+(ri+1)+'] TEAM: '+tname+' | WA: '+(reg.whatsapp||'—'));
-          else       copyLines.push('['+(ri+1)+'] SOLO | WA: '+(reg.whatsapp||'—'));
-          if(!rUids.length){
-            copyLines.push('  • '+(reg.game_name||reg.name||'—'));
-          } else {
-            rUids.forEach(function(uid,i){
+          if(tname){
+            copyLines.push(entryNum+'.['+tname+'](Team)');
+            var count=rUids.length||1;
+            for(var i=0;i<count;i++){
               var gn=rNames[i]||(i===0?(reg.game_name||reg.name||'—'):'—');
-              copyLines.push('  '+(i+1)+'. '+gn+' ('+uid+')');
-            });
+              copyLines.push('      '+(romans[i]||i+1)+'.'+gn);
+            }
+          } else {
+            var soloName=rNames[0]||reg.game_name||reg.name||'—';
+            copyLines.push(entryNum+'.'+soloName);
           }
         });
         window.__cpData[cid]={
-          names: copyLines,   // full organized text
+          names:  copyLines,
           phones: regs.map(function(r){ return r.whatsapp||''; }).filter(Boolean)
         };
 
