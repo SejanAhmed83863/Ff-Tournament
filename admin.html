@@ -873,7 +873,7 @@
   };
 
   function loadDatabaseData(){
-    var historyCache=[], runningCache=[], usersCache={};
+    var historyCache=[], runningCache=[], usersCache={}, regCache=[];
 
     // Match history
     onSnapshot(collection(db,'match_history'), function(snap){
@@ -910,6 +910,15 @@
       snap.forEach(function(d){ rows.push(Object.assign({id:d.id},d.data())); });
       runningCache=rows;
       window.__adminTourCache=rows;
+      renderParticipantsOverview();
+    });
+
+    // Registrations — source of truth for participants, team names, game UIDs
+    onSnapshot(collection(db,'registrations'), function(snap){
+      var rows=[];
+      snap.forEach(function(d){ rows.push(Object.assign({id:d.id},d.data())); });
+      regCache=rows;
+      window.__adminRegCache=rows;
       renderParticipantsOverview();
     });
 
@@ -1014,53 +1023,45 @@
       };
     }
 
-    // Returns [{gameName,uid,whatsapp,teamName,paid,time,_raw}] — one entry per player
-    function expandParticipants(tx){
-      var u = findUser(tx.uid);
-      var teamName = tx.team_name||tx.teamName||tx.clan||tx.group_name||'';
-      var paid = tx.amount||0;
-      var time = fmtTime(tx.created_at);
+    // ─── PARTICIPANTS from registrations collection ───────────────────────────
+    // Build players list from a registration doc
+    // reg fields: team_name, game_uids[], all_group_uids[], all_group_names[], name, whatsapp
+    function regToPlayers(reg){
+      var teamName = reg.team_name||'';
+      var whatsapp = reg.whatsapp||'—';
+      var uids     = reg.all_group_uids||reg.game_uids||[];
+      var names    = reg.all_group_names||[];
+      var paid     = reg.entry_paid||0;
+      var time     = fmtTime(reg.created_at);
 
-      var leader = Object.assign(playerFromObj(tx, tx.uid), {teamName:teamName, paid:paid, time:time, _raw:tx});
+      if(!uids.length){
+        // Fallback: solo with no uid array
+        return [{
+          teamName:teamName,
+          gameName:reg.game_name||reg.name||'—',
+          uid:'—',
+          whatsapp:whatsapp, paid:paid, time:time
+        }];
+      }
 
-      // Try every common array field name for squad/duo members
-      var extras = tx.members||tx.squad||tx.players||tx.team_members||tx.teammates||
-                   tx.member_list||tx.memberList||tx.member_uids||tx.memberUids||[];
-      if(!Array.isArray(extras)||!extras.length) return [leader];
-
-      var all=[leader];
-      extras.forEach(function(m){
-        if(!m) return;
-        var p;
-        if(typeof m==='string'){
-          // Could be Firebase UID or game UID — try both
-          var mu=findUser(m)||{};
-          p = Object.assign(playerFromObj(mu, m), {teamName:teamName, paid:0, time:''});
-        } else {
-          // Object: could have uid (Firebase) or uid_game/game_uid
-          var fbId = m.uid||m.firebase_uid||m.user_id||m.userId||'';
-          p = Object.assign(playerFromObj(m, fbId), {teamName:teamName, paid:0, time:''});
-        }
-        all.push(p);
+      return uids.map(function(uid,i){
+        return {
+          teamName:teamName,
+          gameName:names[i]||( i===0?(reg.game_name||reg.name||'—'):'—'),
+          uid:uid||'—',
+          whatsapp:i===0?whatsapp:'—',
+          paid:i===0?paid:0,
+          time:i===0?time:''
+        };
       });
-      return all;
+    }
+
+    function regsForMatch(refId){
+      return regCache.filter(function(r){ return r.tournament_id===refId; })
+        .sort(function(a,b){ return (a.created_at&&a.created_at.seconds||0)-(b.created_at&&b.created_at.seconds||0); });
     }
 
     window.__cpData={};
-
-    // Show raw Firestore fields of one entry transaction to help diagnose field naming
-    window.showRawTx=function(refId){
-      var tx=txRowsCacheRef().find(function(t){ return t.type==='entry'&&entryRefMatches(t,refId); });
-      if(!tx){ alert('No entry transaction found for this match yet.'); return; }
-      var keys=Object.keys(tx).filter(function(k){return k!=='_raw';});
-      var msg='Entry transaction fields:\n\n'+keys.map(function(k){
-        var v=tx[k];
-        if(v&&v.toDate) v='[Timestamp]';
-        else if(typeof v==='object') v=JSON.stringify(v).slice(0,120);
-        return k+': '+v;
-      }).join('\n');
-      alert(msg);
-    };
 
     window.renderParticipantsOverview=function(){
       var list=el('db-participants-list');
@@ -1080,11 +1081,10 @@
       var matchIdx=0;
 
       matches.forEach(function(m){
-        var rawTx=txRowsCacheRef().filter(function(tx){ return tx.type==='entry'&&entryRefMatches(tx,m.refId); })
-          .sort(function(a,b){ var at=a.created_at&&a.created_at.seconds||0, bt=b.created_at&&b.created_at.seconds||0; return at-bt; });
-
+        var regs=regsForMatch(m.refId);
+        // Build flat player list (each reg may expand to multiple players)
         var players=[];
-        rawTx.forEach(function(tx){ expandParticipants(tx).forEach(function(p){ players.push(p); }); });
+        regs.forEach(function(reg){ regToPlayers(reg).forEach(function(p){ players.push(p); }); });
 
         if(q){
           var titleHit=m.title.toLowerCase().indexOf(q)!==-1;
@@ -1095,7 +1095,7 @@
         var cid='m'+matchIdx++;
         window.__cpData[cid]={
           names:  players.map(function(p){ return (p.gameName!=='—'?p.gameName:p.uid)+(p.teamName?' ('+p.teamName+')':''); }),
-          phones: players.map(function(p){ return p.whatsapp; })
+          phones: players.map(function(p){ return p.whatsapp!=='—'?p.whatsapp:''; }).filter(Boolean)
         };
 
         html+='<div class="t-card">'
@@ -1108,27 +1108,44 @@
           +'<div class="section-label">PARTICIPANTS ('+players.length+')</div>';
 
         if(!players.length){
-          html+='<div class="log-meta" style="margin-bottom:6px">No participant records found.'
-            +' <span style="color:var(--orange);cursor:pointer;text-decoration:underline" onclick="showRawTx(\''+m.refId+'\')">🔍 Check raw transaction fields</span></div>';
+          html+='<div class="log-meta" style="margin-bottom:6px;color:var(--muted)">No registrations found for this match yet.</div>';
         }else{
           html+='<div class="row" style="margin-bottom:10px">'
             +'<button onclick="copyByKey(\''+cid+'\',\'names\')" style="flex:1;padding:9px;border-radius:7px;font-weight:700;font-family:Rajdhani,sans-serif;font-size:12px;letter-spacing:1px;cursor:pointer;border:1px solid var(--orange);background:transparent;color:var(--orange)">📋 COPY GAME NAMES</button>'
             +'<button onclick="copyByKey(\''+cid+'\',\'phones\')" style="flex:1;padding:9px;border-radius:7px;font-weight:700;font-family:Rajdhani,sans-serif;font-size:12px;letter-spacing:1px;cursor:pointer;border:1px solid var(--green);background:transparent;color:var(--green)">📋 COPY WHATSAPP NOs</button>'
             +'</div>';
 
-          // Group by team name if present
-          var lastTeam='';
-          players.forEach(function(p,i){
-            if(p.teamName&&p.teamName!==lastTeam){
-              lastTeam=p.teamName;
-              html+='<div class="section-label" style="color:var(--gold);font-size:11px;margin:6px 0 4px">🏷 TEAM: '+p.teamName+'</div>';
+          // Group by team
+          var lastTeam=null;
+          var playerNum=0;
+          regs.forEach(function(reg){
+            var tname=reg.team_name||'';
+            if(tname){
+              html+='<div class="fill-label" style="margin:8px 0 4px;padding:6px 8px;background:var(--card);border-radius:6px;border-left:3px solid var(--gold)">'
+                +'<span style="color:var(--gold);font-weight:700">🏷 '+tname+'</span>'
+                +'<span style="color:var(--muted);font-size:11px">'+reg.whatsapp+'</span>'
+                +'</div>';
             }
-            html+='<div class="log-entry"><div>'
-              +'<div class="log-uid">#'+(i+1)+' · '+(p.gameName!=='—'?p.gameName:p.uid)+'</div>'
-              +'<div class="log-meta">UID: '+p.uid+' · WhatsApp: '+p.whatsapp+(p.paid?' · Paid ৳'+p.paid:'')+(p.time?' · '+p.time:'')+'</div>'
-              +'</div></div>';
+            var uids=reg.all_group_uids||reg.game_uids||[];
+            var names=reg.all_group_names||[];
+            if(!uids.length){
+              playerNum++;
+              html+='<div class="log-entry"><div>'
+                +'<div class="log-uid">#'+playerNum+' · '+(reg.game_name||reg.name||'—')+'</div>'
+                +'<div class="log-meta">UID: — · WhatsApp: '+reg.whatsapp+' · Paid ৳'+(reg.entry_paid||0)+' · '+fmtTime(reg.created_at)+'</div>'
+                +'</div></div>';
+            } else {
+              uids.forEach(function(uid,i){
+                playerNum++;
+                var gname=names[i]||(i===0?(reg.game_name||reg.name||'—'):'—');
+                var wa=i===0?(reg.whatsapp||'—'):'—';
+                html+='<div class="log-entry"><div>'
+                  +'<div class="log-uid">#'+playerNum+' · '+gname+'</div>'
+                  +'<div class="log-meta">UID: '+uid+(wa!=='—'?' · WhatsApp: '+wa:'')+(i===0?' · Paid ৳'+(reg.entry_paid||0):'')+'</div>'
+                  +'</div></div>';
+              });
+            }
           });
-          html+='<div style="margin-top:6px;text-align:right"><span style="color:var(--muted);font-size:11px;cursor:pointer" onclick="showRawTx(\''+m.refId+'\')">🔍 Raw fields</span></div>';
         }
         html+='</div>';
       });
@@ -1147,33 +1164,26 @@
 })();
 
 // ── helpers shared between PDF and CSV ──────────────────────────────────────
-function _expandPlayers(refId, allTx, allUsers, gUidMap){
-  var txList=allTx.filter(function(tx){
-    if(tx.type!=='entry') return false;
-    var ref=tx.tournamentId||tx.matchId||tx.tid||tx.tournament_id;
-    return ref===refId;
-  });
-  function findU(id){ return id?(allUsers[id]||gUidMap[id]||{}):{} }
-  function extract(obj, fbId){
-    var u=findU(fbId);
-    var c=Object.assign({},u,obj);
-    return {
-      name: c.game_name||c.ign||c.gameName||c.player_name||c.name||fbId||'—',
-      uid:  c.uid_game||c.game_uid||c.gameUid||c.playerUid||'—',
-      wa:   c.whatsapp||c.whatsapp_number||c.phone||c.phone_number||'—',
-      team: c.team_name||c.teamName||c.clan||c.group_name||''
-    };
-  }
+function _expandPlayers(refId, allRegs){
+  var regs=allRegs.filter(function(r){ return r.tournament_id===refId; })
+    .sort(function(a,b){ return (a.created_at&&a.created_at.seconds||0)-(b.created_at&&b.created_at.seconds||0); });
   var out=[];
-  txList.forEach(function(tx){
-    out.push(Object.assign(extract(tx,tx.uid),{paid:tx.amount||0}));
-    var extras=tx.members||tx.squad||tx.players||tx.team_members||tx.teammates||
-               tx.member_list||tx.memberList||tx.member_uids||tx.memberUids||[];
-    if(Array.isArray(extras)) extras.forEach(function(m){
-      if(!m) return;
-      if(typeof m==='string') out.push(extract(findU(m),m));
-      else out.push(extract(m, m.uid||m.firebase_uid||m.user_id||m.userId||''));
-    });
+  regs.forEach(function(reg){
+    var uids=reg.all_group_uids||reg.game_uids||[];
+    var names=reg.all_group_names||[];
+    var teamName=reg.team_name||'';
+    if(!uids.length){
+      out.push({ team:teamName, name:reg.game_name||reg.name||'—', uid:'—', wa:reg.whatsapp||'—' });
+    } else {
+      uids.forEach(function(uid,i){
+        out.push({
+          team:teamName,
+          name:names[i]||(i===0?(reg.game_name||reg.name||'—'):'—'),
+          uid:uid||'—',
+          wa:i===0?(reg.whatsapp||'—'):'—'
+        });
+      });
+    }
   });
   return out;
 }
@@ -1189,15 +1199,14 @@ window.downloadReport=function(fmt){
   var allTx    = window.__adminTxCache    || [];
   var allTours = window.__adminTourCache  || [];
   var allHist  = window.__adminHistCache  || [];
-  var allUsers = window.__adminUsersCache || {};
-  var gUidMap  = window.__adminGameUidMap || {};
+  var allRegs  = window.__adminRegCache   || [];
 
   function inDay(ts){
     if(!ts||!ts.toDate) return false;
     var d=ts.toDate(); return d>=dayStart&&d<=dayEnd;
   }
   function fmtTs(ts){ try{ if(ts&&ts.toDate) return ts.toDate().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}); }catch(e){} return '-'; }
-  function ep(refId){ return _expandPlayers(refId,allTx,allUsers,gUidMap); }
+  function ep(refId){ return _expandPlayers(refId, allRegs); }
 
   var txDay   = allTx.filter(function(t){ return inDay(t.created_at); });
   var tourDay = allTours.filter(function(t){ return inDay(t.created_at); });
@@ -1213,11 +1222,11 @@ window.downloadReport=function(fmt){
       rows.push([t.type||'',t.email||t.uid||'',t.amount||0,t.status||'',t.reason||'',fmtTs(t.created_at)]);
     });
     rows.push([]);
-    rows.push(['MATCH','STATUS','TEAM NAME','GAME NAME','GAME UID','WHATSAPP','ENTRY FEE']);
+    rows.push(['MATCH','STATUS','TEAM NAME','GAME NAME','GAME UID','WHATSAPP']);
     allTours.concat(allHist).forEach(function(m){
       var isH=!!m.closed_at;
       ep(isH?(m.original_id||m.id):m.id).forEach(function(p){
-        rows.push([m.title||'-',isH?'COMPLETED':'RUNNING',p.team||'',p.name,p.uid,p.wa,m.fee||0]);
+        rows.push([m.title||'-', isH?'COMPLETED':'RUNNING', p.team||'', p.name||'—', p.uid||'—', p.wa||'—']);
       });
     });
     var csv=rows.map(function(r){return r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"';}).join(',');}).join('\r\n');
