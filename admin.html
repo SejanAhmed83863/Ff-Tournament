@@ -1038,7 +1038,7 @@
         // Fallback: solo with no uid array
         return [{
           teamName:teamName,
-          gameName:reg.game_name||reg.name||'—',
+          gameName:reg.game_name||'—',
           uid:'—',
           whatsapp:whatsapp, paid:paid, time:time
         }];
@@ -1047,7 +1047,7 @@
       return uids.map(function(uid,i){
         return {
           teamName:teamName,
-          gameName:names[i]||( i===0?(reg.game_name||reg.name||'—'):'—'),
+          gameName:names[i]||uid||'—',
           uid:uid||'—',
           whatsapp:i===0?whatsapp:'—',
           paid:i===0?paid:0,
@@ -1131,13 +1131,13 @@
             if(!uids.length){
               playerNum++;
               html+='<div class="log-entry"><div>'
-                +'<div class="log-uid">#'+playerNum+' · '+(reg.game_name||reg.name||'—')+'</div>'
+                +'<div class="log-uid">#'+playerNum+' · '+(reg.game_name||'—')+'</div>'
                 +'<div class="log-meta">UID: — · WhatsApp: '+reg.whatsapp+' · Paid ৳'+(reg.entry_paid||0)+' · '+fmtTime(reg.created_at)+'</div>'
                 +'</div></div>';
             } else {
               uids.forEach(function(uid,i){
                 playerNum++;
-                var gname=names[i]||(i===0?(reg.game_name||reg.name||'—'):'—');
+                var gname=names[i]||uid||'—';
                 var wa=i===0?(reg.whatsapp||'—'):'—';
                 html+='<div class="log-entry"><div>'
                   +'<div class="log-uid">#'+playerNum+' · '+gname+'</div>'
@@ -1173,12 +1173,12 @@ function _expandPlayers(refId, allRegs){
     var names=reg.all_group_names||[];
     var teamName=reg.team_name||'';
     if(!uids.length){
-      out.push({ team:teamName, name:reg.game_name||reg.name||'—', uid:'—', wa:reg.whatsapp||'—' });
+      out.push({ team:teamName, name:reg.game_name||'—', uid:'—', wa:reg.whatsapp||'—' });
     } else {
       uids.forEach(function(uid,i){
         out.push({
           team:teamName,
-          name:names[i]||(i===0?(reg.game_name||reg.name||'—'):'—'),
+          name:names[i]||uid||'—',
           uid:uid||'—',
           wa:i===0?(reg.whatsapp||'—'):'—'
         });
