@@ -58,6 +58,10 @@
     .btn-join.joined{background:linear-gradient(180deg,#27ae60,#1a6b3c);border-color:var(--green);color:#fff;cursor:default}
     .btn-join:disabled:not(.joined){background:#222;color:#555;border-color:#333;cursor:not-allowed}
     .solo-queue-note{font-size:11px;color:var(--gold);text-align:center;margin-top:6px;opacity:0.8}
+    .perkill-banner{display:flex;align-items:center;justify-content:center;gap:8px;background:rgba(255,107,107,0.1);border:1px solid rgba(255,107,107,0.35);border-radius:7px;padding:8px 12px;margin-bottom:12px}
+    .perkill-icon{font-size:16px}
+    .perkill-text{font-family:'Teko',sans-serif;font-size:15px;color:var(--danger);letter-spacing:1px;text-transform:uppercase}
+    .perkill-text span{color:#fff;font-size:18px;margin-left:4px}
     .empty-state{text-align:center;color:var(--muted);padding:60px 20px;font-size:14px}
 
     /* MODAL */
@@ -345,6 +349,7 @@
         +'<div class="info-item"><div class="info-label">🗺️ Mode</div><div class="info-value">'+gl+'</div></div>'
         +'<div class="info-item"><div class="info-label">👥 Slots</div><div class="info-value">'+joined+'/'+max+'</div></div>'
         +'</div>'
+        +(t.perKill?'<div class="perkill-banner"><span class="perkill-icon">💀</span><div class="perkill-text">Per Kill Bonus<span>৳'+t.perKill+'</span></div></div>':'')
         +'<div class="prize-pool"><div class="prize-pool-title">🏆 Prize Pool</div>'
         +'<div class="prize-row">'
         +'<div class="prize-item second"><div class="p-label">🥈 Runner Up</div><div class="p-val">৳'+(t.prize2||0)+'</div></div>'
