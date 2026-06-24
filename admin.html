@@ -198,7 +198,8 @@
     </div>
     <!-- PARTICIPANT SELECTOR -->
     <div id="winner-participants" style="display:none">
-      <div class="section-label">SELECT WINNER(S) FROM PARTICIPANTS</div>
+      <div class="section-label" id="winner-select-label">SELECT WINNER FROM PARTICIPANTS</div>
+      <select id="winner-dropdown" onchange="selectWinnerFromDropdown()" style="margin-bottom:10px"><option value="">— Select Player/Team —</option></select>
       <div id="winner-part-list"></div>
     </div>
     <div id="winner-manual" style="margin-top:8px">
@@ -221,11 +222,16 @@
   <!-- PER KILL DISTRIBUTION — ALL PARTICIPANTS -->
   <div class="card">
     <div class="card-title"><div class="card-title-bar" style="background:var(--red)"></div><span style="color:var(--red)">PER KILL PRIZE DISTRIBUTION</span></div>
-    <p class="field-hint">Select a match — all participants load automatically. Enter kills for each player.</p>
+    <p class="field-hint">Select a match, then pick a player/team from the dropdown and enter kills.</p>
     <select id="kill-match-select" onchange="loadKillParticipants()"><option value="">— Select Match —</option></select>
     <div class="cur-display" id="kill-rate-display" style="display:none">Per Kill Rate: <b id="kill-rate-val">৳0</b></div>
+    <div class="row" style="align-items:center">
+      <select id="kill-player-select" style="flex:1"><option value="">— Select Player/Team —</option></select>
+      <input type="number" id="kill-player-kills" placeholder="Kills" style="max-width:80px">
+      <button type="button" onclick="addKillRowFromSelect()" style="padding:11px 14px;background:transparent;border:1px solid var(--orange);color:var(--orange);border-radius:7px;cursor:pointer;font-weight:700;margin-bottom:10px">+ ADD</button>
+    </div>
     <div id="kill-rows"></div>
-    <button type="button" onclick="addKillRow()" style="width:100%;padding:10px;background:transparent;border:1px dashed var(--border);color:var(--muted);border-radius:7px;cursor:pointer;font-family:'Rajdhani';font-weight:700;margin-bottom:10px">+ ADD MANUALLY</button>
+    <button type="button" onclick="addKillRow()" style="width:100%;padding:10px;background:transparent;border:1px dashed var(--border);color:var(--muted);border-radius:7px;cursor:pointer;font-family:'Rajdhani';font-weight:700;margin-bottom:10px">+ ADD MANUALLY (free text UID)</button>
     <button class="btn-main" style="background:linear-gradient(90deg,#FF6B6B,#FF3B00)" onclick="distributeKillPrizes()">DISTRIBUTE KILL PRIZES</button>
     <div id="kill-log-wrap" style="display:none;margin-top:14px">
       <div class="section-label">KILL PRIZE LOG</div>
@@ -233,6 +239,7 @@
     </div>
   </div>
 </div>
+
 
 <!-- SETTINGS -->
 <div class="tab-content" id="tab-settings">
@@ -688,6 +695,7 @@
     var mId=el('winner-match-select').value, preview=el('prize-preview');
     el('winner-participants').style.display='none';
     el('winner-part-list').innerHTML='';
+    if(el('winner-dropdown')) el('winner-dropdown').innerHTML='<option value="">— Select Player/Team —</option>';
     ['w1','w2','w3','k1','k2','k3'].forEach(function(id){ if(el(id)) el(id).value=''; });
     if(!mId){preview.style.display='none'; __winnerMatchData=null; __winnerRegs=[]; return;}
     var snap=await getDoc(doc(db,'tournaments',mId));
@@ -703,17 +711,26 @@
     // Show/hide 2nd+3rd place for squad/duo (only 1 winner)
     var isTeam=(t.teamType||1)>1;
     el('solo-places').style.display=isTeam?'none':'block';
+    el('winner-select-label').textContent=isTeam?'SELECT WINNING TEAM (1 WINNER ONLY)':'SELECT WINNER(S) FROM PARTICIPANTS';
     // Load registrations for this match
     var regSnap=await getDocs(collection(db,'registrations'));
     __winnerRegs=[];
     regSnap.forEach(function(d){ var r=d.data(); if(r.tournament_id===mId){ r._id=d.id; __winnerRegs.push(r); } });
     if(!__winnerRegs.length) return;
-    // Build participant selector
-    var pHtml='';
+    // Build participant selector (click-list + dropdown, kept in sync)
+    var pHtml='', dHtml='<option value="">— Select Player/Team —</option>', autoGrpNum=0;
     __winnerRegs.forEach(function(reg,ri){
       var uids=reg.all_group_uids||reg.game_uids||[];
       var names=reg.all_group_names||[];
-      var label=reg.team_name?('['+reg.team_name+']'):(names[0]||uids[0]||'Player '+(ri+1));
+      var label;
+      if(reg.team_name){
+        label='['+reg.team_name+'](Team)';
+      } else if(isTeam && (uids.length>1||names.length>1)){
+        autoGrpNum++;
+        label=(names[0]||uids[0]||'Player '+(ri+1))+'[Team-'+autoGrpNum+'](Auto Created)';
+      } else {
+        label=names[0]||uids[0]||'Player '+(ri+1);
+      }
       var memberList=uids.length>0?uids.map(function(u,i){return (names[i]||u);}).join(', '):'—';
       pHtml+='<div class="log-entry" style="cursor:pointer;align-items:center" onclick="selectWinner('+ri+')" id="wpart-'+ri+'">'
         +'<div style="flex:1"><div class="log-uid">'+label+'</div>'
@@ -721,9 +738,17 @@
         +'</div>'
         +'<div style="width:20px;height:20px;border-radius:50%;border:2px solid var(--border)" id="wdot-'+ri+'"></div>'
         +'</div>';
+      dHtml+='<option value="'+ri+'">'+label+'</option>';
     });
     el('winner-part-list').innerHTML=pHtml;
+    el('winner-dropdown').innerHTML=dHtml;
     el('winner-participants').style.display='block';
+  };
+
+  window.selectWinnerFromDropdown=function(){
+    var ri=el('winner-dropdown').value;
+    if(ri==='') return;
+    selectWinner(Number(ri));
   };
 
   var __selectedWinner=-1;
@@ -733,6 +758,7 @@
     document.querySelectorAll('[id^="wdot-"]').forEach(function(d){ d.style.background=''; d.style.borderColor='var(--border)'; });
     var sel=el('wpart-'+ri); if(sel) sel.style.background='rgba(255,165,0,0.08)';
     var dot=el('wdot-'+ri); if(dot){ dot.style.background='var(--orange)'; dot.style.borderColor='var(--orange)'; }
+    if(el('winner-dropdown')) el('winner-dropdown').value=String(ri);
     var reg=__winnerRegs[ri];
     if(!reg) return;
     var uids=reg.all_group_uids||reg.game_uids||[];
@@ -823,35 +849,83 @@
   };
 
   window.loadKillParticipants=async function(){
-    var mId=el('kill-match-select').value, disp=el('kill-rate-display'), rows=el('kill-rows');
-    rows.innerHTML=''; disp.style.display='none';
+    var mId=el('kill-match-select').value, disp=el('kill-rate-display'), rows=el('kill-rows'), psel=el('kill-player-select');
+    rows.innerHTML=''; disp.style.display='none'; psel.innerHTML='<option value="">— Select Player/Team —</option>';
+    window.__killEntries={};
     if(!mId) return;
     var snap=await getDoc(doc(db,'tournaments',mId));
     if(!snap.exists()) return;
     var t=snap.data(), rate=t.perKill||0;
     el('kill-rate-val').textContent='৳'+rate; disp.style.display='block';
-    // Load all players from registrations
+    var isTeam=(t.teamType||1)>1;
+    // Load registrations for this match
     var regSnap=await getDocs(collection(db,'registrations'));
-    var players=[];
-    regSnap.forEach(function(d){
-      var r=d.data(); if(r.tournament_id!==mId) return;
-      var uids=r.all_group_uids||r.game_uids||[];
-      var names=r.all_group_names||[];
-      if(!uids.length){ players.push({name:r.game_name||r.name||'—',uid:''}); return; }
-      uids.forEach(function(uid,i){ players.push({name:names[i]||uid||'—',uid:uid}); });
-    });
-    if(!players.length){ rows.innerHTML='<div class="log-meta" style="color:var(--muted)">No participants found. Use + ADD MANUALLY below.</div>'; return; }
-    players.forEach(function(p){
-      var row=document.createElement('div');
-      row.className='row kill-row'; row.style.alignItems='center';
-      row.innerHTML='<div style="flex:1;font-size:13px;padding:0 4px">'+p.name+'</div>'
-        +'<input type="text" class="kill-uid" value="'+p.uid+'" placeholder="Game UID" style="max-width:120px">'
-        +'<input type="number" class="kill-count" placeholder="Kills" style="max-width:80px">'
-        +'<button type="button" onclick="this.parentElement.remove()" style="padding:11px 14px;background:transparent;border:1px solid var(--red);color:var(--red);border-radius:7px;cursor:pointer;font-weight:700;margin-bottom:10px">✕</button>';
-      rows.appendChild(row);
-    });
+    var regs=[];
+    regSnap.forEach(function(d){ var r=d.data(); if(r.tournament_id===mId) regs.push(r); });
+    var optIdx=0, autoGrpNum=0;
+    if(isTeam){
+      // Duo/Squad — one dropdown entry per TEAM (manual or auto-created)
+      regs.forEach(function(reg){
+        var uids=reg.all_group_uids||reg.game_uids||[];
+        var names=reg.all_group_names||[];
+        var tname=reg.team_name||'';
+        var label, key=optIdx++;
+        if(tname){
+          label='['+tname+'](Team)';
+        } else {
+          autoGrpNum++;
+          label=(names[0]||uids[0]||'—')+'[Team-'+autoGrpNum+'](Auto Created)';
+        }
+        window.__killEntries[key]={uids:uids,names:names,label:label};
+        psel.innerHTML+='<option value="'+key+'">'+label+'</option>';
+      });
+    } else {
+      // Solo — one dropdown entry per PLAYER
+      regs.forEach(function(reg){
+        var uids=reg.all_group_uids||reg.game_uids||[];
+        var names=reg.all_group_names||[];
+        if(!uids.length){
+          var key=optIdx++;
+          window.__killEntries[key]={uids:[],names:[],label:reg.game_name||reg.name||'—',uid:''};
+          psel.innerHTML+='<option value="'+key+'">'+(reg.game_name||reg.name||'—')+'</option>';
+          return;
+        }
+        uids.forEach(function(uid,i){
+          var key=optIdx++;
+          var nm=names[i]||uid||'—';
+          window.__killEntries[key]={uids:[uid],names:[nm],label:nm,uid:uid};
+          psel.innerHTML+='<option value="'+key+'">'+nm+'</option>';
+        });
+      });
+    }
+    if(!optIdx){ psel.innerHTML='<option value="">No participants found</option>'; }
   };
   window.updateKillRateDisplay=window.loadKillParticipants;
+
+  window.addKillRowFromSelect=function(){
+    var psel=el('kill-player-select'), key=psel.value;
+    var kills=Number(el('kill-player-kills').value)||0;
+    if(!key){toast('Select a player/team first!','error');return;}
+    if(!kills){toast('Enter kill count!','error');return;}
+    var entry=window.__killEntries[key];
+    if(!entry){toast('Invalid selection!','error');return;}
+    // For teams, kills apply to the whole team — pay every member
+    var uids=entry.uids&&entry.uids.length?entry.uids:[entry.uid||''];
+    var wrap=el('kill-rows');
+    uids.forEach(function(uid,i){
+      if(!uid) return;
+      var row=document.createElement('div');
+      row.className='row kill-row'; row.style.alignItems='center';
+      var nm=(entry.names&&entry.names[i])||entry.label;
+      row.innerHTML='<div style="flex:1;font-size:13px;padding:0 4px">'+nm+'</div>'
+        +'<input type="text" class="kill-uid" value="'+uid+'" placeholder="Game UID" style="max-width:120px" readonly>'
+        +'<input type="number" class="kill-count" value="'+kills+'" placeholder="Kills" style="max-width:80px">'
+        +'<button type="button" onclick="this.parentElement.remove()" style="padding:11px 14px;background:transparent;border:1px solid var(--red);color:var(--red);border-radius:7px;cursor:pointer;font-weight:700;margin-bottom:10px">✕</button>';
+      wrap.appendChild(row);
+    });
+    el('kill-player-kills').value='';
+    psel.value='';
+  };
 
   window.distributeKillPrizes=async function(){
     var mId=el('kill-match-select').value;
