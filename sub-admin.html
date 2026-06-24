@@ -276,7 +276,7 @@
           copyLines.push(entryNum+'.['+tname+'](Team)');
           var cnt=Math.max(uids.length,names.length,1);
           for(var i=0;i<cnt;i++){
-            var display=names[i]||uids[i]||'—';
+            var display=(i===0)?(names[i]||reg.game_name||reg.name||uids[i]||'—'):(names[i]||uids[i]||'—');
             copyLines.push('      '+(romans[i]||String(i+1))+'.'+display);
           }
         } else if(names.length>1||uids.length>1){
@@ -333,7 +333,7 @@
             var cnt=Math.max(uids.length,names.length,1);
             for(var i=0;i<cnt;i++){
               pNum++;
-              var ign=names[i]||'—';
+              var ign=(i===0)?(names[i]||reg.game_name||reg.name||uids[i]||'—'):(names[i]||uids[i]||'—');
               var uid=uids[i]||'—';
               html+='<div class="log-entry"><div>'
                 +'<div class="log-uid">#'+pNum+' '+romans[i]+'. '+ign+'</div>'
