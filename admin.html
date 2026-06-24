@@ -1344,24 +1344,22 @@
           var rNames=reg.all_group_names||[];
           var tname=reg.team_name||'';
           if(tname){
-            // Named team
+            // Named team — one numbered line for the team, roman-numeral sub-lines for each player
             entryNum++;
             copyLines.push(entryNum+'.['+tname+'](Team)');
-            var count=Math.max(rUids.length,1);
+            var count=Math.max(rUids.length,rNames.length,1);
             for(var i=0;i<count;i++){
-              var gn=rNames[i]||rUids[i]||'—';
+              // Prefer the player's IGN; if missing, fall back to their UID with a note
+              var nm=rNames[i], ud=rUids[i];
+              var gn = nm ? nm : (ud ? ud+'(uid of team member as IGN not available)' : '—');
               copyLines.push('      '+(romans[i]||String(i+1))+'.'+gn);
             }
           } else if(rNames.length>1||rUids.length>1){
-            // Auto-grouped solo queue — each player on own numbered line
+            // Auto-grouped solo queue — ONE numbered line for the whole auto-team
             autoGrpNum++;
-            var glabel='(Team-'+autoGrpNum+')';
-            var count=Math.max(rNames.length,rUids.length);
-            for(var i=0;i<count;i++){
-              entryNum++;
-              var gn=rNames[i]||rUids[i]||'—';
-              copyLines.push(entryNum+'.'+gn+glabel);
-            }
+            entryNum++;
+            var autoName=rNames[0]||rUids[0]||'—';
+            copyLines.push(entryNum+'.'+autoName+'[Team-'+autoGrpNum+'](Auto Created)');
           } else {
             // True solo
             entryNum++;
