@@ -1,1 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
+  <title>Sub-Admin Panel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--orange:#FF6B00;--gold:#FFD700;--green:#00C853;--red:#FF3B3B;--bg:#0a0a14;--card:#12121e;--border:#1e1e30;--muted:#666;--text:#e0e0e0}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;min-height:100vh}
+    /* LOGIN */
+    #login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+    .login-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:36px 28px;width:min(380px,100%);text-align:center}
+    .login-logo{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--orange);letter-spacing:3px;margin-bottom:4px}
+    .login-sub{color:var(--muted);font-size:13px;margin-bottom:24px}
+    input{width:100%;padding:12px 14px;background:#0d0d1a;border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Rajdhani',sans-serif;font-size:14px;margin-bottom:12px;outline:none}
+    input:focus{border-color:var(--orange)}
+    .btn{width:100%;padding:13px;border:none;border-radius:8px;font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;cursor:pointer;transition:.2s}
+    .btn-orange{background:linear-gradient(90deg,var(--orange),#c0390a);color:#fff}
+    .btn-orange:hover{opacity:.9}
+    .err{color:var(--red);font-size:12px;min-height:18px;margin-bottom:8px}
+    /* MAIN PANEL */
+    #main-screen{display:none}
+    .topbar{background:linear-gradient(90deg,#12121e,#1a1a2e);border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
+    .topbar-title{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--orange);letter-spacing:2px}
+    .topbar-badge{background:#1e1e30;border:1px solid var(--border);color:var(--muted);font-size:11px;padding:3px 10px;border-radius:20px}
+    .logout-btn{padding:7px 14px;background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:7px;cursor:pointer;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:12px}
+    .tabs{display:flex;gap:6px;padding:12px 12px 0;overflow-x:auto;border-bottom:1px solid var(--border);background:var(--card)}
+    .tab{padding:10px 16px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--muted);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;letter-spacing:1px;cursor:pointer;white-space:nowrap}
+    .tab.active{color:var(--orange);border-bottom-color:var(--orange)}
+    .tab-content{display:none;padding:12px}
+    .tab-content.active{display:block}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px}
+    .card-title{font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--orange);letter-spacing:2px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+    .t-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:12px}
+    .t-title{font-family:'Bebas Neue',sans-serif;font-size:17px;color:var(--text);letter-spacing:1px;margin-bottom:4px}
+    .t-badge{font-size:10px;padding:2px 8px;border-radius:10px;background:#1e1e30;font-weight:700;letter-spacing:1px}
+    .t-badges{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+    .log-entry{display:flex;justify-content:space-between;align-items:flex-start;padding:10px 12px;background:#0d0d1a;border-radius:8px;margin-bottom:6px;gap:10px}
+    .log-uid{font-weight:700;font-size:13px;color:var(--text)}
+    .log-meta{font-size:11px;color:var(--muted);margin-top:2px}
+    .section-label{font-family:'Bebas Neue',sans-serif;font-size:12px;color:var(--muted);letter-spacing:2px;margin:10px 0 6px}
+    .fill-label{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin:4px 0}
+    .copy-row{display:flex;gap:8px;margin-bottom:10px}
+    .copy-btn{flex:1;padding:9px;border-radius:7px;font-weight:700;font-family:'Rajdhani',sans-serif;font-size:12px;letter-spacing:1px;cursor:pointer;border:1px solid var(--orange);background:transparent;color:var(--orange)}
+    .copy-btn.green{border-color:var(--green);color:var(--green)}
+    .search-box{width:100%;padding:11px 14px;background:#0d0d1a;border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Rajdhani',sans-serif;font-size:13px;margin-bottom:12px;outline:none}
+    .search-box:focus{border-color:var(--orange)}
+    .empty{text-align:center;padding:40px 20px;color:var(--muted);font-size:14px}
+    .stats-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+    .stat-box{flex:1;min-width:100px;background:#0d0d1a;border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center}
+    .stat-val{font-family:'Bebas Neue',sans-serif;font-size:22px}
+    .stat-lbl{font-size:10px;color:var(--muted);margin-top:2px;letter-spacing:1px}
+    .team-header{background:rgba(255,215,0,0.08);border-left:3px solid var(--gold);border-radius:0 6px 6px 0;padding:6px 10px;margin:6px 0 4px;display:flex;justify-content:space-between;align-items:center}
+    /* Toast */
+    #toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1e1e30;border:1px solid var(--border);color:var(--text);padding:10px 20px;border-radius:20px;font-size:13px;font-weight:700;z-index:9999;opacity:0;pointer-events:none;transition:.3s;white-space:nowrap}
+    #toast.show{opacity:1}
+  </style>
+</head>
+<body>
 
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">🛡 SUB-ADMIN</div>
+    <div class="login-sub">Free Fire Tournament Panel</div>
+    <input type="email" id="login-email" placeholder="Gmail address" autocomplete="email">
+    <input type="password" id="login-pass" placeholder="Password" onkeydown="if(event.key==='Enter')doLogin()">
+    <div class="err" id="login-err"></div>
+    <button class="btn btn-orange" onclick="doLogin()">LOGIN</button>
+  </div>
+</div>
+
+<!-- MAIN PANEL -->
+<div id="main-screen">
+  <div class="topbar">
+    <div class="topbar-title">⚔ SUB-ADMIN PANEL</div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span class="topbar-badge" id="sa-email-badge">—</span>
+      <button class="logout-btn" onclick="doLogout()">LOGOUT</button>
+    </div>
+  </div>
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('history')">🏆 MATCH HISTORY</button>
+    <button class="tab" onclick="switchTab('participants')">🧍 PARTICIPANTS</button>
+  </div>
+
+  <!-- HISTORY TAB -->
+  <div class="tab-content active" id="tab-history">
+    <div class="stats-row">
+      <div class="stat-box"><div class="stat-val" id="sa-hist-count" style="color:var(--orange)">0</div><div class="stat-lbl">MATCHES</div></div>
+      <div class="stat-box"><div class="stat-val" id="sa-hist-paid" style="color:var(--gold)">৳0</div><div class="stat-lbl">PRIZES PAID</div></div>
+    </div>
+    <div id="sa-history-list"><div class="empty">Loading…</div></div>
+  </div>
+
+  <!-- PARTICIPANTS TAB -->
+  <div class="tab-content" id="tab-participants">
+    <input type="text" class="search-box" id="sa-search" placeholder="🔍 Search match, name, UID, WhatsApp…" oninput="renderParticipants()">
+    <div id="sa-participants-list"><div class="empty">Loading…</div></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+  import { getFirestore, collection, doc, getDoc, onSnapshot }
+    from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+
+  const cfg = {
+    apiKey:"AIzaSyBgMroBilivfk7bJxoz93HjxSt6yU7Ura0",
+    authDomain:"tournament-app-4a050.firebaseapp.com",
+    projectId:"tournament-app-4a050",
+    storageBucket:"tournament-app-4a050.appspot.com",
+    messagingSenderId:"811957533858",
+    appId:"1:811957533858:web:1d1f0f916c0aba5eccebfb"
+  };
+  const app=initializeApp(cfg,'sub-admin'), db=getFirestore(app);
+
+  function el(id){ return document.getElementById(id); }
+  function toast(msg){
+    var t=el('toast'); t.textContent=msg; t.classList.add('show');
+    clearTimeout(window.__toast); window.__toast=setTimeout(function(){t.classList.remove('show');},2200);
+  }
+
+  window.switchTab=function(name){
+    document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
+    document.querySelectorAll('.tab-content').forEach(function(t){t.classList.remove('active');});
+    var idx=name==='history'?0:1;
+    document.querySelectorAll('.tab')[idx].classList.add('active');
+    el('tab-'+name).classList.add('active');
+  };
+
+  var histCache=[], regCache=[], tourCache=[];
+  var romans=['i','ii','iii','iv','v','vi','vii','viii'];
+
+  // ── LOGIN ────────────────────────────────────────────────────────────────
+  window.doLogin=async function(){
+    var email=el('login-email').value.trim();
+    var pass=el('login-pass').value;
+    el('login-err').textContent='';
+    if(!email||!pass){ el('login-err').textContent='Enter email and password.'; return; }
+    try{
+      var saDoc=await getDoc(doc(db,'settings','sub_admin'));
+      if(!saDoc.exists()){ el('login-err').textContent='No sub-admin account configured yet.'; return; }
+      var sa=saDoc.data();
+      if(!sa.enabled){ el('login-err').textContent='Sub-admin access is disabled.'; return; }
+      if(sa.email!==email||sa.password!==pass){ el('login-err').textContent='Wrong email or password.'; return; }
+      sessionStorage.setItem('saAuth','1');
+      sessionStorage.setItem('saEmail',email);
+      enterPanel(email);
+    }catch(e){ el('login-err').textContent='Error: '+e.message; }
+  };
+
+  window.doLogout=function(){
+    sessionStorage.removeItem('saAuth'); sessionStorage.removeItem('saEmail');
+    el('login-screen').style.display='flex'; el('main-screen').style.display='none';
+    el('login-pass').value=''; el('login-email').value='';
+  };
+
+  function enterPanel(email){
+    el('login-screen').style.display='none';
+    el('main-screen').style.display='block';
+    el('sa-email-badge').textContent=email;
+    loadData();
+  }
+
+  // Auto-restore session
+  (function(){
+    if(sessionStorage.getItem('saAuth')==='1'){
+      enterPanel(sessionStorage.getItem('saEmail')||'Sub-Admin');
+    }
+  })();
+
+  // ── DATA LOADING ─────────────────────────────────────────────────────────
+  function loadData(){
+    onSnapshot(collection(db,'match_history'), function(snap){
+      var rows=[]; var paid=0;
+      snap.forEach(function(d){ var r=Object.assign({id:d.id},d.data()); rows.push(r); paid+=r.totalPaid||0; });
+      rows.sort(function(a,b){ return (b.closed_at&&b.closed_at.seconds||0)-(a.closed_at&&a.closed_at.seconds||0); });
+      histCache=rows;
+      el('sa-hist-count').textContent=rows.length;
+      el('sa-hist-paid').textContent='৳'+paid;
+      renderHistory();
+    });
+    onSnapshot(collection(db,'tournaments'), function(snap){
+      tourCache=[];
+      snap.forEach(function(d){ tourCache.push(Object.assign({id:d.id},d.data())); });
+      renderParticipants();
+    });
+    onSnapshot(collection(db,'registrations'), function(snap){
+      regCache=[];
+      snap.forEach(function(d){ regCache.push(Object.assign({id:d.id},d.data())); });
+      renderParticipants();
+    });
+  }
+
+  function fmtTime(ts){
+    try{ if(ts&&ts.toDate) return ts.toDate().toLocaleString(); }catch(e){}
+    return '';
+  }
+
+  function teamLabel(t){ return t===4?'Squad':t===2?'Duo':'Solo'; }
+
+  // ── HISTORY RENDER ───────────────────────────────────────────────────────
+  function renderHistory(){
+    var list=el('sa-history-list');
+    if(!histCache.length){ list.innerHTML='<div class="empty">No match history yet.</div>'; return; }
+    list.innerHTML='';
+    histCache.forEach(function(t){
+      var wnr=(t.winners||[]).map(function(w,i){
+        return '<div class="log-meta">'+['🥇','🥈','🥉'][i]+' UID '+w.uid+' — ৳'+w.prize+(w.kills?' ('+w.kills+' kills)':'')+'</div>';
+      }).join('');
+      list.innerHTML+='<div class="t-card">'
+        +'<div class="t-title">'+t.title+'</div>'
+        +'<div class="t-badges">'
+        +'<span class="t-badge" style="background:#1abc9c22;color:#1abc9c">COMPLETED</span>'
+        +(t.game_mode?'<span class="t-badge">'+t.game_mode+'</span>':'')
+        +'<span class="t-badge">'+teamLabel(t.teamType)+'</span>'
+        +'</div>'
+        +'<div class="fill-label"><span>ENTRY</span><span>৳'+(t.fee||0)+'</span></div>'
+        +'<div class="fill-label"><span>PLAYERS</span><span>'+(t.joined||0)+'/'+(t.maxPlayers||0)+'</span></div>'
+        +wnr
+        +'<div class="fill-label" style="margin-top:8px"><span>TOTAL PAID</span><span style="color:var(--green)">৳'+(t.totalPaid||0)+'</span></div>'
+        +'<div class="log-meta">'+fmtTime(t.closed_at)+'</div>'
+        +'</div>';
+    });
+  }
+
+  // ── PARTICIPANTS RENDER ──────────────────────────────────────────────────
+  var __saCP={};
+
+  window.renderParticipants=function(){
+    var list=el('sa-participants-list'); if(!list) return;
+    var q=(el('sa-search')&&el('sa-search').value||'').trim().toLowerCase();
+
+    // Merge running + completed matches
+    var matches=[];
+    tourCache.forEach(function(t){
+      matches.push({title:t.title,status:'RUNNING',sc:'var(--green)',game_mode:t.game_mode,teamType:t.teamType,fee:t.fee,joined:t.joined,maxPlayers:t.maxPlayers,refId:t.id,sortKey:1e15});
+    });
+    histCache.forEach(function(h){
+      matches.push({title:h.title,status:'COMPLETED',sc:'var(--muted)',game_mode:h.game_mode,teamType:h.teamType,fee:h.fee,joined:h.joined,maxPlayers:h.maxPlayers,refId:h.original_id||h.id,sortKey:(h.closed_at&&h.closed_at.seconds||0)});
+    });
+    matches.sort(function(a,b){ return b.sortKey-a.sortKey; });
+
+    __saCP={};
+    var html=''; var mi=0;
+
+    matches.forEach(function(m){
+      var regs=regCache.filter(function(r){ return r.tournament_id===m.refId; })
+        .sort(function(a,b){ return (a.created_at&&a.created_at.seconds||0)-(b.created_at&&b.created_at.seconds||0); });
+
+      // Search filter
+      var allText=m.title;
+      regs.forEach(function(r){
+        allText+=' '+(r.team_name||'')+' '+(r.all_group_names||[]).join(' ')+' '+(r.all_group_uids||[]).join(' ')+' '+(r.whatsapp||'');
+      });
+      if(q&&allText.toLowerCase().indexOf(q)===-1) return;
+
+      var cid='m'+mi++;
+
+      // ── BUILD COPY LINES ─────────────────────────────────────────────────
+      var copyLines=[]; var entryNum=0; var autoGrpNum=0;
+
+      regs.forEach(function(reg){
+        var uids=reg.all_group_uids||reg.game_uids||[];
+        var names=reg.all_group_names||[];
+        var tname=reg.team_name||'';
+
+        if(tname){
+          // Named team → 1.[TeamName](Team) + roman numeral members (IGN or UID fallback)
+          entryNum++;
+          copyLines.push(entryNum+'.['+tname+'](Team)');
+          var cnt=Math.max(uids.length,names.length,1);
+          for(var i=0;i<cnt;i++){
+            var display=names[i]||uids[i]||'—';
+            copyLines.push('      '+(romans[i]||String(i+1))+'.'+display);
+          }
+        } else if(names.length>1||uids.length>1){
+          // Unnamed squad → each member gets own entry number + (Team-X) suffix
+          autoGrpNum++;
+          var gl='(Team-'+autoGrpNum+')';
+          var cnt=Math.max(names.length,uids.length);
+          for(var i=0;i<cnt;i++){
+            entryNum++;
+            var display=names[i]||uids[i]||'—';
+            copyLines.push(entryNum+'.'+display+gl);
+          }
+        } else {
+          // Solo player → just entry number + IGN
+          entryNum++;
+          var display=names[0]||reg.game_name||uids[0]||'—';
+          copyLines.push(entryNum+'.'+display);
+        }
+      });
+
+      __saCP[cid]={
+        names: copyLines,
+        phones: regs.map(function(r){ return r.whatsapp||''; }).filter(Boolean)
+      };
+
+      // ── BUILD HTML DISPLAY ───────────────────────────────────────────────
+      html+='<div class="t-card">'
+        +'<div class="t-title">'+m.title+'</div>'
+        +'<div class="t-badges"><span class="t-badge" style="background:'+m.sc+'22;color:'+m.sc+'">'+m.status+'</span>'
+        +(m.game_mode?'<span class="t-badge">'+m.game_mode+'</span>':'')
+        +'<span class="t-badge">'+teamLabel(m.teamType)+'</span>'
+        +'</div>'
+        +'<div class="fill-label"><span>ENTRY</span><span>৳'+(m.fee||0)+'</span></div>'
+        +'<div class="fill-label" style="margin-bottom:8px"><span>PLAYERS</span><span>'+(m.joined||0)+'/'+(m.maxPlayers||0)+'</span></div>'
+        +'<div class="section-label">PARTICIPANTS ('+regs.length+' registrations)</div>';
+
+      if(!regs.length){
+        html+='<div class="log-meta" style="color:var(--muted);margin-bottom:8px">No registrations yet.</div>';
+      } else {
+        html+='<div class="copy-row">'
+          +'<button class="copy-btn" onclick="saCP(\''+cid+'\',\'names\')">📋 COPY PLAYER LIST</button>'
+          +'<button class="copy-btn green" onclick="saCP(\''+cid+'\',\'phones\')">📋 COPY WHATSAPP NOs</button>'
+          +'</div>';
+
+        var pNum=0; var aGrp=0;
+        regs.forEach(function(reg){
+          var uids=reg.all_group_uids||reg.game_uids||[];
+          var names=reg.all_group_names||[];
+          var tname=reg.team_name||'';
+
+          if(tname){
+            // Named team display
+            html+='<div class="team-header"><span style="color:var(--gold);font-weight:700">🏷 '+tname+'</span><span style="color:var(--muted);font-size:11px">'+reg.whatsapp+'</span></div>';
+            var cnt=Math.max(uids.length,names.length,1);
+            for(var i=0;i<cnt;i++){
+              pNum++;
+              var ign=names[i]||uids[i]||'—';
+              var uid=uids[i]||'—';
+              html+='<div class="log-entry"><div>'
+                +'<div class="log-uid">#'+pNum+' '+romans[i]+'. '+ign+'</div>'
+                +'<div class="log-meta">UID: '+uid+(i===0?' · 📱 '+reg.whatsapp:'')+'</div>'
+                +'</div></div>';
+            }
+          } else if(names.length>1||uids.length>1){
+            // Unnamed squad display
+            aGrp++;
+            var gl='Team-'+aGrp;
+            var cnt=Math.max(names.length,uids.length);
+            for(var i=0;i<cnt;i++){
+              pNum++;
+              var ign=names[i]||uids[i]||'—';
+              var uid=uids[i]||'—';
+              html+='<div class="log-entry"><div>'
+                +'<div class="log-uid">#'+pNum+' '+ign+' <span style="color:var(--muted);font-size:11px">('+gl+')</span></div>'
+                +'<div class="log-meta">UID: '+uid+(i===0?' · 📱 '+reg.whatsapp:'')+'</div>'
+                +'</div></div>';
+            }
+          } else {
+            // Solo display
+            pNum++;
+            var ign=names[0]||reg.game_name||'—';
+            var uid=uids[0]||'—';
+            html+='<div class="log-entry"><div>'
+              +'<div class="log-uid">#'+pNum+' '+ign+'</div>'
+              +'<div class="log-meta">UID: '+uid+' · 📱 '+reg.whatsapp+'</div>'
+              +'</div></div>';
+          }
+        });
+      }
+      html+='</div>';
+    });
+
+    if(!matches.length){ list.innerHTML='<div class="empty">No matches yet.</div>'; return; }
+    if(!html){ list.innerHTML='<div class="empty">No results found.</div>'; return; }
+    list.innerHTML=html;
+  };
+
+  window.saCP=function(cid,field){
+    var d=__saCP[cid];
+    if(!d||!d[field]||!d[field].length){ toast('Nothing to copy'); return; }
+    var txt=d[field].join('\n');
+    navigator.clipboard.writeText(txt)
+      .then(function(){ toast('📋 Copied '+d[field].length+' item(s)!'); })
+      .catch(function(){
+        var ta=document.createElement('textarea');
+        ta.value=txt; ta.style.position='fixed'; ta.style.opacity='0';
+        document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+        document.body.removeChild(ta); toast('📋 Copied!');
+      });
+  };
+</script>
+</body>
+</html>
