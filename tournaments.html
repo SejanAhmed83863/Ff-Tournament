@@ -15,7 +15,6 @@
     .header-title{font-family:'Teko',sans-serif;font-size:24px;color:var(--gold);text-transform:uppercase;letter-spacing:2px}
     .wallet-badge{background:linear-gradient(180deg,var(--amber),var(--amber-deep));border:1px solid var(--gold);padding:6px 14px;border-radius:6px;font-family:'Teko';font-size:18px;color:var(--gold);letter-spacing:1px}
     .content{padding:14px;max-width:500px;margin:0 auto}
-
     .filter-label{font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:5px;padding-left:2px}
     .filter-row{display:flex;gap:8px;margin-bottom:8px;overflow-x:auto;padding-bottom:4px}
     .filter-btn{padding:7px 14px;border-radius:5px;border:1px solid var(--border);background:rgba(0,0,0,0.5);color:var(--muted);font-family:'Teko';font-size:14px;letter-spacing:1px;cursor:pointer;white-space:nowrap;text-transform:uppercase;flex-shrink:0}
@@ -26,7 +25,6 @@
     .mode-chip.classic.active{border-color:#FF9500;background:rgba(255,149,0,0.12);color:#FF9500}
     .mode-chip.clash.active{border-color:var(--danger);background:rgba(255,107,107,0.12);color:var(--danger)}
     .mode-chip.lone.active{border-color:var(--green);background:rgba(92,255,138,0.1);color:var(--green)}
-
     .t-card{background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:14px;overflow:hidden;position:relative;box-shadow:0 5px 20px rgba(0,0,0,0.6)}
     .t-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--amber),var(--gold),var(--amber))}
     .t-card-header{background:linear-gradient(135deg,rgba(184,134,11,0.25),rgba(254,203,0,0.08),rgba(0,0,0,0.5));padding:14px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
@@ -54,23 +52,18 @@
     .progress-label{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:5px;letter-spacing:1px;text-transform:uppercase}
     .progress-bar{height:6px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden;border:1px solid var(--border)}
     .progress-fill{height:100%;background:linear-gradient(90deg,var(--amber),var(--gold));border-radius:3px}
-
-    /* Card action row — Join + Rules buttons */
     .card-action-row{display:flex;gap:8px}
     .btn-join{flex:1;padding:13px;border:1px solid var(--gold);border-radius:7px;background:linear-gradient(180deg,var(--amber),var(--amber-deep));color:var(--gold);font-family:'Teko';font-size:20px;letter-spacing:3px;cursor:pointer;text-transform:uppercase}
     .btn-join.joined{background:linear-gradient(180deg,#27ae60,#1a6b3c);border-color:var(--green);color:#fff;cursor:default}
     .btn-join:disabled:not(.joined){background:#222;color:#555;border-color:#333;cursor:not-allowed}
     .btn-rules-card{flex:0 0 auto;padding:13px 14px;border:1px solid var(--border);border-radius:7px;background:rgba(255,255,255,0.04);color:var(--muted);font-family:'Teko';font-size:16px;letter-spacing:1px;cursor:pointer;text-transform:uppercase;display:flex;align-items:center;gap:5px;white-space:nowrap}
     .btn-rules-card:active{border-color:var(--gold);color:var(--gold)}
-
     .solo-queue-note{font-size:11px;color:var(--gold);text-align:center;margin-top:6px;opacity:0.8}
     .perkill-banner{display:flex;align-items:center;justify-content:center;gap:8px;background:rgba(255,107,107,0.1);border:1px solid rgba(255,107,107,0.35);border-radius:7px;padding:8px 12px;margin-bottom:12px}
     .perkill-icon{font-size:16px}
     .perkill-text{font-family:'Teko',sans-serif;font-size:15px;color:var(--danger);letter-spacing:1px;text-transform:uppercase}
     .perkill-text span{color:#fff;font-size:18px;margin-left:4px}
     .empty-state{text-align:center;color:var(--muted);padding:60px 20px;font-size:14px}
-
-    /* MODAL */
     .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:500;align-items:flex-end;justify-content:center}
     .modal-overlay.open{display:flex}
     .modal{background:#111;border:1px solid var(--gold);border-radius:16px 16px 0 0;width:100%;max-width:500px;animation:slideUp 0.28s ease both;border-top:3px solid var(--gold);height:88vh;display:flex;flex-direction:column}
@@ -98,43 +91,31 @@
     .msg.info{display:block;background:rgba(254,203,0,0.08);border:1px solid rgba(254,203,0,0.3);color:var(--gold)}
     .profile-warn{background:rgba(255,107,107,0.12);border:1px solid rgba(255,107,107,0.4);border-radius:8px;padding:12px;margin-bottom:14px;font-size:13px;color:var(--danger);text-align:center;display:none}
     .profile-warn a{color:var(--gold);font-weight:700;text-decoration:underline}
-
-    /* Solo/Team toggle */
     .reg-toggle{display:flex;background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:14px}
     .reg-toggle-btn{flex:1;padding:10px;text-align:center;font-family:'Teko';font-size:16px;letter-spacing:1px;color:var(--muted);border:none;background:transparent;cursor:pointer;text-transform:uppercase;transition:0.2s}
     .reg-toggle-btn.active{background:linear-gradient(180deg,var(--amber),var(--amber-deep));color:var(--gold)}
     .solo-queue-info{background:rgba(92,255,138,0.06);border:1px solid rgba(92,255,138,0.25);border-radius:8px;padding:12px;margin-bottom:14px;font-size:12px;color:#aaa;line-height:1.7}
     .solo-queue-info b{color:var(--green)}
     .solo-queue-counter{text-align:center;font-family:'Teko';font-size:18px;color:var(--green);margin-bottom:4px;letter-spacing:1px}
-
-    /* UID lookup result */
     .uid-row{position:relative;margin-bottom:12px}
     .uid-row .m-input{margin-bottom:0}
     .uid-name-tag{display:none;font-size:12px;color:var(--green);font-weight:600;padding:4px 10px;background:rgba(92,255,138,0.08);border:1px solid rgba(92,255,138,0.25);border-radius:0 0 7px 7px;letter-spacing:0.5px}
     .uid-name-tag.show{display:block}
     .uid-status{font-size:11px;min-height:16px;margin-bottom:8px;letter-spacing:0.5px}
-
-    /* RULES */
     .rules-list{list-style:none;padding:0}
     .rules-list li{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;color:#ccc;line-height:1.5}
     .rules-list li:last-child{border-bottom:none}
     .rule-num{background:linear-gradient(135deg,var(--amber),var(--gold));color:#000;font-family:'Teko';font-size:14px;font-weight:700;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
     .rules-empty{text-align:center;color:var(--muted);padding:40px 20px;font-size:13px;line-height:1.7}
     .rules-loading{text-align:center;color:var(--muted);padding:30px 20px;font-size:13px}
-
-    /* RULES-ONLY MODAL (for joined cards) */
     .rules-modal{background:#111;border:1px solid var(--gold);border-radius:16px 16px 0 0;width:100%;max-width:500px;animation:slideUp 0.28s ease both;border-top:3px solid var(--gold);height:75vh;display:flex;flex-direction:column}
     .rules-modal-hdr{display:flex;align-items:center;justify-content:space-between;padding:15px 18px 13px;border-bottom:1px solid var(--border);flex-shrink:0}
     .rules-modal-title{font-family:'Teko',sans-serif;font-size:22px;color:var(--gold);letter-spacing:3px;text-transform:uppercase}
     .rules-modal-sub{font-size:11px;color:var(--muted);letter-spacing:1px;margin-top:2px}
     .rules-modal-x{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,0.05);border:1px solid #444;color:#888;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center}
     .rules-modal-body{overflow-y:auto;padding:18px;flex:1}
-
-    /* SUPPORT FLOATING BUTTON */
     .support-fab{position:fixed;bottom:80px;right:16px;z-index:150;background:linear-gradient(135deg,var(--amber),var(--gold));border:none;width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;box-shadow:0 4px 16px rgba(254,203,0,0.4);transition:transform 0.2s}
     .support-fab:active{transform:scale(0.9)}
-
-    /* SUPPORT MODAL */
     .support-modal{background:#111;border:1px solid var(--gold);border-radius:16px 16px 0 0;width:100%;max-width:500px;animation:slideUp 0.28s ease both;border-top:3px solid var(--gold);padding:0}
     .support-hdr{display:flex;align-items:center;justify-content:space-between;padding:15px 18px 13px;border-bottom:1px solid var(--border)}
     .support-title{font-family:'Teko',sans-serif;font-size:24px;color:var(--gold);letter-spacing:3px;text-transform:uppercase}
@@ -145,7 +126,6 @@
     .support-link-icon{font-size:28px;flex-shrink:0}
     .support-link-label{font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:3px}
     .support-link-val{font-family:'Teko';font-size:18px;color:#fff;letter-spacing:1px}
-
     .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(0,0,0,0.97);border-top:2px solid var(--gold);display:flex;z-index:200}
     .nav-item{flex:1;padding:12px 8px;text-align:center;cursor:pointer;color:var(--muted);font-family:'Teko';font-size:13px;letter-spacing:2px;text-transform:uppercase;text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:3px;border:none;background:none}
     .nav-item.active{color:var(--gold)}
@@ -186,10 +166,8 @@
   <div class="tagline">PLAY HARD • STAY PRO • <span>BOOYAH!</span></div>
 </div>
 
-<!-- SUPPORT FAB -->
 <button class="support-fab" onclick="openSupport()" title="Support">🎧</button>
 
-<!-- SUPPORT MODAL -->
 <div class="modal-overlay" id="support-modal">
   <div class="support-modal">
     <div class="support-hdr">
@@ -202,7 +180,6 @@
   </div>
 </div>
 
-<!-- JOIN MODAL (with Rules tab — always accessible) -->
 <div class="modal-overlay" id="join-modal">
   <div class="modal">
     <div class="modal-tab-bar">
@@ -253,7 +230,6 @@
   </div>
 </div>
 
-<!-- RULES-ONLY MODAL (opened from card Rules button after joining) -->
 <div class="modal-overlay" id="rules-only-modal">
   <div class="rules-modal">
     <div class="rules-modal-hdr">
@@ -297,7 +273,7 @@
   var allTournaments=[], joinedIds=new Set(), selectedT=null;
   var typeFilter='all', modeFilter='all', regType='team';
   var uidLookupTimers={}, supportSettings=null;
-  var globalRules=[];   // rules from settings/rules (global fallback)
+  var globalRules=[];
 
   function el(id){ return document.getElementById(id); }
 
@@ -326,9 +302,6 @@
     }catch(e){}
   }
 
-  // Load global rules from settings/rules document in Firestore.
-  // Admin stores rules as an array field called "rules" — each item is a string.
-  // Falls back to empty array; card rules override global rules if present.
   async function loadGlobalRules(){
     try{
       var snap=await getDoc(doc(db,'settings','rules'));
@@ -360,18 +333,16 @@
   function isExpired(t){ if(!t.time) return false; return (new Date()-new Date(t.time))/60000>=60; }
   function fmt12(s){ if(!s) return ''; return new Date(s).toLocaleString('en-US',{day:'2-digit',month:'short',hour:'numeric',minute:'2-digit',hour12:true}); }
 
-  // Returns rules array for a tournament: tournament-specific rules first, fallback to global
   function getRulesFor(t){
     if(t&&t.rules&&Array.isArray(t.rules)&&t.rules.length) return t.rules;
     return globalRules;
   }
 
-  // Renders a <ul class="rules-list"> content string from a rules array
   function buildRulesHTML(rules){
     if(!rules||!rules.length){
       return '<li><div class="rules-empty">📋 No rules have been set for this tournament yet.<br><span style="color:var(--gold)">Check back soon or contact support.</span></div></li>';
     }
-    return rules.map(function(rule, i){
+    return rules.map(function(rule,i){
       return '<li><span class="rule-num">'+(i+1)+'</span><span>'+escHtml(rule)+'</span></li>';
     }).join('');
   }
@@ -397,7 +368,6 @@
       var btnTxt=hasJoined?'✅ JOINED':isFull?'🔒 FULL':'JOIN · '+(isFree?'FREE':'৳'+t.fee);
       var btnDis=(hasJoined||isFull)?'disabled':'';
       var btnClk=(!hasJoined&&!isFull)?'onclick="openJoin(\''+t.id+'\')"':'';
-      // Rules button always available — opens join modal on Rules tab if not joined, or rules-only modal if joined
       var rulesBtn='<button class="btn-rules-card" onclick="openRules(\''+t.id+'\',\''+escHtml(t.title)+'\')">📋 Rules</button>';
       c.innerHTML+='<div class="t-card">'
         +'<div class="t-card-header"><div class="t-name">'+t.title+'</div>'
@@ -484,13 +454,13 @@
         +'</div>';
     }
     el('uid-inputs').innerHTML=html;
+    // Pre-fill leader IGN from userData
     if(userData&&userData.uid_game&&userData.game_name){
       var tag=el('uid-name-1');
       if(tag){ tag.textContent='🎮 '+userData.game_name; tag.classList.add('show'); }
     }
   }
 
-  // Populate the rules tab inside the Join modal for selectedT
   function populateRulesTab(){
     if(!selectedT) return;
     var rules=getRulesFor(selectedT);
@@ -548,7 +518,6 @@
     },700);
   };
 
-  // Open Join modal — always starts on Join tab, Rules tab is also available
   window.openJoin=async function(tId){
     var t=allTournaments.find(function(x){return x.id===tId;}); if(!t) return;
     selectedT=t; regType='team';
@@ -572,7 +541,6 @@
     el('join-modal').classList.add('open');
   };
 
-  // Open Rules-only modal — for cards where player already joined
   window.openRules=function(tId, tTitle){
     var t=allTournaments.find(function(x){return x.id===tId;});
     var rules=getRulesFor(t||{});
@@ -580,6 +548,14 @@
     el('rules-only-list').innerHTML=buildRulesHTML(rules);
     el('rules-only-modal').classList.add('open');
   };
+
+  // ── Helper: extract IGN from uid-name tag ────────────────────────────────
+  function getIgnFromTag(idx){
+    var tag=el('uid-name-'+idx);
+    if(!tag) return '';
+    var txt=tag.textContent||'';
+    return txt.replace('🎮 ','').trim();
+  }
 
   window.confirmJoin=async function(){
     var t=selectedT; if(!t) return;
@@ -614,11 +590,20 @@
       }
       await updateDoc(doc(db,'tournaments',t.id),{joined:increment(teamSize)});
       var groupId='grp_'+Date.now()+'_'+Math.random().toString(36).substr(2,5);
+
+      // ── Build all_group_names: IGN from uid-name tag, fallback to userData.game_name for leader, else empty ──
+      var allGroupNames=uids.map(function(_,i){
+        var ign=getIgnFromTag(i+1);
+        if(!ign&&i===0&&userData&&userData.game_name) ign=userData.game_name;
+        return ign||'';
+      });
+
       await addDoc(collection(db,'registrations'),{
         tournament_id:t.id, tournament_name:t.title,
         uid:currentUser.uid, email:currentUser.email, name:name, whatsapp:whatsapp,
+        game_name:userData&&userData.game_name?userData.game_name:name,
         team_name:teamName, game_uids:uids, group_id:groupId,
-        all_group_uids:uids, all_group_names:uids.map(function(_,i){   var tag=document.getElementById('uid-name-'+(i+1));   var txt=tag&&tag.textContent?tag.textContent.replace('🎮 ','').trim():'';   // slot 0 fallback: use userData.game_name   if(!txt&&i===0&&userData&&userData.game_name) txt=userData.game_name;   return txt; }),
+        all_group_uids:uids, all_group_names:allGroupNames,
         entry_paid:totalFee, registration_type:'team', status:'joined', created_at:serverTimestamp()
       });
       await updateDoc(doc(db,'users',currentUser.uid),{played:increment(1),name:name,whatsapp:whatsapp});
@@ -642,10 +627,11 @@
         userBalance-=fee; el('nav-balance').textContent=userBalance;
       }
       await updateDoc(doc(db,'tournaments',t.id),{joined:increment(1)});
+      var myIgn=getIgnFromTag(1)||(userData&&userData.game_name?userData.game_name:name);
       var sqRef=await addDoc(collection(db,'solo_queue'),{
         tournament_id:t.id, tournament_name:t.title,
         firebase_uid:currentUser.uid, email:currentUser.email||'',
-        game_uid:myUid, game_name:userData&&userData.game_name?userData.game_name:name,
+        game_uid:myUid, game_name:myIgn,
         name:name, whatsapp:whatsapp, fee_paid:fee, grouped:false,
         created_at:serverTimestamp()
       });
@@ -659,7 +645,7 @@
         await addDoc(collection(db,'registrations'),{
           tournament_id:t.id, tournament_name:t.title,
           uid:currentUser.uid, email:currentUser.email||'', name:name, whatsapp:whatsapp,
-          game_uids:[myUid], game_name:userData&&userData.game_name?userData.game_name:name,
+          game_uids:[myUid], game_name:myIgn,
           entry_paid:fee, registration_type:'solo_queue', grouped:false,
           solo_queue_id:sqRef.id, status:'joined', created_at:serverTimestamp()
         });
@@ -677,7 +663,7 @@
     var group=entries.slice(0,teamSize);
     var groupId='grp_'+Date.now()+'_'+Math.random().toString(36).substr(2,5);
     var gameUids=group.map(function(e){return e.game_uid;});
-    var gameNames=group.map(function(e){return e.game_name||e.name;});
+    var gameNames=group.map(function(e){return e.game_name||e.name||'';});
     for(var i=0;i<group.length;i++){
       try{ await updateDoc(doc(db,'solo_queue',group[i].docId),{grouped:true,group_id:groupId}); }catch(e){}
     }
@@ -691,7 +677,7 @@
           await addDoc(collection(db,'registrations'),{
             tournament_id:t.id, tournament_name:t.title,
             uid:p.firebase_uid, email:p.email||'', name:p.name, whatsapp:p.whatsapp,
-            game_uids:[p.game_uid], game_name:p.game_name||p.name,
+            game_uids:[p.game_uid], game_name:p.game_name||p.name||'',
             group_id:groupId, all_group_uids:gameUids, all_group_names:gameNames,
             entry_paid:p.fee_paid, registration_type:'solo_queue', grouped:true,
             status:'joined', created_at:serverTimestamp()
@@ -703,7 +689,6 @@
     setTimeout(function(){ el('join-modal').classList.remove('open'); loadTournaments(); },3000);
   }
 
-  // ─── SUPPORT ──────────────────────────────────────────────────────────────
   window.openSupport=function(){
     var linksEl=el('support-links');
     if(!supportSettings||(!supportSettings.whatsapp&&!supportSettings.telegram_link&&!supportSettings.phone)){
