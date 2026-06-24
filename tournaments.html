@@ -305,8 +305,10 @@
   async function loadGlobalRules(){
     try{
       var snap=await getDoc(doc(db,'settings','rules'));
-      if(snap.exists()&&snap.data().rules&&Array.isArray(snap.data().rules)){
-        globalRules=snap.data().rules;
+      if(snap.exists()){
+        var d=snap.data();
+        var r=d.list||d.rules||[];
+        if(Array.isArray(r)) globalRules=r;
       }
     }catch(e){ globalRules=[]; }
   }
