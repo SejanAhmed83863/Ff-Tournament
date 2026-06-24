@@ -176,13 +176,21 @@
       <div class="pp-item"><div class="pp-val" id="pp3" style="color:#CD7F32">৳0</div><div class="pp-lbl">3RD</div></div>
       <div class="pp-item" id="pp-perkill-wrap" style="display:none"><div class="pp-val" id="pp-perkill" style="color:var(--red)">৳0</div><div class="pp-lbl">PER KILL</div></div>
     </div>
-    <p style="color:var(--muted);font-size:13px;margin-bottom:12px">⚠️ Enter the Game UID registered in each player's profile.</p>
-    <div class="w-uid-wrap"><span class="w-uid-num" style="color:var(--gold)">#1</span><input type="text" id="w1" placeholder="1st Place Game UID 🥇"></div>
-    <input type="number" id="k1" placeholder="Kills (optional, for per-kill bonus)">
-    <div class="w-uid-wrap"><span class="w-uid-num" style="color:#C0C0C0">#2</span><input type="text" id="w2" placeholder="2nd Place Game UID 🥈"></div>
-    <input type="number" id="k2" placeholder="Kills (optional, for per-kill bonus)">
-    <div class="w-uid-wrap"><span class="w-uid-num" style="color:#CD7F32">#3</span><input type="text" id="w3" placeholder="3rd Place Game UID 🥉"></div>
-    <input type="number" id="k3" placeholder="Kills (optional, for per-kill bonus)">
+    <!-- PARTICIPANT SELECTOR -->
+    <div id="winner-participants" style="display:none">
+      <div class="section-label">SELECT WINNER(S) FROM PARTICIPANTS</div>
+      <div id="winner-part-list"></div>
+    </div>
+    <div id="winner-manual" style="margin-top:8px">
+      <div class="w-uid-wrap"><span class="w-uid-num" style="color:var(--gold)">#1</span><input type="text" id="w1" placeholder="1st Place Game UID 🥇"></div>
+      <input type="number" id="k1" placeholder="Kills (optional)">
+      <div id="solo-places">
+        <div class="w-uid-wrap"><span class="w-uid-num" style="color:#C0C0C0">#2</span><input type="text" id="w2" placeholder="2nd Place Game UID 🥈"></div>
+        <input type="number" id="k2" placeholder="Kills (optional)">
+        <div class="w-uid-wrap"><span class="w-uid-num" style="color:#CD7F32">#3</span><input type="text" id="w3" placeholder="3rd Place Game UID 🥉"></div>
+        <input type="number" id="k3" placeholder="Kills (optional)">
+      </div>
+    </div>
     <button class="btn-gold" onclick="distributePrizes()">DISTRIBUTE PRIZES &amp; CLOSE MATCH</button>
   </div>
   <div id="dist-log-wrap" style="display:none">
@@ -193,17 +201,11 @@
   <!-- PER KILL DISTRIBUTION — ALL PARTICIPANTS -->
   <div class="card">
     <div class="card-title"><div class="card-title-bar" style="background:var(--red)"></div><span style="color:var(--red)">PER KILL PRIZE DISTRIBUTION</span></div>
-    <p class="field-hint">Pay kill-based prize money to <b>any</b> participant in a match — not just the top 3. Add as many players as needed.</p>
-    <select id="kill-match-select" onchange="updateKillRateDisplay()"><option value="">— Select Match —</option></select>
+    <p class="field-hint">Select a match — all participants load automatically. Enter kills for each player.</p>
+    <select id="kill-match-select" onchange="loadKillParticipants()"><option value="">— Select Match —</option></select>
     <div class="cur-display" id="kill-rate-display" style="display:none">Per Kill Rate: <b id="kill-rate-val">৳0</b></div>
-    <div id="kill-rows">
-      <div class="row kill-row" style="align-items:center">
-        <input type="text" class="kill-uid" placeholder="Game UID">
-        <input type="number" class="kill-count" placeholder="Kills" style="max-width:90px">
-        <button type="button" onclick="this.parentElement.remove()" style="padding:11px 14px;background:transparent;border:1px solid var(--red);color:var(--red);border-radius:7px;cursor:pointer;font-weight:700;margin-bottom:10px">✕</button>
-      </div>
-    </div>
-    <button type="button" onclick="addKillRow()" style="width:100%;padding:10px;background:transparent;border:1px dashed var(--border);color:var(--muted);border-radius:7px;cursor:pointer;font-family:'Rajdhani';font-weight:700;margin-bottom:10px">+ ADD PLAYER</button>
+    <div id="kill-rows"></div>
+    <button type="button" onclick="addKillRow()" style="width:100%;padding:10px;background:transparent;border:1px dashed var(--border);color:var(--muted);border-radius:7px;cursor:pointer;font-family:'Rajdhani';font-weight:700;margin-bottom:10px">+ ADD MANUALLY</button>
     <button class="btn-main" style="background:linear-gradient(90deg,#FF6B6B,#FF3B00)" onclick="distributeKillPrizes()">DISTRIBUTE KILL PRIZES</button>
     <div id="kill-log-wrap" style="display:none;margin-top:14px">
       <div class="section-label">KILL PRIZE LOG</div>
@@ -316,6 +318,20 @@
     </div>
   </div>
 
+  <!-- SUB-ADMIN ACCESS -->
+  <div class="card">
+    <div class="card-title"><div class="card-title-bar" style="background:#9b59b6"></div><span style="color:#9b59b6">👤 SUB-ADMIN ACCESS</span></div>
+    <p class="field-hint">Set the Gmail and password for the sub-admin panel. You must confirm your admin password to save.</p>
+    <label class="fld-label">Sub-Admin Gmail</label>
+    <input type="email" id="sub-email" placeholder="subadmin@gmail.com">
+    <label class="fld-label">Sub-Admin Password</label>
+    <input type="password" id="sub-pass" placeholder="Password for sub-admin login">
+    <label class="fld-label">Confirm Admin Password</label>
+    <input type="password" id="sub-admin-confirm" placeholder="Enter Sejan#73526 to confirm">
+    <button class="btn-blue" style="background:linear-gradient(90deg,#9b59b6,#6c3483)" onclick="saveSubAdmin()">💾 SAVE SUB-ADMIN</button>
+    <div id="sub-admin-cur" class="cur-display" style="margin-top:10px;display:none"></div>
+  </div>
+
   <!-- TOURNAMENT RULES -->
   <div class="card">
     <div class="card-title"><div class="card-title-bar" style="background:var(--orange)"></div><span style="color:var(--orange)">📋 TOURNAMENT RULES</span></div>
@@ -401,6 +417,19 @@
            increment, getDoc, getDocs, deleteDoc, serverTimestamp }
     from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+
+
+  const ADMIN_PW = 'Sejan#73526';
+  (function(){
+    var overlay=document.getElementById('pw-overlay');
+    if(sessionStorage.getItem('adminAuth')==='1'){ overlay.style.display='none'; }
+    else{ overlay.style.display='flex'; overlay.querySelector('#pw-input').focus(); }
+  })();
+  window.checkAdminPw=function(){
+    var v=document.getElementById('pw-input').value;
+    if(v===ADMIN_PW){ sessionStorage.setItem('adminAuth','1'); document.getElementById('pw-overlay').style.display='none'; }
+    else{ document.getElementById('pw-err').textContent='Wrong password. Try again.'; document.getElementById('pw-input').value=''; document.getElementById('pw-input').focus(); }
+  };
 
   const ADMIN_EMAIL = "sejansasker@gmail.com";
   const cfg = {
@@ -633,12 +662,17 @@
   };
 
   // ─── WINNERS ──────────────────────────────────────────────────────────────
+  var __winnerMatchData=null, __winnerRegs=[];
+
   window.updatePrizePreview=async function(){
     var mId=el('winner-match-select').value, preview=el('prize-preview');
-    if(!mId){preview.style.display='none';return;}
+    el('winner-participants').style.display='none';
+    el('winner-part-list').innerHTML='';
+    ['w1','w2','w3','k1','k2','k3'].forEach(function(id){ if(el(id)) el(id).value=''; });
+    if(!mId){preview.style.display='none'; __winnerMatchData=null; __winnerRegs=[]; return;}
     var snap=await getDoc(doc(db,'tournaments',mId));
     if(!snap.exists()) return;
-    var t=snap.data();
+    var t=snap.data(); __winnerMatchData=t;
     el('pp1').textContent='৳'+(t.prize1||0);
     el('pp2').textContent='৳'+(t.prize2||0);
     el('pp3').textContent='৳'+(t.prize3||0);
@@ -646,34 +680,97 @@
     if(t.perKill){ el('pp-perkill').textContent='৳'+t.perKill; pkWrap.style.display='block'; }
     else{ pkWrap.style.display='none'; }
     preview.style.display='flex';
+    // Show/hide 2nd+3rd place for squad/duo (only 1 winner)
+    var isTeam=(t.teamType||1)>1;
+    el('solo-places').style.display=isTeam?'none':'block';
+    // Load registrations for this match
+    var regSnap=await getDocs(collection(db,'registrations'));
+    __winnerRegs=[];
+    regSnap.forEach(function(d){ var r=d.data(); if(r.tournament_id===mId){ r._id=d.id; __winnerRegs.push(r); } });
+    if(!__winnerRegs.length) return;
+    // Build participant selector
+    var pHtml='';
+    __winnerRegs.forEach(function(reg,ri){
+      var uids=reg.all_group_uids||reg.game_uids||[];
+      var names=reg.all_group_names||[];
+      var label=reg.team_name?('['+reg.team_name+']'):(names[0]||uids[0]||'Player '+(ri+1));
+      var memberList=uids.length>0?uids.map(function(u,i){return (names[i]||u);}).join(', '):'—';
+      pHtml+='<div class="log-entry" style="cursor:pointer;align-items:center" onclick="selectWinner('+ri+')" id="wpart-'+ri+'">'
+        +'<div style="flex:1"><div class="log-uid">'+label+'</div>'
+        +(uids.length>1?'<div class="log-meta">'+memberList+'</div>':'')
+        +'</div>'
+        +'<div style="width:20px;height:20px;border-radius:50%;border:2px solid var(--border)" id="wdot-'+ri+'"></div>'
+        +'</div>';
+    });
+    el('winner-part-list').innerHTML=pHtml;
+    el('winner-participants').style.display='block';
+  };
+
+  var __selectedWinner=-1;
+  window.selectWinner=function(ri){
+    __selectedWinner=ri;
+    document.querySelectorAll('[id^="wpart-"]').forEach(function(d){ d.style.background=''; });
+    document.querySelectorAll('[id^="wdot-"]').forEach(function(d){ d.style.background=''; d.style.borderColor='var(--border)'; });
+    var sel=el('wpart-'+ri); if(sel) sel.style.background='rgba(255,165,0,0.08)';
+    var dot=el('wdot-'+ri); if(dot){ dot.style.background='var(--orange)'; dot.style.borderColor='var(--orange)'; }
+    var reg=__winnerRegs[ri];
+    if(!reg) return;
+    var uids=reg.all_group_uids||reg.game_uids||[];
+    // Fill w1 with leader/first UID
+    if(el('w1')) el('w1').value=uids[0]||'';
   };
 
   window.distributePrizes=async function(){
     var mId=el('winner-match-select').value;
     if(!mId){toast('Select a match first!','error');return;}
-    var wUIDs=[el('w1').value.trim(),el('w2').value.trim(),el('w3').value.trim()];
-    var kills=[Number(el('k1').value)||0,Number(el('k2').value)||0,Number(el('k3').value)||0];
-    if(!wUIDs[0]&&!wUIDs[1]&&!wUIDs[2]){toast('Enter at least 1 winner UID!','error');return;}
-    var tSnap=await getDoc(doc(db,'tournaments',mId));
-    if(!tSnap.exists()){toast('Match not found!','error');return;}
-    var t=tSnap.data(), basePrizes=[t.prize1||0,t.prize2||0,t.prize3||0], perKill=t.perKill||0;
-    var positions=['🥇 1st','🥈 2nd','🥉 3rd'], logEntries=[], historyWinners=[], totalPaid=0;
+    var t=__winnerMatchData;
+    if(!t){ var s=await getDoc(doc(db,'tournaments',mId)); if(!s.exists()) return; t=s.data(); }
+    var isTeam=(t.teamType||1)>1;
+    var perKill=t.perKill||0, logEntries=[], historyWinners=[], totalPaid=0;
     var allUsers=await getDocs(collection(db,'users'));
-    for(var i=0;i<3;i++){
-      if(!wUIDs[i]) continue;
-      var killBonus=kills[i]*perKill;
-      var prize=basePrizes[i]+killBonus;
-      if(prize===0&&kills[i]===0) continue;
-      allUsers.forEach(async function(uDoc){
-        var uData=uDoc.data();
-        if(uData.uid_game&&uData.uid_game.trim()===wUIDs[i].trim()){
-          await updateDoc(doc(db,'users',uDoc.id),{balance:increment(prize),total_earned:increment(prize),wins:increment(i===0?1:0)});
-          await addDoc(collection(db,'transactions'),{uid:uDoc.id,email:uData.email,amount:prize,type:'prize',status:'approved',reason:t.title+' - '+positions[i]+(kills[i]?' ('+kills[i]+' kills)':''),created_at:serverTimestamp()});
+    function findUser(gameUid){
+      var found=null;
+      allUsers.forEach(function(uDoc){ if((uDoc.data().uid_game||'').trim()===gameUid.trim()) found={id:uDoc.id,data:uDoc.data()}; });
+      return found;
+    }
+    if(isTeam){
+      // Squad/Duo: winner team — prize goes to leader, kill bonus to all
+      var reg=__selectedWinner>=0?__winnerRegs[__selectedWinner]:null;
+      var winUID=el('w1').value.trim();
+      if(!winUID&&!reg){toast('Select or enter winner!','error');return;}
+      var uids=reg?(reg.all_group_uids||reg.game_uids||[winUID]):[winUID];
+      if(!uids.length||!uids[0]){toast('No UIDs found for this team!','error');return;}
+      var kills=Number(el('k1').value)||0;
+      var prize=(t.prize1||0)+kills*perKill;
+      // Leader gets full prize
+      var leader=findUser(uids[0]);
+      if(leader){
+        await updateDoc(doc(db,'users',leader.id),{balance:increment(prize),total_earned:increment(prize),wins:increment(1)});
+        await addDoc(collection(db,'transactions'),{uid:leader.id,email:leader.data.email,amount:prize,type:'prize',status:'approved',reason:t.title+' - 🥇 Winner'+(reg&&reg.team_name?' ['+reg.team_name+']':'')+(kills?' ('+kills+' kills)':''),created_at:serverTimestamp()});
+      }
+      logEntries.push({uid:uids[0],prize:prize,position:'🥇 Winner',match:t.title});
+      historyWinners.push({uid:uids[0],teamName:reg&&reg.team_name||'',place:1,basePrize:t.prize1||0,kills:kills,killBonus:kills*perKill,prize:prize});
+      totalPaid=prize;
+    } else {
+      // Solo: top 3
+      var wUIDs=[el('w1').value.trim(),el('w2').value.trim(),el('w3').value.trim()];
+      var kills=[Number(el('k1').value)||0,Number(el('k2').value)||0,Number(el('k3').value)||0];
+      var basePrizes=[t.prize1||0,t.prize2||0,t.prize3||0];
+      var positions=['🥇 1st','🥈 2nd','🥉 3rd'];
+      for(var i=0;i<3;i++){
+        if(!wUIDs[i]) continue;
+        var killBonus=kills[i]*perKill;
+        var prize=basePrizes[i]+killBonus;
+        if(prize===0) continue;
+        var u=findUser(wUIDs[i]);
+        if(u){
+          await updateDoc(doc(db,'users',u.id),{balance:increment(prize),total_earned:increment(prize),wins:increment(i===0?1:0)});
+          await addDoc(collection(db,'transactions'),{uid:u.id,email:u.data.email,amount:prize,type:'prize',status:'approved',reason:t.title+' - '+positions[i]+(kills[i]?' ('+kills[i]+' kills)':''),created_at:serverTimestamp()});
         }
-      });
-      logEntries.push({uid:wUIDs[i],prize:prize,position:positions[i],match:t.title});
-      historyWinners.push({uid:wUIDs[i],place:i+1,basePrize:basePrizes[i],kills:kills[i],killBonus:killBonus,prize:prize});
-      totalPaid+=prize;
+        logEntries.push({uid:wUIDs[i],prize:prize,position:positions[i],match:t.title});
+        historyWinners.push({uid:wUIDs[i],place:i+1,basePrize:basePrizes[i],kills:kills[i],killBonus:killBonus,prize:prize});
+        totalPaid+=prize;
+      }
     }
     await addDoc(collection(db,'match_history'),{
       original_id:mId, title:t.title, teamType:t.teamType||1, game_mode:t.game_mode||'', fee:t.fee||0,
@@ -687,9 +784,10 @@
     logEntries.forEach(function(e){
       logDiv.innerHTML='<div class="log-entry"><div><div class="log-uid">UID: '+e.uid+'</div><div class="log-meta">'+e.match+' · '+e.position+' · '+new Date().toLocaleTimeString()+'</div></div><div class="log-prize">+৳'+e.prize+'</div></div>'+logDiv.innerHTML;
     });
-    ['w1','w2','w3','k1','k2','k3'].forEach(function(id){el(id).value='';});
+    ['w1','w2','w3','k1','k2','k3'].forEach(function(id){ if(el(id)) el(id).value=''; });
     el('winner-match-select').value=''; el('prize-preview').style.display='none';
-    toast('🏆 Prizes distributed to '+logEntries.length+' winner(s)!');
+    el('winner-participants').style.display='none'; __winnerMatchData=null; __winnerRegs=[]; __selectedWinner=-1;
+    toast('🏆 Prizes distributed to '+logEntries.length+' entry(ies)!');
   };
 
   // ─── PER KILL DISTRIBUTION (ALL PARTICIPANTS) ──────────────────────────────
@@ -704,14 +802,36 @@
     wrap.appendChild(row);
   };
 
-  window.updateKillRateDisplay=async function(){
-    var mId=el('kill-match-select').value, disp=el('kill-rate-display');
-    if(!mId){disp.style.display='none';return;}
+  window.loadKillParticipants=async function(){
+    var mId=el('kill-match-select').value, disp=el('kill-rate-display'), rows=el('kill-rows');
+    rows.innerHTML=''; disp.style.display='none';
+    if(!mId) return;
     var snap=await getDoc(doc(db,'tournaments',mId));
-    if(!snap.exists()){disp.style.display='none';return;}
-    el('kill-rate-val').textContent='৳'+((snap.data().perKill)||0);
-    disp.style.display='block';
+    if(!snap.exists()) return;
+    var t=snap.data(), rate=t.perKill||0;
+    el('kill-rate-val').textContent='৳'+rate; disp.style.display='block';
+    // Load all players from registrations
+    var regSnap=await getDocs(collection(db,'registrations'));
+    var players=[];
+    regSnap.forEach(function(d){
+      var r=d.data(); if(r.tournament_id!==mId) return;
+      var uids=r.all_group_uids||r.game_uids||[];
+      var names=r.all_group_names||[];
+      if(!uids.length){ players.push({name:r.game_name||r.name||'—',uid:''}); return; }
+      uids.forEach(function(uid,i){ players.push({name:names[i]||uid||'—',uid:uid}); });
+    });
+    if(!players.length){ rows.innerHTML='<div class="log-meta" style="color:var(--muted)">No participants found. Use + ADD MANUALLY below.</div>'; return; }
+    players.forEach(function(p){
+      var row=document.createElement('div');
+      row.className='row kill-row'; row.style.alignItems='center';
+      row.innerHTML='<div style="flex:1;font-size:13px;padding:0 4px">'+p.name+'</div>'
+        +'<input type="text" class="kill-uid" value="'+p.uid+'" placeholder="Game UID" style="max-width:120px">'
+        +'<input type="number" class="kill-count" placeholder="Kills" style="max-width:80px">'
+        +'<button type="button" onclick="this.parentElement.remove()" style="padding:11px 14px;background:transparent;border:1px solid var(--red);color:var(--red);border-radius:7px;cursor:pointer;font-weight:700;margin-bottom:10px">✕</button>';
+      rows.appendChild(row);
+    });
   };
+  window.updateKillRateDisplay=window.loadKillParticipants;
 
   window.distributeKillPrizes=async function(){
     var mId=el('kill-match-select').value;
@@ -936,6 +1056,37 @@
     });
   };
 
+
+  window.saveSubAdmin=async function(){
+    var email=el('sub-email').value.trim();
+    var pass=el('sub-pass').value;
+    var confirm=el('sub-admin-confirm').value;
+    if(!email||!pass){toast('Enter email and password!','error');return;}
+    if(confirm!=='Sejan#73526'){toast('Wrong admin password!','error');el('sub-admin-confirm').value='';return;}
+    try{
+      // Use secondary app to create/update Firebase Auth user without signing out admin
+      var {initializeApp:initApp2,deleteApp} = await import('https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js');
+      var {getAuth:getAuth2,createUserWithEmailAndPassword,signInWithEmailAndPassword,updatePassword} = await import('https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js');
+      var app2=initApp2(cfg,'sub-admin-setup-'+Date.now());
+      var auth2=getAuth2(app2);
+      var uid2='';
+      try{
+        var cred=await createUserWithEmailAndPassword(auth2,email,pass);
+        uid2=cred.user.uid;
+      }catch(e2){
+        if(e2.code==='auth/email-already-in-use'){
+          var cred2=await signInWithEmailAndPassword(auth2,email,pass.slice(0,1)||'x').catch(function(){return null;});
+          // Can't update password without current password via client SDK — store in Firestore only
+        }
+      }
+      await setDoc(doc(db,'settings','sub_admin'),{email:email,password:pass,uid:uid2,enabled:true,updated_at:serverTimestamp()},{merge:true});
+      try{ await deleteApp(app2); }catch(e){}
+      el('sub-admin-confirm').value='';
+      el('sub-admin-cur').style.display='block';
+      el('sub-admin-cur').textContent='Sub-Admin set: '+email;
+      toast('👤 Sub-admin access saved!');
+    }catch(e){ toast('Failed: '+e.message,'error'); }
+  };
   window.toggleUserBlock=async function(uid,isBlocked){
     try{
       await updateDoc(doc(db,'users',uid),{blocked:!isBlocked, blocked_at: !isBlocked?serverTimestamp():null});
@@ -1167,21 +1318,35 @@
         var copyLines=[];
         var entryNum=0;
         var romans=['i','ii','iii','iv','v','vi','vii','viii'];
+        var autoGrpNum=0;
         regs.forEach(function(reg){
-          entryNum++;
           var rUids=reg.all_group_uids||reg.game_uids||[];
           var rNames=reg.all_group_names||[];
           var tname=reg.team_name||'';
           if(tname){
+            // Named team
+            entryNum++;
             copyLines.push(entryNum+'.['+tname+'](Team)');
-            var count=rUids.length||1;
+            var count=Math.max(rUids.length,1);
             for(var i=0;i<count;i++){
-              var gn=rNames[i]||(i===0?(reg.game_name||reg.name||'—'):'—');
-              copyLines.push('      '+(romans[i]||i+1)+'.'+gn);
+              var gn=rNames[i]||rUids[i]||'—';
+              copyLines.push('      '+(romans[i]||String(i+1))+'.'+gn);
+            }
+          } else if(rNames.length>1||rUids.length>1){
+            // Auto-grouped solo queue — each player on own numbered line
+            autoGrpNum++;
+            var glabel='(Team-'+autoGrpNum+')';
+            var count=Math.max(rNames.length,rUids.length);
+            for(var i=0;i<count;i++){
+              entryNum++;
+              var gn=rNames[i]||rUids[i]||'—';
+              copyLines.push(entryNum+'.'+gn+glabel);
             }
           } else {
-            var soloName=rNames[0]||reg.game_name||reg.name||'—';
-            copyLines.push(entryNum+'.'+soloName);
+            // True solo
+            entryNum++;
+            var gn=rNames[0]||reg.game_name||'—';
+            copyLines.push(entryNum+'.'+gn);
           }
         });
         window.__cpData[cid]={
