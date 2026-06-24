@@ -33,9 +33,6 @@
     .btn:disabled { opacity: 0.5; cursor: not-allowed; }
     .divider { display: flex; align-items: center; gap: 12px; margin: 18px 0; color: var(--muted); font-size: 12px; letter-spacing: 2px; text-transform: uppercase; }
     .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-    .btn-google { width: 100%; padding: 13px; border: 1px solid var(--border); border-radius: 10px; background: transparent; color: var(--text); font-family: 'Rajdhani'; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
-    .btn-google:hover { border-color: var(--gold); background: rgba(255,215,0,0.05); }
-    .btn-google svg { width: 20px; height: 20px; }
     .message { margin-top: 14px; padding: 11px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; text-align: center; display: none; }
     .message.error { display: block; background: rgba(255,50,50,0.1); border: 1px solid rgba(255,50,50,0.3); color: #FF6B6B; }
     .message.success { display: block; background: rgba(50,255,100,0.1); border: 1px solid rgba(50,255,100,0.3); color: #5CFF8A; }
@@ -56,13 +53,7 @@
     .verify-email-highlight { color: var(--text); font-weight: 700; }
     .btn-small { padding: 10px 20px; border: 1px solid var(--border); border-radius: 8px; background: transparent; color: var(--muted); font-family: 'Rajdhani'; font-size: 14px; font-weight: 700; cursor: pointer; margin: 4px; }
     .btn-small:hover { border-color: var(--gold); color: var(--gold); }
-    /* Google extra-info modal */
-    .gname-modal-bg { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:1000; align-items:center; justify-content:center; padding:20px; }
-    .gname-modal-bg.open { display:flex; }
-    .gname-modal { background:#12121A; border:1px solid var(--gold); border-radius:14px; padding:24px; width:100%; max-width:380px; }
-    .gname-modal h3 { font-family:'Bebas Neue'; font-size:24px; color:var(--gold); letter-spacing:2px; margin-bottom:6px; }
-    .gname-modal p { color:var(--muted); font-size:13px; margin-bottom:16px; }
-  </style>
+    </style>
 </head>
 <body>
 <div class="container">
@@ -88,11 +79,6 @@
       <div class="resend-link">
         <button id="resend-btn" onclick="resendVerification()">📧 Resend Verification Email</button>
       </div>
-      <div class="divider">or</div>
-      <button class="btn-google" onclick="loginGoogle()">
-        <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-        Continue with Google
-      </button>
       <div class="message" id="login-msg"></div>
     </div>
 
@@ -106,11 +92,6 @@
         <div class="field"><label>Password</label><input type="password" id="reg-pass" placeholder="Min 6 characters"/></div>
         <div class="field"><label>Confirm Password</label><input type="password" id="reg-pass2" placeholder="Repeat password"/></div>
         <button class="btn" id="reg-btn" onclick="registerEmail()">Join Tournament</button>
-        <div class="divider">or</div>
-        <button class="btn-google" onclick="loginGoogle()">
-          <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-          Continue with Google
-        </button>
         <div class="message" id="reg-msg"></div>
       </div>
       <!-- Email verification pending box -->
@@ -131,23 +112,11 @@
   </div>
 </div>
 
-<!-- Google sign-in extra-info modal -->
-<div class="gname-modal-bg" id="gname-modal">
-  <div class="gname-modal">
-    <h3>Complete Your Profile</h3>
-    <p>We need a few more details before you continue.</p>
-    <div class="field"><label>Full Name</label><input type="text" id="g-name" placeholder="Your Name"/></div>
-    <div class="field"><label>WhatsApp Number</label><input type="tel" id="g-whatsapp" placeholder="01XXXXXXXXX"/></div>
-    <div class="message" id="g-msg"></div>
-    <button class="btn" onclick="saveGoogleExtra()">Continue</button>
-  </div>
-</div>
-
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import {
     getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
-    GoogleAuthProvider, signInWithPopup, onAuthStateChanged, updateProfile,
+    onAuthStateChanged, updateProfile,
     sendPasswordResetEmail, sendEmailVerification, fetchSignInMethodsForEmail,
     signOut
   } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -167,10 +136,8 @@
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
-  const provider = new GoogleAuthProvider();
 
   let pendingRegInfo = null;
-  let pendingGoogleUser = null;
   let unverifiedUser = null; // holds the user object for resend verification
 
   // ─── Auth state listener ───────────────────────────────────────────────────
@@ -219,15 +186,6 @@
       return;
     }
 
-    // Google sign-in — needs Name + WhatsApp for first time
-    if (!snap.exists() || !snap.data().name || !snap.data().whatsapp) {
-      pendingGoogleUser = user;
-      document.getElementById('g-name').value = (snap.exists() && snap.data().name) || user.displayName || '';
-      document.getElementById('g-whatsapp').value = (snap.exists() && snap.data().whatsapp) || '';
-      document.getElementById('gname-modal').classList.add('open');
-      return;
-    }
-
     // All good — go home
     window.location.href = 'home.html';
   });
@@ -241,8 +199,10 @@
     document.getElementById('register-form').classList.toggle('active', tab === 'register');
     // Reset verify box
     if (tab === 'register') {
-      document.getElementById('reg-fields').style.display = 'block';
+      document.getElementById('reg-fields').style.display = '';
       document.getElementById('verify-box').classList.remove('show');
+      document.getElementById('reg-btn').disabled = false;
+      document.getElementById('reg-btn').textContent = 'Join Tournament';
     }
   };
 
@@ -344,26 +304,6 @@
     }
   };
 
-  // ─── Google sign-in ───────────────────────────────────────────────────────
-  window.loginGoogle = async () => {
-    try {
-      await signInWithPopup(auth, provider);
-      // onAuthStateChanged handles redirect
-    } catch(e) {
-      if (e.code === 'auth/account-exists-with-different-credential') {
-        const email = e.customData?.email;
-        showMsg('login-msg',
-          `⚠️ An account already exists with ${email || 'this email'} using a different sign-in method. Try logging in with email & password.`,
-          'error'
-        );
-      } else if (e.code === 'auth/popup-closed-by-user') {
-        // User closed popup — no error needed
-      } else {
-        showMsg('login-msg', 'Google sign-in failed. Try again.', 'error');
-      }
-    }
-  };
-
   // ─── Forgot Password ──────────────────────────────────────────────────────
   window.forgotPassword = async () => {
     const email = document.getElementById('login-email').value.trim();
@@ -424,27 +364,6 @@
     }
   };
 
-  // ─── Google Extra Info ────────────────────────────────────────────────────
-  window.saveGoogleExtra = async () => {
-    const name     = document.getElementById('g-name').value.trim();
-    const whatsapp = document.getElementById('g-whatsapp').value.trim();
-    if (!name) return showMsg('g-msg', 'Please enter your name.', 'error');
-    if (whatsapp.replace(/\D/g,'').length < 11) return showMsg('g-msg', 'Enter a valid 11-digit WhatsApp number.', 'error');
-    if (!pendingGoogleUser) return;
-
-    const ref  = doc(db, 'users', pendingGoogleUser.uid);
-    const snap = await getDoc(ref);
-    const base = snap.exists() ? snap.data() : {
-      game_name: '', uid_game: '', balance: 0, played: 0, wins: 0, total_earned: 0, uid_changed: false
-    };
-    await setDoc(ref, {
-      ...base, name, whatsapp,
-      email: pendingGoogleUser.email,
-      provider: 'google',
-      created_at: base.created_at || new Date().toISOString()
-    }, { merge: true });
-    window.location.href = 'home.html';
-  };
 </script>
 </body>
 </html>
