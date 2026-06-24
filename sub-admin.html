@@ -106,10 +106,8 @@
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-  import { getFirestore, collection, doc, getDoc, getDocs, onSnapshot }
+  import { getFirestore, collection, doc, getDoc, onSnapshot }
     from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
-  import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged }
-    from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
 
   const cfg = {
     apiKey:"AIzaSyBgMroBilivfk7bJxoz93HjxSt6yU7Ura0",
@@ -119,25 +117,24 @@
     messagingSenderId:"811957533858",
     appId:"1:811957533858:web:1d1f0f916c0aba5eccebfb"
   };
-  const app=initializeApp(cfg,'sub-admin'), db=getFirestore(app), auth=getAuth(app);
+  const app=initializeApp(cfg,'sub-admin'), db=getFirestore(app);
+
   function el(id){ return document.getElementById(id); }
   function toast(msg){
     var t=el('toast'); t.textContent=msg; t.classList.add('show');
     clearTimeout(window.__toast); window.__toast=setTimeout(function(){t.classList.remove('show');},2200);
   }
-  function show(id){ el(id).style.display='block'; }
-  function hide(id){ el(id).style.display='none'; }
 
   window.switchTab=function(name){
     document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
     document.querySelectorAll('.tab-content').forEach(function(t){t.classList.remove('active');});
-    var tabs=document.querySelectorAll('.tab');
     var idx=name==='history'?0:1;
-    tabs[idx].classList.add('active');
+    document.querySelectorAll('.tab')[idx].classList.add('active');
     el('tab-'+name).classList.add('active');
   };
 
   var histCache=[], regCache=[], tourCache=[];
+  var romans=['i','ii','iii','iv','v','vi','vii','viii'];
 
   // ── LOGIN ────────────────────────────────────────────────────────────────
   window.doLogin=async function(){
@@ -146,13 +143,11 @@
     el('login-err').textContent='';
     if(!email||!pass){ el('login-err').textContent='Enter email and password.'; return; }
     try{
-      // Check credentials against Firestore settings/sub_admin
       var saDoc=await getDoc(doc(db,'settings','sub_admin'));
       if(!saDoc.exists()){ el('login-err').textContent='No sub-admin account configured yet.'; return; }
       var sa=saDoc.data();
       if(!sa.enabled){ el('login-err').textContent='Sub-admin access is disabled.'; return; }
       if(sa.email!==email||sa.password!==pass){ el('login-err').textContent='Wrong email or password.'; return; }
-      // Store session
       sessionStorage.setItem('saAuth','1');
       sessionStorage.setItem('saEmail',email);
       enterPanel(email);
@@ -236,11 +231,12 @@
 
   // ── PARTICIPANTS RENDER ──────────────────────────────────────────────────
   var __saCP={};
-  var romans=['i','ii','iii','iv','v','vi','vii','viii'];
 
   window.renderParticipants=function(){
     var list=el('sa-participants-list'); if(!list) return;
     var q=(el('sa-search')&&el('sa-search').value||'').trim().toLowerCase();
+
+    // Merge running + completed matches
     var matches=[];
     tourCache.forEach(function(t){
       matches.push({title:t.title,status:'RUNNING',sc:'var(--green)',game_mode:t.game_mode,teamType:t.teamType,fee:t.fee,joined:t.joined,maxPlayers:t.maxPlayers,refId:t.id,sortKey:1e15});
@@ -252,38 +248,61 @@
 
     __saCP={};
     var html=''; var mi=0;
+
     matches.forEach(function(m){
       var regs=regCache.filter(function(r){ return r.tournament_id===m.refId; })
         .sort(function(a,b){ return (a.created_at&&a.created_at.seconds||0)-(b.created_at&&b.created_at.seconds||0); });
 
-      // Build all players flat for search
+      // Search filter
       var allText=m.title;
-      regs.forEach(function(r){ allText+=' '+(r.team_name||'')+' '+(r.all_group_names||[]).join(' ')+' '+(r.all_group_uids||[]).join(' ')+' '+(r.whatsapp||''); });
+      regs.forEach(function(r){
+        allText+=' '+(r.team_name||'')+' '+(r.all_group_names||[]).join(' ')+' '+(r.all_group_uids||[]).join(' ')+' '+(r.whatsapp||'');
+      });
       if(q&&allText.toLowerCase().indexOf(q)===-1) return;
 
       var cid='m'+mi++;
+
+      // ── BUILD COPY LINES ─────────────────────────────────────────────────
       var copyLines=[]; var entryNum=0; var autoGrpNum=0;
+
       regs.forEach(function(reg){
         var uids=reg.all_group_uids||reg.game_uids||[];
         var names=reg.all_group_names||[];
         var tname=reg.team_name||'';
+
         if(tname){
+          // Named team → 1.[TeamName](Team) + roman numeral members (IGN or UID fallback)
           entryNum++;
           copyLines.push(entryNum+'.['+tname+'](Team)');
-          var cnt=Math.max(uids.length,1);
-          for(var i=0;i<cnt;i++){ copyLines.push('      '+(romans[i]||String(i+1))+'.'+(names[i]||uids[i]||'—')); }
+          var cnt=Math.max(uids.length,names.length,1);
+          for(var i=0;i<cnt;i++){
+            var display=names[i]||uids[i]||'—';
+            copyLines.push('      '+(romans[i]||String(i+1))+'.'+display);
+          }
         } else if(names.length>1||uids.length>1){
+          // Unnamed squad → each member gets own entry number + (Team-X) suffix
           autoGrpNum++;
           var gl='(Team-'+autoGrpNum+')';
           var cnt=Math.max(names.length,uids.length);
-          for(var i=0;i<cnt;i++){ entryNum++; copyLines.push(entryNum+'.'+(names[i]||uids[i]||'—')+gl); }
+          for(var i=0;i<cnt;i++){
+            entryNum++;
+            var display=names[i]||uids[i]||'—';
+            copyLines.push(entryNum+'.'+display+gl);
+          }
         } else {
+          // Solo player → just entry number + IGN
           entryNum++;
-          copyLines.push(entryNum+'.'+(names[0]||reg.game_name||'—'));
+          var display=names[0]||reg.game_name||uids[0]||'—';
+          copyLines.push(entryNum+'.'+display);
         }
       });
-      __saCP[cid]={ names:copyLines, phones:regs.map(function(r){ return r.whatsapp||''; }).filter(Boolean) };
 
+      __saCP[cid]={
+        names: copyLines,
+        phones: regs.map(function(r){ return r.whatsapp||''; }).filter(Boolean)
+      };
+
+      // ── BUILD HTML DISPLAY ───────────────────────────────────────────────
       html+='<div class="t-card">'
         +'<div class="t-title">'+m.title+'</div>'
         +'<div class="t-badges"><span class="t-badge" style="background:'+m.sc+'22;color:'+m.sc+'">'+m.status+'</span>'
@@ -301,32 +320,49 @@
           +'<button class="copy-btn" onclick="saCP(\''+cid+'\',\'names\')">📋 COPY PLAYER LIST</button>'
           +'<button class="copy-btn green" onclick="saCP(\''+cid+'\',\'phones\')">📋 COPY WHATSAPP NOs</button>'
           +'</div>';
+
         var pNum=0; var aGrp=0;
         regs.forEach(function(reg){
           var uids=reg.all_group_uids||reg.game_uids||[];
           var names=reg.all_group_names||[];
           var tname=reg.team_name||'';
+
           if(tname){
+            // Named team display
             html+='<div class="team-header"><span style="color:var(--gold);font-weight:700">🏷 '+tname+'</span><span style="color:var(--muted);font-size:11px">'+reg.whatsapp+'</span></div>';
-            var cnt=Math.max(uids.length,1);
+            var cnt=Math.max(uids.length,names.length,1);
             for(var i=0;i<cnt;i++){
               pNum++;
-              html+='<div class="log-entry"><div><div class="log-uid">#'+pNum+' '+romans[i]+'. '+(names[i]||uids[i]||'—')+'</div>'
-                +'<div class="log-meta">UID: '+(uids[i]||'—')+(i===0?' · 📱 '+reg.whatsapp:'')+'</div></div></div>';
+              var ign=names[i]||'—';
+              var uid=uids[i]||'—';
+              html+='<div class="log-entry"><div>'
+                +'<div class="log-uid">#'+pNum+' '+romans[i]+'. '+ign+'</div>'
+                +'<div class="log-meta">UID: '+uid+(i===0?' · 📱 '+reg.whatsapp:'')+'</div>'
+                +'</div></div>';
             }
           } else if(names.length>1||uids.length>1){
+            // Unnamed squad display
             aGrp++;
             var gl='Team-'+aGrp;
             var cnt=Math.max(names.length,uids.length);
             for(var i=0;i<cnt;i++){
               pNum++;
-              html+='<div class="log-entry"><div><div class="log-uid">#'+pNum+' '+(names[i]||uids[i]||'—')+' <span style="color:var(--muted);font-size:11px">('+gl+')</span></div>'
-                +'<div class="log-meta">UID: '+(uids[i]||'—')+(i===0?' · 📱 '+reg.whatsapp:'')+'</div></div></div>';
+              var ign=names[i]||uids[i]||'—';
+              var uid=uids[i]||'—';
+              html+='<div class="log-entry"><div>'
+                +'<div class="log-uid">#'+pNum+' '+ign+' <span style="color:var(--muted);font-size:11px">('+gl+')</span></div>'
+                +'<div class="log-meta">UID: '+uid+(i===0?' · 📱 '+reg.whatsapp:'')+'</div>'
+                +'</div></div>';
             }
           } else {
+            // Solo display
             pNum++;
-            html+='<div class="log-entry"><div><div class="log-uid">#'+pNum+' '+(names[0]||reg.game_name||'—')+'</div>'
-              +'<div class="log-meta">UID: '+(uids[0]||'—')+' · 📱 '+reg.whatsapp+'</div></div></div>';
+            var ign=names[0]||reg.game_name||'—';
+            var uid=uids[0]||'—';
+            html+='<div class="log-entry"><div>'
+              +'<div class="log-uid">#'+pNum+' '+ign+'</div>'
+              +'<div class="log-meta">UID: '+uid+' · 📱 '+reg.whatsapp+'</div>'
+              +'</div></div>';
           }
         });
       }
@@ -339,14 +375,17 @@
   };
 
   window.saCP=function(cid,field){
-    var d=__saCP[cid]; if(!d||!d[field]||!d[field].length){ toast('Nothing to copy'); return; }
+    var d=__saCP[cid];
+    if(!d||!d[field]||!d[field].length){ toast('Nothing to copy'); return; }
     var txt=d[field].join('\n');
-    navigator.clipboard.writeText(txt).then(function(){ toast('📋 Copied '+d[field].length+' item(s)!'); })
-    .catch(function(){
-      var ta=document.createElement('textarea'); ta.value=txt; ta.style.position='fixed'; ta.style.opacity='0';
-      document.body.appendChild(ta); ta.select(); document.execCommand('copy');
-      document.body.removeChild(ta); toast('📋 Copied!');
-    });
+    navigator.clipboard.writeText(txt)
+      .then(function(){ toast('📋 Copied '+d[field].length+' item(s)!'); })
+      .catch(function(){
+        var ta=document.createElement('textarea');
+        ta.value=txt; ta.style.position='fixed'; ta.style.opacity='0';
+        document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+        document.body.removeChild(ta); toast('📋 Copied!');
+      });
   };
 </script>
 </body>
