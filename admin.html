@@ -99,10 +99,30 @@
     .pay-cur-lbl{font-size:10px;color:var(--muted);letter-spacing:1px;margin-bottom:4px;text-transform:uppercase}
     .pay-cur-val{font-family:'Bebas Neue';font-size:16px;color:var(--green);letter-spacing:1px;word-break:break-all}
     .fld-label{font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;display:block;margin-bottom:6px}
+
+    /* PASSWORD OVERLAY */
+    #pw-overlay{display:none;position:fixed;inset:0;background:rgba(10,10,15,0.97);z-index:99999;align-items:center;justify-content:center;padding:20px}
+    .pw-box{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:28px 24px;width:100%;max-width:340px;text-align:center}
+    .pw-box .header-icon{margin:0 auto 14px}
+    .pw-box h2{font-family:'Bebas Neue',sans-serif;color:var(--orange);letter-spacing:2px;font-size:20px;margin-bottom:6px}
+    .pw-box p{color:var(--muted);font-size:13px;margin-bottom:18px}
+    #pw-input{margin-bottom:10px;text-align:center;letter-spacing:2px}
+    #pw-err{color:var(--red);font-size:12px;min-height:16px;margin-bottom:8px}
   </style>
 </head>
 <body>
 <div id="toast"></div>
+
+<div id="pw-overlay">
+  <div class="pw-box">
+    <div class="header-icon">⚡</div>
+    <h2>ADMIN ACCESS</h2>
+    <p>Enter the admin password to continue</p>
+    <input type="password" id="pw-input" placeholder="Password" onkeydown="if(event.key==='Enter')checkAdminPw()">
+    <div id="pw-err"></div>
+    <button class="btn-main" onclick="checkAdminPw()">UNLOCK</button>
+  </div>
+</div>
 
 <div class="header">
   <div class="header-left">
