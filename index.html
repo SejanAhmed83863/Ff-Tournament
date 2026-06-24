@@ -147,7 +147,8 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import {
     getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
-    GoogleAuthProvider, signInWithPopup, onAuthStateChanged, updateProfile,
+    GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult,
+    onAuthStateChanged, updateProfile,
     sendPasswordResetEmail, sendEmailVerification, fetchSignInMethodsForEmail,
     signOut
   } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -172,6 +173,30 @@
   let pendingRegInfo = null;
   let pendingGoogleUser = null;
   let unverifiedUser = null; // holds the user object for resend verification
+
+  function showMsg(id, msg, type) {
+    const el = document.getElementById(id);
+    el.textContent = msg;
+    el.className = `message ${type}`;
+  }
+
+  // ─── Handle Google redirect result (runs on page load after redirect) ──────
+  getRedirectResult(auth).then(async (result) => {
+    if (result && result.user) {
+      // User came back from Google login — onAuthStateChanged will handle the rest
+      console.log('Google redirect result received:', result.user.email);
+    }
+  }).catch((e) => {
+    if (e.code === 'auth/account-exists-with-different-credential') {
+      const email = e.customData?.email;
+      showMsg('login-msg',
+        `⚠️ An account already exists with ${email || 'this email'} using a different sign-in method. Try logging in with email & password.`,
+        'error'
+      );
+    } else if (e.code && e.code !== 'auth/cancelled-popup-request') {
+      showMsg('login-msg', 'Google sign-in failed. Please try again.', 'error');
+    }
+  });
 
   // ─── Auth state listener ───────────────────────────────────────────────────
   onAuthStateChanged(auth, async (user) => {
@@ -245,12 +270,6 @@
       document.getElementById('verify-box').classList.remove('show');
     }
   };
-
-  function showMsg(id, msg, type) {
-    const el = document.getElementById(id);
-    el.textContent = msg;
-    el.className = `message ${type}`;
-  }
 
   // ─── Login with email ─────────────────────────────────────────────────────
   window.loginEmail = async () => {
@@ -344,23 +363,15 @@
     }
   };
 
-  // ─── Google sign-in ───────────────────────────────────────────────────────
+  // ─── Google sign-in (redirect — works in WebView/app wrappers) ───────────
   window.loginGoogle = async () => {
     try {
-      await signInWithPopup(auth, provider);
-      // onAuthStateChanged handles redirect
+      // signInWithRedirect opens the browser, Google login happens,
+      // then the browser returns back to this page automatically.
+      // getRedirectResult (above) picks up the result on page reload.
+      await signInWithRedirect(auth, provider);
     } catch(e) {
-      if (e.code === 'auth/account-exists-with-different-credential') {
-        const email = e.customData?.email;
-        showMsg('login-msg',
-          `⚠️ An account already exists with ${email || 'this email'} using a different sign-in method. Try logging in with email & password.`,
-          'error'
-        );
-      } else if (e.code === 'auth/popup-closed-by-user') {
-        // User closed popup — no error needed
-      } else {
-        showMsg('login-msg', 'Google sign-in failed. Try again.', 'error');
-      }
+      showMsg('login-msg', 'Google sign-in failed. Please try again.', 'error');
     }
   };
 
