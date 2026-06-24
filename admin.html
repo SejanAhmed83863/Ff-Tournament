@@ -17,13 +17,11 @@
     .live-dot{display:flex;align-items:center;gap:6px}
     .live-dot span:first-child{width:8px;height:8px;background:var(--green);border-radius:50%;box-shadow:0 0 6px var(--green);display:inline-block}
     .live-dot span:last-child{font-size:12px;color:var(--green);font-weight:600}
-
     .tabs{display:flex;background:var(--card);border-bottom:1px solid var(--border);overflow-x:auto}
     .tab{flex:1;min-width:65px;padding:13px 4px;text-align:center;cursor:pointer;font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:1px;color:var(--muted);border-bottom:2px solid transparent;position:relative;background:none;border-top:none;border-left:none;border-right:none;white-space:nowrap}
     .tab.active{color:var(--orange);border-bottom:2px solid var(--orange)}
     .tab-icon{font-size:15px;display:block;margin-bottom:1px}
     .badge{position:absolute;top:8px;right:50%;transform:translateX(14px);background:var(--red);color:white;border-radius:50%;width:18px;height:18px;font-size:11px;display:flex;align-items:center;justify-content:center;font-family:'Rajdhani',sans-serif;font-weight:700}
-
     .tab-content{display:none;padding:16px;max-width:600px;margin:0 auto}
     .tab-content.active{display:block}
     .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px}
@@ -70,7 +68,7 @@
     .w-uid-wrap{position:relative;margin-bottom:10px}
     .w-uid-wrap input{padding-left:40px}
     .w-uid-num{position:absolute;left:14px;top:50%;transform:translateY(-60%);font-weight:700;font-size:14px}
-    .prize-preview{background:#0A0A0F;border-radius:8px;padding:12px;margin-bottom:14px;display:flex;gap:20px}
+    .prize-preview{background:#0A0A0F;border-radius:8px;padding:12px;margin-bottom:14px;display:flex;gap:20px;flex-wrap:wrap}
     .pp-item{text-align:center}
     .pp-val{font-family:'Bebas Neue';font-size:20px;letter-spacing:1px}
     .pp-lbl{color:var(--muted);font-size:11px}
@@ -79,28 +77,43 @@
     .log-meta{color:var(--muted);font-size:12px}
     .log-prize{color:var(--green);font-family:'Bebas Neue';font-size:20px}
     #toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);padding:11px 26px;border-radius:8px;font-family:'Rajdhani';font-weight:700;font-size:14px;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.5);display:none;white-space:nowrap}
-
-    /* SETTINGS */
     .settings-section{margin-bottom:20px}
     .settings-section-title{font-family:'Bebas Neue';font-size:15px;letter-spacing:2px;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:8px}
     .settings-section-title::after{content:'';flex:1;height:1px;background:var(--border)}
     .field-hint{font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.6;padding:10px;background:rgba(255,255,255,0.03);border-radius:7px;border:1px solid var(--border)}
     .cur-display{background:#0A0A0F;border:1px solid var(--border);border-radius:7px;padding:10px 13px;font-size:13px;color:var(--gold);margin-bottom:10px;min-height:38px;word-break:break-word;line-height:1.5}
-    .cur-display.empty{color:var(--muted);font-style:italic}
-
-    /* Per-method payment tabs */
     .pay-method-tabs{display:flex;border-radius:8px 8px 0 0;overflow:hidden;border:1px solid var(--border);border-bottom:none;margin-bottom:0}
     .pay-method-tab{flex:1;padding:10px;text-align:center;font-family:'Bebas Neue';font-size:14px;letter-spacing:1px;color:var(--muted);cursor:pointer;background:var(--dark);border:none;border-bottom:2px solid transparent}
     .pay-method-tab.active{color:var(--orange);background:rgba(255,107,0,0.08);border-bottom:2px solid var(--orange)}
     .pay-method-panel{display:none;border:1px solid var(--border);border-radius:0 0 8px 8px;padding:14px;margin-bottom:12px}
     .pay-method-panel.active{display:block}
-    .pay-cur{display:flex;gap:8px;margin-bottom:12px}
+    .pay-cur{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
     .pay-cur-box{background:#0A0A0F;border:1px solid var(--border);border-radius:7px;padding:10px 12px;flex:1}
     .pay-cur-lbl{font-size:10px;color:var(--muted);letter-spacing:1px;margin-bottom:4px;text-transform:uppercase}
     .pay-cur-val{font-family:'Bebas Neue';font-size:16px;color:var(--green);letter-spacing:1px;word-break:break-all}
     .fld-label{font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;display:block;margin-bottom:6px}
-
-    /* PASSWORD OVERLAY */
+    /* PLAYER SELECTOR CARDS */
+    .psel-card{background:#0A0A0F;border:2px solid var(--border);border-radius:10px;padding:11px 14px;margin-bottom:8px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:border-color .15s,background .15s}
+    .psel-card:hover{border-color:var(--orange);background:rgba(255,107,0,0.05)}
+    .psel-card.selected{border-color:var(--orange);background:rgba(255,107,0,0.10)}
+    .psel-radio{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s}
+    .psel-card.selected .psel-radio{border-color:var(--orange);background:var(--orange)}
+    .psel-dot{width:8px;height:8px;border-radius:50%;background:#fff;display:none}
+    .psel-card.selected .psel-dot{display:block}
+    .psel-info{flex:1}
+    .psel-name{font-weight:700;font-size:14px}
+    .psel-meta{color:var(--muted);font-size:12px;margin-top:2px}
+    .psel-badge{font-size:10px;padding:2px 8px;border-radius:12px;font-weight:700;letter-spacing:1px;white-space:nowrap}
+    /* Kill rows */
+    .krow{background:#0A0A0F;border:1px solid var(--border);border-radius:9px;padding:10px 12px;margin-bottom:8px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+    .krow .kr-name{flex:1;min-width:100px}
+    .krow .kr-name-main{font-weight:700;font-size:13px}
+    .krow .kr-name-sub{color:var(--muted);font-size:11px}
+    .krow input[type=number]{max-width:90px;margin-bottom:0;flex-shrink:0}
+    .krow .kr-calc{min-width:58px;text-align:right;font-family:'Bebas Neue';font-size:16px;color:var(--green);flex-shrink:0}
+    .krow .kr-uid-input{max-width:120px;margin-bottom:0}
+    .divlbl{font-family:'Bebas Neue';font-size:12px;letter-spacing:2px;margin:12px 0 8px;display:flex;align-items:center;gap:8px}
+    .divlbl::before,.divlbl::after{content:'';flex:1;height:1px;background:var(--border)}
     #pw-overlay{display:none;position:fixed;inset:0;background:rgba(10,10,15,0.97);z-index:99999;align-items:center;justify-content:center;padding:20px}
     .pw-box{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:28px 24px;width:100%;max-width:340px;text-align:center}
     .pw-box .header-icon{margin:0 auto 14px}
@@ -133,11 +146,11 @@
 </div>
 
 <div class="tabs">
-  <button class="tab active" onclick="switchTab('requests')"   id="tab-btn-requests"><span class="tab-icon">📥</span>REQUESTS<span class="badge" id="pending-badge" style="display:none">0</span></button>
-  <button class="tab"        onclick="switchTab('tournaments')" id="tab-btn-tournaments"><span class="tab-icon">🎮</span>MATCHES</button>
-  <button class="tab"        onclick="switchTab('winners')"     id="tab-btn-winners"><span class="tab-icon">🏆</span>WINNERS</button>
-  <button class="tab"        onclick="switchTab('settings')"    id="tab-btn-settings"><span class="tab-icon">⚙️</span>SETTINGS</button>
-  <button class="tab"        onclick="switchTab('database')"    id="tab-btn-database"><span class="tab-icon">🗄️</span>DATABASE</button>
+  <button class="tab active" onclick="switchTab('requests')" id="tab-btn-requests"><span class="tab-icon">📥</span>REQUESTS<span class="badge" id="pending-badge" style="display:none">0</span></button>
+  <button class="tab" onclick="switchTab('tournaments')" id="tab-btn-tournaments"><span class="tab-icon">🎮</span>MATCHES</button>
+  <button class="tab" onclick="switchTab('winners')" id="tab-btn-winners"><span class="tab-icon">🏆</span>WINNERS</button>
+  <button class="tab" onclick="switchTab('settings')" id="tab-btn-settings"><span class="tab-icon">⚙️</span>SETTINGS</button>
+  <button class="tab" onclick="switchTab('database')" id="tab-btn-database"><span class="tab-icon">🗄️</span>DATABASE</button>
 </div>
 
 <!-- REQUESTS -->
@@ -167,8 +180,7 @@
     </div>
     <label class="fld-label">Per Kill Prize (optional)</label>
     <input type="number" id="t-perkill" placeholder="৳ per kill, e.g. 10">
-    <div class="field-hint">If set, every confirmed kill earns the player this amount on top of any placement prize when winners are distributed.</div>
-    <!-- GAME MODE — Classic / Clash Squad / Lone Wolf -->
+    <div class="field-hint">If set, every confirmed kill earns the player this amount on top of any placement prize.</div>
     <label class="fld-label">Game Mode</label>
     <select id="t-game-mode">
       <option value="Classic">🗺️ Classic (Battle Royale)</option>
@@ -190,48 +202,54 @@
   <div class="card">
     <div class="card-title"><div class="card-title-bar" style="background:var(--gold)"></div><span style="color:var(--gold)">DISTRIBUTE PRIZES</span></div>
     <select id="winner-match-select" onchange="updatePrizePreview()"><option value="">— Select Match —</option></select>
+
     <div id="prize-preview" style="display:none" class="prize-preview">
       <div class="pp-item"><div class="pp-val" id="pp1" style="color:var(--gold)">৳0</div><div class="pp-lbl">1ST</div></div>
-      <div class="pp-item"><div class="pp-val" id="pp2" style="color:#C0C0C0">৳0</div><div class="pp-lbl">2ND</div></div>
-      <div class="pp-item"><div class="pp-val" id="pp3" style="color:#CD7F32">৳0</div><div class="pp-lbl">3RD</div></div>
+      <div class="pp-item" id="pp2w"><div class="pp-val" id="pp2" style="color:#C0C0C0">৳0</div><div class="pp-lbl">2ND</div></div>
+      <div class="pp-item" id="pp3w"><div class="pp-val" id="pp3" style="color:#CD7F32">৳0</div><div class="pp-lbl">3RD</div></div>
       <div class="pp-item" id="pp-perkill-wrap" style="display:none"><div class="pp-val" id="pp-perkill" style="color:var(--red)">৳0</div><div class="pp-lbl">PER KILL</div></div>
     </div>
-    <!-- PARTICIPANT SELECTOR -->
-    <div id="winner-participants" style="display:none">
-      <div class="section-label" id="winner-select-label">SELECT WINNER FROM PARTICIPANTS</div>
-      <select id="winner-dropdown" onchange="selectWinnerFromDropdown()" style="margin-bottom:10px"><option value="">— Select Player/Team —</option></select>
-      <div id="winner-part-list"></div>
+
+    <!-- SELECTOR: populated after match chosen -->
+    <div id="winner-selector-wrap" style="display:none">
+      <div id="winner-selector-list"></div>
     </div>
-    <div id="winner-manual" style="margin-top:8px">
+
+    <!-- KILLS after selection -->
+    <div id="winner-kills-wrap" style="display:none">
+      <div class="divlbl" style="color:var(--red)">KILLS PER WINNER</div>
+      <div id="winner-kills-inner"></div>
+    </div>
+
+    <!-- MANUAL FALLBACK (no registrations) -->
+    <div id="winner-manual" style="display:none;margin-top:8px">
+      <div class="field-hint" style="color:var(--gold)">⚠️ No registrations found — enter UIDs manually.</div>
       <div class="w-uid-wrap"><span class="w-uid-num" style="color:var(--gold)">#1</span><input type="text" id="w1" placeholder="1st Place Game UID 🥇"></div>
       <input type="number" id="k1" placeholder="Kills (optional)">
-      <div id="solo-places">
+      <div id="solo-manual-extra">
         <div class="w-uid-wrap"><span class="w-uid-num" style="color:#C0C0C0">#2</span><input type="text" id="w2" placeholder="2nd Place Game UID 🥈"></div>
         <input type="number" id="k2" placeholder="Kills (optional)">
         <div class="w-uid-wrap"><span class="w-uid-num" style="color:#CD7F32">#3</span><input type="text" id="w3" placeholder="3rd Place Game UID 🥉"></div>
         <input type="number" id="k3" placeholder="Kills (optional)">
       </div>
     </div>
-    <button class="btn-gold" onclick="distributePrizes()">DISTRIBUTE PRIZES &amp; CLOSE MATCH</button>
+
+    <button class="btn-gold" onclick="distributePrizes()" style="margin-top:12px">DISTRIBUTE PRIZES &amp; CLOSE MATCH</button>
   </div>
+
   <div id="dist-log-wrap" style="display:none">
     <div class="section-label">DISTRIBUTION LOG</div>
     <div id="dist-log"></div>
   </div>
 
-  <!-- PER KILL DISTRIBUTION — ALL PARTICIPANTS -->
+  <!-- PER KILL DISTRIBUTION -->
   <div class="card">
     <div class="card-title"><div class="card-title-bar" style="background:var(--red)"></div><span style="color:var(--red)">PER KILL PRIZE DISTRIBUTION</span></div>
-    <p class="field-hint">Select a match, then pick a player/team from the dropdown and enter kills.</p>
+    <p class="field-hint">Select a match — all participants load automatically. Enter kills per player then distribute.</p>
     <select id="kill-match-select" onchange="loadKillParticipants()"><option value="">— Select Match —</option></select>
-    <div class="cur-display" id="kill-rate-display" style="display:none">Per Kill Rate: <b id="kill-rate-val">৳0</b></div>
-    <div class="row" style="align-items:center">
-      <select id="kill-player-select" style="flex:1"><option value="">— Select Player/Team —</option></select>
-      <input type="number" id="kill-player-kills" placeholder="Kills" style="max-width:80px">
-      <button type="button" onclick="addKillRowFromSelect()" style="padding:11px 14px;background:transparent;border:1px solid var(--orange);color:var(--orange);border-radius:7px;cursor:pointer;font-weight:700;margin-bottom:10px">+ ADD</button>
-    </div>
+    <div id="kill-rate-display" style="display:none;background:#0A0A0F;border:1px solid var(--border);border-radius:7px;padding:10px 13px;margin-bottom:10px;color:var(--gold);font-size:13px">Per Kill Rate: <b id="kill-rate-val">৳0</b></div>
     <div id="kill-rows"></div>
-    <button type="button" onclick="addKillRow()" style="width:100%;padding:10px;background:transparent;border:1px dashed var(--border);color:var(--muted);border-radius:7px;cursor:pointer;font-family:'Rajdhani';font-weight:700;margin-bottom:10px">+ ADD MANUALLY (free text UID)</button>
+    <button type="button" onclick="addKillRowManual()" style="width:100%;padding:10px;background:transparent;border:1px dashed var(--border);color:var(--muted);border-radius:7px;cursor:pointer;font-family:'Rajdhani';font-weight:700;margin-bottom:10px">+ ADD MANUALLY</button>
     <button class="btn-main" style="background:linear-gradient(90deg,#FF6B6B,#FF3B00)" onclick="distributeKillPrizes()">DISTRIBUTE KILL PRIZES</button>
     <div id="kill-log-wrap" style="display:none;margin-top:14px">
       <div class="section-label">KILL PRIZE LOG</div>
@@ -240,11 +258,8 @@
   </div>
 </div>
 
-
 <!-- SETTINGS -->
 <div class="tab-content" id="tab-settings">
-
-  <!-- NOTICE -->
   <div class="card">
     <div class="card-title"><div class="card-title-bar" style="background:var(--gold)"></div><span style="color:var(--gold)">📢 GLOBAL NOTICE BAR</span></div>
     <div class="settings-section">
@@ -253,7 +268,7 @@
     </div>
     <div class="settings-section">
       <div class="settings-section-title">UPDATE NOTICE</div>
-      <p class="field-hint">Scrolls across the top of Home page. Leave blank to hide bar.</p>
+      <p class="field-hint">Scrolls across the top of Home page. Leave blank to hide.</p>
       <textarea id="notice-input" placeholder="e.g. 🔥 New tournament tonight at 9PM!"></textarea>
       <div class="row">
         <button class="btn-main" style="margin-top:0" onclick="saveNotice()">SAVE NOTICE</button>
@@ -262,17 +277,14 @@
     </div>
   </div>
 
-  <!-- PAYMENT DETAILS — per method -->
   <div class="card">
     <div class="card-title"><div class="card-title-bar" style="background:var(--green)"></div><span style="color:var(--green)">💳 DEPOSIT PAYMENT DETAILS</span></div>
-    <p class="field-hint">Set a <b>separate number &amp; send type for each method</b>. Users see the correct number when they select bKash, Nagad, or Rocket in the Deposit screen.</p>
+    <p class="field-hint">Set a separate number &amp; send type for each method.</p>
     <div class="pay-method-tabs">
       <button class="pay-method-tab active" onclick="switchPayTab('bkash')">📱 bKash</button>
-      <button class="pay-method-tab"        onclick="switchPayTab('nagad')">💳 Nagad</button>
-      <button class="pay-method-tab"        onclick="switchPayTab('rocket')">🚀 Rocket</button>
+      <button class="pay-method-tab" onclick="switchPayTab('nagad')">💳 Nagad</button>
+      <button class="pay-method-tab" onclick="switchPayTab('rocket')">🚀 Rocket</button>
     </div>
-
-    <!-- bKash -->
     <div class="pay-method-panel active" id="pay-panel-bkash">
       <div class="pay-cur">
         <div class="pay-cur-box"><div class="pay-cur-lbl">Number</div><div class="pay-cur-val" id="cur-bkash-number">—</div></div>
@@ -284,8 +296,6 @@
       <select id="pay-bkash-type"><option value="Send Money">Send Money</option><option value="Cashout">Cashout</option><option value="Payment">Payment</option></select>
       <button class="btn-green" onclick="savePayMethod('bkash')">SAVE bKash DETAILS</button>
     </div>
-
-    <!-- Nagad -->
     <div class="pay-method-panel" id="pay-panel-nagad">
       <div class="pay-cur">
         <div class="pay-cur-box"><div class="pay-cur-lbl">Number</div><div class="pay-cur-val" id="cur-nagad-number">—</div></div>
@@ -297,8 +307,6 @@
       <select id="pay-nagad-type"><option value="Send Money">Send Money</option><option value="Cashout">Cashout</option><option value="Payment">Payment</option></select>
       <button class="btn-green" onclick="savePayMethod('nagad')">SAVE NAGAD DETAILS</button>
     </div>
-
-    <!-- Rocket -->
     <div class="pay-method-panel" id="pay-panel-rocket">
       <div class="pay-cur">
         <div class="pay-cur-box"><div class="pay-cur-lbl">Number</div><div class="pay-cur-val" id="cur-rocket-number">—</div></div>
@@ -312,43 +320,29 @@
     </div>
   </div>
 
-  <!-- SUPPORT CONTACTS -->
   <div class="card">
     <div class="card-title"><div class="card-title-bar" style="background:#4facfe"></div><span style="color:#4facfe">🎧 SUPPORT CONTACTS</span></div>
-    <p class="field-hint">These contacts appear in the Support button on every page. Users can reach you via WhatsApp, Telegram, or phone call.</p>
-
     <div class="settings-section">
-      <div class="settings-section-title">CURRENT SUPPORT INFO</div>
+      <div class="settings-section-title">CURRENT</div>
       <div class="pay-cur">
         <div class="pay-cur-box"><div class="pay-cur-lbl">WhatsApp</div><div class="pay-cur-val" id="cur-wa">—</div></div>
         <div class="pay-cur-box"><div class="pay-cur-lbl">Telegram</div><div class="pay-cur-val" id="cur-tg">—</div></div>
         <div class="pay-cur-box"><div class="pay-cur-lbl">Phone</div><div class="pay-cur-val" id="cur-ph">—</div></div>
       </div>
     </div>
-
-    <div class="settings-section">
-      <div class="settings-section-title">UPDATE SUPPORT CONTACTS</div>
-
-      <label class="fld-label">WhatsApp Number (with country code, e.g. +8801XXXXXXXXX)</label>
-      <input type="tel" id="support-whatsapp" placeholder="+8801XXXXXXXXX">
-
-      <label class="fld-label">Telegram Username (e.g. @yourusername)</label>
-      <input type="text" id="support-telegram-link" placeholder="@yourusername">
-
-      <label class="fld-label">Telegram Phone Number (optional, e.g. +8801XXXXXXXXX)</label>
-      <input type="tel" id="support-telegram-number" placeholder="+8801XXXXXXXXX">
-
-      <label class="fld-label">Phone Number (for direct call)</label>
-      <input type="tel" id="support-phone" placeholder="01XXXXXXXXX">
-
-      <button class="btn-blue" onclick="saveSupportContacts()">SAVE SUPPORT CONTACTS</button>
-    </div>
+    <label class="fld-label">WhatsApp Number</label>
+    <input type="tel" id="support-whatsapp" placeholder="+8801XXXXXXXXX">
+    <label class="fld-label">Telegram Username</label>
+    <input type="text" id="support-telegram-link" placeholder="@yourusername">
+    <label class="fld-label">Telegram Phone (optional)</label>
+    <input type="tel" id="support-telegram-number" placeholder="+8801XXXXXXXXX">
+    <label class="fld-label">Phone (direct call)</label>
+    <input type="tel" id="support-phone" placeholder="01XXXXXXXXX">
+    <button class="btn-blue" onclick="saveSupportContacts()">SAVE SUPPORT CONTACTS</button>
   </div>
 
-  <!-- SUB-ADMIN ACCESS -->
   <div class="card">
     <div class="card-title"><div class="card-title-bar" style="background:#9b59b6"></div><span style="color:#9b59b6">👤 SUB-ADMIN ACCESS</span></div>
-    <p class="field-hint">Set the Gmail and password for the sub-admin panel. You must confirm your admin password to save.</p>
     <label class="fld-label">Sub-Admin Gmail</label>
     <input type="email" id="sub-email" placeholder="subadmin@gmail.com">
     <label class="fld-label">Sub-Admin Password</label>
@@ -359,31 +353,27 @@
     <div id="sub-admin-cur" class="cur-display" style="margin-top:10px;display:none"></div>
   </div>
 
-  <!-- TOURNAMENT RULES -->
   <div class="card">
     <div class="card-title"><div class="card-title-bar" style="background:var(--orange)"></div><span style="color:var(--orange)">📋 TOURNAMENT RULES</span></div>
-    <p class="field-hint">Add unlimited rules. Players will see these before joining. Drag to reorder.</p>
+    <p class="field-hint">Add unlimited rules. Players see these before joining.</p>
     <div id="rules-list" style="margin-bottom:10px"></div>
     <div class="row" style="margin-bottom:0">
       <input type="text" id="new-rule-input" placeholder="Type a new rule…" onkeydown="if(event.key==='Enter')addRule()">
-      <button class="btn-main" style="white-space:nowrap;padding:0 18px" onclick="addRule()">+ ADD RULE</button>
+      <button class="btn-main" style="white-space:nowrap;padding:0 18px" onclick="addRule()">+ ADD</button>
     </div>
     <button class="btn-blue" style="margin-top:10px" onclick="saveRules()">💾 SAVE RULES</button>
   </div>
-
-</div><!-- end settings -->
+</div>
 
 <!-- DATABASE -->
 <div class="tab-content" id="tab-database">
   <div class="card" style="padding:0;overflow:hidden">
     <div class="pay-method-tabs" style="border-radius:12px 12px 0 0">
       <button class="pay-method-tab active" onclick="switchDbTab('history')">🏆 History</button>
-      <button class="pay-method-tab"        onclick="switchDbTab('participants')">🧍 Participants</button>
-      <button class="pay-method-tab"        onclick="switchDbTab('transactions')">💸 Transactions</button>
-      <button class="pay-method-tab"        onclick="switchDbTab('users')">👥 Users</button>
+      <button class="pay-method-tab" onclick="switchDbTab('participants')">🧍 Participants</button>
+      <button class="pay-method-tab" onclick="switchDbTab('transactions')">💸 Transactions</button>
+      <button class="pay-method-tab" onclick="switchDbTab('users')">👥 Users</button>
     </div>
-
-    <!-- MATCH HISTORY -->
     <div class="pay-method-panel active" id="db-panel-history" style="border-radius:0 0 12px 12px">
       <div class="stats-row">
         <div class="stat-box"><div class="stat-val" id="db-hist-count" style="color:var(--orange)">0</div><div class="stat-lbl">MATCHES PLAYED</div></div>
@@ -391,20 +381,16 @@
       </div>
       <div id="db-history-list"></div>
     </div>
-
-    <!-- PARTICIPANTS (RUNNING + PAST MATCHES) -->
     <div class="pay-method-panel" id="db-panel-participants" style="border-radius:0 0 12px 12px">
       <input type="text" id="db-participants-search" placeholder="🔍 Search by match, game name, UID or WhatsApp…" oninput="renderParticipantsOverview()" style="margin-bottom:12px">
       <div id="db-participants-list"></div>
     </div>
-
-    <!-- TRANSACTIONS -->
     <div class="pay-method-panel" id="db-panel-transactions" style="border-radius:0 0 12px 12px">
       <div class="prize-preview" style="margin-bottom:14px">
-        <div class="pp-item"><div class="pp-val" id="db-tx-today" style="color:var(--gold)">৳0</div><div class="pp-lbl">TODAY'S ADDED MONEY</div></div>
-        <div class="pp-item"><div class="pp-val" id="db-tx-deposited" style="color:var(--green)">৳0</div><div class="pp-lbl">TOTAL MONEY ADDED</div></div>
-        <div class="pp-item"><div class="pp-val" id="db-tx-withdrawn" style="color:var(--red)">৳0</div><div class="pp-lbl">TOTAL WITHDRAWN</div></div>
-        <div class="pp-item"><div class="pp-val" id="db-tx-net" style="color:var(--orange)">৳0</div><div class="pp-lbl">NET IN DATABASE</div></div>
+        <div class="pp-item"><div class="pp-val" id="db-tx-today" style="color:var(--gold)">৳0</div><div class="pp-lbl">TODAY'S ADDED</div></div>
+        <div class="pp-item"><div class="pp-val" id="db-tx-deposited" style="color:var(--green)">৳0</div><div class="pp-lbl">TOTAL ADDED</div></div>
+        <div class="pp-item"><div class="pp-val" id="db-tx-withdrawn" style="color:var(--red)">৳0</div><div class="pp-lbl">WITHDRAWN</div></div>
+        <div class="pp-item"><div class="pp-val" id="db-tx-net" style="color:var(--orange)">৳0</div><div class="pp-lbl">NET</div></div>
       </div>
       <div class="stats-row">
         <div class="stat-box"><div class="stat-val" id="db-tx-count" style="color:var(--orange)">0</div><div class="stat-lbl">TOTAL TX</div></div>
@@ -414,8 +400,6 @@
       </div>
       <div id="db-transactions-list"></div>
     </div>
-
-    <!-- USERS -->
     <div class="pay-method-panel" id="db-panel-users" style="border-radius:0 0 12px 12px">
       <div class="stats-row">
         <div class="stat-box"><div class="stat-val" id="db-user-count" style="color:var(--orange)">0</div><div class="stat-lbl">TOTAL USERS</div></div>
@@ -424,19 +408,16 @@
       <div id="db-users-list"></div>
     </div>
   </div>
-
-  <!-- DOWNLOAD REPORT -->
   <div class="card" style="margin-top:14px">
     <div class="card-title"><div class="card-title-bar" style="background:var(--orange)"></div><span style="color:var(--orange)">📥 DOWNLOAD DAILY REPORT</span></div>
-    <p class="field-hint">Generate and download a PDF report of tournaments and transactions for any date.</p>
     <label class="fld-label">Select Date</label>
     <input type="date" id="report-date" style="margin-bottom:10px">
     <div class="row" style="margin-bottom:0">
-      <button class="btn-main" style="background:linear-gradient(90deg,#e67e22,#c0392b)" onclick="downloadReport('pdf')">⬇ DOWNLOAD PDF</button>
-      <button class="btn-main" style="background:linear-gradient(90deg,#27ae60,#1a7a44)" onclick="downloadReport('csv')">⬇ DOWNLOAD CSV</button>
+      <button class="btn-main" style="background:linear-gradient(90deg,#e67e22,#c0392b)" onclick="downloadReport('pdf')">⬇ PDF</button>
+      <button class="btn-main" style="background:linear-gradient(90deg,#27ae60,#1a7a44)" onclick="downloadReport('csv')">⬇ CSV</button>
     </div>
   </div>
-</div><!-- end database -->
+</div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
@@ -445,1249 +426,494 @@
     from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
 
-
   const ADMIN_PW = 'Sejan#73526';
   (function(){
-    var overlay=document.getElementById('pw-overlay');
-    if(sessionStorage.getItem('adminAuth')==='1'){ overlay.style.display='none'; }
-    else{ overlay.style.display='flex'; overlay.querySelector('#pw-input').focus(); }
+    var o=document.getElementById('pw-overlay');
+    if(sessionStorage.getItem('adminAuth')==='1'){o.style.display='none';}
+    else{o.style.display='flex';o.querySelector('#pw-input').focus();}
   })();
   window.checkAdminPw=function(){
     var v=document.getElementById('pw-input').value;
-    if(v===ADMIN_PW){ sessionStorage.setItem('adminAuth','1'); document.getElementById('pw-overlay').style.display='none'; }
-    else{ document.getElementById('pw-err').textContent='Wrong password. Try again.'; document.getElementById('pw-input').value=''; document.getElementById('pw-input').focus(); }
+    if(v===ADMIN_PW){sessionStorage.setItem('adminAuth','1');document.getElementById('pw-overlay').style.display='none';}
+    else{document.getElementById('pw-err').textContent='Wrong password.';document.getElementById('pw-input').value='';document.getElementById('pw-input').focus();}
   };
 
-  const ADMIN_EMAIL = "sejansasker@gmail.com";
-  const cfg = {
-    apiKey:"AIzaSyBgMroBilivfk7bJxoz93HjxSt6yU7Ura0",
-    authDomain:"tournament-app-4a050.firebaseapp.com",
-    projectId:"tournament-app-4a050",
-    storageBucket:"tournament-app-4a050.appspot.com",
-    messagingSenderId:"811957533858",
-    appId:"1:811957533858:web:1d1f0f916c0aba5eccebfb"
-  };
-  const app=initializeApp(cfg), db=getFirestore(app), auth=getAuth(app);
+  const ADMIN_EMAIL="sejansasker@gmail.com";
+  const cfg={apiKey:"AIzaSyBgMroBilivfk7bJxoz93HjxSt6yU7Ura0",authDomain:"tournament-app-4a050.firebaseapp.com",projectId:"tournament-app-4a050",storageBucket:"tournament-app-4a050.appspot.com",messagingSenderId:"811957533858",appId:"1:811957533858:web:1d1f0f916c0aba5eccebfb"};
+  const app=initializeApp(cfg),db=getFirestore(app),auth=getAuth(app);
 
-  onAuthStateChanged(auth, function(user){
-    if(!user){ window.location.href='index.html'; return; }
-    if(user.email!==ADMIN_EMAIL){ alert('Access Denied!'); window.location.href='home.html'; return; }
-    loadRequests();
-    loadTournaments();
-    loadSettingsData();
-    loadDatabaseData();
+  onAuthStateChanged(auth,function(user){
+    if(!user){window.location.href='index.html';return;}
+    if(user.email!==ADMIN_EMAIL){alert('Access Denied!');window.location.href='home.html';return;}
+    loadRequests();loadTournaments();loadSettingsData();loadDatabaseData();
   });
 
-  function el(id){ return document.getElementById(id); }
-  function toast(msg, type){
-    var e=el('toast');
-    e.textContent=msg;
+  function el(id){return document.getElementById(id);}
+  function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+  function toast(msg,type){
+    var e=el('toast');e.textContent=msg;
     e.style.background=type==='error'?'#FF6B6B':type==='warn'?'#FFD700':'#5CFF8A';
-    e.style.color=(type==='error')?'#fff':'#0A0A0F';
-    e.style.display='block';
-    clearTimeout(window._tt); window._tt=setTimeout(function(){e.style.display='none';},2600);
+    e.style.color=(type==='error')?'#fff':'#0A0A0F';e.style.display='block';
+    clearTimeout(window._tt);window._tt=setTimeout(function(){e.style.display='none';},2600);
   }
-
   window.switchTab=function(name){
     document.querySelectorAll('.tab-content').forEach(function(c){c.classList.remove('active');});
     document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
-    el('tab-'+name).classList.add('active');
-    el('tab-btn-'+name).classList.add('active');
+    el('tab-'+name).classList.add('active');el('tab-btn-'+name).classList.add('active');
   };
 
-  // ─── REQUESTS ─────────────────────────────────────────────────────────────
+  // ── REQUESTS ──────────────────────────────────────────────────────────────
   function loadRequests(){
-    onSnapshot(collection(db,'transactions'), function(snap){
-      var all=[],pending=[],approved=[],rejected=[];
-      snap.forEach(function(d){
-        var tx=Object.assign({id:d.id},d.data()); all.push(tx);
-        if(tx.status==='pending') pending.push(tx);
-        else if(tx.status==='approved') approved.push(tx);
-        else rejected.push(tx);
-      });
-      el('stat-pending').textContent=pending.length;
-      el('stat-total').textContent=all.length;
-      el('stat-approved').textContent=approved.length;
-      el('stat-rejected').textContent=rejected.length;
-      var badge=el('pending-badge');
-      if(pending.length>0){badge.textContent=pending.length;badge.style.display='flex';}else badge.style.display='none';
+    onSnapshot(collection(db,'transactions'),function(snap){
+      var all=[],pend=[],appr=[],rej=[];
+      snap.forEach(function(d){var tx=Object.assign({id:d.id},d.data());all.push(tx);if(tx.status==='pending')pend.push(tx);else if(tx.status==='approved')appr.push(tx);else rej.push(tx);});
+      el('stat-pending').textContent=pend.length;el('stat-total').textContent=all.length;el('stat-approved').textContent=appr.length;el('stat-rejected').textContent=rej.length;
+      var badge=el('pending-badge');if(pend.length>0){badge.textContent=pend.length;badge.style.display='flex';}else badge.style.display='none';
       var list=el('requests-list');
-      if(!pending.length){list.innerHTML='<div class="empty-state"><div class="tick">✓</div><div>ALL REQUESTS HANDLED</div></div>';return;}
+      if(!pend.length){list.innerHTML='<div class="empty-state"><div class="tick">✓</div><div>ALL REQUESTS HANDLED</div></div>';return;}
       list.innerHTML='';
-      pending.forEach(function(tx){
-        var isd=tx.type==='deposit'||tx.type==='entry';
-        var sc=isd?'#5CFF8A':'#FF6B6B', tc=isd?'rgba(92,255,138,0.12)':'rgba(255,107,107,0.12)';
-        list.innerHTML+='<div class="req-card">'
-          +'<div class="req-strip" style="background:'+sc+'"></div>'
-          +'<div style="display:flex;justify-content:space-between;align-items:flex-start">'
-          +'<span class="req-type" style="background:'+tc+';color:'+sc+'">'+tx.type.toUpperCase()+'</span>'
-          +'<span class="req-amount">৳'+tx.amount+'</span></div>'
-          +'<div class="req-email">'+tx.email+'</div>'
-          +'<div class="req-meta">'
-          +(tx.name?'👤 '+tx.name+'<br>':'')
-          +(tx.txid?'🔖 TxID: '+tx.txid+'<br>':'')
-          +(tx.number?'📞 '+tx.number+'<br>':'')
-          +(tx.method?'📱 '+tx.method.toUpperCase():'')
-          +'</div>'
-          +'<div class="req-actions">'
-          +'<button class="btn-approve" onclick="handleTx(\''+tx.id+'\',\''+tx.uid+'\','+tx.amount+',\''+tx.type+'\',\'approve\')">✓ APPROVE</button>'
-          +'<button class="btn-reject"  onclick="handleTx(\''+tx.id+'\',\''+tx.uid+'\','+tx.amount+',\''+tx.type+'\',\'reject\')">✕ REJECT</button>'
-          +'</div></div>';
+      pend.forEach(function(tx){
+        var isd=tx.type==='deposit'||tx.type==='entry',sc=isd?'#5CFF8A':'#FF6B6B',tc=isd?'rgba(92,255,138,0.12)':'rgba(255,107,107,0.12)';
+        list.innerHTML+='<div class="req-card"><div class="req-strip" style="background:'+sc+'"></div>'
+          +'<div style="display:flex;justify-content:space-between;align-items:flex-start"><span class="req-type" style="background:'+tc+';color:'+sc+'">'+tx.type.toUpperCase()+'</span><span class="req-amount">৳'+tx.amount+'</span></div>'
+          +'<div class="req-email">'+esc(tx.email)+'</div>'
+          +'<div class="req-meta">'+(tx.name?'👤 '+esc(tx.name)+'<br>':'')+(tx.txid?'🔖 TxID: '+esc(tx.txid)+'<br>':'')+(tx.number?'📞 '+esc(tx.number)+'<br>':'')+(tx.method?'📱 '+tx.method.toUpperCase():'')+'</div>'
+          +'<div class="req-actions"><button class="btn-approve" onclick="handleTx(\''+tx.id+'\',\''+tx.uid+'\','+tx.amount+',\''+tx.type+'\',\'approve\')">✓ APPROVE</button><button class="btn-reject" onclick="handleTx(\''+tx.id+'\',\''+tx.uid+'\','+tx.amount+',\''+tx.type+'\',\'reject\')">✕ REJECT</button></div></div>';
       });
     });
   }
-
   window.handleTx=async function(id,uid,amt,type,action){
     try{
-      if(action==='approve'){
-        await updateDoc(doc(db,'transactions',id),{status:'approved'});
-        if(type==='deposit') await updateDoc(doc(db,'users',uid),{balance:increment(amt)});
-        toast('✅ Approved! ৳'+amt+' credited');
-      } else {
-        await updateDoc(doc(db,'transactions',id),{status:'rejected'});
-        if(type==='withdraw') await updateDoc(doc(db,'users',uid),{balance:increment(amt)});
-        toast('❌ Rejected'+(type==='withdraw'?' & ৳'+amt+' refunded':''),'error');
-      }
+      if(action==='approve'){await updateDoc(doc(db,'transactions',id),{status:'approved'});if(type==='deposit')await updateDoc(doc(db,'users',uid),{balance:increment(amt)});toast('✅ Approved! ৳'+amt+' credited');}
+      else{await updateDoc(doc(db,'transactions',id),{status:'rejected'});if(type==='withdraw')await updateDoc(doc(db,'users',uid),{balance:increment(amt)});toast('❌ Rejected'+(type==='withdraw'?' & ৳'+amt+' refunded':''),'error');}
     }catch(e){toast(e.message,'error');}
   };
 
-  // ─── TOURNAMENTS ──────────────────────────────────────────────────────────
+  // ── TOURNAMENTS ───────────────────────────────────────────────────────────
   window.createTournament=async function(){
-    var title=el('t-title').value.trim();
-    var fee=Number(el('t-fee').value);
-    var time=el('t-time').value;
-    var max=Number(el('t-max').value);
-    var gameMode=el('t-game-mode').value;
-    if(!title||fee===undefined||isNaN(fee)||!time||!max){toast('Fill all required fields!','error');return;}
-    await addDoc(collection(db,'tournaments'),{
-      title:title,
-      prize1:Number(el('t-prize1').value)||0,
-      prize2:Number(el('t-prize2').value)||0,
-      prize3:Number(el('t-prize3').value)||0,
-      perKill:Number(el('t-perkill').value)||0,
-      fee:fee, teamType:Number(el('t-type').value),
-      game_mode:gameMode, maxPlayers:max, joined:0,
-      time:time, status:'open', created_at:serverTimestamp()
-    });
+    var title=el('t-title').value.trim(),fee=Number(el('t-fee').value),time=el('t-time').value,max=Number(el('t-max').value),gm=el('t-game-mode').value;
+    if(!title||isNaN(fee)||!time||!max){toast('Fill all required fields!','error');return;}
+    await addDoc(collection(db,'tournaments'),{title:title,prize1:Number(el('t-prize1').value)||0,prize2:Number(el('t-prize2').value)||0,prize3:Number(el('t-prize3').value)||0,perKill:Number(el('t-perkill').value)||0,fee:fee,teamType:Number(el('t-type').value),game_mode:gm,maxPlayers:max,joined:0,time:time,status:'open',created_at:serverTimestamp()});
     ['t-title','t-prize1','t-prize2','t-prize3','t-fee','t-max','t-time','t-perkill'].forEach(function(id){el(id).value='';});
-    el('t-type').value='1'; el('t-game-mode').value='Classic';
-    toast('🏆 Tournament created!');
+    el('t-type').value='1';el('t-game-mode').value='Classic';toast('🏆 Tournament created!');
   };
-
   function teamLabel(v){return v==1?'SOLO':v==2?'DUO':'SQUAD';}
   function teamColor(v){return v==1?'#FFD700':v==2?'#5CFF8A':'#FF6B00';}
   function gmColor(m){var ml=(m||'').toLowerCase();if(ml.includes('clash'))return '#FF6B6B';if(ml.includes('lone')||ml.includes('wolf'))return '#5CFF8A';return '#FF9500';}
 
   function loadTournaments(){
     onSnapshot(collection(db,'tournaments'),function(snap){
-      var list=el('tournament-list'), sel=el('winner-match-select'), ksel=el('kill-match-select');
-      list.innerHTML=''; sel.innerHTML='<option value="">— Select Match —</option>'; ksel.innerHTML='<option value="">— Select Match —</option>';
+      var list=el('tournament-list'),sel=el('winner-match-select'),ksel=el('kill-match-select');
+      list.innerHTML='';sel.innerHTML='<option value="">— Select Match —</option>';ksel.innerHTML='<option value="">— Select Match —</option>';
       el('match-count-label').textContent='ACTIVE MATCHES ('+snap.size+')';
       snap.forEach(function(d){
-        var t=d.data(), tc=teamColor(t.teamType), gc=gmColor(t.game_mode);
+        var t=d.data(),tc=teamColor(t.teamType),gc=gmColor(t.game_mode);
         var fill=Math.min(Math.round(((t.joined||0)/(t.maxPlayers||1))*100),100);
-        var barColor=fill>=100?'#FF6B6B':fill>70?'#FFD700':'#5CFF8A';
-        list.innerHTML+='<div class="t-card">'
-          +'<div class="t-header"><div>'
-          +'<div class="t-title">'+t.title+'</div>'
-          +'<div class="t-badges">'
-          +'<span class="t-badge" style="background:'+tc+'22;color:'+tc+'">'+teamLabel(t.teamType)+'</span>'
-          +(t.game_mode?'<span class="t-badge" style="background:'+gc+'22;color:'+gc+'">'+t.game_mode+'</span>':'')
-          +'</div></div>'
+        var bc=fill>=100?'#FF6B6B':fill>70?'#FFD700':'#5CFF8A';
+        list.innerHTML+='<div class="t-card"><div class="t-header"><div><div class="t-title">'+esc(t.title)+'</div>'
+          +'<div class="t-badges"><span class="t-badge" style="background:'+tc+'22;color:'+tc+'">'+teamLabel(t.teamType)+'</span>'+(t.game_mode?'<span class="t-badge" style="background:'+gc+'22;color:'+gc+'">'+t.game_mode+'</span>':'')+'</div></div>'
           +'<button class="btn-delete" onclick="deleteTournament(\''+d.id+'\')">✕ DELETE</button></div>'
-          +'<div class="t-prizes">'
-          +'<div><div class="t-prize-lbl">ENTRY/PLAYER</div><div class="t-prize-val" style="color:var(--gold)">৳'+t.fee+'</div></div>'
-          +'<div><div class="t-prize-lbl">1ST</div><div class="t-prize-val" style="color:var(--green)">৳'+t.prize1+'</div></div>'
-          +'<div><div class="t-prize-lbl">2ND</div><div class="t-prize-val">৳'+t.prize2+'</div></div>'
-          +'<div><div class="t-prize-lbl">3RD</div><div class="t-prize-val" style="color:#CD7F32">৳'+t.prize3+'</div></div>'
-          +(t.perKill?'<div><div class="t-prize-lbl">PER KILL</div><div class="t-prize-val" style="color:var(--red)">৳'+t.perKill+'</div></div>':'')
-          +'</div>'
-          +'<div class="fill-label"><span>PLAYERS</span><span style="color:'+barColor+'">'+t.joined+'/'+t.maxPlayers+'</span></div>'
-          +'<div class="fill-bar-bg"><div class="fill-bar" style="width:'+fill+'%;background:'+barColor+'"></div></div>'
+          +'<div class="t-prizes"><div><div class="t-prize-lbl">ENTRY/PLAYER</div><div class="t-prize-val" style="color:var(--gold)">৳'+t.fee+'</div></div><div><div class="t-prize-lbl">1ST</div><div class="t-prize-val" style="color:var(--green)">৳'+t.prize1+'</div></div><div><div class="t-prize-lbl">2ND</div><div class="t-prize-val">৳'+t.prize2+'</div></div><div><div class="t-prize-lbl">3RD</div><div class="t-prize-val" style="color:#CD7F32">৳'+t.prize3+'</div></div>'+(t.perKill?'<div><div class="t-prize-lbl">PER KILL</div><div class="t-prize-val" style="color:var(--red)">৳'+t.perKill+'</div></div>':'')+'</div>'
+          +'<div class="fill-label"><span>PLAYERS</span><span style="color:'+bc+'">'+t.joined+'/'+t.maxPlayers+'</span></div>'
+          +'<div class="fill-bar-bg"><div class="fill-bar" style="width:'+fill+'%;background:'+bc+'"></div></div>'
           +'<button type="button" class="btn-main" style="padding:9px;font-size:13px;margin-top:10px;background:linear-gradient(90deg,#2a2a3a,#1a1a28);border:1px solid var(--border)" onclick="toggleParticipants(\''+d.id+'\')">👥 VIEW PARTICIPANTS ('+(t.joined||0)+')</button>'
           +'<div id="participants-'+d.id+'" style="display:none;margin-top:8px"></div>'
-          +'<div class="row" style="margin-top:12px">'
-          +'<input type="text" id="room-'+d.id+'" placeholder="Room ID" value="'+(t.roomID||'')+'">'
-          +'<input type="text" id="pass-'+d.id+'" placeholder="Password" value="'+(t.roomPass||'')+'">'
-          +'</div>'
-          +'<button class="btn-main" style="padding:10px;font-size:13px;margin-top:2px" onclick="updateRoom(\''+d.id+'\')">Update Room Info</button>'
-          +'</div>';
-        sel.innerHTML+='<option value="'+d.id+'">'+t.title+(t.game_mode?' ['+t.game_mode+']':'')+'</option>';
-        ksel.innerHTML+='<option value="'+d.id+'">'+t.title+(t.game_mode?' ['+t.game_mode+']':'')+(t.perKill?' — ৳'+t.perKill+'/kill':'')+'</option>';
+          +'<div class="row" style="margin-top:12px"><input type="text" id="room-'+d.id+'" placeholder="Room ID" value="'+(t.roomID||'')+'"><input type="text" id="pass-'+d.id+'" placeholder="Password" value="'+(t.roomPass||'')+'"></div>'
+          +'<button class="btn-main" style="padding:10px;font-size:13px;margin-top:2px" onclick="updateRoom(\''+d.id+'\')">Update Room Info</button></div>';
+        sel.innerHTML+='<option value="'+d.id+'">'+esc(t.title)+(t.game_mode?' ['+t.game_mode+']':'')+'</option>';
+        ksel.innerHTML+='<option value="'+d.id+'">'+esc(t.title)+(t.game_mode?' ['+t.game_mode+']':'')+(t.perKill?' — ৳'+t.perKill+'/kill':'')+'</option>';
       });
     });
   }
 
   window.toggleParticipants=async function(id){
-    var box=el('participants-'+id);
-    if(!box) return;
-    if(box.style.display==='block'){ box.style.display='none'; return; }
-    box.style.display='block';
-    box.innerHTML='<div class="log-meta">Loading participants…</div>';
+    var box=el('participants-'+id);if(!box)return;
+    if(box.style.display==='block'){box.style.display='none';return;}
+    box.style.display='block';box.innerHTML='<div class="log-meta">Loading…</div>';
     try{
-      var txSnap=await getDocs(collection(db,'transactions'));
-      var rows=[];
-      txSnap.forEach(function(d){
-        var tx=d.data();
-        if(tx.type!=='entry') return;
-        var ref=tx.tournamentId||tx.matchId||tx.tid||tx.tournament_id;
-        if(ref!==id) return;
-        rows.push(tx);
-      });
-      rows.sort(function(a,b){ var at=a.created_at&&a.created_at.seconds||0, bt=b.created_at&&b.created_at.seconds||0; return at-bt; });
-      if(!rows.length){
-        box.innerHTML='<div class="log-meta">No participant records found yet. (If players have joined but nothing shows here, your join code may tag the match with a different field than tournamentId/matchId/tid — let me know and I\'ll point it correctly.)</div>';
-        return;
-      }
-      var usersSnap=await getDocs(collection(db,'users'));
-      var uMap={};
-      usersSnap.forEach(function(u){ uMap[u.id]=u.data(); });
-      var html='<div class="section-label">JOINED PLAYERS ('+rows.length+')</div>';
-      rows.forEach(function(tx,i){
-        var u=uMap[tx.uid]||{};
-        html+='<div class="log-entry"><div>'
-          +'<div class="log-uid">#'+(i+1)+' · '+(u.uid_game||tx.uid_game||'No UID')+'</div>'
-          +'<div class="log-meta">'+(u.name||tx.email||tx.uid||'')+(u.email&&u.name?' · '+u.email:'')+' · Paid ৳'+(tx.amount||0)+' · '+fmtTime(tx.created_at)+'</div>'
-          +'</div></div>';
-      });
+      var txSnap=await getDocs(collection(db,'transactions')),rows=[];
+      txSnap.forEach(function(d){var tx=d.data();if(tx.type!=='entry')return;var ref=tx.tournamentId||tx.matchId||tx.tid||tx.tournament_id;if(ref!==id)return;rows.push(tx);});
+      rows.sort(function(a,b){return (a.created_at&&a.created_at.seconds||0)-(b.created_at&&b.created_at.seconds||0);});
+      if(!rows.length){box.innerHTML='<div class="log-meta">No participant records found.</div>';return;}
+      var usSnap=await getDocs(collection(db,'users')),uMap={};
+      usSnap.forEach(function(u){uMap[u.id]=u.data();});
+      var html='<div class="section-label">JOINED ('+rows.length+')</div>';
+      rows.forEach(function(tx,i){var u=uMap[tx.uid]||{};html+='<div class="log-entry"><div><div class="log-uid">#'+(i+1)+' · '+(u.uid_game||tx.uid_game||'No UID')+'</div><div class="log-meta">'+(u.name||tx.email||tx.uid||'')+(u.email&&u.name?' · '+u.email:'')+' · Paid ৳'+(tx.amount||0)+'</div></div></div>';});
       box.innerHTML=html;
-    }catch(e){
-      box.innerHTML='<div class="log-meta" style="color:var(--red)">Failed to load participants: '+e.message+'</div>';
-    }
+    }catch(e){box.innerHTML='<div class="log-meta" style="color:var(--red)">Error: '+e.message+'</div>';}
   };
-
-  window.updateRoom=async function(id){
-    await updateDoc(doc(db,'tournaments',id),{roomID:el('room-'+id).value,roomPass:el('pass-'+id).value});
-    toast('Room info updated!');
-  };
+  window.updateRoom=async function(id){await updateDoc(doc(db,'tournaments',id),{roomID:el('room-'+id).value,roomPass:el('pass-'+id).value});toast('Room info updated!');};
   window.deleteTournament=async function(id){
-    if(!confirm('Delete this tournament? Entry fees will be refunded to every joined participant.')) return;
+    if(!confirm('Delete this tournament? Entry fees will be refunded.'))return;
     try{
-      var tSnap=await getDoc(doc(db,'tournaments',id));
-      var t=tSnap.exists()?tSnap.data():{};
-      var refundCount=0, refundTotal=0;
-
-      // Find entry-fee transactions tied to this match and refund each one (skips any already refunded)
+      var tSnap=await getDoc(doc(db,'tournaments',id)),t=tSnap.exists()?tSnap.data():{},rc=0,rt=0;
       var txSnap=await getDocs(collection(db,'transactions'));
-      for(var i=0;i<txSnap.docs.length;i++){
-        var txDoc=txSnap.docs[i], tx=txDoc.data();
-        if(tx.type!=='entry'||tx.refunded) continue;
-        var ref=tx.tournamentId||tx.matchId||tx.tid||tx.tournament_id;
-        if(ref!==id) continue;
-        var amt=tx.amount||t.fee||0;
-        if(amt>0&&tx.uid){
-          await updateDoc(doc(db,'users',tx.uid),{balance:increment(amt)});
-          await addDoc(collection(db,'transactions'),{uid:tx.uid,email:tx.email||'',amount:amt,type:'refund',status:'approved',reason:(t.title||'Match')+' cancelled - entry fee refunded',created_at:serverTimestamp()});
-          await updateDoc(doc(db,'transactions',txDoc.id),{refunded:true});
-          refundCount++; refundTotal+=amt;
-        }
-      }
-
-      await deleteDoc(doc(db,'tournaments',id));
-      toast(refundCount?('🗑️ Deleted — ৳'+refundTotal+' refunded to '+refundCount+' player(s)'):'Deleted','warn');
-    }catch(e){ toast('Failed: '+e.message,'error'); }
+      for(var i=0;i<txSnap.docs.length;i++){var txDoc=txSnap.docs[i],tx=txDoc.data();if(tx.type!=='entry'||tx.refunded)continue;var ref=tx.tournamentId||tx.matchId||tx.tid||tx.tournament_id;if(ref!==id)continue;var amt=tx.amount||t.fee||0;if(amt>0&&tx.uid){await updateDoc(doc(db,'users',tx.uid),{balance:increment(amt)});await addDoc(collection(db,'transactions'),{uid:tx.uid,email:tx.email||'',amount:amt,type:'refund',status:'approved',reason:(t.title||'Match')+' cancelled',created_at:serverTimestamp()});await updateDoc(doc(db,'transactions',txDoc.id),{refunded:true});rc++;rt+=amt;}}
+      await deleteDoc(doc(db,'tournaments',id));toast(rc?('🗑️ Deleted — ৳'+rt+' refunded to '+rc+' player(s)'):'Deleted','warn');
+    }catch(e){toast('Failed: '+e.message,'error');}
   };
 
-  // ─── WINNERS ──────────────────────────────────────────────────────────────
-  var __winnerMatchData=null, __winnerRegs=[];
+  // ── WINNERS — NEW SELECTOR LOGIC ──────────────────────────────────────────
+  var __wMatchData=null,__wRegs=[],__wEntries=[],__wSelected=[];
 
   window.updatePrizePreview=async function(){
-    var mId=el('winner-match-select').value, preview=el('prize-preview');
-    el('winner-participants').style.display='none';
-    el('winner-part-list').innerHTML='';
-    if(el('winner-dropdown')) el('winner-dropdown').innerHTML='<option value="">— Select Player/Team —</option>';
-    ['w1','w2','w3','k1','k2','k3'].forEach(function(id){ if(el(id)) el(id).value=''; });
-    if(!mId){preview.style.display='none'; __winnerMatchData=null; __winnerRegs=[]; return;}
+    var mId=el('winner-match-select').value;
+    el('prize-preview').style.display='none';
+    el('winner-selector-wrap').style.display='none';
+    el('winner-kills-wrap').style.display='none';
+    el('winner-manual').style.display='none';
+    el('winner-selector-list').innerHTML='';
+    el('winner-kills-inner').innerHTML='';
+    __wMatchData=null;__wRegs=[];__wEntries=[];__wSelected=[];
+    if(!mId)return;
     var snap=await getDoc(doc(db,'tournaments',mId));
-    if(!snap.exists()) return;
-    var t=snap.data(); __winnerMatchData=t;
+    if(!snap.exists())return;
+    var t=snap.data();__wMatchData=t;
+    var isTeam=(t.teamType||1)>1;
     el('pp1').textContent='৳'+(t.prize1||0);
     el('pp2').textContent='৳'+(t.prize2||0);
     el('pp3').textContent='৳'+(t.prize3||0);
-    var pkWrap=el('pp-perkill-wrap');
-    if(t.perKill){ el('pp-perkill').textContent='৳'+t.perKill; pkWrap.style.display='block'; }
-    else{ pkWrap.style.display='none'; }
-    preview.style.display='flex';
-    // Show/hide 2nd+3rd place for squad/duo (only 1 winner)
-    var isTeam=(t.teamType||1)>1;
-    el('solo-places').style.display=isTeam?'none':'block';
-    el('winner-select-label').textContent=isTeam?'SELECT WINNING TEAM (1 WINNER ONLY)':'SELECT WINNER(S) FROM PARTICIPANTS';
-    // Load registrations for this match
+    el('pp2w').style.display=isTeam?'none':'';
+    el('pp3w').style.display=isTeam?'none':'';
+    if(t.perKill){el('pp-perkill').textContent='৳'+t.perKill;el('pp-perkill-wrap').style.display='block';}else{el('pp-perkill-wrap').style.display='none';}
+    el('prize-preview').style.display='flex';
     var regSnap=await getDocs(collection(db,'registrations'));
-    __winnerRegs=[];
-    regSnap.forEach(function(d){ var r=d.data(); if(r.tournament_id===mId){ r._id=d.id; __winnerRegs.push(r); } });
-    if(!__winnerRegs.length) return;
-    // Build participant selector (click-list + dropdown, kept in sync)
-    var pHtml='', dHtml='<option value="">— Select Player/Team —</option>', autoGrpNum=0;
-    __winnerRegs.forEach(function(reg,ri){
-      var uids=reg.all_group_uids||reg.game_uids||[];
-      var names=reg.all_group_names||[];
-      var label;
-      if(reg.team_name){
-        label='['+reg.team_name+'](Team)';
-      } else if(isTeam && (uids.length>1||names.length>1)){
-        autoGrpNum++;
-        label=(names[0]||uids[0]||'Player '+(ri+1))+'[Team-'+autoGrpNum+'](Auto Created)';
-      } else {
-        label=names[0]||uids[0]||'Player '+(ri+1);
+    __wRegs=[];
+    regSnap.forEach(function(d){var r=d.data();if(r.tournament_id===mId){r._id=d.id;__wRegs.push(r);}});
+    if(!__wRegs.length){
+      el('winner-manual').style.display='block';
+      el('solo-manual-extra').style.display=isTeam?'none':'block';
+      return;
+    }
+    // Build entries: TEAM = one card per team; SOLO = one card per player
+    if(isTeam){
+      __wRegs.forEach(function(reg,ri){
+        var uids=reg.all_group_uids||reg.game_uids||[];
+        var names=reg.all_group_names||[];
+        var tname=reg.team_name||('Auto-Group #'+(ri+1));
+        __wEntries.push({type:'team',label:tname,uids:uids,names:names,reg:reg,isNamed:!!reg.team_name});
+      });
+    } else {
+      __wRegs.forEach(function(reg){
+        var uids=reg.all_group_uids||reg.game_uids||[];
+        var names=reg.all_group_names||[];
+        if(uids.length){uids.forEach(function(uid,i){__wEntries.push({type:'solo',label:names[i]||uid||'Player',uid:uid,reg:reg});});}
+        else{__wEntries.push({type:'solo',label:reg.game_name||reg.name||'Player',uid:'',reg:reg});}
+      });
+    }
+    var places=isTeam?1:3;
+    __wSelected=new Array(places).fill(-1);
+    renderWinnerSelector();
+    el('winner-selector-wrap').style.display='block';
+  };
+
+  function renderWinnerSelector(){
+    var isTeam=(__wMatchData&&(__wMatchData.teamType||1))>1;
+    var places=isTeam?1:3;
+    var placeColors=['var(--gold)','#C0C0C0','#CD7F32'];
+    var placeIcons=['🥇','🥈','🥉'];
+    var placeNames=['1ST PLACE WINNER','2ND PLACE','3RD PLACE'];
+    var wrap=el('winner-selector-list');
+    wrap.innerHTML='';
+    for(var p=0;p<places;p++){
+      var pc=p;
+      // Place header
+      var hdr=document.createElement('div');
+      hdr.className='divlbl';hdr.style.color=placeColors[p];
+      hdr.textContent=placeIcons[p]+' '+placeNames[p]+(isTeam?' (ONE WINNER ONLY)':'');
+      wrap.appendChild(hdr);
+      // Entry cards
+      __wEntries.forEach(function(entry,ei){
+        // Grey out entries already picked for earlier places
+        var usedEarlier=false;
+        for(var op=0;op<pc;op++){if(__wSelected[op]===ei)usedEarlier=true;}
+        var card=document.createElement('div');
+        card.className='psel-card'+(__wSelected[pc]===ei?' selected':'');
+        if(usedEarlier){card.style.opacity='0.3';card.style.pointerEvents='none';}
+        var meta=entry.type==='team'
+          ?(entry.uids.length?'Members: '+(entry.names.length?entry.names.join(', '):entry.uids.join(', ')):'No member list')
+          :('UID: '+(entry.uid||'—'));
+        var badgeTxt=entry.type==='team'?(entry.isNamed?'🏷 NAMED TEAM':'⚡ AUTO GROUP'):'';
+        var badgeCol=entry.isNamed?'var(--gold)':'var(--muted)';
+        card.innerHTML='<div class="psel-radio"><div class="psel-dot"></div></div>'
+          +'<div class="psel-info"><div class="psel-name">'+esc(entry.label)+'</div><div class="psel-meta">'+esc(meta)+'</div></div>'
+          +(badgeTxt?'<span class="psel-badge" style="background:'+badgeCol+'22;color:'+badgeCol+'">'+badgeTxt+'</span>':'');
+        (function(captP,captEi){card.addEventListener('click',function(){__wSelected[captP]=captEi;renderWinnerSelector();renderKillInputs();});})(pc,ei);
+        wrap.appendChild(card);
+      });
+    }
+  }
+
+  function renderKillInputs(){
+    var t=__wMatchData;if(!t)return;
+    var isTeam=(t.teamType||1)>1,perKill=t.perKill||0,places=isTeam?1:3;
+    var inner=el('winner-kills-inner');inner.innerHTML='';
+    var anyPicked=__wSelected.some(function(s){return s>=0;});
+    if(!anyPicked){el('winner-kills-wrap').style.display='none';return;}
+    el('winner-kills-wrap').style.display='block';
+    var placeColors=['var(--gold)','#C0C0C0','#CD7F32'],placeIcons=['🥇','🥈','🥉'];
+    for(var p=0;p<places;p++){
+      var idx=__wSelected[p];if(idx<0)continue;
+      var entry=__wEntries[idx];if(!entry)continue;
+      var row=document.createElement('div');
+      row.className='krow';
+      row.innerHTML='<div class="kr-name"><div class="kr-name-main" style="color:'+placeColors[p]+'">'+placeIcons[p]+' '+esc(entry.label)+'</div><div class="kr-name-sub">UID: '+(entry.uid||entry.uids&&entry.uids[0]||'—')+'</div></div>'
+        +(perKill?'<input type="number" min="0" id="wk'+p+'" placeholder="Kills"><div class="kr-calc" id="wkc'+p+'">৳0</div>':'<span style="color:var(--muted);font-size:12px;flex-shrink:0">No per-kill rate</span>');
+      inner.appendChild(row);
+      if(perKill){
+        (function(captP,captRate){
+          var inp=row.querySelector('#wk'+captP);
+          inp.addEventListener('input',function(){var calc=document.getElementById('wkc'+captP);if(calc)calc.textContent='৳'+((Number(this.value)||0)*captRate);});
+        })(p,perKill);
       }
-      var memberList=uids.length>0?uids.map(function(u,i){return (names[i]||u);}).join(', '):'—';
-      pHtml+='<div class="log-entry" style="cursor:pointer;align-items:center" onclick="selectWinner('+ri+')" id="wpart-'+ri+'">'
-        +'<div style="flex:1"><div class="log-uid">'+label+'</div>'
-        +(uids.length>1?'<div class="log-meta">'+memberList+'</div>':'')
-        +'</div>'
-        +'<div style="width:20px;height:20px;border-radius:50%;border:2px solid var(--border)" id="wdot-'+ri+'"></div>'
-        +'</div>';
-      dHtml+='<option value="'+ri+'">'+label+'</option>';
-    });
-    el('winner-part-list').innerHTML=pHtml;
-    el('winner-dropdown').innerHTML=dHtml;
-    el('winner-participants').style.display='block';
-  };
-
-  window.selectWinnerFromDropdown=function(){
-    var ri=el('winner-dropdown').value;
-    if(ri==='') return;
-    selectWinner(Number(ri));
-  };
-
-  var __selectedWinner=-1;
-  window.selectWinner=function(ri){
-    __selectedWinner=ri;
-    document.querySelectorAll('[id^="wpart-"]').forEach(function(d){ d.style.background=''; });
-    document.querySelectorAll('[id^="wdot-"]').forEach(function(d){ d.style.background=''; d.style.borderColor='var(--border)'; });
-    var sel=el('wpart-'+ri); if(sel) sel.style.background='rgba(255,165,0,0.08)';
-    var dot=el('wdot-'+ri); if(dot){ dot.style.background='var(--orange)'; dot.style.borderColor='var(--orange)'; }
-    if(el('winner-dropdown')) el('winner-dropdown').value=String(ri);
-    var reg=__winnerRegs[ri];
-    if(!reg) return;
-    var uids=reg.all_group_uids||reg.game_uids||[];
-    // Fill w1 with leader/first UID
-    if(el('w1')) el('w1').value=uids[0]||'';
-  };
+    }
+  }
 
   window.distributePrizes=async function(){
     var mId=el('winner-match-select').value;
     if(!mId){toast('Select a match first!','error');return;}
-    var t=__winnerMatchData;
-    if(!t){ var s=await getDoc(doc(db,'tournaments',mId)); if(!s.exists()) return; t=s.data(); }
-    var isTeam=(t.teamType||1)>1;
-    var perKill=t.perKill||0, logEntries=[], historyWinners=[], totalPaid=0;
+    var t=__wMatchData;
+    if(!t){var s=await getDoc(doc(db,'tournaments',mId));if(!s.exists())return;t=s.data();}
+    var isTeam=(t.teamType||1)>1,perKill=t.perKill||0,places=isTeam?1:3;
+    var logEntries=[],histWinners=[],totalPaid=0;
     var allUsers=await getDocs(collection(db,'users'));
-    function findUser(gameUid){
-      var found=null;
-      allUsers.forEach(function(uDoc){ if((uDoc.data().uid_game||'').trim()===gameUid.trim()) found={id:uDoc.id,data:uDoc.data()}; });
-      return found;
-    }
-    if(isTeam){
-      // Squad/Duo: winner team — prize goes to leader, kill bonus to all
-      var reg=__selectedWinner>=0?__winnerRegs[__selectedWinner]:null;
-      var winUID=el('w1').value.trim();
-      if(!winUID&&!reg){toast('Select or enter winner!','error');return;}
-      var uids=reg?(reg.all_group_uids||reg.game_uids||[winUID]):[winUID];
-      if(!uids.length||!uids[0]){toast('No UIDs found for this team!','error');return;}
-      var kills=Number(el('k1').value)||0;
-      var prize=(t.prize1||0)+kills*perKill;
-      // Leader gets full prize
-      var leader=findUser(uids[0]);
-      if(leader){
-        await updateDoc(doc(db,'users',leader.id),{balance:increment(prize),total_earned:increment(prize),wins:increment(1)});
-        await addDoc(collection(db,'transactions'),{uid:leader.id,email:leader.data.email,amount:prize,type:'prize',status:'approved',reason:t.title+' - 🥇 Winner'+(reg&&reg.team_name?' ['+reg.team_name+']':'')+(kills?' ('+kills+' kills)':''),created_at:serverTimestamp()});
+    function findU(gameUid){var f=null;allUsers.forEach(function(uDoc){if((uDoc.data().uid_game||'').trim()===(gameUid||'').trim())f={id:uDoc.id,data:uDoc.data()};});return f;}
+    var useManual=el('winner-manual').style.display!=='none';
+    var bp=[t.prize1||0,t.prize2||0,t.prize3||0],posL=['🥇 1st','🥈 2nd','🥉 3rd'];
+    if(useManual){
+      // original manual path unchanged
+      if(isTeam){
+        var wu=el('w1').value.trim();if(!wu){toast('Enter winner UID!','error');return;}
+        var wk=Number(el('k1').value)||0,wp=bp[0]+wk*perKill;
+        var u=findU(wu);if(u){await updateDoc(doc(db,'users',u.id),{balance:increment(wp),total_earned:increment(wp),wins:increment(1)});await addDoc(collection(db,'transactions'),{uid:u.id,email:u.data.email,amount:wp,type:'prize',status:'approved',reason:t.title+' - 🥇 Winner'+(wk?' ('+wk+' kills)':''),created_at:serverTimestamp()});}
+        logEntries.push({uid:wu,prize:wp,position:'🥇 Winner',match:t.title});histWinners.push({uid:wu,place:1,basePrize:bp[0],kills:wk,killBonus:wk*perKill,prize:wp});totalPaid=wp;
+      } else {
+        var wUs=[el('w1').value.trim(),el('w2').value.trim(),el('w3').value.trim()];
+        var wKs=[Number(el('k1').value)||0,Number(el('k2').value)||0,Number(el('k3').value)||0];
+        for(var i=0;i<3;i++){if(!wUs[i])continue;var kb=wKs[i]*perKill,pr=bp[i]+kb;if(pr===0)continue;var u2=findU(wUs[i]);if(u2){await updateDoc(doc(db,'users',u2.id),{balance:increment(pr),total_earned:increment(pr),wins:increment(i===0?1:0)});await addDoc(collection(db,'transactions'),{uid:u2.id,email:u2.data.email,amount:pr,type:'prize',status:'approved',reason:t.title+' - '+posL[i]+(wKs[i]?' ('+wKs[i]+' kills)':''),created_at:serverTimestamp()});}
+        logEntries.push({uid:wUs[i],prize:pr,position:posL[i],match:t.title});histWinners.push({uid:wUs[i],place:i+1,basePrize:bp[i],kills:wKs[i],killBonus:kb,prize:pr});totalPaid+=pr;}
       }
-      logEntries.push({uid:uids[0],prize:prize,position:'🥇 Winner',match:t.title});
-      historyWinners.push({uid:uids[0],teamName:reg&&reg.team_name||'',place:1,basePrize:t.prize1||0,kills:kills,killBonus:kills*perKill,prize:prize});
-      totalPaid=prize;
     } else {
-      // Solo: top 3
-      var wUIDs=[el('w1').value.trim(),el('w2').value.trim(),el('w3').value.trim()];
-      var kills=[Number(el('k1').value)||0,Number(el('k2').value)||0,Number(el('k3').value)||0];
-      var basePrizes=[t.prize1||0,t.prize2||0,t.prize3||0];
-      var positions=['🥇 1st','🥈 2nd','🥉 3rd'];
-      for(var i=0;i<3;i++){
-        if(!wUIDs[i]) continue;
-        var killBonus=kills[i]*perKill;
-        var prize=basePrizes[i]+killBonus;
-        if(prize===0) continue;
-        var u=findUser(wUIDs[i]);
-        if(u){
-          await updateDoc(doc(db,'users',u.id),{balance:increment(prize),total_earned:increment(prize),wins:increment(i===0?1:0)});
-          await addDoc(collection(db,'transactions'),{uid:u.id,email:u.data.email,amount:prize,type:'prize',status:'approved',reason:t.title+' - '+positions[i]+(kills[i]?' ('+kills[i]+' kills)':''),created_at:serverTimestamp()});
+      if(!__wSelected.some(function(s){return s>=0;})){toast('Select at least one winner!','error');return;}
+      for(var p2=0;p2<places;p2++){
+        var idx=__wSelected[p2];if(idx<0)continue;
+        var entry=__wEntries[idx];if(!entry)continue;
+        var kills=0,kInp=document.getElementById('wk'+p2);if(kInp)kills=Number(kInp.value)||0;
+        var kb2=kills*perKill,prize=bp[p2]+kb2;
+        if(isTeam){
+          var leaderUid=entry.uids&&entry.uids[0]||'';
+          var u3=findU(leaderUid);
+          if(u3){await updateDoc(doc(db,'users',u3.id),{balance:increment(prize),total_earned:increment(prize),wins:increment(1)});await addDoc(collection(db,'transactions'),{uid:u3.id,email:u3.data.email||'',amount:prize,type:'prize',status:'approved',reason:t.title+' - 🥇 Winner ['+entry.label+']'+(kills?' ('+kills+' kills)':''),created_at:serverTimestamp()});}
+          logEntries.push({uid:leaderUid||entry.label,prize:prize,position:'🥇 Winner ['+entry.label+']',match:t.title});
+          histWinners.push({uid:leaderUid,teamName:entry.label,place:1,basePrize:bp[0],kills:kills,killBonus:kb2,prize:prize});
+        } else {
+          var su=findU(entry.uid||'');
+          if(su){await updateDoc(doc(db,'users',su.id),{balance:increment(prize),total_earned:increment(prize),wins:increment(p2===0?1:0)});await addDoc(collection(db,'transactions'),{uid:su.id,email:su.data.email||'',amount:prize,type:'prize',status:'approved',reason:t.title+' - '+posL[p2]+(kills?' ('+kills+' kills)':''),created_at:serverTimestamp()});}
+          logEntries.push({uid:entry.uid||entry.label,prize:prize,position:posL[p2],match:t.title});
+          histWinners.push({uid:entry.uid,gameName:entry.label,place:p2+1,basePrize:bp[p2],kills:kills,killBonus:kb2,prize:prize});
         }
-        logEntries.push({uid:wUIDs[i],prize:prize,position:positions[i],match:t.title});
-        historyWinners.push({uid:wUIDs[i],place:i+1,basePrize:basePrizes[i],kills:kills[i],killBonus:killBonus,prize:prize});
         totalPaid+=prize;
       }
     }
-    await addDoc(collection(db,'match_history'),{
-      original_id:mId, title:t.title, teamType:t.teamType||1, game_mode:t.game_mode||'', fee:t.fee||0,
-      prize1:t.prize1||0, prize2:t.prize2||0, prize3:t.prize3||0, perKill:perKill,
-      maxPlayers:t.maxPlayers||0, joined:t.joined||0,
-      winners:historyWinners, totalPaid:totalPaid, closed_at:serverTimestamp()
-    });
+    if(!logEntries.length){toast('No valid winners!','error');return;}
+    await addDoc(collection(db,'match_history'),{original_id:mId,title:t.title,teamType:t.teamType||1,game_mode:t.game_mode||'',fee:t.fee||0,prize1:t.prize1||0,prize2:t.prize2||0,prize3:t.prize3||0,perKill:perKill,maxPlayers:t.maxPlayers||0,joined:t.joined||0,winners:histWinners,totalPaid:totalPaid,closed_at:serverTimestamp()});
     await deleteDoc(doc(db,'tournaments',mId));
     el('dist-log-wrap').style.display='block';
     var logDiv=el('dist-log');
-    logEntries.forEach(function(e){
-      logDiv.innerHTML='<div class="log-entry"><div><div class="log-uid">UID: '+e.uid+'</div><div class="log-meta">'+e.match+' · '+e.position+' · '+new Date().toLocaleTimeString()+'</div></div><div class="log-prize">+৳'+e.prize+'</div></div>'+logDiv.innerHTML;
-    });
-    ['w1','w2','w3','k1','k2','k3'].forEach(function(id){ if(el(id)) el(id).value=''; });
-    el('winner-match-select').value=''; el('prize-preview').style.display='none';
-    el('winner-participants').style.display='none'; __winnerMatchData=null; __winnerRegs=[]; __selectedWinner=-1;
+    logEntries.forEach(function(e){logDiv.innerHTML='<div class="log-entry"><div><div class="log-uid">'+esc(e.uid)+'</div><div class="log-meta">'+esc(e.match)+' · '+esc(e.position)+' · '+new Date().toLocaleTimeString()+'</div></div><div class="log-prize">+৳'+e.prize+'</div></div>'+logDiv.innerHTML;});
+    el('winner-match-select').value='';el('prize-preview').style.display='none';
+    el('winner-selector-wrap').style.display='none';el('winner-kills-wrap').style.display='none';el('winner-manual').style.display='none';
+    __wMatchData=null;__wRegs=[];__wEntries=[];__wSelected=[];
     toast('🏆 Prizes distributed to '+logEntries.length+' entry(ies)!');
   };
 
-  // ─── PER KILL DISTRIBUTION (ALL PARTICIPANTS) ──────────────────────────────
-  window.addKillRow=function(){
-    var wrap=el('kill-rows');
-    var row=document.createElement('div');
-    row.className='row kill-row';
-    row.style.alignItems='center';
-    row.innerHTML='<input type="text" class="kill-uid" placeholder="Game UID">'
-      +'<input type="number" class="kill-count" placeholder="Kills" style="max-width:90px">'
-      +'<button type="button" onclick="this.parentElement.remove()" style="padding:11px 14px;background:transparent;border:1px solid var(--red);color:var(--red);border-radius:7px;cursor:pointer;font-weight:700;margin-bottom:10px">✕</button>';
+  // ── PER KILL DISTRIBUTION ─────────────────────────────────────────────────
+  window.addKillRowManual=function(){
+    var wrap=el('kill-rows'),row=document.createElement('div');
+    row.className='krow';
+    row.innerHTML='<div class="kr-name" style="flex:1"><input type="text" class="kill-uid" placeholder="Game UID" style="margin-bottom:0"></div>'
+      +'<input type="number" class="kill-count" placeholder="Kills" style="max-width:90px;margin-bottom:0">'
+      +'<div class="kr-calc kill-calc">৳0</div>'
+      +'<button type="button" onclick="this.parentElement.remove()" style="padding:10px 12px;background:transparent;border:1px solid var(--red);color:var(--red);border-radius:7px;cursor:pointer;font-weight:700">✕</button>';
     wrap.appendChild(row);
+    bindKillCalc(row,window.__killRate||0);
   };
 
+  window.__killRate=0;
   window.loadKillParticipants=async function(){
-    var mId=el('kill-match-select').value, disp=el('kill-rate-display'), rows=el('kill-rows'), psel=el('kill-player-select');
-    rows.innerHTML=''; disp.style.display='none'; psel.innerHTML='<option value="">— Select Player/Team —</option>';
-    window.__killEntries={};
-    if(!mId) return;
-    var snap=await getDoc(doc(db,'tournaments',mId));
-    if(!snap.exists()) return;
-    var t=snap.data(), rate=t.perKill||0;
-    el('kill-rate-val').textContent='৳'+rate; disp.style.display='block';
-    var isTeam=(t.teamType||1)>1;
-    // Load registrations for this match
+    var mId=el('kill-match-select').value,disp=el('kill-rate-display'),rows=el('kill-rows');
+    rows.innerHTML='';disp.style.display='none';window.__killRate=0;
+    if(!mId)return;
+    var snap=await getDoc(doc(db,'tournaments',mId));if(!snap.exists())return;
+    var t=snap.data(),rate=t.perKill||0;
+    window.__killRate=rate;el('kill-rate-val').textContent='৳'+rate;disp.style.display='block';
     var regSnap=await getDocs(collection(db,'registrations'));
     var regs=[];
-    regSnap.forEach(function(d){ var r=d.data(); if(r.tournament_id===mId) regs.push(r); });
-    var optIdx=0, autoGrpNum=0;
-    if(isTeam){
-      // Duo/Squad — one dropdown entry per TEAM (manual or auto-created)
-      regs.forEach(function(reg){
-        var uids=reg.all_group_uids||reg.game_uids||[];
-        var names=reg.all_group_names||[];
-        var tname=reg.team_name||'';
-        var label, key=optIdx++;
-        if(tname){
-          label='['+tname+'](Team)';
-        } else {
-          autoGrpNum++;
-          label=(names[0]||uids[0]||'—')+'[Team-'+autoGrpNum+'](Auto Created)';
-        }
-        window.__killEntries[key]={uids:uids,names:names,label:label};
-        psel.innerHTML+='<option value="'+key+'">'+label+'</option>';
+    regSnap.forEach(function(d){var r=d.data();if(r.tournament_id===mId)regs.push(r);});
+    if(!regs.length){rows.innerHTML='<div class="log-meta" style="color:var(--muted);padding:8px 0">No registrations found. Use + ADD MANUALLY.</div>';return;}
+    // Show each individual player (kills are per-player even in team mode)
+    regs.forEach(function(reg){
+      var uids=reg.all_group_uids||reg.game_uids||[];
+      var names=reg.all_group_names||[];
+      var tname=reg.team_name||'';
+      if(!uids.length){
+        var row=makeKillRow(tname,reg.game_name||reg.name||'—','',rate);rows.appendChild(row);bindKillCalc(row,rate);return;
+      }
+      uids.forEach(function(uid,i){
+        var row=makeKillRow(tname,names[i]||uid||'—',uid,rate);rows.appendChild(row);bindKillCalc(row,rate);
       });
-    } else {
-      // Solo — one dropdown entry per PLAYER
-      regs.forEach(function(reg){
-        var uids=reg.all_group_uids||reg.game_uids||[];
-        var names=reg.all_group_names||[];
-        if(!uids.length){
-          var key=optIdx++;
-          window.__killEntries[key]={uids:[],names:[],label:reg.game_name||reg.name||'—',uid:''};
-          psel.innerHTML+='<option value="'+key+'">'+(reg.game_name||reg.name||'—')+'</option>';
-          return;
-        }
-        uids.forEach(function(uid,i){
-          var key=optIdx++;
-          var nm=names[i]||uid||'—';
-          window.__killEntries[key]={uids:[uid],names:[nm],label:nm,uid:uid};
-          psel.innerHTML+='<option value="'+key+'">'+nm+'</option>';
-        });
-      });
-    }
-    if(!optIdx){ psel.innerHTML='<option value="">No participants found</option>'; }
-  };
-  window.updateKillRateDisplay=window.loadKillParticipants;
-
-  window.addKillRowFromSelect=function(){
-    var psel=el('kill-player-select'), key=psel.value;
-    var kills=Number(el('kill-player-kills').value)||0;
-    if(!key){toast('Select a player/team first!','error');return;}
-    if(!kills){toast('Enter kill count!','error');return;}
-    var entry=window.__killEntries[key];
-    if(!entry){toast('Invalid selection!','error');return;}
-    // For teams, kills apply to the whole team — pay every member
-    var uids=entry.uids&&entry.uids.length?entry.uids:[entry.uid||''];
-    var wrap=el('kill-rows');
-    uids.forEach(function(uid,i){
-      if(!uid) return;
-      var row=document.createElement('div');
-      row.className='row kill-row'; row.style.alignItems='center';
-      var nm=(entry.names&&entry.names[i])||entry.label;
-      row.innerHTML='<div style="flex:1;font-size:13px;padding:0 4px">'+nm+'</div>'
-        +'<input type="text" class="kill-uid" value="'+uid+'" placeholder="Game UID" style="max-width:120px" readonly>'
-        +'<input type="number" class="kill-count" value="'+kills+'" placeholder="Kills" style="max-width:80px">'
-        +'<button type="button" onclick="this.parentElement.remove()" style="padding:11px 14px;background:transparent;border:1px solid var(--red);color:var(--red);border-radius:7px;cursor:pointer;font-weight:700;margin-bottom:10px">✕</button>';
-      wrap.appendChild(row);
     });
-    el('kill-player-kills').value='';
-    psel.value='';
   };
+
+  function makeKillRow(teamName,gameName,uid,rate){
+    var row=document.createElement('div');row.className='krow';
+    var displayName=(teamName?'['+teamName+'] ':'')+gameName;
+    row.innerHTML='<div class="kr-name"><div class="kr-name-main">'+esc(displayName)+'</div><div class="kr-name-sub">UID: '+esc(uid||'—')+'</div></div>'
+      +'<input type="text" class="kill-uid" value="'+esc(uid)+'" placeholder="UID" style="max-width:110px;margin-bottom:0">'
+      +'<input type="number" class="kill-count" placeholder="Kills" style="max-width:80px;margin-bottom:0">'
+      +(rate?'<div class="kr-calc kill-calc">৳0</div>':'')
+      +'<button type="button" onclick="this.parentElement.remove()" style="padding:10px 12px;background:transparent;border:1px solid var(--red);color:var(--red);border-radius:7px;cursor:pointer;font-weight:700">✕</button>';
+    return row;
+  }
+
+  function bindKillCalc(rowEl,rate){
+    if(!rate)return;
+    var inp=rowEl.querySelector('.kill-count'),calc=rowEl.querySelector('.kill-calc');
+    if(inp&&calc)inp.addEventListener('input',function(){calc.textContent='৳'+((Number(this.value)||0)*rate);});
+  }
 
   window.distributeKillPrizes=async function(){
-    var mId=el('kill-match-select').value;
-    if(!mId){toast('Select a match first!','error');return;}
-    var tSnap=await getDoc(doc(db,'tournaments',mId));
-    if(!tSnap.exists()){toast('Match not found!','error');return;}
-    var t=tSnap.data(), perKill=t.perKill||0;
-    if(!perKill){toast('This match has no per-kill rate set!','error');return;}
+    var mId=el('kill-match-select').value;if(!mId){toast('Select a match first!','error');return;}
+    var tSnap=await getDoc(doc(db,'tournaments',mId));if(!tSnap.exists()){toast('Match not found!','error');return;}
+    var t=tSnap.data(),perKill=t.perKill||0;if(!perKill){toast('No per-kill rate set!','error');return;}
     var entries=[];
-    document.querySelectorAll('#kill-rows .kill-row').forEach(function(r){
-      var uid=r.querySelector('.kill-uid').value.trim();
-      var kills=Number(r.querySelector('.kill-count').value)||0;
-      if(uid&&kills>0) entries.push({uid:uid,kills:kills});
-    });
+    document.querySelectorAll('#kill-rows .krow').forEach(function(r){var uid=r.querySelector('.kill-uid').value.trim(),kills=Number(r.querySelector('.kill-count').value)||0;if(uid&&kills>0)entries.push({uid:uid,kills:kills});});
     if(!entries.length){toast('Add at least one player with kills!','error');return;}
     var allUsers=await getDocs(collection(db,'users'));
-    var paidCount=0, paidTotal=0, logDiv=el('kill-log');
+    var paidCount=0,paidTotal=0,logDiv=el('kill-log');
     for(var i=0;i<entries.length;i++){
-      var entry=entries[i], amt=entry.kills*perKill, found=false;
-      allUsers.forEach(async function(uDoc){
-        var uData=uDoc.data();
-        if(uData.uid_game&&uData.uid_game.trim()===entry.uid){
-          found=true;
-          await updateDoc(doc(db,'users',uDoc.id),{balance:increment(amt),total_earned:increment(amt)});
-          await addDoc(collection(db,'transactions'),{uid:uDoc.id,email:uData.email,amount:amt,type:'kill_prize',status:'approved',reason:t.title+' - '+entry.kills+' kills',created_at:serverTimestamp()});
-        }
-      });
-      paidCount++; paidTotal+=amt;
-      logDiv.innerHTML='<div class="log-entry"><div><div class="log-uid">UID: '+entry.uid+'</div><div class="log-meta">'+t.title+' · '+entry.kills+' kills × ৳'+perKill+' · '+new Date().toLocaleTimeString()+'</div></div><div class="log-prize">+৳'+amt+'</div></div>'+logDiv.innerHTML;
+      var entry=entries[i],amt=entry.kills*perKill;
+      allUsers.forEach(async function(uDoc){var uData=uDoc.data();if(uData.uid_game&&uData.uid_game.trim()===entry.uid){await updateDoc(doc(db,'users',uDoc.id),{balance:increment(amt),total_earned:increment(amt)});await addDoc(collection(db,'transactions'),{uid:uDoc.id,email:uData.email,amount:amt,type:'kill_prize',status:'approved',reason:t.title+' - '+entry.kills+' kills',created_at:serverTimestamp()});}});
+      paidCount++;paidTotal+=amt;
+      logDiv.innerHTML='<div class="log-entry"><div><div class="log-uid">UID: '+esc(entry.uid)+'</div><div class="log-meta">'+esc(t.title)+' · '+entry.kills+' kills × ৳'+perKill+' · '+new Date().toLocaleTimeString()+'</div></div><div class="log-prize">+৳'+amt+'</div></div>'+logDiv.innerHTML;
     }
-    el('kill-log-wrap').style.display='block';
-    el('kill-rows').innerHTML='';
-    addKillRow();
-    toast('🔫 ৳'+paidTotal+' in kill prizes distributed to '+paidCount+' entr'+(paidCount===1?'y':'ies')+'!');
+    el('kill-log-wrap').style.display='block';el('kill-rows').innerHTML='';addKillRowManual();
+    toast('🔫 ৳'+paidTotal+' distributed to '+paidCount+' player'+(paidCount===1?'':'s')+'!');
   };
 
-  // ─── SETTINGS ─────────────────────────────────────────────────────────────
+  // ── SETTINGS ──────────────────────────────────────────────────────────────
   async function loadSettingsData(){
-    // Notice
-    try{
-      var ns=await getDoc(doc(db,'settings','notice'));
-      if(ns.exists()&&ns.data().text){
-        var txt=ns.data().text;
-        el('current-notice-display').textContent=txt;
-        el('notice-input').value=txt;
-      }
-    }catch(e){}
-    // Payment per-method
-    try{
-      var ps=await getDoc(doc(db,'settings','payment'));
-      if(ps.exists()){
-        var p=ps.data();
-        ['bkash','nagad','rocket'].forEach(function(m){
-          if(p[m]){
-            el('cur-'+m+'-number').textContent=p[m].number||'—';
-            el('cur-'+m+'-type').textContent=p[m].send_type||'—';
-            if(p[m].number) el('pay-'+m+'-number').value=p[m].number;
-            if(p[m].send_type) el('pay-'+m+'-type').value=p[m].send_type;
-          }
-        });
-      }
-    }catch(e){}
-    // Support
-    try{
-      var ss=await getDoc(doc(db,'settings','support'));
-      if(ss.exists()){
-        var s=ss.data();
-        el('cur-wa').textContent=s.whatsapp||'—';
-        el('cur-tg').textContent=s.telegram_link||'—';
-        el('cur-ph').textContent=s.phone||'—';
-        if(s.whatsapp)          el('support-whatsapp').value=s.whatsapp;
-        if(s.telegram_link)     el('support-telegram-link').value=s.telegram_link;
-        if(s.telegram_number)   el('support-telegram-number').value=s.telegram_number;
-        if(s.phone)             el('support-phone').value=s.phone;
-      }
-    }catch(e){}
-    // Rules
-    try{
-      var rs=await getDoc(doc(db,'settings','rules'));
-      if(rs.exists()&&rs.data().list){
-        window.__rulesArr=rs.data().list;
-        renderRulesList();
-      }
-    }catch(e){}
+    try{var ns=await getDoc(doc(db,'settings','notice'));if(ns.exists()&&ns.data().text){var txt=ns.data().text;el('current-notice-display').textContent=txt;el('notice-input').value=txt;}}catch(e){}
+    try{var ps=await getDoc(doc(db,'settings','payment'));if(ps.exists()){var p=ps.data();['bkash','nagad','rocket'].forEach(function(m){if(p[m]){el('cur-'+m+'-number').textContent=p[m].number||'—';el('cur-'+m+'-type').textContent=p[m].send_type||'—';if(p[m].number)el('pay-'+m+'-number').value=p[m].number;if(p[m].send_type)el('pay-'+m+'-type').value=p[m].send_type;}});}}catch(e){}
+    try{var ss=await getDoc(doc(db,'settings','support'));if(ss.exists()){var s=ss.data();el('cur-wa').textContent=s.whatsapp||'—';el('cur-tg').textContent=s.telegram_link||'—';el('cur-ph').textContent=s.phone||'—';if(s.whatsapp)el('support-whatsapp').value=s.whatsapp;if(s.telegram_link)el('support-telegram-link').value=s.telegram_link;if(s.telegram_number)el('support-telegram-number').value=s.telegram_number;if(s.phone)el('support-phone').value=s.phone;}}catch(e){}
+    try{var rs=await getDoc(doc(db,'settings','rules'));if(rs.exists()&&rs.data().list){window.__rulesArr=rs.data().list;renderRulesList();}}catch(e){}
   }
-
-  // ─── RULES ──────────────────────────────────────────────────────────────────
   window.__rulesArr=[];
+  function renderRulesList(){var wrap=el('rules-list');if(!wrap)return;if(!window.__rulesArr.length){wrap.innerHTML='<div class="log-meta" style="color:var(--muted)">No rules yet.</div>';return;}wrap.innerHTML=window.__rulesArr.map(function(r,i){return '<div class="log-entry" style="align-items:center;gap:8px"><span style="color:var(--orange);font-weight:700;min-width:24px">'+(i+1)+'.</span><div style="flex:1;font-size:13px">'+esc(r)+'</div><div style="display:flex;gap:6px">'+(i>0?'<button onclick="moveRule('+i+',-1)" style="padding:5px 9px;background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:5px;cursor:pointer;font-size:12px">▲</button>':'')+(i<window.__rulesArr.length-1?'<button onclick="moveRule('+i+',1)" style="padding:5px 9px;background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:5px;cursor:pointer;font-size:12px">▼</button>':'')+'<button onclick="deleteRule('+i+')" style="padding:5px 10px;background:transparent;border:1px solid var(--red);color:var(--red);border-radius:5px;cursor:pointer;font-size:12px">✕</button></div></div>';}).join('');}
+  window.addRule=function(){var inp=el('new-rule-input'),txt=(inp.value||'').trim();if(!txt){toast('Enter a rule!','error');return;}window.__rulesArr.push(txt);inp.value='';renderRulesList();};
+  window.deleteRule=function(i){window.__rulesArr.splice(i,1);renderRulesList();};
+  window.moveRule=function(i,dir){var arr=window.__rulesArr,ni=i+dir;if(ni<0||ni>=arr.length)return;var tmp=arr[i];arr[i]=arr[ni];arr[ni]=tmp;renderRulesList();};
+  window.saveRules=async function(){try{await setDoc(doc(db,'settings','rules'),{list:window.__rulesArr,updated_at:serverTimestamp()},{merge:true});toast('📋 Rules saved! ('+window.__rulesArr.length+')');}catch(e){toast('Failed: '+e.message,'error');}};
+  window.switchPayTab=function(m){document.querySelectorAll('.pay-method-tab').forEach(function(t){t.classList.remove('active');});document.querySelectorAll('.pay-method-panel').forEach(function(p){p.classList.remove('active');});var idx=m==='bkash'?0:m==='nagad'?1:2;document.querySelectorAll('.pay-method-tab')[idx].classList.add('active');el('pay-panel-'+m).classList.add('active');};
+  window.savePayMethod=async function(m){var number=el('pay-'+m+'-number').value.trim(),send_type=el('pay-'+m+'-type').value;if(!number||number.replace(/\D/g,'').length<11){toast('Enter valid 11-digit number!','error');return;}try{var u={};u[m]={number:number,send_type:send_type};await setDoc(doc(db,'settings','payment'),u,{merge:true});el('cur-'+m+'-number').textContent=number;el('cur-'+m+'-type').textContent=send_type;toast('💳 '+m.charAt(0).toUpperCase()+m.slice(1)+' saved!');}catch(e){toast('Failed','error');}};
+  window.saveNotice=async function(){var text=el('notice-input').value.trim();try{await setDoc(doc(db,'settings','notice'),{text:text,updated_at:serverTimestamp()},{merge:true});if(text){el('current-notice-display').textContent=text;}else{el('current-notice-display').innerHTML='<span style="color:var(--muted);font-style:italic">No notice set</span>';}toast('📢 Notice saved!');}catch(e){toast('Failed','error');}};
+  window.clearNotice=async function(){try{await setDoc(doc(db,'settings','notice'),{text:'',updated_at:serverTimestamp()},{merge:true});el('notice-input').value='';el('current-notice-display').innerHTML='<span style="color:var(--muted);font-style:italic">No notice set</span>';toast('Notice cleared');}catch(e){toast('Failed','error');}};
+  window.saveSupportContacts=async function(){try{await setDoc(doc(db,'settings','support'),{whatsapp:el('support-whatsapp').value.trim(),telegram_link:el('support-telegram-link').value.trim(),telegram_number:el('support-telegram-number').value.trim(),phone:el('support-phone').value.trim(),updated_at:serverTimestamp()},{merge:true});el('cur-wa').textContent=el('support-whatsapp').value.trim()||'—';el('cur-tg').textContent=el('support-telegram-link').value.trim()||'—';el('cur-ph').textContent=el('support-phone').value.trim()||'—';toast('🎧 Support contacts saved!');}catch(e){toast('Failed: '+e.message,'error');}};
+  window.saveSubAdmin=async function(){var email=el('sub-email').value.trim(),pass=el('sub-pass').value,confirm=el('sub-admin-confirm').value;if(!email||!pass){toast('Enter email and password!','error');return;}if(confirm!=='Sejan#73526'){toast('Wrong admin password!','error');el('sub-admin-confirm').value='';return;}try{var {initializeApp:initApp2,deleteApp}=await import('https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js');var {getAuth:getAuth2,createUserWithEmailAndPassword}=await import('https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js');var app2=initApp2(cfg,'sub-admin-'+Date.now()),auth2=getAuth2(app2),uid2='';try{var cred=await createUserWithEmailAndPassword(auth2,email,pass);uid2=cred.user.uid;}catch(e2){}await setDoc(doc(db,'settings','sub_admin'),{email:email,password:pass,uid:uid2,enabled:true,updated_at:serverTimestamp()},{merge:true});try{await deleteApp(app2);}catch(e){}el('sub-admin-confirm').value='';el('sub-admin-cur').style.display='block';el('sub-admin-cur').textContent='Sub-Admin set: '+email;toast('👤 Sub-admin saved!');}catch(e){toast('Failed: '+e.message,'error');}};
+  window.toggleUserBlock=async function(uid,isBlocked){try{await updateDoc(doc(db,'users',uid),{blocked:!isBlocked,blocked_at:!isBlocked?serverTimestamp():null});toast(!isBlocked?'🚫 User blocked':'✅ User unblocked',!isBlocked?'error':undefined);}catch(e){toast('Failed: '+e.message,'error');}};
 
-  function renderRulesList(){
-    var wrap=el('rules-list');
-    if(!wrap) return;
-    if(!window.__rulesArr.length){
-      wrap.innerHTML='<div class="log-meta" style="color:var(--muted)">No rules yet. Add your first rule below.</div>';
-      return;
-    }
-    wrap.innerHTML=window.__rulesArr.map(function(r,i){
-      return '<div class="log-entry" style="align-items:center;gap:8px">'
-        +'<span style="color:var(--orange);font-weight:700;min-width:24px">'+(i+1)+'.</span>'
-        +'<div style="flex:1;font-size:13px">'+r+'</div>'
-        +'<div style="display:flex;gap:6px">'
-        +(i>0?'<button onclick="moveRule('+i+',-1)" style="padding:5px 9px;background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:5px;cursor:pointer;font-size:12px">▲</button>':'')
-        +(i<window.__rulesArr.length-1?'<button onclick="moveRule('+i+',1)" style="padding:5px 9px;background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:5px;cursor:pointer;font-size:12px">▼</button>':'')
-        +'<button onclick="deleteRule('+i+')" style="padding:5px 10px;background:transparent;border:1px solid var(--red);color:var(--red);border-radius:5px;cursor:pointer;font-size:12px">✕</button>'
-        +'</div></div>';
-    }).join('');
-  }
-
-  window.addRule=function(){
-    var inp=el('new-rule-input');
-    var txt=(inp.value||'').trim();
-    if(!txt){ toast('Enter a rule first!','error'); return; }
-    window.__rulesArr.push(txt);
-    inp.value='';
-    renderRulesList();
-  };
-
-  window.deleteRule=function(i){
-    window.__rulesArr.splice(i,1);
-    renderRulesList();
-  };
-
-  window.moveRule=function(i,dir){
-    var arr=window.__rulesArr;
-    var ni=i+dir;
-    if(ni<0||ni>=arr.length) return;
-    var tmp=arr[i]; arr[i]=arr[ni]; arr[ni]=tmp;
-    renderRulesList();
-  };
-
-  window.saveRules=async function(){
-    try{
-      await setDoc(doc(db,'settings','rules'),{list:window.__rulesArr,updated_at:serverTimestamp()},{merge:true});
-      toast('📋 Rules saved! ('+window.__rulesArr.length+' rules)');
-    }catch(e){ toast('Failed: '+e.message,'error'); }
-  };
-
-  // Payment method tabs
-  window.switchPayTab=function(m){
-    document.querySelectorAll('.pay-method-tab').forEach(function(t){t.classList.remove('active');});
-    document.querySelectorAll('.pay-method-panel').forEach(function(p){p.classList.remove('active');});
-    var tabs=document.querySelectorAll('.pay-method-tab');
-    var idx=m==='bkash'?0:m==='nagad'?1:2;
-    tabs[idx].classList.add('active');
-    el('pay-panel-'+m).classList.add('active');
-  };
-
-  window.savePayMethod=async function(m){
-    var number=el('pay-'+m+'-number').value.trim();
-    var send_type=el('pay-'+m+'-type').value;
-    if(!number||number.replace(/\D/g,'').length<11){toast('Enter valid 11-digit number for '+m+'!','error');return;}
-    try{
-      var update={}; update[m]={number:number,send_type:send_type};
-      await setDoc(doc(db,'settings','payment'),update,{merge:true});
-      el('cur-'+m+'-number').textContent=number;
-      el('cur-'+m+'-type').textContent=send_type;
-      toast('💳 '+m.charAt(0).toUpperCase()+m.slice(1)+' details saved!');
-    }catch(e){toast('Failed to save','error');}
-  };
-
-  // Notice
-  window.saveNotice=async function(){
-    var text=el('notice-input').value.trim();
-    try{
-      await setDoc(doc(db,'settings','notice'),{text:text,updated_at:serverTimestamp()},{merge:true});
-      if(text){el('current-notice-display').textContent=text;el('current-notice-display').className='cur-display';}
-      else{el('current-notice-display').innerHTML='<span style="color:var(--muted);font-style:italic">No notice set</span>';}
-      toast('📢 Notice saved!');
-    }catch(e){toast('Failed','error');}
-  };
-  window.clearNotice=async function(){
-    try{
-      await setDoc(doc(db,'settings','notice'),{text:'',updated_at:serverTimestamp()},{merge:true});
-      el('notice-input').value='';
-      el('current-notice-display').innerHTML='<span style="color:var(--muted);font-style:italic">No notice set</span>';
-      toast('Notice cleared');
-    }catch(e){toast('Failed','error');}
-  };
-
-  // Support contacts
-  // ─── DATABASE SECTION ─────────────────────────────────────────────────────
-  window.switchDbTab=function(name){
-    document.querySelectorAll('#tab-database .pay-method-tab').forEach(function(t){t.classList.remove('active');});
-    document.querySelectorAll('#tab-database .pay-method-panel').forEach(function(p){p.classList.remove('active');});
-    var idx=name==='history'?0:name==='participants'?1:name==='transactions'?2:3;
-    document.querySelectorAll('#tab-database .pay-method-tab')[idx].classList.add('active');
-    el('db-panel-'+name).classList.add('active');
-  };
-
-  function fmtTime(ts){
-    try{ if(ts&&ts.toDate) return ts.toDate().toLocaleString(); }catch(e){}
-    return '';
-  }
-
-  function isToday(ts){
-    try{
-      if(!ts||!ts.toDate) return false;
-      var d=ts.toDate(), now=new Date();
-      return d.getFullYear()===now.getFullYear() && d.getMonth()===now.getMonth() && d.getDate()===now.getDate();
-    }catch(e){ return false; }
-  }
-
-  window.copyByKey=function(cid,field){
-    var data=window.__cpData&&window.__cpData[cid];
-    if(!data||!data[field]||!data[field].length){ toast('Nothing to copy','error'); return; }
-    var txt=data[field].join('\n');
-    navigator.clipboard.writeText(txt).then(function(){
-      toast('📋 Copied '+data[field].length+' item(s)!');
-    }).catch(function(){
-      var ta=document.createElement('textarea');
-      ta.value=txt; ta.style.position='fixed'; ta.style.opacity='0';
-      document.body.appendChild(ta); ta.select(); document.execCommand('copy');
-      document.body.removeChild(ta); toast('📋 Copied '+data[field].length+' item(s)!');
-    });
-  };
-
-  window.copyText=function(txt){
-    navigator.clipboard.writeText(txt).then(function(){ toast('📋 Copied!'); }).catch(function(){
-      var ta=document.createElement('textarea'); ta.value=txt; ta.style.position='fixed'; ta.style.opacity='0';
-      document.body.appendChild(ta); ta.select(); document.execCommand('copy');
-      document.body.removeChild(ta); toast('📋 Copied!');
-    });
-  };
-
-
-  window.saveSubAdmin=async function(){
-    var email=el('sub-email').value.trim();
-    var pass=el('sub-pass').value;
-    var confirm=el('sub-admin-confirm').value;
-    if(!email||!pass){toast('Enter email and password!','error');return;}
-    if(confirm!=='Sejan#73526'){toast('Wrong admin password!','error');el('sub-admin-confirm').value='';return;}
-    try{
-      // Use secondary app to create/update Firebase Auth user without signing out admin
-      var {initializeApp:initApp2,deleteApp} = await import('https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js');
-      var {getAuth:getAuth2,createUserWithEmailAndPassword,signInWithEmailAndPassword,updatePassword} = await import('https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js');
-      var app2=initApp2(cfg,'sub-admin-setup-'+Date.now());
-      var auth2=getAuth2(app2);
-      var uid2='';
-      try{
-        var cred=await createUserWithEmailAndPassword(auth2,email,pass);
-        uid2=cred.user.uid;
-      }catch(e2){
-        if(e2.code==='auth/email-already-in-use'){
-          var cred2=await signInWithEmailAndPassword(auth2,email,pass.slice(0,1)||'x').catch(function(){return null;});
-          // Can't update password without current password via client SDK — store in Firestore only
-        }
-      }
-      await setDoc(doc(db,'settings','sub_admin'),{email:email,password:pass,uid:uid2,enabled:true,updated_at:serverTimestamp()},{merge:true});
-      try{ await deleteApp(app2); }catch(e){}
-      el('sub-admin-confirm').value='';
-      el('sub-admin-cur').style.display='block';
-      el('sub-admin-cur').textContent='Sub-Admin set: '+email;
-      toast('👤 Sub-admin access saved!');
-    }catch(e){ toast('Failed: '+e.message,'error'); }
-  };
-  window.toggleUserBlock=async function(uid,isBlocked){
-    try{
-      await updateDoc(doc(db,'users',uid),{blocked:!isBlocked, blocked_at: !isBlocked?serverTimestamp():null});
-      toast(!isBlocked?'🚫 User blocked':'✅ User unblocked', !isBlocked?'error':undefined);
-    }catch(e){ toast('Failed: '+e.message,'error'); }
-  };
+  // ── DATABASE ──────────────────────────────────────────────────────────────
+  window.switchDbTab=function(name){document.querySelectorAll('#tab-database .pay-method-tab').forEach(function(t){t.classList.remove('active');});document.querySelectorAll('#tab-database .pay-method-panel').forEach(function(p){p.classList.remove('active');});var idx=name==='history'?0:name==='participants'?1:name==='transactions'?2:3;document.querySelectorAll('#tab-database .pay-method-tab')[idx].classList.add('active');el('db-panel-'+name).classList.add('active');};
+  function fmtTime(ts){try{if(ts&&ts.toDate)return ts.toDate().toLocaleString();}catch(e){}return '';}
+  function isToday(ts){try{if(!ts||!ts.toDate)return false;var d=ts.toDate(),n=new Date();return d.getFullYear()===n.getFullYear()&&d.getMonth()===n.getMonth()&&d.getDate()===n.getDate();}catch(e){return false;}}
+  window.copyByKey=function(cid,field){var data=window.__cpData&&window.__cpData[cid];if(!data||!data[field]||!data[field].length){toast('Nothing to copy','error');return;}var txt=data[field].join('\n');navigator.clipboard.writeText(txt).then(function(){toast('📋 Copied '+data[field].length+' item(s)!');}).catch(function(){var ta=document.createElement('textarea');ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);toast('📋 Copied!');});};
 
   function loadDatabaseData(){
-    var historyCache=[], runningCache=[], usersCache={}, regCache=[];
-
-    // Match history
-    onSnapshot(collection(db,'match_history'), function(snap){
-      var rows=[]; var totalPaid=0;
-      snap.forEach(function(d){ rows.push(Object.assign({id:d.id},d.data())); totalPaid+=d.data().totalPaid||0; });
-      rows.sort(function(a,b){ var at=a.closed_at&&a.closed_at.seconds||0, bt=b.closed_at&&b.closed_at.seconds||0; return bt-at; });
-      historyCache=rows;
-      window.__adminHistCache=rows;
-      el('db-hist-count').textContent=rows.length;
-      el('db-hist-paid').textContent='৳'+totalPaid;
-      var list=el('db-history-list');
-      if(!rows.length){list.innerHTML='<div class="empty-state"><div class="tick">🏁</div><div>NO MATCH HISTORY YET</div></div>';}
-      else{
-        list.innerHTML='';
-        rows.forEach(function(t){
-          var winnersHtml=(t.winners||[]).map(function(w){
-            return '<div class="log-meta">'+['🥇','🥈','🥉'][w.place-1]+' UID '+w.uid+' — ৳'+w.prize+(w.kills?' ('+w.kills+' kills × ৳'+(t.perKill||0)+')':'')+'</div>';
-          }).join('');
-          list.innerHTML+='<div class="t-card">'
-            +'<div class="t-title">'+t.title+'</div>'
-            +'<div class="req-meta" style="margin-bottom:8px">'+(t.game_mode?t.game_mode+' · ':'')+teamLabel(t.teamType)+' · Entry ৳'+(t.fee||0)+' · '+t.joined+'/'+t.maxPlayers+' players</div>'
-            +winnersHtml
-            +'<div class="fill-label" style="margin-top:8px"><span>TOTAL PAID</span><span style="color:var(--green)">৳'+(t.totalPaid||0)+'</span></div>'
-            +'<div class="log-meta" style="margin-top:4px">'+fmtTime(t.closed_at)+'</div>'
-            +'</div>';
-        });
-      }
+    var historyCache=[],runningCache=[],usersCache={},regCache=[];
+    onSnapshot(collection(db,'match_history'),function(snap){
+      var rows=[],totalPaid=0;snap.forEach(function(d){rows.push(Object.assign({id:d.id},d.data()));totalPaid+=d.data().totalPaid||0;});
+      rows.sort(function(a,b){return (b.closed_at&&b.closed_at.seconds||0)-(a.closed_at&&a.closed_at.seconds||0);});
+      historyCache=rows;window.__adminHistCache=rows;el('db-hist-count').textContent=rows.length;el('db-hist-paid').textContent='৳'+totalPaid;
+      var list=el('db-history-list');if(!rows.length){list.innerHTML='<div class="empty-state"><div class="tick">🏁</div><div>NO HISTORY YET</div></div>';}
+      else{list.innerHTML='';rows.forEach(function(t){var wh=(t.winners||[]).map(function(w){return '<div class="log-meta">'+['🥇','🥈','🥉'][w.place-1]+' '+(w.teamName?'['+esc(w.teamName)+'] ':'')+esc(w.uid||'')+' — ৳'+w.prize+(w.kills?' ('+w.kills+' kills)':'')+'</div>';}).join('');list.innerHTML+='<div class="t-card"><div class="t-title">'+esc(t.title)+'</div><div class="req-meta" style="margin-bottom:8px">'+(t.game_mode?t.game_mode+' · ':'')+teamLabel(t.teamType)+' · Entry ৳'+(t.fee||0)+' · '+(t.joined||0)+'/'+(t.maxPlayers||0)+'</div>'+wh+'<div class="fill-label" style="margin-top:8px"><span>TOTAL PAID</span><span style="color:var(--green)">৳'+(t.totalPaid||0)+'</span></div><div class="log-meta">'+fmtTime(t.closed_at)+'</div></div>';});}
       renderParticipantsOverview();
     });
-
-    // Running tournaments (separate live cache for the participants overview)
-    onSnapshot(collection(db,'tournaments'), function(snap){
-      var rows=[];
-      snap.forEach(function(d){ rows.push(Object.assign({id:d.id},d.data())); });
-      runningCache=rows;
-      window.__adminTourCache=rows;
-      renderParticipantsOverview();
-    });
-
-    // Registrations — source of truth for participants, team names, game UIDs
-    onSnapshot(collection(db,'registrations'), function(snap){
-      var rows=[];
-      snap.forEach(function(d){ rows.push(Object.assign({id:d.id},d.data())); });
-      regCache=rows;
-      window.__adminRegCache=rows;
-      renderParticipantsOverview();
-    });
-
-    // All transactions
+    onSnapshot(collection(db,'tournaments'),function(snap){var rows=[];snap.forEach(function(d){rows.push(Object.assign({id:d.id},d.data()));});runningCache=rows;window.__adminTourCache=rows;renderParticipantsOverview();});
+    onSnapshot(collection(db,'registrations'),function(snap){var rows=[];snap.forEach(function(d){rows.push(Object.assign({id:d.id},d.data()));});regCache=rows;window.__adminRegCache=rows;renderParticipantsOverview();});
     var txRowsCache=[];
-    function recomputeTxStats(){
-      var approved=0,pending=0,rejected=0,deposited=0,withdrawn=0,today=0;
-      txRowsCache.forEach(function(tx){
-        if(tx.status==='approved') approved++; else if(tx.status==='pending') pending++; else rejected++;
-        if(tx.status==='approved'&&tx.type==='deposit'){
-          deposited+=tx.amount||0;
-          if(isToday(tx.created_at)) today+=tx.amount||0;
-        }
-        if(tx.status==='approved'&&tx.type==='withdraw') withdrawn+=tx.amount||0;
-      });
-      el('db-tx-count').textContent=txRowsCache.length;
-      el('db-tx-approved').textContent=approved;
-      el('db-tx-pending').textContent=pending;
-      el('db-tx-rejected').textContent=rejected;
-      el('db-tx-today').textContent='৳'+today;
-      el('db-tx-deposited').textContent='৳'+deposited;
-      el('db-tx-withdrawn').textContent='৳'+withdrawn;
-      el('db-tx-net').textContent='৳'+(deposited-withdrawn);
-    }
-    setInterval(recomputeTxStats,60000); // keeps "today" accurate across midnight even with no new transactions
-    onSnapshot(collection(db,'transactions'), function(snap){
-      var rows=[];
-      snap.forEach(function(d){ rows.push(Object.assign({id:d.id},d.data())); });
-      rows.sort(function(a,b){ var at=a.created_at&&a.created_at.seconds||0, bt=b.created_at&&b.created_at.seconds||0; return bt-at; });
-      txRowsCache=rows;
-      window.__adminTxCache=rows;
-      recomputeTxStats();
-      var list=el('db-transactions-list');
-      if(!rows.length){list.innerHTML='<div class="empty-state"><div class="tick">∅</div><div>NO TRANSACTIONS YET</div></div>';}
-      else{
-        list.innerHTML='';
-        rows.forEach(function(tx){
-          var sc=tx.status==='approved'?'var(--green)':tx.status==='pending'?'var(--gold)':'var(--red)';
-          list.innerHTML+='<div class="log-entry"><div>'
-            +'<div class="log-uid">'+(tx.type||'').toUpperCase()+' · '+(tx.email||tx.uid||'')+'</div>'
-            +'<div class="log-meta">'+(tx.reason?tx.reason+' · ':'')+(tx.method?tx.method.toUpperCase()+' · ':'')+fmtTime(tx.created_at)+'</div>'
-            +'</div><div class="log-prize" style="color:'+sc+'">৳'+(tx.amount||0)+'</div></div>';
-        });
-      }
-      renderParticipantsOverview();
-    });
-
-    // All users
-    onSnapshot(collection(db,'users'), function(snap){
-      var rows=[]; var totalBal=0; usersCache={};
-      var gUidMap={};
-      snap.forEach(function(d){
-        var u=Object.assign({id:d.id},d.data()); rows.push(u); totalBal+=u.balance||0;
-        usersCache[d.id]=u;
-        var gid=u.uid_game||u.game_uid||u.gameUid||'';
-        if(gid) gUidMap[gid]=u;
-      });
-      window.__adminUsersCache=usersCache;
-      window.__adminGameUidMap=gUidMap;
-      el('db-user-count').textContent=rows.length;
-      el('db-user-balance').textContent='৳'+totalBal;
-      var list=el('db-users-list');
-      if(!rows.length){list.innerHTML='<div class="empty-state"><div class="tick">∅</div><div>NO USERS YET</div></div>';}
-      else{
-        list.innerHTML='';
-        rows.forEach(function(u){
-          var blocked=!!u.blocked;
-          list.innerHTML+='<div class="log-entry" style="flex-direction:column;align-items:stretch;gap:8px">'
-            +'<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">'
-            +'<div><div class="log-uid">'+(u.name||u.email||u.id)+(blocked?' <span style="color:var(--red);font-size:11px;font-weight:700">● BLOCKED</span>':'')+'</div>'
-            +'<div class="log-meta">'+(u.email?u.email+' · ':'')+'Game UID: '+(u.uid_game||'—')+' · Wins: '+(u.wins||0)+' · Earned: ৳'+(u.total_earned||0)+'</div></div>'
-            +'<div class="log-prize" style="color:var(--gold);white-space:nowrap">৳'+(u.balance||0)+'</div>'
-            +'</div>'
-            +'<button onclick="toggleUserBlock(\''+u.id+'\','+blocked+')" style="padding:9px;border-radius:7px;font-weight:700;font-family:Rajdhani,sans-serif;font-size:13px;letter-spacing:1px;cursor:pointer;border:1px solid '+(blocked?'var(--green)':'var(--red)')+';background:transparent;color:'+(blocked?'var(--green)':'var(--red)')+'">'+(blocked?'✅ UNBLOCK USER':'🚫 BLOCK USER')+'</button>'
-            +'</div>';
-        });
-      }
-      renderParticipantsOverview();
-    });
-
-    // ─── ORGANISED PARTICIPANTS LIST (running + past matches) ────────────────
-    function entryRefMatches(tx,refId){
-      var ref=tx.tournamentId||tx.matchId||tx.tid||tx.tournament_id;
-      return ref===refId;
-    }
-
-    // Look up a user by Firebase UID first, then by game UID as fallback
-    function findUser(uid){
-      if(!uid) return {};
-      return usersCache[uid] || window.__adminGameUidMap[uid] || {};
-    }
-
-    // Extract one player's display info from any object (user doc, member object, or raw string)
-    function playerFromObj(obj, fbUid){
-      var u = fbUid ? findUser(fbUid) : {};
-      // obj can be the transaction itself, a member sub-object, or a user doc
-      var combined = Object.assign({}, u, obj); // obj fields override user fields where present
-      return {
-        gameName: combined.game_name||combined.ign||combined.gameName||combined.player_name||combined.name||fbUid||'—',
-        uid:      combined.uid_game||combined.game_uid||combined.gameUid||combined.playerUid||'—',
-        whatsapp: combined.whatsapp||combined.whatsapp_number||combined.phone||combined.phone_number||'—',
-      };
-    }
-
-    // ─── PARTICIPANTS from registrations collection ───────────────────────────
-    // Build players list from a registration doc
-    // reg fields: team_name, game_uids[], all_group_uids[], all_group_names[], name, whatsapp
-    function regToPlayers(reg){
-      var teamName = reg.team_name||'';
-      var whatsapp = reg.whatsapp||'—';
-      var uids     = reg.all_group_uids||reg.game_uids||[];
-      var names    = reg.all_group_names||[];
-      var paid     = reg.entry_paid||0;
-      var time     = fmtTime(reg.created_at);
-
-      if(!uids.length){
-        // Fallback: solo with no uid array
-        return [{
-          teamName:teamName,
-          gameName:reg.game_name||'—',
-          uid:'—',
-          whatsapp:whatsapp, paid:paid, time:time
-        }];
-      }
-
-      return uids.map(function(uid,i){
-        return {
-          teamName:teamName,
-          gameName:names[i]||reg.name||'—',
-          uid:uid||'—',
-          whatsapp:i===0?whatsapp:'—',
-          paid:i===0?paid:0,
-          time:i===0?time:''
-        };
-      });
-    }
-
-    function regsForMatch(refId){
-      return regCache.filter(function(r){ return r.tournament_id===refId; })
-        .sort(function(a,b){ return (a.created_at&&a.created_at.seconds||0)-(b.created_at&&b.created_at.seconds||0); });
-    }
-
+    function recomputeTx(){var ap=0,pe=0,re=0,dep=0,wd=0,today=0;txRowsCache.forEach(function(tx){if(tx.status==='approved')ap++;else if(tx.status==='pending')pe++;else re++;if(tx.status==='approved'&&tx.type==='deposit'){dep+=tx.amount||0;if(isToday(tx.created_at))today+=tx.amount||0;}if(tx.status==='approved'&&tx.type==='withdraw')wd+=tx.amount||0;});el('db-tx-count').textContent=txRowsCache.length;el('db-tx-approved').textContent=ap;el('db-tx-pending').textContent=pe;el('db-tx-rejected').textContent=re;el('db-tx-today').textContent='৳'+today;el('db-tx-deposited').textContent='৳'+dep;el('db-tx-withdrawn').textContent='৳'+wd;el('db-tx-net').textContent='৳'+(dep-wd);}
+    setInterval(recomputeTx,60000);
+    onSnapshot(collection(db,'transactions'),function(snap){var rows=[];snap.forEach(function(d){rows.push(Object.assign({id:d.id},d.data()));});rows.sort(function(a,b){return (b.created_at&&b.created_at.seconds||0)-(a.created_at&&a.created_at.seconds||0);});txRowsCache=rows;window.__adminTxCache=rows;recomputeTx();var list=el('db-transactions-list');if(!rows.length){list.innerHTML='<div class="empty-state"><div class="tick">∅</div><div>NO TRANSACTIONS</div></div>';}else{list.innerHTML='';rows.forEach(function(tx){var sc=tx.status==='approved'?'var(--green)':tx.status==='pending'?'var(--gold)':'var(--red)';list.innerHTML+='<div class="log-entry"><div><div class="log-uid">'+(tx.type||'').toUpperCase()+' · '+esc(tx.email||tx.uid||'')+'</div><div class="log-meta">'+(tx.reason?esc(tx.reason)+' · ':'')+(tx.method?tx.method.toUpperCase()+' · ':'')+fmtTime(tx.created_at)+'</div></div><div class="log-prize" style="color:'+sc+'">৳'+(tx.amount||0)+'</div></div>';});}renderParticipantsOverview();});
+    onSnapshot(collection(db,'users'),function(snap){var rows=[],totalBal=0;usersCache={};var gUidMap={};snap.forEach(function(d){var u=Object.assign({id:d.id},d.data());rows.push(u);totalBal+=u.balance||0;usersCache[d.id]=u;var gid=u.uid_game||u.game_uid||'';if(gid)gUidMap[gid]=u;});window.__adminUsersCache=usersCache;window.__adminGameUidMap=gUidMap;el('db-user-count').textContent=rows.length;el('db-user-balance').textContent='৳'+totalBal;var list=el('db-users-list');if(!rows.length){list.innerHTML='<div class="empty-state"><div class="tick">∅</div><div>NO USERS</div></div>';}else{list.innerHTML='';rows.forEach(function(u){var blocked=!!u.blocked;list.innerHTML+='<div class="log-entry" style="flex-direction:column;align-items:stretch;gap:8px"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px"><div><div class="log-uid">'+esc(u.name||u.email||u.id)+(blocked?' <span style="color:var(--red);font-size:11px">● BLOCKED</span>':'')+'</div><div class="log-meta">'+(u.email?esc(u.email)+' · ':'')+'UID: '+(u.uid_game||'—')+' · Wins: '+(u.wins||0)+' · Earned: ৳'+(u.total_earned||0)+'</div></div><div class="log-prize" style="color:var(--gold);white-space:nowrap">৳'+(u.balance||0)+'</div></div><button onclick="toggleUserBlock(\''+u.id+'\','+blocked+')" style="padding:9px;border-radius:7px;font-weight:700;font-family:Rajdhani,sans-serif;font-size:13px;letter-spacing:1px;cursor:pointer;border:1px solid '+(blocked?'var(--green)':'var(--red)')+';background:transparent;color:'+(blocked?'var(--green)':'var(--red)')+'">'+(blocked?'✅ UNBLOCK USER':'🚫 BLOCK USER')+'</button></div>';});}renderParticipantsOverview();});
     window.__cpData={};
-
     window.renderParticipantsOverview=function(){
-      var list=el('db-participants-list');
-      if(!list) return;
+      var list=el('db-participants-list');if(!list)return;
       var q=(el('db-participants-search')&&el('db-participants-search').value||'').trim().toLowerCase();
       var matches=[];
-      runningCache.forEach(function(t){
-        matches.push({title:t.title,status:'RUNNING',statusColor:'var(--green)',game_mode:t.game_mode,teamType:t.teamType,fee:t.fee,joined:t.joined,maxPlayers:t.maxPlayers,refId:t.id,sortKey:1e15});
-      });
-      historyCache.forEach(function(h){
-        matches.push({title:h.title,status:'COMPLETED',statusColor:'var(--muted)',game_mode:h.game_mode,teamType:h.teamType,fee:h.fee,joined:h.joined,maxPlayers:h.maxPlayers,refId:h.original_id||h.id,sortKey:(h.closed_at&&h.closed_at.seconds)||0});
-      });
-      matches.sort(function(a,b){ return b.sortKey-a.sortKey; });
-
-      window.__cpData={};
-      var html='';
-      var matchIdx=0;
-
+      runningCache.forEach(function(t){matches.push({title:t.title,status:'RUNNING',statusColor:'var(--green)',game_mode:t.game_mode,teamType:t.teamType,fee:t.fee,joined:t.joined,maxPlayers:t.maxPlayers,refId:t.id,sortKey:1e15});});
+      historyCache.forEach(function(h){matches.push({title:h.title,status:'COMPLETED',statusColor:'var(--muted)',game_mode:h.game_mode,teamType:h.teamType,fee:h.fee,joined:h.joined,maxPlayers:h.maxPlayers,refId:h.original_id||h.id,sortKey:(h.closed_at&&h.closed_at.seconds)||0});});
+      matches.sort(function(a,b){return b.sortKey-a.sortKey;});
+      window.__cpData={};var html='',matchIdx=0,romans=['i','ii','iii','iv','v','vi','vii','viii'];
       matches.forEach(function(m){
-        var regs=regsForMatch(m.refId);
-        // Build flat player list (each reg may expand to multiple players)
+        var regs=regCache.filter(function(r){return r.tournament_id===m.refId;}).sort(function(a,b){return (a.created_at&&a.created_at.seconds||0)-(b.created_at&&b.created_at.seconds||0);});
         var players=[];
-        regs.forEach(function(reg){ regToPlayers(reg).forEach(function(p){ players.push(p); }); });
-
-        if(q){
-          var titleHit=m.title.toLowerCase().indexOf(q)!==-1;
-          var partHit=players.some(function(p){ return (p.gameName+p.uid+p.whatsapp+p.teamName).toLowerCase().indexOf(q)!==-1; });
-          if(!titleHit&&!partHit) return;
-        }
-
-        var cid='m'+matchIdx++;
-        var copyLines=[];
-        var entryNum=0;
-        var romans=['i','ii','iii','iv','v','vi','vii','viii'];
-        var autoGrpNum=0;
-        regs.forEach(function(reg){
-          var rUids=reg.all_group_uids||reg.game_uids||[];
-          var rNames=reg.all_group_names||[];
-          var tname=reg.team_name||'';
-          if(tname){
-            // Named team — one numbered line for the team, roman-numeral sub-lines for each player
-            entryNum++;
-            copyLines.push(entryNum+'.['+tname+'](Team)');
-            var count=Math.max(rUids.length,rNames.length,1);
-            for(var i=0;i<count;i++){
-              // Prefer the player's IGN; if missing, fall back to their UID with a note
-              var nm=rNames[i], ud=rUids[i];
-              var gn = nm ? nm : (ud ? ud+'(uid of team member as IGN not available)' : '—');
-              copyLines.push('      '+(romans[i]||String(i+1))+'.'+gn);
-            }
-          } else if(rNames.length>1||rUids.length>1){
-            // Auto-grouped solo queue — ONE numbered line for the whole auto-team
-            autoGrpNum++;
-            entryNum++;
-            var autoName=rNames[0]||rUids[0]||'—';
-            copyLines.push(entryNum+'.'+autoName+'[Team-'+autoGrpNum+'](Auto Created)');
-          } else {
-            // True solo
-            entryNum++;
-            var gn=rNames[0]||reg.game_name||'—';
-            copyLines.push(entryNum+'.'+gn);
-          }
-        });
-        window.__cpData[cid]={
-          names:  copyLines,
-          phones: regs.map(function(r){ return r.whatsapp||''; }).filter(Boolean)
-        };
-
-        html+='<div class="t-card">'
-          +'<div class="t-header"><div>'
-          +'<div class="t-title">'+m.title+'</div>'
-          +'<div class="t-badges"><span class="t-badge" style="background:'+m.statusColor+'22;color:'+m.statusColor+'">'+m.status+'</span>'
-          +(m.game_mode?'<span class="t-badge">'+m.game_mode+'</span>':'')+'</div>'
-          +'</div></div>'
-          +'<div class="req-meta" style="margin-bottom:8px">'+teamLabel(m.teamType)+' · Entry ৳'+(m.fee||0)+' · '+(m.joined||0)+'/'+(m.maxPlayers||0)+' players</div>'
-          +'<div class="section-label">PARTICIPANTS ('+players.length+')</div>';
-
-        if(!players.length){
-          html+='<div class="log-meta" style="margin-bottom:6px;color:var(--muted)">No registrations found for this match yet.</div>';
-        }else{
-          html+='<div class="row" style="margin-bottom:10px">'
-            +'<button onclick="copyByKey(\''+cid+'\',\'names\')" style="flex:1;padding:9px;border-radius:7px;font-weight:700;font-family:Rajdhani,sans-serif;font-size:12px;letter-spacing:1px;cursor:pointer;border:1px solid var(--orange);background:transparent;color:var(--orange)">📋 COPY PLAYER LIST</button>'
-            +'<button onclick="copyByKey(\''+cid+'\',\'phones\')" style="flex:1;padding:9px;border-radius:7px;font-weight:700;font-family:Rajdhani,sans-serif;font-size:12px;letter-spacing:1px;cursor:pointer;border:1px solid var(--green);background:transparent;color:var(--green)">📋 COPY WHATSAPP NOs</button>'
-            +'</div>';
-
-          // Group by team
-          var lastTeam=null;
-          var playerNum=0;
-          regs.forEach(function(reg){
-            var tname=reg.team_name||'';
-            if(tname){
-              html+='<div class="fill-label" style="margin:8px 0 4px;padding:6px 8px;background:var(--card);border-radius:6px;border-left:3px solid var(--gold)">'
-                +'<span style="color:var(--gold);font-weight:700">🏷 '+tname+'</span>'
-                +'<span style="color:var(--muted);font-size:11px">'+reg.whatsapp+'</span>'
-                +'</div>';
-            }
-            var uids=reg.all_group_uids||reg.game_uids||[];
-            var names=reg.all_group_names||[];
-            if(!uids.length){
-              playerNum++;
-              html+='<div class="log-entry"><div>'
-                +'<div class="log-uid">#'+playerNum+' · '+(reg.game_name||'—')+'</div>'
-                +'<div class="log-meta">UID: — · WhatsApp: '+reg.whatsapp+' · Paid ৳'+(reg.entry_paid||0)+' · '+fmtTime(reg.created_at)+'</div>'
-                +'</div></div>';
-            } else {
-              uids.forEach(function(uid,i){
-                playerNum++;
-                var gname=names[i]||(i===0?reg.name||'—':'—');
-                var wa=i===0?(reg.whatsapp||'—'):'—';
-                html+='<div class="log-entry"><div>'
-                  +'<div class="log-uid">#'+playerNum+' · '+gname+'</div>'
-                  +'<div class="log-meta">UID: '+uid+(wa!=='—'?' · WhatsApp: '+wa:'')+(i===0?' · Paid ৳'+(reg.entry_paid||0):'')+'</div>'
-                  +'</div></div>';
-              });
-            }
-          });
-        }
+        regs.forEach(function(reg){var uids=reg.all_group_uids||reg.game_uids||[];var names=reg.all_group_names||[];var tname=reg.team_name||'';if(!uids.length){players.push({teamName:tname,gameName:reg.game_name||'—',uid:'—',wa:reg.whatsapp||'—'});}else{uids.forEach(function(uid,i){players.push({teamName:tname,gameName:names[i]||reg.name||'—',uid:uid||'—',wa:i===0?(reg.whatsapp||'—'):'—'});});}});
+        if(q){var th=m.title.toLowerCase().indexOf(q)!==-1,ph=players.some(function(p){return (p.gameName+p.uid+p.wa+p.teamName).toLowerCase().indexOf(q)!==-1;});if(!th&&!ph)return;}
+        var cid='m'+matchIdx++,copyLines=[],autoGrpNum=0,entryNum=0;
+        regs.forEach(function(reg){var rUids=reg.all_group_uids||reg.game_uids||[];var rNames=reg.all_group_names||[];var tname=reg.team_name||'';if(tname){entryNum++;copyLines.push(entryNum+'.['+tname+'](Team)');var cnt=Math.max(rUids.length,rNames.length,1);for(var i=0;i<cnt;i++){var nm=rNames[i],ud=rUids[i];copyLines.push('      '+(romans[i]||String(i+1))+'.'+(nm?nm:(ud?ud:'—')));}}else if(rNames.length>1||rUids.length>1){autoGrpNum++;entryNum++;copyLines.push(entryNum+'.'+(rNames[0]||rUids[0]||'—')+'[Auto-'+autoGrpNum+']');}else{entryNum++;copyLines.push(entryNum+'.'+(rNames[0]||reg.game_name||'—'));}});
+        window.__cpData[cid]={names:copyLines,phones:regs.map(function(r){return r.whatsapp||'';}).filter(Boolean)};
+        html+='<div class="t-card"><div class="t-header"><div><div class="t-title">'+esc(m.title)+'</div><div class="t-badges"><span class="t-badge" style="background:'+m.statusColor+'22;color:'+m.statusColor+'">'+m.status+'</span>'+(m.game_mode?'<span class="t-badge">'+m.game_mode+'</span>':'')+'</div></div></div><div class="req-meta" style="margin-bottom:8px">'+teamLabel(m.teamType)+' · Entry ৳'+(m.fee||0)+' · '+(m.joined||0)+'/'+(m.maxPlayers||0)+' players</div><div class="section-label">PARTICIPANTS ('+players.length+')</div>';
+        if(!players.length){html+='<div class="log-meta" style="color:var(--muted)">No registrations yet.</div>';}
+        else{html+='<div class="row" style="margin-bottom:10px"><button onclick="copyByKey(\''+cid+'\',\'names\')" style="flex:1;padding:9px;border-radius:7px;font-weight:700;font-family:Rajdhani,sans-serif;font-size:12px;letter-spacing:1px;cursor:pointer;border:1px solid var(--orange);background:transparent;color:var(--orange)">📋 COPY PLAYER LIST</button><button onclick="copyByKey(\''+cid+'\',\'phones\')" style="flex:1;padding:9px;border-radius:7px;font-weight:700;font-family:Rajdhani,sans-serif;font-size:12px;letter-spacing:1px;cursor:pointer;border:1px solid var(--green);background:transparent;color:var(--green)">📋 COPY WHATSAPP NOs</button></div>';
+        var pNum=0;regs.forEach(function(reg){var tname=reg.team_name||'';if(tname){html+='<div class="fill-label" style="margin:8px 0 4px;padding:6px 8px;background:var(--card);border-radius:6px;border-left:3px solid var(--gold)"><span style="color:var(--gold);font-weight:700">🏷 '+esc(tname)+'</span><span style="color:var(--muted);font-size:11px">'+esc(reg.whatsapp||'')+'</span></div>';}var uids=reg.all_group_uids||reg.game_uids||[];var names=reg.all_group_names||[];if(!uids.length){pNum++;html+='<div class="log-entry"><div><div class="log-uid">#'+pNum+' · '+esc(reg.game_name||'—')+'</div><div class="log-meta">UID: — · WA: '+esc(reg.whatsapp||'—')+' · Paid ৳'+(reg.entry_paid||0)+'</div></div></div>';}else{uids.forEach(function(uid,i){pNum++;var gn=names[i]||(i===0?reg.name||'—':'—'),wa=i===0?(reg.whatsapp||'—'):'—';html+='<div class="log-entry"><div><div class="log-uid">#'+pNum+' · '+esc(gn)+'</div><div class="log-meta">UID: '+esc(uid)+(wa!=='—'?' · WA: '+wa:'')+(i===0?' · Paid ৳'+(reg.entry_paid||0):'')+'</div></div></div>';});}});}
         html+='</div>';
       });
-
-      if(!matches.length){ list.innerHTML='<div class="empty-state"><div class="tick">🧍</div><div>NO MATCHES YET</div></div>'; return; }
-      if(!html){ list.innerHTML='<div class="empty-state"><div class="tick">🔍</div><div>NO MATCHES FOUND</div></div>'; return; }
+      if(!matches.length){list.innerHTML='<div class="empty-state"><div class="tick">🧍</div><div>NO MATCHES YET</div></div>';return;}
+      if(!html){list.innerHTML='<div class="empty-state"><div class="tick">🔍</div><div>NO RESULTS</div></div>';return;}
       list.innerHTML=html;
     };
-    function txRowsCacheRef(){ return txRowsCache; }
   }
 </script>
+
 <script>
-(function(){
-  var d=document.getElementById('report-date');
-  if(d) d.value=new Date().toISOString().slice(0,10);
-})();
-
-// ── helpers shared between PDF and CSV ──────────────────────────────────────
-function _expandPlayers(refId, allRegs){
-  var regs=allRegs.filter(function(r){ return r.tournament_id===refId; })
-    .sort(function(a,b){ return (a.created_at&&a.created_at.seconds||0)-(b.created_at&&b.created_at.seconds||0); });
-  var out=[];
-  regs.forEach(function(reg){
-    var uids=reg.all_group_uids||reg.game_uids||[];
-    var names=reg.all_group_names||[];
-    var teamName=reg.team_name||'';
-    if(!uids.length){
-      out.push({ team:teamName, name:reg.game_name||'—', uid:'—', wa:reg.whatsapp||'—' });
-    } else {
-      uids.forEach(function(uid,i){
-        out.push({
-          team:teamName,
-          name:names[i]||(i===0?reg.name||'—':'—'),
-          uid:uid||'—',
-          wa:i===0?(reg.whatsapp||'—'):'—'
-        });
-      });
-    }
-  });
-  return out;
-}
-
+(function(){var d=document.getElementById('report-date');if(d)d.value=new Date().toISOString().slice(0,10);})();
+function _xp(refId,allRegs){var regs=(allRegs||[]).filter(function(r){return r.tournament_id===refId;}).sort(function(a,b){return (a.created_at&&a.created_at.seconds||0)-(b.created_at&&b.created_at.seconds||0);});var out=[];regs.forEach(function(reg){var uids=reg.all_group_uids||reg.game_uids||[];var names=reg.all_group_names||[];var tname=reg.team_name||'';if(!uids.length){out.push({team:tname,name:reg.game_name||'—',uid:'—',wa:reg.whatsapp||'—'});}else{uids.forEach(function(uid,i){out.push({team:tname,name:names[i]||(i===0?reg.name||'—':'—'),uid:uid||'—',wa:i===0?(reg.whatsapp||'—'):'—'});});}});return out;}
+function eh(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function tl(v){return v==1?'SOLO':v==2?'DUO':'SQUAD';}
 window.downloadReport=function(fmt){
-  var dateVal=document.getElementById('report-date').value;
-  if(!dateVal){ alert('Please select a date first.'); return; }
-  var sel=new Date(dateVal);
-  var dayStart=new Date(sel.getFullYear(),sel.getMonth(),sel.getDate(),0,0,0);
-  var dayEnd  =new Date(sel.getFullYear(),sel.getMonth(),sel.getDate(),23,59,59);
+  var dateVal=document.getElementById('report-date').value;if(!dateVal){alert('Select a date first.');return;}
+  var sel=new Date(dateVal),ds=new Date(sel.getFullYear(),sel.getMonth(),sel.getDate(),0,0,0),de=new Date(sel.getFullYear(),sel.getMonth(),sel.getDate(),23,59,59);
   var label=sel.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
-
-  var allTx    = window.__adminTxCache    || [];
-  var allTours = window.__adminTourCache  || [];
-  var allHist  = window.__adminHistCache  || [];
-  var allRegs  = window.__adminRegCache   || [];
-
-  function inDay(ts){
-    if(!ts||!ts.toDate) return false;
-    var d=ts.toDate(); return d>=dayStart&&d<=dayEnd;
-  }
-  function fmtTs(ts){ try{ if(ts&&ts.toDate) return ts.toDate().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}); }catch(e){} return '-'; }
-  function ep(refId){ return _expandPlayers(refId, allRegs); }
-
-  var txDay   = allTx.filter(function(t){ return inDay(t.created_at); });
-  var tourDay = allTours.filter(function(t){ return inDay(t.created_at); });
-  var histDay = allHist.filter(function(t){ return inDay(t.closed_at); });
+  var allTx=window.__adminTxCache||[],allTours=window.__adminTourCache||[],allHist=window.__adminHistCache||[],allRegs=window.__adminRegCache||[];
+  function inDay(ts){if(!ts||!ts.toDate)return false;var d=ts.toDate();return d>=ds&&d<=de;}
+  function fts(ts){try{if(ts&&ts.toDate)return ts.toDate().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});}catch(e){}return '-';}
+  var txDay=allTx.filter(function(t){return inDay(t.created_at);}),tourDay=allTours.filter(function(t){return inDay(t.created_at);}),histDay=allHist.filter(function(t){return inDay(t.closed_at);});
   var dep=txDay.filter(function(t){return t.type==='deposit'&&t.status==='approved';}).reduce(function(s,t){return s+(t.amount||0);},0);
-  var wd =txDay.filter(function(t){return t.type==='withdraw'&&t.status==='approved';}).reduce(function(s,t){return s+(t.amount||0);},0);
-  var pr =txDay.filter(function(t){return t.type==='prize'||t.type==='kill_prize';}).reduce(function(s,t){return s+(t.amount||0);},0);
-
-  // ── CSV ──────────────────────────────────────────────────────────────────
+  var wd=txDay.filter(function(t){return t.type==='withdraw'&&t.status==='approved';}).reduce(function(s,t){return s+(t.amount||0);},0);
+  var pr=txDay.filter(function(t){return t.type==='prize'||t.type==='kill_prize';}).reduce(function(s,t){return s+(t.amount||0);},0);
   if(fmt==='csv'){
     var rows=[['TYPE','EMAIL/UID','AMOUNT(BDT)','STATUS','REASON','TIME']];
-    txDay.forEach(function(t){
-      rows.push([t.type||'',t.email||t.uid||'',t.amount||0,t.status||'',t.reason||'',fmtTs(t.created_at)]);
-    });
-    rows.push([]);
-    rows.push(['MATCH','STATUS','TEAM NAME','GAME NAME','GAME UID','WHATSAPP']);
-    allTours.concat(allHist).forEach(function(m){
-      var isH=!!m.closed_at;
-      ep(isH?(m.original_id||m.id):m.id).forEach(function(p){
-        rows.push([m.title||'-', isH?'COMPLETED':'RUNNING', p.team||'', p.name||'—', p.uid||'—', p.wa||'—']);
-      });
-    });
+    txDay.forEach(function(t){rows.push([t.type||'',t.email||t.uid||'',t.amount||0,t.status||'',t.reason||'',fts(t.created_at)]);});
+    rows.push([]);rows.push(['MATCH','STATUS','TEAM','NAME','UID','WHATSAPP']);
+    allTours.concat(allHist).forEach(function(m){var isH=!!m.closed_at;_xp(isH?(m.original_id||m.id):m.id,allRegs).forEach(function(p){rows.push([m.title||'-',isH?'COMPLETED':'RUNNING',p.team||'',p.name||'—',p.uid||'—',p.wa||'—']);});});
     var csv=rows.map(function(r){return r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"';}).join(',');}).join('\r\n');
-    var blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
-    var a=document.createElement('a'); a.href=URL.createObjectURL(blob);
-    a.download='Report_'+dateVal+'.csv'; a.click();
-    return;
+    var blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Report_'+dateVal+'.csv';a.click();return;
   }
-
-  // ── PDF via browser print (handles ALL Unicode including Bengali natively) ─
-  function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-  function partRows(players){
-    if(!players.length) return '<tr><td colspan="4" style="color:#888;font-style:italic">No participant data</td></tr>';
-    return players.map(function(p,i){
-      return '<tr>'
-        +'<td>'+(i+1)+'</td>'
-        +'<td>'+(p.team?'<span style="color:#f0c040;font-size:11px">['+esc(p.team)+']</span> ':'')
-               +esc(p.name!=='—'?p.name:p.uid)+'</td>'
-        +'<td>'+esc(p.uid)+'</td>'
-        +'<td>'+esc(p.wa)+'</td>'
-        +'</tr>';
-    }).join('');
-  }
-
-  var tourSection='', histSection='';
-  tourDay.forEach(function(t){
-    var players=ep(t.id);
-    tourSection+='<div class="match-block">'
-      +'<div class="match-title">'+esc(t.title)+'</div>'
-      +'<div class="match-sub">'+(t.game_mode||'')+' · Entry BDT '+(t.fee||0)+' · Players '+(t.joined||0)+'/'+(t.maxPlayers||0)+'</div>'
-      +'<table><thead><tr><th>#</th><th>GAME NAME</th><th>GAME UID</th><th>WHATSAPP</th></tr></thead>'
-      +'<tbody>'+partRows(players)+'</tbody></table></div>';
-  });
-  histDay.forEach(function(t){
-    var players=ep(t.original_id||t.id);
-    var wnr=(t.winners||[]).map(function(w,i){return ['🥇','🥈','🥉'][i]+' '+esc(w.uid)+' — BDT '+w.prize;}).join('&nbsp;&nbsp;');
-    histSection+='<div class="match-block">'
-      +'<div class="match-title">'+esc(t.title)+' <span style="color:#1abc9c;font-size:12px">COMPLETED</span></div>'
-      +(wnr?'<div class="match-sub winners">'+wnr+'</div>':'')
-      +'<table><thead><tr><th>#</th><th>GAME NAME</th><th>GAME UID</th><th>WHATSAPP</th></tr></thead>'
-      +'<tbody>'+partRows(players)+'</tbody></table></div>';
-  });
-
-  var txRows=txDay.map(function(t){
-    var sc=t.status==='approved'?'#27ae60':t.status==='pending'?'#f0c040':'#e74c3c';
-    return '<tr><td>'+(t.type||'').toUpperCase()+'</td><td>'+esc(t.email||t.uid||'')+'</td>'
-      +'<td>BDT '+(t.amount||0)+'</td>'
-      +'<td style="color:'+sc+'">'+(t.status||'').toUpperCase()+'</td>'
-      +'<td>'+fmtTs(t.created_at)+'</td></tr>';
-  }).join('');
-
-  var html='<!DOCTYPE html><html><head><meta charset="utf-8">'
-    +'<title>FF Report '+label+'</title>'
-    +'<style>'
-    +'*{box-sizing:border-box;margin:0;padding:0}'
-    +'body{font-family:\'Segoe UI\',Arial,sans-serif;font-size:12px;color:#111;background:#fff;padding:20px}'
-    +'.header{background:#FF6B00;color:#fff;padding:10px 16px;border-radius:6px;display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}'
-    +'.header h1{font-size:15px;font-weight:700;letter-spacing:1px}'
-    +'.summary{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}'
-    +'.sbox{border:1px solid #ddd;border-radius:6px;padding:8px 14px;min-width:120px;text-align:center}'
-    +'.sbox .val{font-size:16px;font-weight:700}'
-    +'.sbox .lbl{font-size:10px;color:#888;margin-top:2px}'
-    +'h2{font-size:12px;font-weight:700;letter-spacing:1px;margin:14px 0 6px;padding:4px 8px;border-radius:3px}'
-    +'.match-block{margin-bottom:14px;page-break-inside:avoid}'
-    +'.match-title{font-weight:700;font-size:13px;margin-bottom:2px}'
-    +'.match-sub{font-size:10px;color:#666;margin-bottom:6px}'
-    +'.winners{color:#e67e22}'
-    +'table{width:100%;border-collapse:collapse;margin-bottom:4px}'
-    +'th{background:#FF6B00;color:#fff;padding:5px 8px;text-align:left;font-size:10px;letter-spacing:.5px}'
-    +'td{padding:4px 8px;border-bottom:1px solid #eee;font-size:11px}'
-    +'tr:nth-child(even) td{background:#f9f9f9}'
-    +'@media print{'
-    +'  body{padding:10px}'
-    +'  .no-print{display:none!important}'
-    +'  .match-block{page-break-inside:avoid}'
-    +'}'
-    +'</style></head><body>'
-    +'<div class="no-print" style="margin-bottom:12px">'
-    +'<button onclick="window.print()" style="padding:10px 22px;background:#FF6B00;color:#fff;border:none;border-radius:6px;font-weight:700;font-size:14px;cursor:pointer;margin-right:8px">🖨 PRINT / SAVE AS PDF</button>'
-    +'<button onclick="window.close()" style="padding:10px 18px;background:#eee;border:none;border-radius:6px;font-size:13px;cursor:pointer">✕ Close</button>'
-    +'<span style="margin-left:12px;color:#888;font-size:11px">In the print dialog → set Destination to "Save as PDF"</span>'
-    +'</div>'
+  function partRows(players){if(!players.length)return '<tr><td colspan="4" style="color:#888;font-style:italic">No data</td></tr>';return players.map(function(p,i){return '<tr><td>'+(i+1)+'</td><td>'+(p.team?'<span style="color:#f0c040;font-size:11px">['+eh(p.team)+']</span> ':'')+eh(p.name!=='—'?p.name:p.uid)+'</td><td>'+eh(p.uid)+'</td><td>'+eh(p.wa)+'</td></tr>';}).join('');}
+  var tourSec='',histSec='';
+  tourDay.forEach(function(t){tourSec+='<div class="match-block"><div class="match-title">'+eh(t.title)+'</div><div class="match-sub">'+(t.game_mode||'')+' · Entry BDT '+(t.fee||0)+' · '+tl(t.teamType)+' · '+(t.joined||0)+'/'+(t.maxPlayers||0)+'</div><table><thead><tr><th>#</th><th>GAME NAME</th><th>UID</th><th>WHATSAPP</th></tr></thead><tbody>'+partRows(_xp(t.id,allRegs))+'</tbody></table></div>';});
+  histDay.forEach(function(t){var wnr=(t.winners||[]).map(function(w,i){return ['🥇','🥈','🥉'][i]+' '+(w.teamName?'['+eh(w.teamName)+'] ':'')+eh(w.uid||'')+' — BDT '+w.prize;}).join('&nbsp;&nbsp;');histSec+='<div class="match-block"><div class="match-title">'+eh(t.title)+' <span style="color:#1abc9c;font-size:12px">COMPLETED</span></div>'+(wnr?'<div class="match-sub winners">'+wnr+'</div>':'')+'<table><thead><tr><th>#</th><th>GAME NAME</th><th>UID</th><th>WHATSAPP</th></tr></thead><tbody>'+partRows(_xp(t.original_id||t.id,allRegs))+'</tbody></table></div>';});
+  var txRows=txDay.map(function(t){var sc=t.status==='approved'?'#27ae60':t.status==='pending'?'#f0c040':'#e74c3c';return '<tr><td>'+(t.type||'').toUpperCase()+'</td><td>'+eh(t.email||t.uid||'')+'</td><td>BDT '+(t.amount||0)+'</td><td style="color:'+sc+'">'+(t.status||'').toUpperCase()+'</td><td>'+fts(t.created_at)+'</td></tr>';}).join('');
+  var html='<!DOCTYPE html><html><head><meta charset="utf-8"><title>FF Report '+label+'</title><style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:\'Segoe UI\',Arial,sans-serif;font-size:12px;color:#111;background:#fff;padding:20px}.header{background:#FF6B00;color:#fff;padding:10px 16px;border-radius:6px;display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}.header h1{font-size:15px;font-weight:700}.summary{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}.sbox{border:1px solid #ddd;border-radius:6px;padding:8px 14px;min-width:120px;text-align:center}.sbox .val{font-size:16px;font-weight:700}.sbox .lbl{font-size:10px;color:#888;margin-top:2px}h2{font-size:12px;font-weight:700;letter-spacing:1px;margin:14px 0 6px;padding:4px 8px;border-radius:3px}.match-block{margin-bottom:14px;page-break-inside:avoid}.match-title{font-weight:700;font-size:13px;margin-bottom:2px}.match-sub{font-size:10px;color:#666;margin-bottom:6px}.winners{color:#e67e22}table{width:100%;border-collapse:collapse;margin-bottom:4px}th{background:#FF6B00;color:#fff;padding:5px 8px;text-align:left;font-size:10px}td{padding:4px 8px;border-bottom:1px solid #eee;font-size:11px}tr:nth-child(even) td{background:#f9f9f9}@media print{body{padding:10px}.no-print{display:none!important}}</style></head><body>'
+    +'<div class="no-print" style="margin-bottom:12px"><button onclick="window.print()" style="padding:10px 22px;background:#FF6B00;color:#fff;border:none;border-radius:6px;font-weight:700;font-size:14px;cursor:pointer;margin-right:8px">🖨 PRINT / SAVE AS PDF</button><button onclick="window.close()" style="padding:10px 18px;background:#eee;border:none;border-radius:6px;font-size:13px;cursor:pointer">✕ Close</button></div>'
     +'<div class="header"><h1>FREE FIRE TOURNAMENT — DAILY REPORT</h1><span>'+label+'</span></div>'
-    +'<div class="summary">'
-    +'<div class="sbox"><div class="val" style="color:#27ae60">BDT '+dep+'</div><div class="lbl">TOTAL DEPOSITED</div></div>'
-    +'<div class="sbox"><div class="val" style="color:#e74c3c">BDT '+wd+'</div><div class="lbl">TOTAL WITHDRAWN</div></div>'
-    +'<div class="sbox"><div class="val" style="color:#f39c12">BDT '+pr+'</div><div class="lbl">PRIZES PAID</div></div>'
-    +'<div class="sbox"><div class="val" style="color:#3498db">'+txDay.filter(function(t){return t.type==='entry';}).length+'</div><div class="lbl">ENTRIES</div></div>'
-    +'<div class="sbox"><div class="val" style="color:#9b59b6">'+tourDay.length+'</div><div class="lbl">NEW TOURNAMENTS</div></div>'
-    +'<div class="sbox"><div class="val" style="color:#1abc9c">'+histDay.length+'</div><div class="lbl">CLOSED MATCHES</div></div>'
-    +'</div>';
-
-  if(txRows){
-    html+='<h2 style="background:#e67e22;color:#fff">TRANSACTIONS ('+txDay.length+')</h2>'
-      +'<table><thead><tr><th>TYPE</th><th>EMAIL / UID</th><th>AMOUNT</th><th>STATUS</th><th>TIME</th></tr></thead>'
-      +'<tbody>'+txRows+'</tbody></table>';
-  }
-  if(tourSection){
-    html+='<h2 style="background:#9b59b6;color:#fff">NEW TOURNAMENTS ('+tourDay.length+')</h2>'+tourSection;
-  }
-  if(histSection){
-    html+='<h2 style="background:#1abc9c;color:#0d1f1b">CLOSED MATCHES ('+histDay.length+')</h2>'+histSection;
-  }
-  if(!txDay.length&&!tourDay.length&&!histDay.length){
-    html+='<p style="color:#888;padding:20px 0">No data found for this date.</p>';
-  }
-  html+='<div style="margin-top:20px;font-size:10px;color:#aaa">Generated by FF Tournament Admin · '+new Date().toLocaleString()+'</div>';
-  html+='</body></html>';
-
-  var w=window.open('','_blank','width=900,height=700');
-  if(!w){ alert('Please allow popups for this site to open the PDF preview.'); return; }
-  w.document.write(html);
-  w.document.close();
+    +'<div class="summary"><div class="sbox"><div class="val" style="color:#27ae60">BDT '+dep+'</div><div class="lbl">DEPOSITED</div></div><div class="sbox"><div class="val" style="color:#e74c3c">BDT '+wd+'</div><div class="lbl">WITHDRAWN</div></div><div class="sbox"><div class="val" style="color:#f39c12">BDT '+pr+'</div><div class="lbl">PRIZES PAID</div></div><div class="sbox"><div class="val" style="color:#3498db">'+txDay.filter(function(t){return t.type==='entry';}).length+'</div><div class="lbl">ENTRIES</div></div><div class="sbox"><div class="val" style="color:#9b59b6">'+tourDay.length+'</div><div class="lbl">NEW MATCHES</div></div><div class="sbox"><div class="val" style="color:#1abc9c">'+histDay.length+'</div><div class="lbl">CLOSED</div></div></div>';
+  if(txRows)html+='<h2 style="background:#e67e22;color:#fff">TRANSACTIONS ('+txDay.length+')</h2><table><thead><tr><th>TYPE</th><th>EMAIL/UID</th><th>AMOUNT</th><th>STATUS</th><th>TIME</th></tr></thead><tbody>'+txRows+'</tbody></table>';
+  if(tourSec)html+='<h2 style="background:#9b59b6;color:#fff">NEW MATCHES ('+tourDay.length+')</h2>'+tourSec;
+  if(histSec)html+='<h2 style="background:#1abc9c;color:#0d1f1b">CLOSED MATCHES ('+histDay.length+')</h2>'+histSec;
+  if(!txDay.length&&!tourDay.length&&!histDay.length)html+='<p style="color:#888;padding:20px 0">No data for this date.</p>';
+  html+='<div style="margin-top:20px;font-size:10px;color:#aaa">Generated by FF Tournament Admin · '+new Date().toLocaleString()+'</div></body></html>';
+  var w=window.open('','_blank','width=900,height=700');if(!w){alert('Allow popups for PDF preview.');return;}w.document.write(html);w.document.close();
 };
 </script>
 </body>
