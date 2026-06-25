@@ -31,12 +31,10 @@
     .field input::placeholder { color: var(--muted); font-weight: 400; }
     .btn { width: 100%; padding: 14px; border: 1px solid var(--gold); border-radius: 10px; background: linear-gradient(135deg, var(--amber), #6b4f00); color: var(--gold); font-family: 'Bebas Neue'; font-size: 20px; letter-spacing: 3px; cursor: pointer; margin-top: 8px; }
     .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    .divider { display: flex; align-items: center; gap: 12px; margin: 18px 0; color: var(--muted); font-size: 12px; letter-spacing: 2px; text-transform: uppercase; }
-    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
     .message { margin-top: 14px; padding: 11px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; text-align: center; display: none; }
-    .message.error { display: block; background: rgba(255,50,50,0.1); border: 1px solid rgba(255,50,50,0.3); color: #FF6B6B; }
-    .message.success { display: block; background: rgba(50,255,100,0.1); border: 1px solid rgba(50,255,100,0.3); color: #5CFF8A; }
-    .message.info { display: block; background: rgba(255,215,0,0.08); border: 1px solid rgba(255,215,0,0.3); color: var(--gold); }
+    .message.error   { display: block; background: rgba(255,50,50,0.1);   border: 1px solid rgba(255,50,50,0.3);   color: #FF6B6B; }
+    .message.success { display: block; background: rgba(50,255,100,0.1);  border: 1px solid rgba(50,255,100,0.3);  color: #5CFF8A; }
+    .message.info    { display: block; background: rgba(255,215,0,0.08);  border: 1px solid rgba(255,215,0,0.3);   color: var(--gold); }
     .forgot-link { text-align: right; margin-top: -6px; margin-bottom: 10px; }
     .forgot-link button { background: none; border: none; color: var(--gold); font-family: 'Rajdhani'; font-size: 13px; font-weight: 600; cursor: pointer; letter-spacing: 0.5px; padding: 0; }
     .forgot-link button:hover { text-decoration: underline; }
@@ -44,7 +42,7 @@
     .resend-link button { background: none; border: none; color: var(--amber); font-family: 'Rajdhani'; font-size: 13px; font-weight: 600; cursor: pointer; letter-spacing: 0.5px; padding: 0; display: none; }
     .resend-link button.show { display: inline-block; }
     .resend-link button:hover { text-decoration: underline; }
-    /* Verification pending overlay */
+    /* Verification pending box */
     .verify-box { display: none; text-align: center; padding: 20px 0; }
     .verify-box.show { display: block; }
     .verify-icon { font-size: 48px; margin-bottom: 12px; }
@@ -53,7 +51,7 @@
     .verify-email-highlight { color: var(--text); font-weight: 700; }
     .btn-small { padding: 10px 20px; border: 1px solid var(--border); border-radius: 8px; background: transparent; color: var(--muted); font-family: 'Rajdhani'; font-size: 14px; font-weight: 700; cursor: pointer; margin: 4px; }
     .btn-small:hover { border-color: var(--gold); color: var(--gold); }
-    </style>
+  </style>
 </head>
 <body>
 <div class="container">
@@ -84,7 +82,7 @@
 
     <!-- REGISTER FORM -->
     <div class="form" id="register-form">
-      <!-- Normal registration fields -->
+      <!-- Registration fields -->
       <div id="reg-fields">
         <div class="field"><label>Full Name</label><input type="text" id="reg-name" placeholder="Your Name"/></div>
         <div class="field"><label>WhatsApp Number</label><input type="tel" id="reg-whatsapp" placeholder="01XXXXXXXXX"/></div>
@@ -117,10 +115,9 @@
   import {
     getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
     onAuthStateChanged, updateProfile,
-    sendPasswordResetEmail, sendEmailVerification, fetchSignInMethodsForEmail,
-    signOut
+    sendPasswordResetEmail, sendEmailVerification, signOut
   } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const ADMIN_EMAIL = 'sejansasker@gmail.com';
 
@@ -133,60 +130,24 @@
     appId: "1:811957533858:web:1d1f0f916c0aba5eccebfb"
   };
 
-  const app = initializeApp(firebaseConfig);
+  const app  = initializeApp(firebaseConfig);
   const auth = getAuth(app);
-  const db = getFirestore(app);
+  const db   = getFirestore(app);
 
-  let pendingRegInfo = null;
-  let unverifiedUser = null; // holds the user object for resend verification
+  // Holds the last unverified user for resend on login page
+  let unverifiedUser = null;
+  // Holds registered user for resend on verify box
+  let registeredUser = null;
 
-  // ─── Auth state listener ───────────────────────────────────────────────────
+  // ─── Auth state — only used for LOGIN redirect ────────────────────────────
   onAuthStateChanged(auth, async (user) => {
     if (!user) return;
-
-    // Email/password user — enforce verification (skip for admin)
-    const isEmailProvider = user.providerData.some(p => p.providerId === 'password');
-    if (isEmailProvider && !user.emailVerified && user.email !== ADMIN_EMAIL) {
-      // Don't redirect — show verification UI or error handled in loginEmail
-      // If they just registered, pendingRegInfo is still set
-      if (!pendingRegInfo) {
-        // Existing user tried to log in but not verified
-        await signOut(auth);
-      }
+    // Only redirect verified email users or admin (registration is handled inline)
+    const isEmail = user.providerData.some(p => p.providerId === 'password');
+    if (isEmail && !user.emailVerified && user.email !== ADMIN_EMAIL) {
+      // not verified — don't redirect
       return;
     }
-
-    const ref = doc(db, 'users', user.uid);
-    const snap = await getDoc(ref);
-
-    // Email/password registration just happened
-    if (pendingRegInfo) {
-      await setDoc(ref, {
-        name: pendingRegInfo.name,
-        whatsapp: pendingRegInfo.whatsapp,
-        game_name: '',
-        uid_game: '',
-        email: user.email,
-        provider: 'password',
-        balance: 0, played: 0, wins: 0, total_earned: 0,
-        uid_changed: false,
-        created_at: new Date().toISOString()
-      }, { merge: true });
-      // Send verification email
-      try {
-        await sendEmailVerification(user);
-      } catch(e) { console.warn('Verification email failed:', e); }
-      unverifiedUser = user;
-      document.getElementById('verify-email-display').textContent = user.email;
-      document.getElementById('reg-fields').style.display = 'none';
-      document.getElementById('verify-box').classList.add('show');
-      pendingRegInfo = null;
-      // Sign out so they can't browse without verifying
-      await signOut(auth);
-      return;
-    }
-
-    // All good — go home
     window.location.href = 'home.html';
   });
 
@@ -197,7 +158,6 @@
     );
     document.getElementById('login-form').classList.toggle('active', tab === 'login');
     document.getElementById('register-form').classList.toggle('active', tab === 'register');
-    // Reset verify box
     if (tab === 'register') {
       document.getElementById('reg-fields').style.display = '';
       document.getElementById('verify-box').classList.remove('show');
@@ -212,21 +172,21 @@
     el.className = `message ${type}`;
   }
 
-  // ─── Login with email ─────────────────────────────────────────────────────
+  // ─── Login ────────────────────────────────────────────────────────────────
   window.loginEmail = async () => {
     const email = document.getElementById('login-email').value.trim();
     const pass  = document.getElementById('login-pass').value;
     if (!email || !pass) return showMsg('login-msg', 'Please fill in all fields.', 'error');
 
-    document.getElementById('login-btn').disabled = true;
-    document.getElementById('login-btn').textContent = 'Signing In...';
+    const btn = document.getElementById('login-btn');
+    btn.disabled = true;
+    btn.textContent = 'Signing In...';
     document.getElementById('resend-btn').classList.remove('show');
 
     try {
       const cred = await signInWithEmailAndPassword(auth, email, pass);
       const user = cred.user;
 
-      // Skip verification for admin
       if (user.email === ADMIN_EMAIL) {
         window.location.href = 'home.html';
         return;
@@ -237,15 +197,15 @@
         await signOut(auth);
         showMsg('login-msg', '📧 Please verify your email first. Check your inbox!', 'info');
         document.getElementById('resend-btn').classList.add('show');
-        document.getElementById('login-btn').disabled = false;
-        document.getElementById('login-btn').textContent = 'Enter Arena';
+        btn.disabled = false;
+        btn.textContent = 'Enter Arena';
         return;
       }
       // Verified — onAuthStateChanged will redirect
     } catch(e) {
-      document.getElementById('login-btn').disabled = false;
-      document.getElementById('login-btn').textContent = 'Enter Arena';
-      if (e.code === 'auth/invalid-credential' || e.code === 'auth/wrong-password' || e.code === 'auth/user-not-found') {
+      btn.disabled = false;
+      btn.textContent = 'Enter Arena';
+      if (['auth/invalid-credential','auth/wrong-password','auth/user-not-found'].includes(e.code)) {
         showMsg('login-msg', '❌ Invalid email or password.', 'error');
       } else if (e.code === 'auth/too-many-requests') {
         showMsg('login-msg', '⏳ Too many attempts. Wait a moment and try again.', 'error');
@@ -255,7 +215,7 @@
     }
   };
 
-  // ─── Register with email ──────────────────────────────────────────────────
+  // ─── Register — fully inline, no onAuthStateChanged dependency ───────────
   window.registerEmail = async () => {
     const name     = document.getElementById('reg-name').value.trim();
     const whatsapp = document.getElementById('reg-whatsapp').value.trim();
@@ -272,34 +232,57 @@
     if (pass.length < 6)
       return showMsg('reg-msg', 'Password must be at least 6 characters.', 'error');
 
-    // Check if this email is already linked to a Google account
-    try {
-      const methods = await fetchSignInMethodsForEmail(auth, email);
-      if (methods.includes('google.com')) {
-        return showMsg('reg-msg', '⚠️ This email is already linked to a Google account. Use "Continue with Google" instead.', 'error');
-      }
-    } catch(e) { /* non-critical check */ }
-
-    document.getElementById('reg-btn').disabled = true;
-    document.getElementById('reg-btn').textContent = 'Creating Account...';
+    const btn = document.getElementById('reg-btn');
+    btn.disabled = true;
+    btn.textContent = 'Creating Account...';
 
     try {
-      pendingRegInfo = { name, whatsapp };
+      // 1. Create the Firebase Auth user
       const cred = await createUserWithEmailAndPassword(auth, email, pass);
-      try { await updateProfile(cred.user, { displayName: name }); } catch(_) {}
-      // onAuthStateChanged handles the rest
+      const user = cred.user;
+
+      // 2. Update display name
+      try { await updateProfile(user, { displayName: name }); } catch(_) {}
+
+      // 3. Save user data to Firestore IMMEDIATELY (inline, no listener)
+      await setDoc(doc(db, 'users', user.uid), {
+        name,
+        whatsapp,
+        email: user.email,
+        provider: 'password',
+        game_name: '',
+        uid_game: '',
+        balance: 0,
+        played: 0,
+        wins: 0,
+        total_earned: 0,
+        uid_changed: false,
+        created_at: new Date().toISOString()
+      });
+
+      // 4. Send verification email
+      try { await sendEmailVerification(user); } catch(_) {}
+
+      // 5. Sign out so unverified user can't slip through
+      registeredUser = user;
+      await signOut(auth);
+
+      // 6. Show verification pending UI
+      document.getElementById('verify-email-display').textContent = user.email;
+      document.getElementById('reg-fields').style.display = 'none';
+      document.getElementById('verify-box').classList.add('show');
+
     } catch(e) {
-      pendingRegInfo = null;
-      document.getElementById('reg-btn').disabled = false;
-      document.getElementById('reg-btn').textContent = 'Join Tournament';
+      btn.disabled = false;
+      btn.textContent = 'Join Tournament';
       if (e.code === 'auth/email-already-in-use') {
-        showMsg('reg-msg', '📧 Email already registered. Try logging in, or use "Forgot Password".', 'error');
+        showMsg('reg-msg', '📧 Email already registered. Try logging in or use Forgot Password.', 'error');
       } else if (e.code === 'auth/weak-password') {
         showMsg('reg-msg', '🔒 Password too weak. Use at least 6 characters.', 'error');
       } else if (e.code === 'auth/invalid-email') {
         showMsg('reg-msg', '❌ Invalid email address.', 'error');
       } else {
-        showMsg('reg-msg', 'Registration failed. Please try again.', 'error');
+        showMsg('reg-msg', 'Registration failed: ' + e.message, 'error');
       }
     }
   };
@@ -319,51 +302,33 @@
       if (e.code === 'auth/user-not-found') {
         showMsg('login-msg', '❌ No account found with this email.', 'error');
       } else {
-        showMsg('login-msg', 'Could not send reset email. Check the email address.', 'error');
+        showMsg('login-msg', 'Could not send reset email. Check the address.', 'error');
       }
     }
   };
 
-  // ─── Resend Verification (from login page) ────────────────────────────────
+  // ─── Resend Verification (login page) ────────────────────────────────────
   window.resendVerification = async () => {
-    if (!unverifiedUser) {
-      showMsg('login-msg', 'Please login first to resend verification.', 'error');
+    const email = document.getElementById('login-email').value.trim();
+    const pass  = document.getElementById('login-pass').value;
+    if (!email || !pass) {
+      showMsg('login-msg', 'Enter your email and password to resend verification.', 'error');
       return;
     }
     try {
-      // Re-sign in to get a fresh user object
-      const email = document.getElementById('login-email').value.trim();
-      const pass  = document.getElementById('login-pass').value;
-      if (!email || !pass) {
-        showMsg('login-msg', 'Enter your email and password to resend verification.', 'error');
-        return;
-      }
       const cred = await signInWithEmailAndPassword(auth, email, pass);
       await sendEmailVerification(cred.user);
       await signOut(auth);
       showMsg('login-msg', '✅ Verification email resent! Check your inbox.', 'success');
     } catch(e) {
-      showMsg('login-msg', 'Failed to resend. Try again.', 'error');
+      showMsg('login-msg', 'Failed to resend. Check your credentials.', 'error');
     }
   };
 
-  // ─── Resend Verification (from register verify box) ──────────────────────
+  // ─── Resend Verification (verify box after register) ─────────────────────
   window.resendRegVerification = async () => {
-    if (!unverifiedUser) {
-      showMsg('verify-msg', 'Session expired. Please register again.', 'error');
-      return;
-    }
-    try {
-      // We need to sign in briefly to send the email
-      const email = document.getElementById('reg-email').value.trim();
-      showMsg('verify-msg', 'Resending...', 'info');
-      // Just show message — user can go to login and use resend there
-      showMsg('verify-msg', '📧 Go to Login and use "Resend Verification Email" after entering your credentials.', 'info');
-    } catch(e) {
-      showMsg('verify-msg', 'Failed. Try again.', 'error');
-    }
+    showMsg('verify-msg', '📧 Go to Login tab and use "Resend Verification Email" after entering your credentials.', 'info');
   };
-
 </script>
 </body>
 </html>
