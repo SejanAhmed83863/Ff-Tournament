@@ -1,0 +1,1816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+  <title>Jahanabad Tournament Club</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;600;700&family=Teko:wght@400;600;700&family=Oswald:wght@400;500;700&display=swap" rel="stylesheet"/>
+  <style>
+    /* ── RESET & VARS ─────────────────────────────────────────────────────── */
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+    :root{
+      --gold:#fecb00;--amber:#b8860b;--amber-deep:#6b4f00;
+      --dark:#0A0A0F;--card:rgba(20,20,20,0.97);--border:#333;
+      --text:#fff;--muted:#999;--green:#5CFF8A;--danger:#FF6B6B;--orange:#FF6B00;
+    }
+    body{font-family:'Oswald',sans-serif;background:#0a0a0a;color:var(--text);min-height:100vh;
+      background-image:linear-gradient(to bottom,rgba(0,0,0,0.9),rgba(0,0,0,0.97));
+      background-attachment:fixed}
+
+    /* ── PAGE SYSTEM ──────────────────────────────────────────────────────── */
+    .page{
+      display:none !important;
+      visibility:hidden;
+      position:fixed;
+      top:0;left:0;right:0;bottom:0;
+      overflow-y:auto;
+      overflow-x:hidden;
+      background:#0a0a0a;
+      padding-bottom:80px;
+      z-index:1;
+    }
+    .page.active{
+      display:block !important;
+      visibility:visible;
+      position:relative;
+      min-height:100vh;
+      animation:fadeIn 0.2s ease both;
+    }
+    #page-login{align-items:center;justify-content:center;}
+    #page-login.active{display:flex !important;min-height:100vh;padding-bottom:20px;}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+    /* ── SHARED HEADER ────────────────────────────────────────────────────── */
+    .app-header{background:linear-gradient(180deg,rgba(0,0,0,0.97),rgba(10,10,10,0.9));
+      border-bottom:2px solid var(--gold);padding:10px 16px;
+      display:flex;align-items:center;justify-content:space-between;
+      position:sticky;top:0;z-index:100}
+    .logo-wrap{display:flex;align-items:center;gap:10px}
+    .logo-img{width:40px;height:40px;border-radius:6px;border:2px solid var(--gold);object-fit:cover}
+    .header-title{font-family:'Teko',sans-serif;font-size:22px;color:var(--gold);
+      text-transform:uppercase;letter-spacing:2px}
+    .wallet-badge{background:linear-gradient(180deg,var(--amber),var(--amber-deep));
+      border:1px solid var(--gold);padding:6px 14px;border-radius:6px;
+      font-family:'Teko';font-size:18px;color:var(--gold);letter-spacing:1px;cursor:pointer}
+    .header-logout{background:transparent;border:1px solid var(--border);color:var(--muted);
+      padding:6px 12px;border-radius:6px;font-family:'Teko';font-size:14px;
+      letter-spacing:1px;cursor:pointer;text-transform:uppercase}
+
+    /* ── BOTTOM NAV ───────────────────────────────────────────────────────── */
+    .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(0,0,0,0.97);
+      border-top:2px solid var(--gold);display:flex;z-index:200}
+    .nav-item{flex:1;padding:11px 8px;text-align:center;cursor:pointer;color:var(--muted);
+      font-family:'Teko';font-size:13px;letter-spacing:2px;text-transform:uppercase;
+      display:flex;flex-direction:column;align-items:center;gap:2px;border:none;background:none}
+    .nav-item.active{color:var(--gold)}
+    .nav-icon{font-size:22px}
+    .nav-divider{width:1px;background:var(--border);margin:8px 0}
+    .nav-item.active .nav-icon{filter:drop-shadow(0 0 6px rgba(254,203,0,0.7))}
+
+    /* ── CONTENT WRAPPER ──────────────────────────────────────────────────── */
+    .content{padding:14px;max-width:500px;margin:0 auto}
+
+    /* ═══════════════════════════════════════════════════════════════════════
+       LOGIN PAGE
+    ═══════════════════════════════════════════════════════════════════════ */
+    #page-login{display:flex;align-items:center;justify-content:center;padding:20px 0;
+      background:var(--dark);min-height:100vh}
+    #page-login.active{display:flex}
+    #page-login::before{content:'';position:fixed;inset:0;
+      background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(255,215,0,0.12) 0%,transparent 70%);
+      pointer-events:none;z-index:0}
+    .login-container{position:relative;z-index:1;width:100%;max-width:420px;padding:20px;
+      animation:fadeIn 0.6s ease both}
+    .login-logo{text-align:center;margin-bottom:24px}
+    .login-logo-img{width:110px;height:110px;border-radius:16px;object-fit:cover;
+      border:2px solid var(--gold);box-shadow:0 0 30px rgba(255,215,0,0.35);margin-bottom:12px}
+    .login-logo h1{font-family:'Bebas Neue';font-size:36px;letter-spacing:4px;
+      background:linear-gradient(135deg,var(--gold),var(--amber));
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1}
+    .login-logo p{color:var(--muted);font-size:12px;letter-spacing:3px;text-transform:uppercase;margin-top:6px}
+    .login-card{background:#12121A;border:1px solid #2A2A3A;border-radius:16px;
+      padding:28px 24px;position:relative;overflow:hidden}
+    .login-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,transparent,var(--amber),var(--gold),transparent)}
+    .l-tabs{display:flex;background:rgba(255,255,255,0.04);border-radius:10px;
+      padding:4px;margin-bottom:22px;gap:4px}
+    .l-tab{flex:1;padding:10px;border:none;background:transparent;color:var(--muted);
+      font-family:'Rajdhani';font-size:15px;font-weight:700;letter-spacing:1.5px;
+      text-transform:uppercase;border-radius:8px;cursor:pointer;transition:all 0.25s ease}
+    .l-tab.active{background:linear-gradient(135deg,var(--amber),#6b4f00);color:var(--gold);
+      box-shadow:0 4px 15px rgba(184,134,11,0.4)}
+    .l-form{display:none}
+    .l-form.active{display:block;animation:fadeIn 0.3s ease both}
+    .l-field{margin-bottom:14px}
+    .l-field label{display:block;font-size:11px;font-weight:700;letter-spacing:2px;
+      text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+    .l-field input{width:100%;background:rgba(255,255,255,0.04);border:1px solid #2A2A3A;
+      border-radius:10px;padding:12px 14px;color:var(--text);font-family:'Rajdhani';
+      font-size:15px;font-weight:600;outline:none;transition:border-color 0.2s,box-shadow 0.2s}
+    .l-field input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(255,215,0,0.15)}
+    .l-field input::placeholder{color:var(--muted);font-weight:400}
+    .l-btn{width:100%;padding:14px;border:1px solid var(--gold);border-radius:10px;
+      background:linear-gradient(135deg,var(--amber),#6b4f00);color:var(--gold);
+      font-family:'Bebas Neue';font-size:20px;letter-spacing:3px;cursor:pointer;margin-top:8px}
+    .l-btn:disabled{opacity:0.5;cursor:not-allowed}
+    .l-divider{display:flex;align-items:center;gap:12px;margin:18px 0;
+      color:var(--muted);font-size:12px;letter-spacing:2px;text-transform:uppercase}
+    .l-divider::before,.l-divider::after{content:'';flex:1;height:1px;background:#2A2A3A}
+    .btn-google{width:100%;padding:13px;border:1px solid #2A2A3A;border-radius:10px;
+      background:transparent;color:var(--text);font-family:'Rajdhani';font-size:15px;
+      font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px}
+    .btn-google:hover{border-color:var(--gold);background:rgba(255,215,0,0.05)}
+    .l-msg{margin-top:14px;padding:11px 14px;border-radius:8px;font-size:13px;
+      font-weight:600;text-align:center;display:none}
+    .l-msg.error{display:block;background:rgba(255,50,50,0.1);border:1px solid rgba(255,50,50,0.3);color:#FF6B6B}
+    .l-msg.success{display:block;background:rgba(50,255,100,0.1);border:1px solid rgba(50,255,100,0.3);color:#5CFF8A}
+    .l-msg.info{display:block;background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.3);color:var(--gold)}
+    .forgot-link{text-align:right;margin-top:-6px;margin-bottom:10px}
+    .forgot-link button{background:none;border:none;color:var(--gold);font-family:'Rajdhani';
+      font-size:13px;font-weight:600;cursor:pointer;letter-spacing:0.5px;padding:0}
+    .resend-link{text-align:center;margin-top:8px}
+    .resend-link button{background:none;border:none;color:var(--amber);font-family:'Rajdhani';
+      font-size:13px;font-weight:600;cursor:pointer;display:none}
+    .resend-link button.show{display:inline-block}
+    .verify-box{display:none;text-align:center;padding:20px 0}
+    .verify-box.show{display:block}
+    .verify-icon{font-size:48px;margin-bottom:12px}
+    .verify-title{font-family:'Bebas Neue';font-size:24px;color:var(--gold);letter-spacing:2px;margin-bottom:8px}
+    .verify-text{color:var(--muted);font-size:13px;line-height:1.7;margin-bottom:16px}
+    .verify-email-hl{color:var(--text);font-weight:700}
+    .btn-small{padding:10px 20px;border:1px solid #2A2A3A;border-radius:8px;background:transparent;
+      color:var(--muted);font-family:'Rajdhani';font-size:14px;font-weight:700;cursor:pointer;margin:4px}
+    .btn-small:hover{border-color:var(--gold);color:var(--gold)}
+    .gname-modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);
+      z-index:1000;align-items:center;justify-content:center;padding:20px}
+    .gname-modal-bg.open{display:flex}
+    .gname-modal{background:#12121A;border:1px solid var(--gold);border-radius:14px;
+      padding:24px;width:100%;max-width:380px}
+    .gname-modal h3{font-family:'Bebas Neue';font-size:24px;color:var(--gold);
+      letter-spacing:2px;margin-bottom:6px}
+    .gname-modal p{color:var(--muted);font-size:13px;margin-bottom:16px}
+
+    /* ═══════════════════════════════════════════════════════════════════════
+       HOME PAGE
+    ═══════════════════════════════════════════════════════════════════════ */
+    .notice-bar{background:linear-gradient(90deg,rgba(184,134,11,0.25),rgba(254,203,0,0.15),rgba(184,134,11,0.25));
+      border-bottom:1px solid rgba(254,203,0,0.4);padding:8px 12px 8px 16px;
+      display:none;align-items:center;gap:10px}
+    .notice-bar.visible{display:flex}
+    .notice-icon{font-size:14px;flex-shrink:0;animation:npulse 2s infinite}
+    @keyframes npulse{0%,100%{opacity:1}50%{opacity:0.5}}
+    .notice-text-wrap{flex:1;overflow:hidden}
+    .notice-text{font-family:'Oswald';font-size:13px;color:var(--gold);letter-spacing:0.5px;
+      font-weight:500;white-space:nowrap;display:inline-block;animation:marquee 20s linear infinite}
+    @keyframes marquee{0%{transform:translateX(100%)}100%{transform:translateX(-100%)}}
+    .notice-close{background:none;border:none;color:var(--muted);font-size:18px;
+      cursor:pointer;flex-shrink:0;padding:0 4px;line-height:1}
+    .welcome{padding:14px 4px 16px;font-family:'Teko';color:var(--gold);
+      font-size:24px;letter-spacing:2px;text-transform:uppercase}
+    .welcome .sub{color:var(--muted);font-size:13px;letter-spacing:2px;margin-top:2px}
+    .stats-row{display:flex;gap:10px;margin-bottom:18px}
+    .qs{flex:1;background:var(--card);border:1px solid var(--border);border-radius:10px;
+      padding:12px;text-align:center;position:relative;overflow:hidden}
+    .qs::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--amber),var(--gold))}
+    .qs-val{font-family:'Teko';font-size:26px;color:var(--gold);letter-spacing:1px;line-height:1}
+    .qs-label{font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:4px}
+    .sec-head{display:flex;justify-content:space-between;align-items:center;
+      margin-bottom:10px;border-left:3px solid var(--gold);padding-left:10px}
+    .sec-title{font-family:'Teko',sans-serif;font-size:20px;color:#fff;
+      letter-spacing:2px;text-transform:uppercase}
+    .sec-link{color:var(--gold);font-size:12px;font-weight:700;text-decoration:none;
+      letter-spacing:1px;text-transform:uppercase;background:none;border:none;cursor:pointer}
+    .mode-row{display:flex;gap:10px;margin-bottom:18px}
+    .mode-card{flex:1;background:var(--card);border:1px solid var(--border);border-radius:11px;
+      padding:13px 8px;text-align:center;cursor:pointer;position:relative;overflow:hidden;
+      transition:transform 0.15s,border-color 0.15s;border:none;display:block}
+    .mode-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+    .mode-card.classic::before{background:linear-gradient(90deg,#FF6B00,#FFD700)}
+    .mode-card.clash::before{background:linear-gradient(90deg,#FF6B6B,#FF0040)}
+    .mode-card.lone::before{background:linear-gradient(90deg,#5CFF8A,#00c96a)}
+    .mode-card:active{transform:scale(0.96)}
+    .mode-icon{font-size:26px;margin-bottom:5px}
+    .mode-name{font-family:'Teko';font-size:15px;color:#fff;text-transform:uppercase;
+      letter-spacing:1px;line-height:1.1;margin-bottom:3px}
+    .mode-desc{font-size:10px;color:var(--muted);line-height:1.4;margin-bottom:7px}
+    .mode-count{font-family:'Teko';font-size:24px;color:var(--gold);line-height:1}
+    .mode-count-lbl{font-size:10px;color:var(--muted);margin-top:1px}
+    .mini-card{background:var(--card);border:1px solid var(--border);border-radius:10px;
+      padding:13px 14px;margin-bottom:10px;display:flex;align-items:center;
+      justify-content:space-between;cursor:pointer;transition:0.2s;
+      border-left:3px solid var(--gold);position:relative;overflow:hidden}
+    .mini-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+      background:linear-gradient(90deg,var(--amber),var(--gold),transparent)}
+    .mini-card:active{transform:scale(0.98)}
+    .mini-left{display:flex;align-items:center;gap:11px}
+    .mini-icon-box{width:42px;height:42px;border-radius:8px;
+      background:linear-gradient(135deg,var(--amber),var(--gold));
+      display:flex;align-items:center;justify-content:center;font-size:20px;
+      flex-shrink:0;border:1px solid var(--gold)}
+    .mini-name{font-family:'Teko',sans-serif;font-size:18px;color:#fff;
+      letter-spacing:1px;margin-bottom:1px}
+    .mini-meta{font-size:11px;color:var(--muted);letter-spacing:1px}
+    .mini-right{text-align:right}
+    .mini-prize{font-family:'Teko',sans-serif;font-size:22px;color:var(--gold);letter-spacing:1px}
+    .mini-entry{font-size:11px;color:var(--muted)}
+    .live-dot{display:inline-flex;align-items:center;gap:4px;font-size:10px;
+      color:var(--gold);font-weight:700;margin-top:3px;letter-spacing:1px}
+    .live-dot::before{content:'';width:6px;height:6px;background:var(--gold);
+      border-radius:50%;animation:blink 1s infinite}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+    .empty-state{text-align:center;color:var(--muted);padding:40px 20px;font-size:14px}
+    .tagline{text-align:center;font-family:'Teko',sans-serif;font-size:14px;
+      color:var(--muted);letter-spacing:3px;padding:16px 0 8px;text-transform:uppercase}
+    .tagline span{color:var(--gold)}
+
+    /* ═══════════════════════════════════════════════════════════════════════
+       TOURNAMENTS PAGE
+    ═══════════════════════════════════════════════════════════════════════ */
+    .filter-label{font-size:10px;color:var(--muted);letter-spacing:2px;
+      text-transform:uppercase;margin-bottom:5px;padding-left:2px}
+    .filter-row{display:flex;gap:8px;margin-bottom:8px;overflow-x:auto;padding-bottom:4px}
+    .filter-btn{padding:7px 14px;border-radius:5px;border:1px solid var(--border);
+      background:rgba(0,0,0,0.5);color:var(--muted);font-family:'Teko';font-size:14px;
+      letter-spacing:1px;cursor:pointer;white-space:nowrap;text-transform:uppercase;flex-shrink:0}
+    .filter-btn.active{border-color:var(--gold);background:rgba(254,203,0,0.1);color:var(--gold)}
+    .mode-chip-row{display:flex;gap:8px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px}
+    .mode-chip{padding:7px 14px;border-radius:20px;border:1px solid var(--border);
+      background:rgba(0,0,0,0.5);color:var(--muted);font-family:'Teko';font-size:13px;
+      letter-spacing:1px;cursor:pointer;white-space:nowrap;text-transform:uppercase;flex-shrink:0}
+    .mode-chip.active{border-color:var(--gold);background:rgba(254,203,0,0.1);color:var(--gold)}
+    .mode-chip.classic.active{border-color:#FF9500;background:rgba(255,149,0,0.12);color:#FF9500}
+    .mode-chip.clash.active{border-color:var(--danger);background:rgba(255,107,107,0.12);color:var(--danger)}
+    .mode-chip.lone.active{border-color:var(--green);background:rgba(92,255,138,0.1);color:var(--green)}
+    .t-card{background:var(--card);border:1px solid var(--border);border-radius:12px;
+      margin-bottom:14px;overflow:hidden;position:relative;box-shadow:0 5px 20px rgba(0,0,0,0.6)}
+    .t-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;
+      background:linear-gradient(90deg,var(--amber),var(--gold),var(--amber))}
+    .t-card-header{background:linear-gradient(135deg,rgba(184,134,11,0.25),rgba(254,203,0,0.08),rgba(0,0,0,0.5));
+      padding:14px 16px;border-bottom:1px solid var(--border);
+      display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+    .t-name{font-family:'Teko',sans-serif;font-size:22px;color:#fff;
+      letter-spacing:2px;text-transform:uppercase;flex:1}
+    .t-badges{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}
+    .t-mode-badge{background:rgba(254,203,0,0.15);border:1px solid var(--gold);
+      color:var(--gold);font-family:'Teko';font-size:12px;padding:2px 8px;
+      border-radius:4px;letter-spacing:1px;text-transform:uppercase}
+    .t-gm-badge{font-family:'Teko';font-size:11px;padding:2px 8px;border-radius:4px;
+      letter-spacing:1px;text-transform:uppercase}
+    .t-gm-badge.classic{background:rgba(255,149,0,0.15);border:1px solid #FF9500;color:#FF9500}
+    .t-gm-badge.clash{background:rgba(255,107,107,0.15);border:1px solid var(--danger);color:var(--danger)}
+    .t-gm-badge.lone{background:rgba(92,255,138,0.12);border:1px solid var(--green);color:var(--green)}
+    .t-body{padding:14px 16px}
+    .info-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px}
+    .info-item{background:rgba(0,0,0,0.4);border:1px solid var(--border);
+      border-radius:7px;padding:8px 10px;text-align:center}
+    .info-label{font-size:10px;color:var(--muted);letter-spacing:2px;
+      text-transform:uppercase;margin-bottom:3px}
+    .info-value{font-family:'Teko',sans-serif;font-size:16px;color:var(--gold);letter-spacing:1px}
+    .prize-pool{background:rgba(0,0,0,0.5);border:1px solid rgba(254,203,0,0.3);
+      border-radius:8px;padding:12px;margin-bottom:12px}
+    .prize-pool-title{font-family:'Teko',sans-serif;font-size:14px;color:var(--gold);
+      letter-spacing:3px;text-align:center;margin-bottom:10px;text-transform:uppercase;
+      border-bottom:1px solid rgba(254,203,0,0.2);padding-bottom:6px}
+    .prize-row{display:flex;justify-content:space-around;text-align:center}
+    .prize-item .p-label{font-size:11px;color:var(--muted);margin-bottom:3px;letter-spacing:1px}
+    .prize-item .p-val{font-family:'Teko',sans-serif;font-size:22px;letter-spacing:1px}
+    .prize-item.first .p-val{font-size:28px;color:var(--gold)}
+    .prize-item.second .p-val{color:#C0C0C0}
+    .prize-item.third .p-val{color:#CD7F32}
+    .progress-wrap{margin-bottom:12px}
+    .progress-label{display:flex;justify-content:space-between;font-size:11px;
+      color:var(--muted);margin-bottom:5px;letter-spacing:1px;text-transform:uppercase}
+    .progress-bar{height:6px;background:rgba(255,255,255,0.08);border-radius:3px;
+      overflow:hidden;border:1px solid var(--border)}
+    .progress-fill{height:100%;background:linear-gradient(90deg,var(--amber),var(--gold));border-radius:3px}
+    .btn-join{width:100%;padding:13px;border:1px solid var(--gold);border-radius:7px;
+      background:linear-gradient(180deg,var(--amber),var(--amber-deep));color:var(--gold);
+      font-family:'Teko';font-size:20px;letter-spacing:3px;cursor:pointer;text-transform:uppercase}
+    .btn-join.joined{background:linear-gradient(180deg,#27ae60,#1a6b3c);
+      border-color:var(--green);color:#fff;cursor:default}
+    .btn-join:disabled:not(.joined){background:#222;color:#555;border-color:#333;cursor:not-allowed}
+    .solo-queue-note{font-size:11px;color:var(--gold);text-align:center;margin-top:6px;opacity:0.8}
+
+    /* ═══════════════════════════════════════════════════════════════════════
+       DASHBOARD PAGE
+    ═══════════════════════════════════════════════════════════════════════ */
+    .profile-card{background:var(--card);border-radius:12px;border:1px solid var(--border);
+      margin-bottom:14px;overflow:hidden;box-shadow:0 5px 20px rgba(0,0,0,0.7);position:relative}
+    .profile-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;
+      background:linear-gradient(90deg,var(--amber),var(--gold),var(--amber))}
+    .profile-banner{background:linear-gradient(135deg,rgba(184,134,11,0.18),rgba(254,203,0,0.08),rgba(0,0,0,0.5));
+      padding:18px 16px 14px;display:flex;align-items:center;gap:14px;
+      border-bottom:1px solid var(--border);position:relative}
+    .avatar{width:70px;height:70px;border-radius:50%;
+      background:linear-gradient(135deg,var(--amber),var(--gold));
+      display:flex;align-items:center;justify-content:center;
+      font-family:'Teko';font-size:28px;color:#000;font-weight:700;
+      border:3px solid var(--gold);flex-shrink:0}
+    .profile-info{flex:1;min-width:0}
+    .game-name{font-family:'Teko',sans-serif;font-size:26px;color:var(--gold);
+      text-transform:uppercase;letter-spacing:2px;line-height:1;margin-bottom:3px;word-break:break-word}
+    .player-name{color:#fff;font-size:14px;font-weight:600;margin-bottom:2px}
+    .player-email{color:var(--muted);font-size:12px;word-break:break-all;margin-bottom:3px}
+    .player-whatsapp{color:#25D366;font-size:12px;font-weight:600}
+    .uid-tag{display:inline-block;background:rgba(184,134,11,0.15);
+      border:1px solid var(--amber);color:var(--gold);font-family:'Teko';
+      font-size:13px;padding:2px 10px;border-radius:4px;letter-spacing:1px;margin-top:4px}
+    .edit-icon{position:absolute;top:12px;right:12px;background:rgba(254,203,0,0.1);
+      border:1px solid var(--gold);color:var(--gold);width:32px;height:32px;
+      border-radius:50%;display:flex;align-items:center;justify-content:center;
+      cursor:pointer;font-size:14px}
+    .edit-panel{display:none;padding:16px;background:rgba(0,0,0,0.5);border-top:1px solid var(--border)}
+    .edit-panel.open{display:block}
+    .e-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);
+      margin-bottom:6px;display:block}
+    .e-input{width:100%;background:#111;border:1px solid var(--border);padding:11px 13px;
+      border-radius:7px;color:#fff;font-family:'Oswald';font-size:14px;
+      outline:none;margin-bottom:10px}
+    .e-input:focus{border-color:var(--gold)}
+    .e-input::placeholder{color:#555}
+    .locked-box{background:rgba(184,134,11,0.08);border:1px solid rgba(184,134,11,0.35);
+      border-radius:8px;padding:12px;margin-bottom:12px}
+    .locked-box-title{font-family:'Teko';font-size:15px;color:var(--gold);letter-spacing:1px;margin-bottom:4px}
+    .locked-box-note{font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.5}
+    .locked-badge{display:none;align-items:center;gap:5px;
+      background:rgba(255,107,107,0.12);border:1px solid rgba(255,107,107,0.3);
+      color:var(--danger);font-size:11px;padding:3px 8px;border-radius:4px;
+      margin-bottom:8px;letter-spacing:0.5px}
+    .locked-badge.show{display:inline-flex}
+    .reauth-section{margin-top:10px;padding-top:10px;border-top:1px solid var(--border);display:none}
+    .reauth-section.show{display:block}
+    .reauth-label{font-size:11px;color:var(--muted);letter-spacing:1px;margin-bottom:8px}
+    .reauth-row{display:flex;gap:8px;margin-bottom:10px}
+    .reauth-btn{flex:1;padding:10px;border-radius:7px;border:1px solid var(--border);
+      background:transparent;color:var(--text);font-family:'Oswald';font-size:13px;
+      font-weight:700;cursor:pointer}
+    .reauth-btn.active{border-color:var(--gold);background:rgba(254,203,0,0.1);color:var(--gold)}
+    .btn-row{display:flex;gap:8px;margin-top:4px}
+    .save-btn{flex:1;padding:12px;background:linear-gradient(180deg,var(--amber),var(--amber-deep));
+      border:1px solid var(--gold);color:var(--gold);font-family:'Teko';font-size:18px;
+      letter-spacing:2px;border-radius:7px;cursor:pointer;text-transform:uppercase}
+    .cancel-btn{padding:12px 16px;background:transparent;border:1px solid var(--border);
+      color:var(--muted);font-family:'Teko';font-size:18px;border-radius:7px;cursor:pointer}
+    .d-msg{text-align:center;padding:8px;border-radius:6px;font-size:13px;
+      font-weight:600;display:none;margin-bottom:10px}
+    .d-msg.error{display:block;background:rgba(255,50,50,0.1);border:1px solid rgba(255,50,50,0.3);color:var(--danger)}
+    .d-msg.success{display:block;background:rgba(92,255,138,0.1);border:1px solid rgba(92,255,138,0.3);color:var(--green)}
+    .stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
+    .stat-card{background:var(--card);border:1px solid var(--border);border-radius:10px;
+      padding:14px;text-align:center;position:relative;overflow:hidden}
+    .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--amber),var(--gold))}
+    .stat-icon{font-size:22px;margin-bottom:4px}
+    .stat-value{font-family:'Teko',sans-serif;font-size:28px;color:var(--gold);letter-spacing:1px}
+    .stat-label{color:var(--muted);font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-top:2px}
+    .wallet-card{background:var(--card);border:1px solid var(--border);border-radius:12px;
+      padding:18px;margin-bottom:14px;position:relative;overflow:hidden}
+    .wallet-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;
+      background:linear-gradient(90deg,var(--gold),var(--amber),var(--gold))}
+    .w-title{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+    .w-balance{font-family:'Teko',sans-serif;font-size:46px;color:var(--gold);
+      letter-spacing:2px;line-height:1;margin-bottom:14px}
+    .w-actions{display:flex;gap:10px;margin-bottom:16px}
+    .btn-deposit{flex:1;padding:12px;border-radius:7px;
+      background:linear-gradient(180deg,var(--amber),var(--amber-deep));
+      border:1px solid var(--gold);color:var(--gold);font-family:'Teko';
+      font-size:18px;letter-spacing:2px;cursor:pointer;text-transform:uppercase}
+    .btn-withdraw{flex:1;padding:12px;border:1px solid var(--gold);border-radius:7px;
+      background:rgba(254,203,0,0.05);color:var(--gold);font-family:'Teko';
+      font-size:18px;letter-spacing:2px;cursor:pointer;text-transform:uppercase}
+    .tx-title{font-family:'Teko',sans-serif;font-size:16px;color:var(--muted);
+      letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;
+      border-left:3px solid var(--gold);padding-left:8px}
+    .tx-item{display:flex;align-items:center;justify-content:space-between;
+      padding:10px 12px;background:rgba(255,255,255,0.03);
+      border:1px solid var(--border);border-radius:7px;margin-bottom:6px;border-left:3px solid var(--border)}
+    .tx-item.deposit{border-left-color:var(--green)}
+    .tx-item.withdraw{border-left-color:var(--amber)}
+    .tx-item.prize{border-left-color:var(--gold)}
+    .tx-item.entry{border-left-color:#FF6B00}
+    .tx-left{display:flex;align-items:center;gap:10px}
+    .tx-icon{font-size:18px}
+    .tx-desc{font-size:13px;font-weight:600}
+    .tx-date{font-size:11px;color:var(--muted);margin-top:1px}
+    .tx-right{text-align:right;flex-shrink:0}
+    .tx-amount{font-family:'Teko',sans-serif;font-size:18px;letter-spacing:1px}
+    .tx-amount.plus{color:var(--green)}
+    .tx-amount.minus{color:var(--danger)}
+    .status-pill{font-size:10px;font-weight:700;letter-spacing:1px;
+      padding:2px 7px;border-radius:20px;margin-top:2px;display:inline-block}
+    .status-pill.pending{background:rgba(254,203,0,0.15);color:var(--gold);border:1px solid rgba(254,203,0,0.3)}
+    .status-pill.approved{background:rgba(92,255,138,0.15);color:var(--green);border:1px solid rgba(92,255,138,0.3)}
+    .status-pill.rejected{background:rgba(255,107,107,0.15);color:var(--danger);border:1px solid rgba(255,107,107,0.3)}
+    .no-tx{text-align:center;color:var(--muted);font-size:13px;padding:14px}
+    .sec-card{background:var(--card);border:1px solid var(--border);border-radius:12px;
+      padding:16px;margin-bottom:14px;position:relative;overflow:hidden}
+    .sec-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--amber),var(--gold),transparent)}
+    .sec-head2{font-family:'Teko',sans-serif;font-size:18px;color:#fff;letter-spacing:2px;
+      text-transform:uppercase;margin-bottom:12px;border-left:3px solid var(--gold);padding-left:8px}
+    .history-item{background:rgba(255,255,255,0.03);border:1px solid var(--border);
+      border-radius:10px;padding:13px;margin-bottom:10px;position:relative;overflow:hidden}
+    .history-item.upcoming{border-color:rgba(254,203,0,0.45);background:rgba(254,203,0,0.03)}
+    .history-item.upcoming::before,.history-item.won::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+    .history-item.upcoming::before{background:linear-gradient(90deg,var(--amber),var(--gold))}
+    .history-item.won::before{background:linear-gradient(90deg,var(--gold),#fff176,var(--gold))}
+    .history-item.queued{border-color:rgba(92,255,138,0.35);background:rgba(92,255,138,0.02)}
+    .history-item.queued::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,#27ae60,var(--green))}
+    .hist-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;gap:8px}
+    .hist-name{font-family:'Teko';font-size:18px;color:#fff;letter-spacing:1px;flex:1}
+    .hist-badge{font-size:10px;font-weight:700;letter-spacing:1px;padding:3px 9px;
+      border-radius:20px;text-transform:uppercase;white-space:nowrap;flex-shrink:0}
+    .hist-badge.upcoming-badge{background:rgba(254,203,0,0.15);color:var(--gold);border:1px solid rgba(254,203,0,0.4)}
+    .hist-badge.played-badge{background:rgba(153,153,153,0.1);color:var(--muted);border:1px solid rgba(153,153,153,0.2)}
+    .hist-badge.queued-badge{background:rgba(92,255,138,0.12);color:var(--green);border:1px solid rgba(92,255,138,0.3)}
+    .hist-badge.won-badge{background:rgba(254,203,0,0.2);color:var(--gold);border:1px solid rgba(254,203,0,0.5)}
+    .countdown-chip{display:inline-flex;align-items:center;gap:6px;
+      background:rgba(254,203,0,0.08);border:1px solid rgba(254,203,0,0.3);
+      padding:4px 11px;border-radius:20px;font-size:11px;color:var(--gold);
+      font-weight:700;letter-spacing:1px;margin-bottom:9px}
+    .cdot{width:6px;height:6px;background:var(--gold);border-radius:50%;
+      display:inline-block;animation:blink 1s infinite;flex-shrink:0}
+    .upcoming-info-grid{display:flex;flex-wrap:wrap;gap:10px;
+      background:rgba(0,0,0,0.35);border:1px solid rgba(254,203,0,0.15);
+      border-radius:8px;padding:10px 12px;margin-bottom:9px}
+    .ui-item{display:flex;flex-direction:column;gap:2px;min-width:80px}
+    .ui-label{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
+    .ui-val{font-family:'Teko';font-size:15px;color:var(--gold);letter-spacing:1px}
+    .winner-block{background:linear-gradient(135deg,rgba(254,203,0,0.1),rgba(184,134,11,0.05));
+      border:1px solid rgba(254,203,0,0.35);border-radius:8px;padding:12px 14px;
+      margin-bottom:9px;display:flex;align-items:center;justify-content:space-between}
+    .winner-pos{font-family:'Teko';font-size:22px;letter-spacing:1px}
+    .winner-prize{font-family:'Teko';font-size:32px;color:var(--green);letter-spacing:1px}
+    .teammates-block{background:rgba(92,255,138,0.05);border:1px solid rgba(92,255,138,0.2);
+      border-radius:8px;padding:10px 12px;margin-bottom:9px}
+    .teammates-title{font-size:10px;color:var(--green);letter-spacing:2px;
+      text-transform:uppercase;margin-bottom:8px}
+    .teammate-row{display:flex;align-items:center;gap:8px;margin-bottom:5px;font-size:13px}
+    .teammate-row:last-child{margin-bottom:0}
+    .teammate-avatar{width:26px;height:26px;border-radius:50%;
+      background:linear-gradient(135deg,var(--amber),var(--gold));
+      display:flex;align-items:center;justify-content:center;
+      font-family:'Teko';font-size:12px;color:#000;font-weight:700;flex-shrink:0}
+    .teammate-name{color:#fff;font-weight:600}
+    .teammate-uid{color:var(--muted);font-size:11px;margin-left:auto}
+    .queue-wait-msg{font-size:12px;color:var(--green);padding:8px 10px;
+      background:rgba(92,255,138,0.06);border:1px solid rgba(92,255,138,0.2);
+      border-radius:7px;margin-bottom:9px;line-height:1.6}
+    .hist-meta{font-size:12px;color:var(--muted);display:flex;gap:10px;flex-wrap:wrap}
+    .hist-meta span{color:#888}
+
+    /* ── SHARED MODALS ────────────────────────────────────────────────────── */
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.9);
+      z-index:500;align-items:flex-end;justify-content:center}
+    .modal-overlay.open{display:flex}
+    .modal{background:#111;border:1px solid var(--gold);border-radius:16px 16px 0 0;
+      width:100%;max-width:500px;animation:slideUp 0.28s ease both;
+      border-top:3px solid var(--gold);height:88vh;display:flex;flex-direction:column}
+    @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+    .modal-hdr{display:flex;align-items:center;justify-content:space-between;
+      padding:14px 16px 12px;border-bottom:1px solid var(--border);flex-shrink:0}
+    .modal-title-txt{font-family:'Teko',sans-serif;font-size:24px;color:var(--gold);
+      letter-spacing:3px;text-transform:uppercase;margin:0;line-height:1}
+    .modal-x{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,0.05);
+      border:1px solid #444;color:#888;font-size:15px;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .modal-scroll{overflow-y:auto;padding:16px;flex:1}
+    .modal-foot{padding:12px 16px 16px;border-top:1px solid var(--border);
+      flex-shrink:0;background:#111;display:flex;gap:10px}
+    .m-btn{flex:1;padding:13px;border:1px solid var(--gold);border-radius:7px;
+      background:linear-gradient(180deg,var(--amber),var(--amber-deep));
+      color:var(--gold);font-family:'Teko';font-size:20px;letter-spacing:2px;
+      cursor:pointer;text-transform:uppercase}
+    .m-cancel{flex:0 0 auto;padding:13px 18px;border:1px solid var(--border);
+      border-radius:7px;background:transparent;color:var(--muted);
+      font-family:'Oswald';font-size:14px;font-weight:700;cursor:pointer}
+    .m-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;
+      color:var(--gold);margin-bottom:6px;display:block}
+    .m-input{width:100%;background:#000;border:1px solid var(--border);
+      padding:11px 13px;border-radius:7px;color:#fff;font-family:'Oswald';
+      font-size:14px;outline:none;margin-bottom:12px}
+    .m-input:focus{border-color:var(--gold)}
+    .m-input::placeholder{color:#555}
+    .m-method-row{display:flex;gap:8px;margin-bottom:14px}
+    .m-method-btn{flex:1;padding:10px 4px;border-radius:7px;border:2px solid var(--border);
+      background:transparent;color:var(--text);font-family:'Oswald';font-size:12px;
+      font-weight:700;cursor:pointer;text-align:center}
+    .m-method-btn.selected{border-color:var(--gold);background:rgba(254,203,0,0.1);color:var(--gold)}
+    .pay-info{background:rgba(0,0,0,0.55);border:1px solid rgba(254,203,0,0.22);
+      border-radius:9px;padding:14px 15px;margin-bottom:14px;display:none}
+    .pay-info.show{display:block}
+    .pay-info-title{font-size:10px;color:var(--muted);letter-spacing:2px;
+      text-transform:uppercase;margin-bottom:10px}
+    .pay-step{font-size:13px;color:#bbb;line-height:2;display:flex;align-items:baseline;gap:7px}
+    .pay-step b{color:#fff}
+    .pay-step .pnum{color:var(--gold);font-family:'Teko';font-size:22px;letter-spacing:1px}
+    .m-msg{text-align:center;padding:8px;border-radius:6px;font-size:13px;
+      font-weight:600;display:none;margin-bottom:8px}
+    .m-msg.error{display:block;background:rgba(255,50,50,0.1);border:1px solid rgba(255,50,50,0.3);color:var(--danger)}
+    .m-msg.success{display:block;background:rgba(92,255,138,0.1);border:1px solid rgba(92,255,138,0.3);color:var(--green)}
+    .m-msg.info{display:block;background:rgba(254,203,0,0.08);border:1px solid rgba(254,203,0,0.3);color:var(--gold)}
+    .fee-box{background:rgba(184,134,11,0.1);border:1px solid rgba(184,134,11,0.4);
+      border-radius:8px;padding:12px;margin-bottom:14px;text-align:center}
+    .fee-label{font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:3px}
+    .fee-amount{font-family:'Teko',sans-serif;font-size:34px;color:var(--gold)}
+    .fee-note{font-size:11px;color:var(--muted);margin-top:4px}
+    .profile-warn-box{background:rgba(255,107,107,0.12);border:1px solid rgba(255,107,107,0.4);
+      border-radius:8px;padding:12px;margin-bottom:14px;font-size:13px;
+      color:var(--danger);text-align:center;display:none}
+    .reg-toggle{display:flex;background:rgba(0,0,0,0.4);border:1px solid var(--border);
+      border-radius:8px;overflow:hidden;margin-bottom:14px}
+    .reg-toggle-btn{flex:1;padding:10px;text-align:center;font-family:'Teko';font-size:16px;
+      letter-spacing:1px;color:var(--muted);border:none;background:transparent;
+      cursor:pointer;text-transform:uppercase;transition:0.2s}
+    .reg-toggle-btn.active{background:linear-gradient(180deg,var(--amber),var(--amber-deep));color:var(--gold)}
+    .solo-queue-info-box{background:rgba(92,255,138,0.06);border:1px solid rgba(92,255,138,0.25);
+      border-radius:8px;padding:12px;margin-bottom:14px;font-size:12px;color:#aaa;line-height:1.7}
+    .solo-queue-info-box b{color:var(--green)}
+    .solo-queue-counter{text-align:center;font-family:'Teko';font-size:18px;
+      color:var(--green);margin-bottom:4px;letter-spacing:1px}
+    .uid-row{position:relative;margin-bottom:12px}
+    .uid-row .m-input{margin-bottom:0}
+    .uid-name-tag{display:none;font-size:12px;color:var(--green);font-weight:600;
+      padding:4px 10px;background:rgba(92,255,138,0.08);
+      border:1px solid rgba(92,255,138,0.25);border-radius:0 0 7px 7px;letter-spacing:0.5px}
+    .uid-name-tag.show{display:block}
+    .uid-status{font-size:11px;min-height:16px;margin-bottom:8px;letter-spacing:0.5px}
+    .rules-list{list-style:none;padding:0}
+    .rules-list li{display:flex;align-items:flex-start;gap:10px;padding:10px 0;
+      border-bottom:1px solid var(--border);font-size:13px;color:#ccc;line-height:1.5}
+    .rules-list li:last-child{border-bottom:none}
+    .rule-num{background:linear-gradient(135deg,var(--amber),var(--gold));color:#000;
+      font-family:'Teko';font-size:14px;font-weight:700;width:24px;height:24px;
+      border-radius:50%;display:flex;align-items:center;justify-content:center;
+      flex-shrink:0;margin-top:1px}
+    .modal-tab-bar{display:flex;border-bottom:1px solid var(--border);flex-shrink:0}
+    .modal-tab{flex:1;padding:13px 8px;text-align:center;font-family:'Teko';font-size:15px;
+      letter-spacing:2px;text-transform:uppercase;color:var(--muted);border:none;
+      background:transparent;cursor:pointer;border-bottom:2px solid transparent}
+    .modal-tab.active{color:var(--gold);border-bottom:2px solid var(--gold)}
+
+    /* ── SUPPORT ──────────────────────────────────────────────────────────── */
+    .support-fab{position:fixed;bottom:80px;right:16px;z-index:150;
+      background:linear-gradient(135deg,var(--amber),var(--gold));
+      border:none;width:50px;height:50px;border-radius:50%;
+      display:flex;align-items:center;justify-content:center;
+      font-size:22px;cursor:pointer;box-shadow:0 4px 16px rgba(254,203,0,0.4)}
+    .support-fab:active{transform:scale(0.9)}
+    .support-modal-inner{background:#111;border:1px solid var(--gold);
+      border-radius:16px 16px 0 0;width:100%;max-width:500px;
+      animation:slideUp 0.28s ease both;border-top:3px solid var(--gold)}
+    .support-hdr{display:flex;align-items:center;justify-content:space-between;
+      padding:15px 18px 13px;border-bottom:1px solid var(--border)}
+    .support-title{font-family:'Teko',sans-serif;font-size:24px;color:var(--gold);
+      letter-spacing:3px;text-transform:uppercase}
+    .support-x{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,0.05);
+      border:1px solid #444;color:#888;font-size:15px;cursor:pointer;
+      display:flex;align-items:center;justify-content:center}
+    .support-links{padding:18px;display:flex;flex-direction:column;gap:12px}
+    .support-link{display:flex;align-items:center;gap:14px;
+      background:rgba(255,255,255,0.04);border:1px solid var(--border);
+      border-radius:10px;padding:14px 16px;text-decoration:none;color:var(--text)}
+    .support-link:active{background:rgba(254,203,0,0.08);border-color:var(--gold)}
+    .support-link-icon{font-size:28px;flex-shrink:0}
+    .support-link-label{font-size:11px;color:var(--muted);letter-spacing:2px;
+      text-transform:uppercase;margin-bottom:3px}
+    .support-link-val{font-family:'Teko';font-size:18px;color:#fff;letter-spacing:1px}
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════════
+     LOGIN PAGE
+══════════════════════════════════════════════════════════════ -->
+<div id="page-loading" style="position:fixed;inset:0;background:#0a0a0a;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999">
+  <img src="logo.png" style="width:80px;height:80px;border-radius:12px;border:2px solid #fecb00;margin-bottom:18px;opacity:0.9"/>
+  <div style="font-family:'Teko',sans-serif;font-size:24px;color:#fecb00;letter-spacing:3px;text-transform:uppercase;margin-bottom:18px">Jahanabad TC</div>
+  <div style="width:40px;height:40px;border:3px solid #333;border-top:3px solid #fecb00;border-radius:50%;animation:spin 0.8s linear infinite"></div>
+  <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+</div>
+<div id="page-login" class="page">
+  <div style="width:100%;display:flex;align-items:center;justify-content:center;padding:20px 0;min-height:100vh;">
+  <div class="login-container" style="max-width:420px;width:100%;padding:20px;">
+    <div class="login-logo">
+      <img class="login-logo-img" src="logo.png" alt="Jahanabad TC"/>
+      <h1>Jahanabad TC</h1>
+      <p>Prove Your Skill · BOOYAH!</p>
+    </div>
+    <div class="login-card">
+      <div class="l-tabs">
+        <button class="l-tab active" onclick="switchLoginTab('login')">Login</button>
+        <button class="l-tab" onclick="switchLoginTab('register')">Register</button>
+      </div>
+      <!-- LOGIN FORM -->
+      <div class="l-form active" id="lf-login">
+        <div class="l-field"><label>Email</label><input type="email" id="login-email" placeholder="your@email.com"/></div>
+        <div class="l-field"><label>Password</label><input type="password" id="login-pass" placeholder="••••••••"/></div>
+        <div class="forgot-link"><button onclick="forgotPassword()">🔑 Forgot Password?</button></div>
+        <button class="l-btn" id="login-btn" onclick="loginEmail()">Enter Arena</button>
+        <div class="resend-link"><button id="resend-btn" onclick="resendVerification()">📧 Resend Verification Email</button></div>
+        <div class="l-msg" id="login-msg"></div>
+      </div>
+      <!-- REGISTER FORM -->
+      <div class="l-form" id="lf-register">
+        <div id="reg-fields">
+          <div class="l-field"><label>Full Name</label><input type="text" id="reg-name" placeholder="Your Name"/></div>
+          <div class="l-field"><label>WhatsApp Number</label><input type="tel" id="reg-whatsapp" placeholder="01XXXXXXXXX"/></div>
+          <div class="l-field"><label>Email</label><input type="email" id="reg-email" placeholder="your@email.com"/></div>
+          <div class="l-field"><label>Password</label><input type="password" id="reg-pass" placeholder="Min 6 characters"/></div>
+          <div class="l-field"><label>Confirm Password</label><input type="password" id="reg-pass2" placeholder="Repeat password"/></div>
+          <button class="l-btn" id="reg-btn" onclick="registerEmail()">Join Tournament</button>
+          <div class="l-msg" id="reg-msg"></div>
+        </div>
+        <div class="verify-box" id="verify-box">
+          <div class="verify-icon">📧</div>
+          <div class="verify-title">Check Your Email</div>
+          <div class="verify-text">We sent a verification link to<br><span class="verify-email-hl" id="verify-email-display"></span><br><br>Click the link to activate, then come back and log in.</div>
+          <button class="btn-small" onclick="switchLoginTab('login')">Go to Login</button>
+          <button class="btn-small" onclick="resendVerificationFromBox()">Resend Email</button>
+          <div class="l-msg" id="verify-msg"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SHARED NOTICE BAR (shown on home/tournaments)
+══════════════════════════════════════════════════════════════ -->
+<div class="notice-bar" id="notice-bar">
+  <span class="notice-icon">📢</span>
+  <div class="notice-text-wrap"><span class="notice-text" id="notice-text"></span></div>
+  <button class="notice-close" onclick="document.getElementById('notice-bar').classList.remove('visible')">✕</button>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     HOME PAGE
+══════════════════════════════════════════════════════════════ -->
+<div id="page-home" class="page">
+  <div class="app-header">
+    <div class="logo-wrap">
+      <img class="logo-img" src="logo.png" alt="Logo"/>
+      <div>
+        <div class="header-title">Jahanabad TC</div>
+      </div>
+    </div>
+    <div class="wallet-badge" onclick="goTo('dashboard')">৳ <span id="nav-balance-home">0</span></div>
+  </div>
+  <div class="content">
+    <div class="welcome">
+      <div>Hello, <span id="welcome-name">Player</span> 👋</div>
+      <div class="sub">Play Fair · Play Hard · Win Glory</div>
+    </div>
+    <div class="stats-row">
+      <div class="qs"><div class="qs-val" id="h-t-count">0</div><div class="qs-label">🔥 Live</div></div>
+      <div class="qs"><div class="qs-val" id="h-p-count">0</div><div class="qs-label">👥 Players</div></div>
+      <div class="qs"><div class="qs-val" id="h-my-played">0</div><div class="qs-label">🎮 My Plays</div></div>
+    </div>
+    <div class="sec-head">
+      <div class="sec-title">🎯 Game Modes</div>
+      <button class="sec-link" onclick="goTo('tournaments')">Browse All →</button>
+    </div>
+    <div class="mode-row">
+      <button class="mode-card classic" onclick="goToTournamentsMode('classic')">
+        <div class="mode-icon">🗺️</div><div class="mode-name">Classic</div>
+        <div class="mode-desc">Battle Royale</div>
+        <div class="mode-count" id="mode-classic">—</div><div class="mode-count-lbl">open</div>
+      </button>
+      <button class="mode-card clash" onclick="goToTournamentsMode('clash')">
+        <div class="mode-icon">⚔️</div><div class="mode-name">Clash Squad</div>
+        <div class="mode-desc">4v4 Tactical</div>
+        <div class="mode-count" id="mode-clash">—</div><div class="mode-count-lbl">open</div>
+      </button>
+      <button class="mode-card lone" onclick="goToTournamentsMode('lone')">
+        <div class="mode-icon">🐺</div><div class="mode-name">Lone Wolf</div>
+        <div class="mode-desc">Solo Survival</div>
+        <div class="mode-count" id="mode-lone">—</div><div class="mode-count-lbl">open</div>
+      </button>
+    </div>
+    <div class="sec-head">
+      <div class="sec-title">🔥 Live Now</div>
+      <button class="sec-link" onclick="goTo('tournaments')">See All →</button>
+    </div>
+    <div id="home-live-list"><div class="empty-state">⏳ Loading...</div></div>
+    <div class="tagline">PLAY HARD • STAY PRO • <span>BOOYAH!</span></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     TOURNAMENTS PAGE
+══════════════════════════════════════════════════════════════ -->
+<div id="page-tournaments" class="page">
+  <div class="app-header">
+    <div class="logo-wrap">
+      <img class="logo-img" src="logo.png" alt="Logo"/>
+      <div class="header-title">Tournaments</div>
+    </div>
+    <div class="wallet-badge" onclick="goTo('dashboard')">৳ <span id="nav-balance-t">0</span></div>
+  </div>
+  <div class="content">
+    <div class="filter-label">Team Type</div>
+    <div class="filter-row">
+      <button class="filter-btn active" onclick="setTypeFilter('all',this)">All</button>
+      <button class="filter-btn" onclick="setTypeFilter('1',this)">Solo</button>
+      <button class="filter-btn" onclick="setTypeFilter('2',this)">Duo</button>
+      <button class="filter-btn" onclick="setTypeFilter('4',this)">Squad</button>
+      <button class="filter-btn" onclick="setTypeFilter('free',this)">Free</button>
+    </div>
+    <div class="filter-label">Game Mode</div>
+    <div class="mode-chip-row">
+      <button class="mode-chip active" id="chip-all" onclick="setModeFilter('all',this)">🎮 All Modes</button>
+      <button class="mode-chip classic" id="chip-classic" onclick="setModeFilter('classic',this)">🗺️ Classic</button>
+      <button class="mode-chip clash"   id="chip-clash"   onclick="setModeFilter('clash',this)">⚔️ Clash Squad</button>
+      <button class="mode-chip lone"    id="chip-lone"    onclick="setModeFilter('lone',this)">🐺 Lone Wolf</button>
+    </div>
+    <div id="tournament-list"><div class="empty-state">⏳ Loading...</div></div>
+    <div class="tagline">PLAY HARD • STAY PRO • <span>BOOYAH!</span></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     DASHBOARD PAGE
+══════════════════════════════════════════════════════════════ -->
+<div id="page-dashboard" class="page">
+  <div class="app-header">
+    <div class="logo-wrap">
+      <img class="logo-img" src="logo.png" alt="Logo"/>
+      <div class="header-title">My Profile</div>
+    </div>
+    <button class="header-logout" onclick="doLogout()">🚪 Logout</button>
+  </div>
+  <div class="content">
+    <div class="profile-card">
+      <div class="profile-banner">
+        <div class="avatar" id="avatar-text">?</div>
+        <div class="profile-info">
+          <div class="game-name" id="display-game-name">PLAYER</div>
+          <div class="player-name" id="display-name"></div>
+          <div class="player-email" id="display-email"></div>
+          <div class="player-whatsapp" id="display-whatsapp"></div>
+          <div class="uid-tag" id="display-uid">🎮 UID: —</div>
+          <div style="margin-top:8px;font-family:'Teko',sans-serif;font-size:32px;color:var(--gold);letter-spacing:2px;line-height:1">৳ <span id="wallet-balance-top">0</span></div>
+          <div style="font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:2px">💰 Wallet Balance</div>
+        </div>
+        <div class="edit-icon" onclick="toggleEdit()">✏️</div>
+      </div>
+      <div style="display:flex;gap:8px;padding:10px 16px;border-bottom:1px solid var(--border);background:rgba(0,0,0,0.3)">
+        <button onclick="openDeposit()" style="flex:1;padding:10px 4px;background:linear-gradient(180deg,var(--amber),var(--amber-deep));border:1px solid var(--gold);color:var(--gold);font-family:'Teko';font-size:15px;letter-spacing:1px;border-radius:8px;cursor:pointer;text-transform:uppercase">+ Deposit</button>
+        <button onclick="openWithdraw()" style="flex:1;padding:10px 4px;background:rgba(254,203,0,0.05);border:1px solid var(--gold);color:var(--gold);font-family:'Teko';font-size:15px;letter-spacing:1px;border-radius:8px;cursor:pointer;text-transform:uppercase">Withdraw</button>
+      </div>
+      <div class="edit-panel" id="edit-panel">
+        <span class="e-label">Full Name</span>
+        <input type="text" class="e-input" id="input-name" placeholder="Your full name"/>
+        <span class="e-label">WhatsApp Number</span>
+        <input type="tel" class="e-input" id="input-whatsapp" placeholder="01XXXXXXXXX"/>
+        <div class="locked-box">
+          <div class="locked-box-title">🎮 Game UID</div>
+          <div class="locked-box-note">Your 10-digit Free Fire UID. After first save, changing requires re-verification.</div>
+          <div class="locked-badge" id="uid-locked-badge">🔒 Already set — re-verify to change</div>
+          <span class="e-label">Game UID (10 digits)</span>
+          <input type="text" class="e-input" id="input-uid" placeholder="e.g. 1234567890" maxlength="12"/>
+        </div>
+        <div class="locked-box">
+          <div class="locked-box-title">🎭 In-Game Name</div>
+          <div class="locked-box-note">Your exact Free Fire name. After first save, changing requires re-verification.</div>
+          <div class="locked-badge" id="gname-locked-badge">🔒 Already set — re-verify to change</div>
+          <span class="e-label">In-Game Name</span>
+          <input type="text" class="e-input" id="input-game-name" placeholder="Your exact in-game name"/>
+        </div>
+        <div class="reauth-section" id="reauth-section">
+          <div class="reauth-label">🔐 Verify identity to change locked field(s)</div>
+          <div class="reauth-row">
+            <button type="button" class="reauth-btn" id="reauth-pass-btn" onclick="setReauthMethod('password')">🔑 Password</button>
+            <button type="button" class="reauth-btn" id="reauth-google-btn" onclick="setReauthMethod('google')">
+              <svg width="13" height="13" viewBox="0 0 24 24" style="vertical-align:middle;margin-right:3px"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+              Google
+            </button>
+          </div>
+          <div id="password-field" style="display:none">
+            <input type="password" class="e-input" id="input-password" placeholder="Enter your current password"/>
+          </div>
+        </div>
+        <div class="d-msg" id="edit-msg"></div>
+        <div class="btn-row">
+          <button class="save-btn" onclick="saveProfile()">Save Changes</button>
+          <button class="cancel-btn" onclick="toggleEdit()">✕</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-icon">🎮</div><div class="stat-value" id="stat-played">0</div><div class="stat-label">Played</div></div>
+      <div class="stat-card"><div class="stat-icon">🏆</div><div class="stat-value" id="stat-wins">0</div><div class="stat-label">Wins</div></div>
+      <div class="stat-card"><div class="stat-icon">📈</div><div class="stat-value" id="stat-winrate">0%</div><div class="stat-label">Win Rate</div></div>
+      <div class="stat-card"><div class="stat-icon">💰</div><div class="stat-value" id="stat-earned">0</div><div class="stat-label">TK Earned</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+      <button onclick="goTo('tournament-history')" style="padding:18px 8px;background:var(--card);border:1px solid var(--border);border-radius:12px;cursor:pointer;text-align:center;position:relative;overflow:hidden;border-left:3px solid var(--gold)">
+        <div style="font-size:28px;margin-bottom:5px">🎮</div>
+        <div style="font-family:'Teko';font-size:16px;color:#fff;letter-spacing:1px;text-transform:uppercase">My Tournaments</div>
+        <div style="font-size:10px;color:var(--muted);letter-spacing:1px;margin-top:3px">View History →</div>
+      </button>
+      <button onclick="goTo('transactions')" style="padding:18px 8px;background:var(--card);border:1px solid var(--border);border-radius:12px;cursor:pointer;text-align:center;position:relative;overflow:hidden;border-left:3px solid var(--amber)">
+        <div style="font-size:28px;margin-bottom:5px">💵</div>
+        <div style="font-family:'Teko';font-size:16px;color:#fff;letter-spacing:1px;text-transform:uppercase">Transactions</div>
+        <div style="font-size:10px;color:var(--muted);letter-spacing:1px;margin-top:3px">View History →</div>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     TOURNAMENT HISTORY PAGE
+══════════════════════════════════════════════════════════════ -->
+<div id="page-tournament-history" class="page">
+  <div class="app-header">
+    <div class="logo-wrap">
+      <button onclick="goTo('dashboard')" style="background:transparent;border:1px solid var(--border);color:var(--muted);width:34px;height:34px;border-radius:7px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-right:8px">←</button>
+      <div class="header-title">My Tournaments</div>
+    </div>
+    <div class="wallet-badge" onclick="goTo('dashboard')">৳ <span id="nav-balance-th">0</span></div>
+  </div>
+  <div class="content">
+    <div class="sec-card" style="margin-top:4px">
+      <div class="sec-head2" style="margin-bottom:14px">🎮 Tournament History</div>
+      <div id="tournament-history"><div class="no-tx">⏳ Loading...</div></div>
+    </div>
+    <div class="tagline">PLAY HARD • STAY PRO • <span>BOOYAH!</span></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     TRANSACTIONS PAGE
+══════════════════════════════════════════════════════════════ -->
+<div id="page-transactions" class="page">
+  <div class="app-header">
+    <div class="logo-wrap">
+      <button onclick="goTo('dashboard')" style="background:transparent;border:1px solid var(--border);color:var(--muted);width:34px;height:34px;border-radius:7px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-right:8px">←</button>
+      <div class="header-title">Transactions</div>
+    </div>
+    <div class="wallet-badge" onclick="goTo('dashboard')">৳ <span id="nav-balance-tx">0</span></div>
+  </div>
+  <div class="content">
+    <div style="display:flex;gap:10px;margin-bottom:14px;margin-top:4px">
+      <button onclick="openDeposit()" style="flex:1;padding:13px 4px;background:linear-gradient(180deg,var(--amber),var(--amber-deep));border:1px solid var(--gold);color:var(--gold);font-family:'Teko';font-size:16px;letter-spacing:1px;border-radius:8px;cursor:pointer;text-transform:uppercase">+ Deposit</button>
+      <button onclick="openWithdraw()" style="flex:1;padding:13px 4px;background:rgba(254,203,0,0.05);border:1px solid var(--gold);color:var(--gold);font-family:'Teko';font-size:16px;letter-spacing:1px;border-radius:8px;cursor:pointer;text-transform:uppercase">Withdraw</button>
+    </div>
+    <div class="wallet-card" style="padding-top:14px">
+      <div class="tx-title">All Transactions</div>
+      <div id="tx-status-list"><div class="no-tx">⏳ Loading...</div></div>
+    </div>
+    <div class="tagline">PLAY HARD • STAY PRO • <span>BOOYAH!</span></div>
+  </div>
+</div>
+
+<!-- ── GLOBAL BOTTOM NAV (always visible except on login) ──────────────────── -->
+<nav class="bottom-nav" id="global-bottom-nav" style="display:none">
+  <button class="nav-item" id="gnav-tournaments" onclick="goTo('home')"><span class="nav-icon">🏆</span>Tournaments</button>
+  <div class="nav-divider"></div>
+  <button class="nav-item" id="gnav-profile" onclick="goTo('dashboard')"><span class="nav-icon">👤</span>Profile</button>
+</nav>
+
+<!-- ── SUPPORT FAB (global) ───────────────────────────────────────────────── -->
+<button class="support-fab" id="support-fab" style="display:none" onclick="openSupport()">🎧</button>
+
+<!-- ── SUPPORT MODAL ─────────────────────────────────────────────────────── -->
+<div class="modal-overlay" id="support-modal">
+  <div class="support-modal-inner">
+    <div class="support-hdr">
+      <div class="support-title">🎧 Support</div>
+      <button class="support-x" onclick="closeModal('support-modal')">✕</button>
+    </div>
+    <div class="support-links" id="support-links"><div style="text-align:center;color:var(--muted);padding:20px;font-size:13px">Loading...</div></div>
+  </div>
+</div>
+
+<!-- ── DEPOSIT MODAL ─────────────────────────────────────────────────────── -->
+<div class="modal-overlay" id="deposit-modal">
+  <div class="modal">
+    <div class="modal-hdr"><div class="modal-title-txt">💰 Deposit</div><button class="modal-x" onclick="closeModal('deposit-modal')">✕</button></div>
+    <div class="modal-scroll">
+      <span class="m-label">Amount (TK)</span>
+      <input type="number" class="m-input" id="deposit-amount" placeholder="Minimum 10 TK"/>
+      <span class="m-label">Payment Method</span>
+      <div class="m-method-row">
+        <button class="m-method-btn" id="btn-bkash" onclick="selectDepMethod('bkash')">📱 bKash</button>
+        <button class="m-method-btn" id="btn-nagad" onclick="selectDepMethod('nagad')">💳 Nagad</button>
+        <button class="m-method-btn" id="btn-rocket" onclick="selectDepMethod('rocket')">🚀 Rocket</button>
+      </div>
+      <div class="pay-info" id="pay-info">
+        <div class="pay-info-title">📋 Payment Instructions</div>
+        <div class="pay-step">1. Open <b id="dep-method-name">—</b> app</div>
+        <div class="pay-step">2. Select <b id="dep-send-type">—</b></div>
+        <div class="pay-step">3. Send to: <span class="pnum" id="dep-number">—</span></div>
+        <div class="pay-step">4. Copy your <b>Transaction ID</b></div>
+      </div>
+      <span class="m-label">Transaction ID</span>
+      <input type="text" class="m-input" id="deposit-txid" placeholder="Paste Transaction ID here"/>
+      <div class="m-msg" id="deposit-msg"></div>
+    </div>
+    <div class="modal-foot"><button class="m-btn" onclick="submitDeposit()">Submit Request</button></div>
+  </div>
+</div>
+
+<!-- ── WITHDRAW MODAL ────────────────────────────────────────────────────── -->
+<div class="modal-overlay" id="withdraw-modal">
+  <div class="modal">
+    <div class="modal-hdr"><div class="modal-title-txt">💸 Withdraw</div><button class="modal-x" onclick="closeModal('withdraw-modal')">✕</button></div>
+    <div class="modal-scroll">
+      <span class="m-label">Amount (TK)</span>
+      <input type="number" class="m-input" id="withdraw-amount" placeholder="Minimum 50 TK"/>
+      <span class="m-label">Send to My Account Via</span>
+      <div class="m-method-row">
+        <button class="m-method-btn" id="wbtn-bkash" onclick="selectWdMethod('bkash')">📱 bKash</button>
+        <button class="m-method-btn" id="wbtn-nagad" onclick="selectWdMethod('nagad')">💳 Nagad</button>
+        <button class="m-method-btn" id="wbtn-rocket" onclick="selectWdMethod('rocket')">🚀 Rocket</button>
+      </div>
+      <span class="m-label">My Number</span>
+      <input type="tel" class="m-input" id="withdraw-number" placeholder="01XXXXXXXXX"/>
+      <div class="m-msg" id="withdraw-msg"></div>
+    </div>
+    <div class="modal-foot"><button class="m-btn" onclick="submitWithdraw()">Request Withdrawal</button></div>
+  </div>
+</div>
+
+<!-- ── JOIN TOURNAMENT MODAL ─────────────────────────────────────────────── -->
+<div class="modal-overlay" id="join-modal">
+  <div class="modal">
+    <div class="modal-tab-bar">
+      <button class="modal-tab active" id="tab-join-btn" onclick="switchJoinTab('join')">🎮 Join</button>
+      <button class="modal-tab" id="tab-rules-btn" onclick="switchJoinTab('rules')">📋 Rules</button>
+    </div>
+    <div class="modal-scroll" id="tab-join-content">
+      <div class="modal-title-txt" id="join-title" style="font-family:'Teko';font-size:22px;color:var(--gold);letter-spacing:2px;margin-bottom:4px">Join Tournament</div>
+      <div style="color:var(--muted);font-size:12px;margin-bottom:14px;letter-spacing:1px" id="join-sub"></div>
+      <div class="fee-box">
+        <div class="fee-label">Entry Fee</div>
+        <div class="fee-amount">৳ <span id="join-fee">0</span></div>
+        <div class="fee-note" id="fee-note"></div>
+      </div>
+      <div class="profile-warn-box" id="profile-warn">
+        ⚠️ Set your <b>Game UID</b> in profile first.<br>
+        <button onclick="goTo('dashboard');closeModal('join-modal')" style="color:var(--gold);font-weight:700;background:none;border:none;cursor:pointer;text-decoration:underline">Go to Profile →</button>
+      </div>
+      <div id="reg-type-wrap" style="display:none">
+        <span class="m-label">Registration Type</span>
+        <div class="reg-toggle">
+          <button class="reg-toggle-btn active" id="btn-team-reg" onclick="setRegType('team')">👥 Team Register</button>
+          <button class="reg-toggle-btn" id="btn-solo-reg" onclick="setRegType('solo')">🎮 Solo Queue</button>
+        </div>
+        <div class="solo-queue-info-box" id="solo-queue-info" style="display:none">
+          <div class="solo-queue-counter" id="solo-queue-counter">0 / 4 solo players waiting</div>
+          <b>Solo Queue:</b> Pay once and you'll be auto-matched with other solo players to form a team.
+        </div>
+      </div>
+      <span class="m-label">Your Name</span>
+      <input type="text" class="m-input" id="join-name" placeholder="Full name"/>
+      <span class="m-label">WhatsApp Number</span>
+      <input type="tel" class="m-input" id="join-whatsapp" placeholder="01XXXXXXXXX"/>
+      <div id="uid-inputs"></div>
+      <div class="m-msg" id="join-msg"></div>
+    </div>
+    <div class="modal-scroll" id="tab-rules-content" style="display:none">
+      <div style="font-family:'Teko';font-size:22px;color:var(--gold);letter-spacing:2px;margin-bottom:4px">📋 Rules</div>
+      <ul class="rules-list">
+        <li><span class="rule-num">1</span><span>Use your <b style="color:var(--gold)">exact registered Game UID</b>. Mismatches = disqualification.</span></li>
+        <li><span class="rule-num">2</span><span>Join room <b style="color:var(--gold)">5 minutes before</b> start. Late = no entry.</span></li>
+        <li><span class="rule-num">3</span><span>Room ID & Password sent to your <b style="color:var(--gold)">WhatsApp</b> before match.</span></li>
+        <li><span class="rule-num">4</span><span><b style="color:var(--danger)">Hacking, teaming, toxic behavior</b> = permanent ban.</span></li>
+        <li><span class="rule-num">5</span><span>Entry fees are <b style="color:var(--danger)">non-refundable</b> once match starts.</span></li>
+        <li><span class="rule-num">6</span><span>Solo Queue players are grouped <b style="color:var(--gold)">randomly and fairly</b>.</span></li>
+        <li><span class="rule-num">7</span><span>Prize credited to wallet within <b style="color:var(--gold)">24 hours</b> of result.</span></li>
+        <li><span class="rule-num">8</span><span>Admin decisions are <b style="color:var(--gold)">final and binding</b>.</span></li>
+      </ul>
+    </div>
+    <div class="modal-foot" id="join-footer">
+      <button class="m-btn" id="confirm-join-btn" onclick="confirmJoin()">Confirm &amp; Join</button>
+      <button class="m-cancel" onclick="closeModal('join-modal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════════════════════════════════════════ -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, EmailAuthProvider,
+         reauthenticateWithCredential, reauthenticateWithPopup, signOut,
+         createUserWithEmailAndPassword, signInWithEmailAndPassword,
+         updateProfile, sendPasswordResetEmail, sendEmailVerification,
+         GoogleAuthProvider }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, addDoc,
+         query, where, getDocs, serverTimestamp, increment, orderBy }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const ADMIN_EMAIL = 'sejansasker@gmail.com';
+const cfg = {
+  apiKey:"AIzaSyBgMroBilivfk7bJxoz93HjxSt6yU7Ura0",
+  authDomain:"tournament-app-4a050.firebaseapp.com",
+  projectId:"tournament-app-4a050",
+  storageBucket:"tournament-app-4a050.firebasestorage.app",
+  messagingSenderId:"811957533858",
+  appId:"1:811957533858:web:1d1f0f916c0aba5eccebfb"
+};
+const app = initializeApp(cfg);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// ── STATE ──────────────────────────────────────────────────────────────────
+var currentUser = null, userData = null, userBalance = 0;
+var paySettings = {}, supportSettings = null;
+var allTournaments = [], joinedIds = new Set(), selectedT = null;
+var typeFilter = 'all', modeFilter = 'all', regType = 'team';
+var uidLookupTimers = {};
+var isRegistering = false; // guard flag: true while we are in the middle of registration
+var pendingRegInfo = null; // holds {name, whatsapp} during registration flow
+var unverifiedEmail = ''; // store email for resend
+var editOpen = false, reauthMethod = '';
+var selDepMethod = '', selWdMethod = '';
+
+function el(id){ return document.getElementById(id); }
+function showLMsg(id,msg,type){ var e=el(id); if(!e) return; e.textContent=msg; e.className='l-msg '+type; }
+
+// ── PAGE ROUTER ────────────────────────────────────────────────────────────
+window.goTo = function(page) {
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+  var pageEl = el('page-'+page);
+  pageEl.classList.add('active');
+  pageEl.scrollTop = 0;
+  var showFab = (page==='home'||page==='tournaments'||page==='dashboard'||page==='tournament-history'||page==='transactions');
+  el('support-fab').style.display = showFab ? 'flex' : 'none';
+  el('notice-bar').style.display = (page==='home'||page==='tournaments') ? '' : 'none';
+  // Global bottom nav: show on all pages except login/loading
+  var gnav=el('global-bottom-nav');
+  if(gnav){
+    var showNav=(page!=='login'&&page!=='loading');
+    gnav.style.display=showNav?'flex':'none';
+    if(showNav){
+      var isTournaments=(page==='home'||page==='tournaments');
+      el('gnav-tournaments').classList.toggle('active',isTournaments);
+      el('gnav-profile').classList.toggle('active',!isTournaments);
+    }
+  }
+  // sync balance badges on sub-pages
+  if(page==='tournament-history'){ var nb=el('nav-balance-th'); if(nb) nb.textContent=userBalance; }
+  if(page==='transactions'){ var nb2=el('nav-balance-tx'); if(nb2) nb2.textContent=userBalance; }
+  if(page==='home') loadHomeData();
+  if(page==='tournaments') loadTournaments();
+  if(page==='dashboard' && currentUser){ loadProfile(currentUser); }
+  if(page==='tournament-history' && currentUser){ loadTournamentHistory(currentUser.uid); }
+  if(page==='transactions' && currentUser){ loadTransactions(currentUser.uid); }
+};
+
+window.goToTournamentsMode = function(mode) {
+  modeFilter = mode;
+  document.querySelectorAll('.mode-chip').forEach(function(c){ c.classList.remove('active'); });
+  var chip = el('chip-'+mode); if(chip) chip.classList.add('active');
+  goTo('tournaments');
+};
+
+// ── AUTH STATE LISTENER ────────────────────────────────────────────────────
+// This listener fires on every auth change. We use isRegistering to prevent
+// it from interfering while we write Firestore data after account creation.
+onAuthStateChanged(auth, async function(user) {
+  // Hide loading screen
+  var loadEl=document.getElementById('page-loading');
+  if(loadEl) loadEl.style.display='none';
+  if(isRegistering) return; // registration flow handles itself
+  if(!user){ goTo('login'); return; }
+
+  // Block unverified email users (except admin)
+  if(user.email !== ADMIN_EMAIL && !user.emailVerified){
+    await signOut(auth);
+    goTo('login');
+    return;
+  }
+
+  // Signed in and verified — load settings then go home
+  currentUser = user;
+  try{ var ps=await getDoc(doc(db,'settings','payment')); if(ps.exists()) paySettings=ps.data(); }catch(e){}
+  try{ var ss=await getDoc(doc(db,'settings','support')); if(ss.exists()) supportSettings=ss.data(); }catch(e){}
+  goTo('home');
+});
+
+// ── LOGIN ──────────────────────────────────────────────────────────────────
+window.switchLoginTab = function(tab) {
+  el('lf-login').classList.toggle('active', tab==='login');
+  el('lf-register').classList.toggle('active', tab==='register');
+  document.querySelectorAll('.l-tab').forEach(function(t,i){
+    t.classList.toggle('active',(tab==='login'&&i===0)||(tab==='register'&&i===1));
+  });
+  if(tab==='register'){ el('reg-fields').style.display='block'; el('verify-box').classList.remove('show'); }
+};
+
+window.loginEmail = async function() {
+  var email=el('login-email').value.trim(), pass=el('login-pass').value;
+  if(!email||!pass){ showLMsg('login-msg','Please fill in all fields.','error'); return; }
+  var btn=el('login-btn');
+  btn.disabled=true; btn.textContent='Signing In...';
+  el('resend-btn').classList.remove('show');
+  try {
+    var cred=await signInWithEmailAndPassword(auth,email,pass);
+    var user=cred.user;
+    // Admin goes to home directly (no email verification required)
+    if(user.email===ADMIN_EMAIL){
+      currentUser=user;
+      try{ var ps=await getDoc(doc(db,'settings','payment')); if(ps.exists()) paySettings=ps.data(); }catch(e){}
+      try{ var ss=await getDoc(doc(db,'settings','support')); if(ss.exists()) supportSettings=ss.data(); }catch(e){}
+      goTo('home');
+      btn.disabled=false; btn.textContent='Enter Arena';
+      return;
+    }
+    if(!user.emailVerified){
+      unverifiedEmail=email;
+      await signOut(auth);
+      showLMsg('login-msg','📧 Please verify your email first. Check your inbox!','info');
+      el('resend-btn').classList.add('show');
+      btn.disabled=false; btn.textContent='Enter Arena';
+      return;
+    }
+    // Verified — onAuthStateChanged will handle redirect
+    btn.disabled=false; btn.textContent='Enter Arena';
+  } catch(e) {
+    btn.disabled=false; btn.textContent='Enter Arena';
+    var code=e.code||'';
+    if(code==='auth/invalid-credential'||code==='auth/wrong-password'||code==='auth/user-not-found')
+      showLMsg('login-msg','❌ Invalid email or password.','error');
+    else if(code==='auth/too-many-requests')
+      showLMsg('login-msg','⏳ Too many attempts. Wait a moment.','error');
+    else if(code==='auth/invalid-email')
+      showLMsg('login-msg','❌ Invalid email address.','error');
+    else
+      showLMsg('login-msg','Login failed: '+e.message,'error');
+  }
+};
+
+window.registerEmail = async function() {
+  var name=el('reg-name').value.trim();
+  var wa=el('reg-whatsapp').value.trim();
+  var email=el('reg-email').value.trim();
+  var pass=el('reg-pass').value;
+  var pass2=el('reg-pass2').value;
+  if(!name||!wa||!email||!pass||!pass2){ showLMsg('reg-msg','Please fill in all fields.','error'); return; }
+  if(wa.replace(/\D/g,'').length<11){ showLMsg('reg-msg','Enter a valid 11-digit WhatsApp number.','error'); return; }
+  if(pass!==pass2){ showLMsg('reg-msg','Passwords do not match!','error'); return; }
+  if(pass.length<6){ showLMsg('reg-msg','Password must be at least 6 characters.','error'); return; }
+  var btn=el('reg-btn');
+  btn.disabled=true; btn.textContent='Creating Account...';
+  isRegistering=true;
+  pendingRegInfo={name:name, whatsapp:wa};
+  try {
+    var cred=await createUserWithEmailAndPassword(auth,email,pass);
+    var user=cred.user;
+    try{ await updateProfile(user,{displayName:name}); }catch(_){}
+    // Write Firestore doc BEFORE sending verification email
+    await setDoc(doc(db,'users',user.uid),{
+      name:name, whatsapp:wa, game_name:'', uid_game:'',
+      email:email, provider:'password', balance:0, played:0,
+      wins:0, total_earned:0, uid_changed:false, game_name_changed:false,
+      created_at:new Date().toISOString()
+    },{merge:true});
+    // Send verification email
+    try{ await sendEmailVerification(user); }catch(ve){ console.warn('Verify email error:',ve); }
+    unverifiedEmail=email;
+    // Sign out so they must verify before entering
+    await signOut(auth);
+    isRegistering=false;
+    pendingRegInfo=null;
+    // Show verify box
+    el('verify-email-display').textContent=email;
+    el('reg-fields').style.display='none';
+    el('verify-box').classList.add('show');
+    btn.disabled=false; btn.textContent='Join Tournament';
+  } catch(e) {
+    isRegistering=false; pendingRegInfo=null;
+    btn.disabled=false; btn.textContent='Join Tournament';
+    var code=e.code||'';
+    if(code==='auth/email-already-in-use') showLMsg('reg-msg','📧 Email already registered. Try logging in.','error');
+    else if(code==='auth/weak-password') showLMsg('reg-msg','🔒 Password too weak. Use 6+ characters.','error');
+    else if(code==='auth/invalid-email') showLMsg('reg-msg','❌ Invalid email address.','error');
+    else showLMsg('reg-msg','Registration failed: '+e.message,'error');
+  }
+};
+
+window.forgotPassword = async function() {
+  var email=el('login-email').value.trim();
+  if(!email){ showLMsg('login-msg','📧 Enter your email above first.','error'); return; }
+  try{
+    await sendPasswordResetEmail(auth,email);
+    showLMsg('login-msg','✅ Reset link sent to '+email+'!','success');
+  }catch(e){ showLMsg('login-msg','Could not send reset email. Check the address.','error'); }
+};
+
+window.resendVerification = async function() {
+  var email=el('login-email').value.trim(), pass=el('login-pass').value;
+  if(!email||!pass){ showLMsg('login-msg','Enter your email and password to resend.','error'); return; }
+  try{
+    var cred=await signInWithEmailAndPassword(auth,email,pass);
+    await sendEmailVerification(cred.user);
+    await signOut(auth);
+    showLMsg('login-msg','✅ Verification email resent! Check your inbox.','success');
+  }catch(e){ showLMsg('login-msg','Failed to resend. Check credentials.','error'); }
+};
+
+window.resendVerificationFromBox = async function() {
+  if(!unverifiedEmail){ showLMsg('verify-msg','Please go to Login tab and use "Resend Verification Email".','info'); return; }
+  showLMsg('verify-msg','Please go to Login tab, enter your credentials, and tap "Resend Verification Email".','info');
+};
+
+// ── HOME ───────────────────────────────────────────────────────────────────
+async function loadHomeData() {
+  if(!currentUser) return;
+  try{
+    var snap=await getDoc(doc(db,'users',currentUser.uid));
+    if(snap.exists()){
+      var d=snap.data();
+      el('nav-balance-home').textContent=d.balance||0;
+      el('welcome-name').textContent=d.game_name||d.name||'Player';
+      el('h-my-played').textContent=d.played||0;
+    }
+  }catch(e){}
+  // Notice
+  try{
+    var ns=await getDoc(doc(db,'settings','notice'));
+    if(ns.exists()&&ns.data().text&&ns.data().text.trim()){
+      el('notice-text').textContent=ns.data().text;
+      el('notice-bar').classList.add('visible');
+    }
+  }catch(e){}
+  // Tournaments
+  var snap2;
+  try{ snap2=await getDocs(query(collection(db,'tournaments'),orderBy('time','asc'))); }
+  catch(e){ snap2=await getDocs(collection(db,'tournaments')); }
+  var active=[]; var classic=0,clash=0,lone=0;
+  var now=new Date();
+  snap2.forEach(function(d){
+    var t=d.data(); if(t.status!=='open') return;
+    var m=(t.game_mode||'').toLowerCase();
+    if(m.includes('clash')) clash++;
+    else if(m.includes('lone')||m.includes('wolf')) lone++;
+    else classic++;
+    if(t.time){ var diff=(now-new Date(t.time))/60000; if(diff<60) active.push(Object.assign({id:d.id},t)); }
+    else active.push(Object.assign({id:d.id},t));
+  });
+  el('mode-classic').textContent=classic;
+  el('mode-clash').textContent=clash;
+  el('mode-lone').textContent=lone;
+  el('h-t-count').textContent=active.length;
+  var list=el('home-live-list');
+  if(!active.length){ list.innerHTML='<div class="empty-state">🎮 No active tournaments right now.<br><span style="color:var(--gold)">Check back soon!</span></div>'; }
+  else{
+    list.innerHTML='';
+    active.slice(0,4).forEach(function(t){
+      var mode=t.teamType==1?'Solo':t.teamType==2?'Duo':'Squad';
+      var timeStr=t.time?new Date(t.time).toLocaleString('en-US',{day:'2-digit',month:'short',hour:'numeric',minute:'2-digit',hour12:true}):'';
+      var isFree=!t.fee||t.fee==0;
+      list.innerHTML+='<div class="mini-card" onclick="goTo(\'tournaments\')">'
+        +'<div class="mini-left"><div class="mini-icon-box">🎮</div>'
+        +'<div><div class="mini-name">'+t.title+'</div>'
+        +'<div class="mini-meta">'+mode+(t.game_mode?' · '+t.game_mode:'')+' · '+timeStr+'</div>'
+        +'<div class="live-dot">OPEN</div></div></div>'
+        +'<div class="mini-right"><div class="mini-prize">৳'+(t.prize1||0)+'</div>'
+        +'<div class="mini-entry">'+(isFree?'FREE':'Entry: ৳'+t.fee)+'</div>'
+        +'<div class="mini-entry">'+(t.joined||0)+'/'+t.maxPlayers+' slots</div></div></div>';
+    });
+  }
+  try{ var us=await getDocs(collection(db,'users')); el('h-p-count').textContent=us.size; }catch(e){}
+}
+
+// ── TOURNAMENTS ────────────────────────────────────────────────────────────
+async function loadJoined(){
+  joinedIds.clear();
+  try{
+    var s=await getDocs(query(collection(db,'registrations'),where('uid','==',currentUser.uid)));
+    s.forEach(function(d){ joinedIds.add(d.data().tournament_id); });
+    var sq=await getDocs(query(collection(db,'solo_queue'),where('firebase_uid','==',currentUser.uid)));
+    sq.forEach(function(d){ joinedIds.add(d.data().tournament_id); });
+  }catch(e){}
+}
+
+async function loadTournaments(){
+  if(!currentUser) return;
+  await loadJoined();
+  var snap;
+  try{ snap=await getDocs(query(collection(db,'tournaments'),orderBy('time','asc'))); }
+  catch(e){ snap=await getDocs(collection(db,'tournaments')); }
+  allTournaments=[];
+  snap.forEach(function(d){ allTournaments.push(Object.assign({id:d.id},d.data())); });
+  renderTournaments();
+  el('nav-balance-t').textContent=userBalance;
+}
+
+function gmKey(t){ var m=(t.game_mode||'').toLowerCase(); if(m.includes('clash')) return 'clash'; if(m.includes('lone')||m.includes('wolf')) return 'lone'; return 'classic'; }
+function gmLabel(t){ var k=gmKey(t); return k==='clash'?'Clash Squad':k==='lone'?'Lone Wolf':'Classic'; }
+function modeLabel(v){ return v==1?'SOLO':v==2?'DUO':'SQUAD'; }
+function isExpired(t){ if(!t.time) return false; return (new Date()-new Date(t.time))/60000>=60; }
+function fmt12(s){ if(!s) return ''; return new Date(s).toLocaleString('en-US',{day:'2-digit',month:'short',hour:'numeric',minute:'2-digit',hour12:true}); }
+
+function renderTournaments(){
+  var c=el('tournament-list');
+  var list=allTournaments.filter(function(t){ return t.status==='open'&&!isExpired(t); });
+  if(typeFilter==='free') list=list.filter(function(t){return !t.fee||t.fee===0;});
+  else if(typeFilter!=='all') list=list.filter(function(t){return String(t.teamType)===typeFilter;});
+  if(modeFilter!=='all') list=list.filter(function(t){return gmKey(t)===modeFilter;});
+  if(!list.length){ c.innerHTML='<div class="empty-state">🎮 No tournaments found.<br><span style="color:var(--gold)">Check back soon!</span></div>'; return; }
+  c.innerHTML='';
+  list.forEach(function(t){
+    var joined=t.joined||0,max=t.maxPlayers||99;
+    var fill=Math.min((joined/max)*100,100),isFull=joined>=max,isFree=!t.fee||t.fee===0;
+    var hasJoined=joinedIds.has(t.id),gk=gmKey(t),gl=gmLabel(t);
+    var canSolo=t.teamType>1;
+    var btnCls='btn-join'+(hasJoined?' joined':'');
+    var btnTxt=hasJoined?'✅ JOINED':isFull?'🔒 FULL':'JOIN · '+(isFree?'FREE':'৳'+t.fee);
+    var clickFn=(!hasJoined&&!isFull)?'openJoin(\''+t.id+'\')':'';
+    c.innerHTML+='<div class="t-card">'
+      +'<div class="t-card-header"><div class="t-name">'+t.title+'</div>'
+      +'<div class="t-badges"><div class="t-mode-badge">'+modeLabel(t.teamType)+'</div>'
+      +'<div class="t-gm-badge '+gk+'">'+gl+'</div></div></div>'
+      +'<div class="t-body">'
+      +'<div class="info-grid">'
+      +'<div class="info-item"><div class="info-label">⏰ Time</div><div class="info-value">'+fmt12(t.time)+'</div></div>'
+      +'<div class="info-item"><div class="info-label">💵 Entry</div><div class="info-value">'+(isFree?'FREE':'৳'+t.fee+'/player')+'</div></div>'
+      +'<div class="info-item"><div class="info-label">🗺️ Mode</div><div class="info-value">'+gl+'</div></div>'
+      +'<div class="info-item"><div class="info-label">👥 Slots</div><div class="info-value">'+joined+'/'+max+'</div></div>'
+      +'</div>'
+      +'<div class="prize-pool"><div class="prize-pool-title">🏆 Prize Pool</div>'
+      +'<div class="prize-row">'
+      +'<div class="prize-item second"><div class="p-label">🥈 Runner Up</div><div class="p-val">৳'+(t.prize2||0)+'</div></div>'
+      +'<div class="prize-item first"><div class="p-label">🥇 Champion</div><div class="p-val">৳'+(t.prize1||0)+'</div></div>'
+      +'<div class="prize-item third"><div class="p-label">🥉 3rd Place</div><div class="p-val">৳'+(t.prize3||0)+'</div></div>'
+      +'</div></div>'
+      +'<div class="progress-wrap"><div class="progress-label"><span>Players Joined</span><span>'+joined+'/'+max+'</span></div>'
+      +'<div class="progress-bar"><div class="progress-fill" style="width:'+fill+'%"></div></div></div>'
+      +'<button class="'+btnCls+'" '+(hasJoined||isFull?'disabled':'')+' '+(clickFn?'onclick="'+clickFn+'"':'')+'>'+btnTxt+'</button>'
+      +(canSolo&&!hasJoined&&!isFull?'<div class="solo-queue-note">Solo Queue available — join alone, team auto-formed</div>':'')
+      +'</div></div>';
+  });
+}
+
+window.setTypeFilter=function(f,btn){ typeFilter=f; document.querySelectorAll('.filter-btn').forEach(function(b){b.classList.remove('active');}); btn.classList.add('active'); renderTournaments(); };
+window.setModeFilter=function(f,btn){ modeFilter=f; document.querySelectorAll('.mode-chip').forEach(function(b){b.classList.remove('active');}); btn.classList.add('active'); renderTournaments(); };
+
+// ── JOIN MODAL ─────────────────────────────────────────────────────────────
+window.switchJoinTab=function(tab){
+  var jc=el('tab-join-content'),rc=el('tab-rules-content'),jb=el('tab-join-btn'),rb=el('tab-rules-btn'),ft=el('join-footer');
+  if(tab==='join'){ jc.style.display='block'; rc.style.display='none'; jb.classList.add('active'); rb.classList.remove('active'); ft.style.display='flex'; }
+  else{ jc.style.display='none'; rc.style.display='block'; rb.classList.add('active'); jb.classList.remove('active'); ft.style.display='none'; }
+};
+window.setRegType=function(type){
+  regType=type;
+  el('btn-team-reg').classList.toggle('active',type==='team');
+  el('btn-solo-reg').classList.toggle('active',type==='solo');
+  el('solo-queue-info').style.display=type==='solo'?'block':'none';
+  buildUidInputs(); updateFeeDisplay();
+};
+async function countSoloQueue(tId,teamSize){
+  try{
+    var snap=await getDocs(query(collection(db,'solo_queue'),where('tournament_id','==',tId),where('grouped','==',false)));
+    el('solo-queue-counter').textContent=snap.size+' / '+teamSize+' solo players waiting'+(snap.size+1>=teamSize?' — Your spot completes a team! 🎉':'');
+  }catch(e){}
+}
+function updateFeeDisplay(){
+  if(!selectedT) return;
+  var fee=selectedT.fee||0, teamSize=selectedT.teamType||1;
+  if(regType==='solo'||teamSize===1){ el('join-fee').textContent=fee; el('fee-note').textContent='Per player · You pay once'; }
+  else{ el('join-fee').textContent=fee*teamSize; el('fee-note').textContent=fee+' TK x '+teamSize+' players'; }
+}
+function buildUidInputs(){
+  if(!selectedT) return;
+  var count=(regType==='solo')?1:(selectedT.teamType||1);
+  var html='';
+  if(count>1) html+='<span class="m-label">Team Name</span><input type="text" class="m-input" id="team-name-input" placeholder="Your team name"/>';
+  for(var i=1;i<=count;i++){
+    var ph=i===1?'Your Game UID (10 digits)':'Player '+i+' Game UID (10 digits)';
+    var pre=(i===1&&userData&&userData.uid_game)?userData.uid_game:'';
+    var ro=pre?'readonly style="opacity:0.7;cursor:not-allowed"':'';
+    html+='<div class="uid-row"><span class="m-label">'+(i===1?'Your':'Player '+i)+' Game UID</span>'
+      +'<input type="text" class="m-input uid-val" id="uid-inp-'+i+'" placeholder="'+ph+'" value="'+pre+'" maxlength="12" '+(pre?ro:'oninput="onUidType(this,'+i+')"')+'/>'
+      +'<div class="uid-status" id="uid-status-'+i+'" style="color:var(--muted)"></div>'
+      +'<div class="uid-name-tag" id="uid-name-'+i+'"></div></div>';
+  }
+  el('uid-inputs').innerHTML=html;
+  if(userData&&userData.uid_game&&userData.game_name){
+    var tag=el('uid-name-1'); if(tag){ tag.textContent='🎮 '+userData.game_name; tag.classList.add('show'); }
+  }
+}
+async function lookupGameName(uid){
+  var endpoints=['https://shop.garena.my/api/profile?app_id=100067&tp_id='+uid+'&region=BD','https://shop2game.com/api/user/profile?app_id=100067&tp_id='+uid];
+  var proxies=['https://corsproxy.io/?','https://api.allorigins.win/raw?url='];
+  for(var pi=0;pi<proxies.length;pi++) for(var ei=0;ei<endpoints.length;ei++){
+    try{
+      var url=proxies[pi]+(pi===1?encodeURIComponent(endpoints[ei]):endpoints[ei]);
+      var res=await fetch(url,{signal:AbortSignal.timeout(6000)});
+      if(!res.ok) continue;
+      var data=await res.json();
+      var name=null;
+      if(data&&data.model&&data.model.nickname) name=data.model.nickname;
+      else if(data&&data.nickname) name=data.nickname;
+      else if(data&&data.name) name=data.name;
+      if(name&&name.trim()&&name.trim()!=='null') return name.trim();
+    }catch(e){ continue; }
+  }
+  return null;
+}
+window.onUidType=function(input,idx){
+  var uid=input.value.trim(),statusEl=el('uid-status-'+idx),nameEl=el('uid-name-'+idx);
+  nameEl.classList.remove('show'); statusEl.textContent='';
+  if(uidLookupTimers[idx]) clearTimeout(uidLookupTimers[idx]);
+  if(!/^\d{10}$/.test(uid)){ if(uid.length>0){ statusEl.style.color='var(--danger)'; statusEl.textContent='Must be exactly 10 digits'; } return; }
+  statusEl.style.color='var(--muted)'; statusEl.textContent='🔍 Looking up player name...';
+  uidLookupTimers[idx]=setTimeout(async function(){
+    var name=await lookupGameName(uid);
+    if(name){ nameEl.textContent='🎮 '+name; nameEl.classList.add('show'); statusEl.textContent=''; }
+    else{ statusEl.style.color='var(--muted)'; statusEl.textContent='UID valid — name lookup unavailable'; }
+  },700);
+};
+window.openJoin=async function(tId){
+  var t=allTournaments.find(function(x){return x.id===tId;}); if(!t) return;
+  selectedT=t; regType='team'; switchJoinTab('join');
+  el('join-title').textContent=t.title;
+  el('join-sub').textContent=modeLabel(t.teamType)+' · '+gmLabel(t)+' · '+fmt12(t.time);
+  el('join-name').value=userData&&userData.name?userData.name:'';
+  el('join-whatsapp').value=userData&&userData.whatsapp?userData.whatsapp:'';
+  var hasProfile=userData&&userData.uid_game;
+  el('profile-warn').style.display=hasProfile?'none':'block';
+  el('confirm-join-btn').disabled=!hasProfile;
+  el('confirm-join-btn').style.opacity=hasProfile?'1':'0.4';
+  el('reg-type-wrap').style.display=t.teamType>1?'block':'none';
+  el('btn-team-reg').classList.add('active'); el('btn-solo-reg').classList.remove('active');
+  el('solo-queue-info').style.display='none';
+  buildUidInputs(); updateFeeDisplay();
+  if(t.teamType>1) await countSoloQueue(t.id,t.teamType);
+  el('join-modal').classList.add('open');
+};
+window.confirmJoin=async function(){
+  var t=selectedT; if(!t) return;
+  var name=el('join-name').value.trim(),wa=el('join-whatsapp').value.trim();
+  if(!name){ showMMsg('join-msg','Enter your name.','error'); return; }
+  if(!wa||wa.replace(/\D/g,'').length<11){ showMMsg('join-msg','Enter valid WhatsApp number.','error'); return; }
+  if(regType==='solo') await joinSoloQueue(t,name,wa); else await joinAsTeam(t,name,wa);
+};
+async function joinAsTeam(t,name,wa){
+  var uids=Array.from(document.querySelectorAll('.uid-val')).map(function(i){return i.value.trim();});
+  var teamName=el('team-name-input')?el('team-name-input').value.trim():'';
+  for(var i=0;i<uids.length;i++){
+    if(!uids[i]){ showMMsg('join-msg','Player '+(i+1)+' UID required.','error'); return; }
+    if(!/^\d{10}$/.test(uids[i])){ showMMsg('join-msg','Player '+(i+1)+' UID must be exactly 10 digits.','error'); return; }
+  }
+  var teamSize=t.teamType||1,totalFee=(t.fee||0)*teamSize;
+  if(totalFee>0&&userBalance<totalFee){ showMMsg('join-msg','Not enough balance! Need ৳'+totalFee+', have ৳'+userBalance+'.','error'); return; }
+  if(joinedIds.has(t.id)){ showMMsg('join-msg','You already joined this tournament!','error'); return; }
+  el('confirm-join-btn').disabled=true; el('confirm-join-btn').textContent='Joining...';
+  try{
+    if(totalFee>0){
+      await updateDoc(doc(db,'users',currentUser.uid),{balance:increment(-totalFee)});
+      await addDoc(collection(db,'transactions'),{uid:currentUser.uid,email:currentUser.email,name:name,whatsapp:wa,amount:totalFee,type:'entry',status:'approved',reason:t.title,tournament_id:t.id,created_at:serverTimestamp()});
+      userBalance-=totalFee; el('nav-balance-t').textContent=userBalance; el('nav-balance-home').textContent=userBalance;
+    }
+    await updateDoc(doc(db,'tournaments',t.id),{joined:increment(teamSize)});
+    var groupId='grp_'+Date.now()+'_'+Math.random().toString(36).substr(2,5);
+    // Collect display names: use looked-up game name from uid-name tags, fallback to name for leader
+    var memberNames=uids.map(function(u,i){
+      var tag=el('uid-name-'+(i+1));
+      if(tag&&tag.textContent&&tag.classList.contains('show')){
+        return tag.textContent.replace(/^🎮\s*/,'').trim();
+      }
+      return i===0?(userData&&userData.game_name?userData.game_name:name):'';
+    });
+    await addDoc(collection(db,'registrations'),{tournament_id:t.id,tournament_name:t.title,uid:currentUser.uid,email:currentUser.email,name:name,whatsapp:wa,team_name:teamName,game_uids:uids,group_id:groupId,all_group_uids:uids,all_group_names:memberNames,entry_paid:totalFee,registration_type:'team',status:'joined',created_at:serverTimestamp()});
+    await updateDoc(doc(db,'users',currentUser.uid),{played:increment(1),name:name,whatsapp:wa});
+    joinedIds.add(t.id);
+    showMMsg('join-msg','🎉 Joined! Room ID sent on WhatsApp. BOOYAH!','success');
+    setTimeout(function(){ closeModal('join-modal'); loadTournaments(); },2200);
+  }catch(e){ el('confirm-join-btn').disabled=false; el('confirm-join-btn').textContent='Confirm & Join'; showMMsg('join-msg','Failed. Try again.','error'); }
+}
+async function joinSoloQueue(t,name,wa){
+  var myUid=el('uid-inp-1')?el('uid-inp-1').value.trim():(userData&&userData.uid_game?userData.uid_game:'');
+  if(!myUid||!/^\d{10}$/.test(myUid)){ showMMsg('join-msg','Enter valid 10-digit Game UID.','error'); return; }
+  var fee=t.fee||0;
+  if(fee>0&&userBalance<fee){ showMMsg('join-msg','Not enough balance! Need ৳'+fee+'.','error'); return; }
+  if(joinedIds.has(t.id)){ showMMsg('join-msg','You already joined this tournament!','error'); return; }
+  el('confirm-join-btn').disabled=true; el('confirm-join-btn').textContent='Joining Queue...';
+  try{
+    if(fee>0){
+      await updateDoc(doc(db,'users',currentUser.uid),{balance:increment(-fee)});
+      await addDoc(collection(db,'transactions'),{uid:currentUser.uid,email:currentUser.email,name:name,whatsapp:wa,amount:fee,type:'entry',status:'approved',reason:t.title+' (Solo Queue)',tournament_id:t.id,created_at:serverTimestamp()});
+      userBalance-=fee; el('nav-balance-t').textContent=userBalance; el('nav-balance-home').textContent=userBalance;
+    }
+    await updateDoc(doc(db,'tournaments',t.id),{joined:increment(1)});
+    var sqRef=await addDoc(collection(db,'solo_queue'),{tournament_id:t.id,tournament_name:t.title,firebase_uid:currentUser.uid,email:currentUser.email||'',game_uid:myUid,game_name:userData&&userData.game_name?userData.game_name:name,name:name,whatsapp:wa,fee_paid:fee,grouped:false,created_at:serverTimestamp()});
+    await updateDoc(doc(db,'users',currentUser.uid),{played:increment(1),name:name,whatsapp:wa});
+    joinedIds.add(t.id);
+    var teamSize=t.teamType||4;
+    var qSnap=await getDocs(query(collection(db,'solo_queue'),where('tournament_id','==',t.id),where('grouped','==',false)));
+    if(qSnap.size>=teamSize){ await autoGroupPlayers(t,qSnap,teamSize,name,wa,myUid); }
+    else{
+      await addDoc(collection(db,'registrations'),{tournament_id:t.id,tournament_name:t.title,uid:currentUser.uid,email:currentUser.email||'',name:name,whatsapp:wa,game_uids:[myUid],game_name:userData&&userData.game_name?userData.game_name:name,entry_paid:fee,registration_type:'solo_queue',grouped:false,solo_queue_id:sqRef.id,status:'joined',created_at:serverTimestamp()});
+      showMMsg('join-msg','⏳ Queued! '+(teamSize-qSnap.size)+' more player(s) needed. Check history for updates!','info');
+      setTimeout(function(){ closeModal('join-modal'); loadTournaments(); },3000);
+    }
+  }catch(e){ el('confirm-join-btn').disabled=false; el('confirm-join-btn').textContent='Confirm & Join'; showMMsg('join-msg','Failed. Try again.','error'); }
+}
+async function autoGroupPlayers(t,qSnap,teamSize,curName,curWa,curUid){
+  var entries=[]; qSnap.forEach(function(d){ entries.push(Object.assign({docId:d.id},d.data())); });
+  entries.sort(function(a,b){return (a.created_at&&a.created_at.toMillis?a.created_at.toMillis():0)-(b.created_at&&b.created_at.toMillis?b.created_at.toMillis():0);});
+  var group=entries.slice(0,teamSize);
+  var groupId='grp_'+Date.now()+'_'+Math.random().toString(36).substr(2,5);
+  var gameUids=group.map(function(e){return e.game_uid;}),gameNames=group.map(function(e){return e.game_name||e.name;});
+  for(var i=0;i<group.length;i++) try{ await updateDoc(doc(db,'solo_queue',group[i].docId),{grouped:true,group_id:groupId}); }catch(e){}
+  for(var j=0;j<group.length;j++){
+    var p=group[j];
+    try{
+      var existing=await getDocs(query(collection(db,'registrations'),where('uid','==',p.firebase_uid),where('tournament_id','==',t.id)));
+      if(!existing.empty) existing.forEach(async function(d){ await updateDoc(doc(db,'registrations',d.id),{group_id:groupId,all_group_uids:gameUids,all_group_names:gameNames,grouped:true}); });
+      else await addDoc(collection(db,'registrations'),{tournament_id:t.id,tournament_name:t.title,uid:p.firebase_uid,email:p.email||'',name:p.name,whatsapp:p.whatsapp,game_uids:[p.game_uid],game_name:p.game_name||p.name,group_id:groupId,all_group_uids:gameUids,all_group_names:gameNames,entry_paid:p.fee_paid,registration_type:'solo_queue',grouped:true,status:'joined',created_at:serverTimestamp()});
+    }catch(e){}
+  }
+  showMMsg('join-msg','🎉 Team formed! Your team: '+gameNames.join(', ')+'. BOOYAH!','success');
+  setTimeout(function(){ closeModal('join-modal'); loadTournaments(); },3000);
+}
+
+// ── DASHBOARD ──────────────────────────────────────────────────────────────
+async function loadProfile(user){
+  var ref=doc(db,'users',user.uid),snap=await getDoc(ref);
+  if(snap.exists()) userData=snap.data();
+  else{ userData={name:'',whatsapp:'',game_name:'',uid_game:'',email:user.email,balance:0,played:0,wins:0,total_earned:0,uid_changed:false,game_name_changed:false,created_at:new Date().toISOString()}; await setDoc(ref,userData,{merge:true}); }
+  userBalance=userData.balance||0;
+  var gn=userData.game_name||'PLAYER';
+  el('display-game-name').textContent=gn;
+  el('display-name').textContent=userData.name?'👤 '+userData.name:'';
+  el('display-email').textContent=user.email||'';
+  el('display-whatsapp').textContent=userData.whatsapp?'📱 '+userData.whatsapp:'';
+  el('display-uid').textContent=userData.uid_game?'🎮 UID: '+userData.uid_game:'🎮 UID: —';
+  el('avatar-text').textContent=gn.charAt(0).toUpperCase();
+  el('input-name').value=userData.name||''; el('input-whatsapp').value=userData.whatsapp||'';
+  el('input-uid').value=userData.uid_game||''; el('input-game-name').value=userData.game_name||'';
+  if(userData.uid_changed) el('uid-locked-badge').classList.add('show');
+  if(userData.game_name_changed) el('gname-locked-badge').classList.add('show');
+  el('wallet-balance-top').textContent=userData.balance||0;
+  el('nav-balance-home').textContent=userData.balance||0;
+  el('nav-balance-t').textContent=userData.balance||0;
+  el('stat-played').textContent=userData.played||0; el('stat-wins').textContent=userData.wins||0;
+  var p=userData.played||0,w=userData.wins||0;
+  el('stat-winrate').textContent=p>0?Math.round(w/p*100)+'%':'0%';
+  el('stat-earned').textContent=userData.total_earned||0;
+  if(userData.uid_changed||userData.game_name_changed){
+    el('reauth-section').classList.add('show');
+    getProvId(currentUser)==='google.com'?setReauthMethod('google'):setReauthMethod('password');
+  }
+}
+
+function getProvId(u){ return u&&u.providerData&&u.providerData.length?u.providerData[0].providerId:'password'; }
+window.toggleEdit=function(){ editOpen=!editOpen; el('edit-panel').classList.toggle('open',editOpen); if(editOpen) el('edit-msg').className='d-msg'; };
+window.setReauthMethod=function(m){
+  reauthMethod=m;
+  el('reauth-pass-btn').classList.toggle('active',m==='password');
+  el('reauth-google-btn').classList.toggle('active',m==='google');
+  el('password-field').style.display=m==='password'?'block':'none';
+};
+window.saveProfile=async function(){
+  var name=el('input-name').value.trim(),wa=el('input-whatsapp').value.trim();
+  var nu=el('input-uid').value.trim(),gn=el('input-game-name').value.trim();
+  if(!name){ showDMsg('edit-msg','Enter your full name.','error'); return; }
+  if(!wa||wa.replace(/\D/g,'').length<11){ showDMsg('edit-msg','Enter a valid 11-digit WhatsApp number.','error'); return; }
+  var uidChanging=nu&&nu!==(userData.uid_game||'');
+  var gnChanging=gn&&gn!==(userData.game_name||'');
+  if(uidChanging&&!/^\d{10}$/.test(nu)){ showDMsg('edit-msg','Game UID must be exactly 10 digits.','error'); return; }
+  var needsReauth=(uidChanging&&userData.uid_changed)||(gnChanging&&userData.game_name_changed);
+  if(needsReauth){
+    el('reauth-section').classList.add('show');
+    if(!reauthMethod){ showDMsg('edit-msg','Choose a verification method above.','error'); return; }
+    try{
+      if(reauthMethod==='password'){
+        var pw=el('input-password').value;
+        if(!pw){ showDMsg('edit-msg','Enter your password.','error'); return; }
+        await reauthenticateWithCredential(currentUser,EmailAuthProvider.credential(currentUser.email,pw));
+      } else { await reauthenticateWithPopup(currentUser,new GoogleAuthProvider()); }
+    }catch(e){ showDMsg('edit-msg','Verification failed: '+e.message,'error'); return; }
+  }
+  var upd={name:name,whatsapp:wa};
+  if(uidChanging){ upd.uid_game=nu; upd.uid_changed=true; }
+  if(gnChanging||(gn&&!userData.game_name)){ upd.game_name=gn; upd.game_name_changed=true; }
+  try{
+    await updateDoc(doc(db,'users',currentUser.uid),upd);
+    userData=Object.assign({},userData,upd);
+    var newGn=upd.game_name||userData.game_name||'PLAYER';
+    el('display-game-name').textContent=newGn;
+    el('display-name').textContent='👤 '+name;
+    el('display-whatsapp').textContent='📱 '+wa;
+    el('avatar-text').textContent=newGn.charAt(0).toUpperCase();
+    if(upd.uid_game){ el('display-uid').textContent='🎮 UID: '+nu; el('uid-locked-badge').classList.add('show'); }
+    if(upd.game_name) el('gname-locked-badge').classList.add('show');
+    showDMsg('edit-msg','Saved! ✅','success');
+    setTimeout(function(){toggleEdit();},1200);
+  }catch(e){ showDMsg('edit-msg','Save failed: '+e.message,'error'); }
+};
+
+async function loadTransactions(uid){
+  var list=el('tx-status-list');
+  try{
+    var snap=await getDocs(query(collection(db,'transactions'),where('uid','==',uid)));
+    if(snap.empty){ list.innerHTML='<div class="no-tx">No transactions yet</div>'; return; }
+    var items=[]; snap.forEach(function(d){items.push(d.data());});
+    items.sort(function(a,b){return (b.created_at&&b.created_at.toMillis?b.created_at.toMillis():0)-(a.created_at&&a.created_at.toMillis?a.created_at.toMillis():0);});
+    list.innerHTML='';
+    items.slice(0,10).forEach(function(tx){
+      var plus=tx.type==='deposit'||tx.type==='prize';
+      var icon=tx.type==='deposit'?'💰':tx.type==='prize'?'🏆':tx.type==='withdraw'?'💸':'🎮';
+      var label=tx.type==='deposit'?'Deposit':tx.type==='prize'?'Prize Won':tx.type==='withdraw'?'Withdrawal':'Entry Fee';
+      var txCls=tx.type==='deposit'?'deposit':tx.type==='withdraw'?'withdraw':tx.type==='prize'?'prize':'entry';
+      var date=tx.created_at&&tx.created_at.toDate?tx.created_at.toDate().toLocaleDateString('en-GB'):'—';
+      var stCls=tx.status==='pending'?'pending':tx.status==='approved'?'approved':'rejected';
+      var stTxt=tx.status==='pending'?'⏳ Pending':tx.status==='approved'?'✅ Approved':'❌ Rejected';
+      var sub=tx.reason?tx.reason:date+(tx.txid?' · '+tx.txid:'');
+      list.innerHTML+='<div class="tx-item '+txCls+'"><div class="tx-left"><div class="tx-icon">'+icon+'</div>'
+        +'<div><div class="tx-desc">'+label+(tx.method?' · '+tx.method.toUpperCase():'')+'</div>'
+        +'<div class="tx-date">'+sub+'</div></div></div>'
+        +'<div class="tx-right"><div class="tx-amount '+(plus?'plus':'minus')+'">'+(plus?'+':'-')+'৳'+tx.amount+'</div>'
+        +'<span class="status-pill '+stCls+'">'+stTxt+'</span></div></div>';
+    });
+  }catch(e){ list.innerHTML='<div class="no-tx" style="color:var(--danger)">Could not load. Refresh.</div>'; }
+}
+
+async function loadTournamentHistory(uid){
+  var list=el('tournament-history');
+  try{
+    var regSnap=await getDocs(query(collection(db,'registrations'),where('uid','==',uid)));
+    if(regSnap.empty){ list.innerHTML='<div class="no-tx">No tournaments joined yet</div>'; return; }
+    var tSnap=await getDocs(collection(db,'tournaments'));
+    var tMap={}; tSnap.forEach(function(d){tMap[d.id]=d.data();});
+    var prizeSnap=await getDocs(query(collection(db,'transactions'),where('uid','==',uid),where('type','==','prize')));
+    var prizeMap={};
+    prizeSnap.forEach(function(d){ var p=d.data(); if(p.tournament_id&&!prizeMap[p.tournament_id]) prizeMap[p.tournament_id]=p; });
+    var items=[]; regSnap.forEach(function(d){items.push(d.data());});
+    items.sort(function(a,b){return (b.created_at&&b.created_at.toMillis?b.created_at.toMillis():0)-(a.created_at&&a.created_at.toMillis?a.created_at.toMillis():0);});
+    var now=new Date(); list.innerHTML='';
+    for(var i=0;i<items.length;i++){
+      var r=items[i],t=tMap[r.tournament_id]||null,matchEnded=!t;
+      var tTime=t&&t.time?new Date(t.time):null;
+      var upcoming=!matchEnded&&tTime&&tTime>now&&t.status==='open';
+      var date=r.created_at&&r.created_at.toDate?r.created_at.toDate().toLocaleDateString('en-GB'):'—';
+      var prizeData=prizeMap[r.tournament_id]||null;
+      var isSoloQueue=r.registration_type==='solo_queue',isGrouped=r.grouped===true;
+      var upBlock='';
+      if(upcoming){
+        var diff=tTime-now,h=Math.floor(diff/3600000),m=Math.floor(diff%3600000/60000);
+        var cd=h>0?h+'h '+m+'m':m>0?m+' min':'Starting soon!';
+        var mode=t.teamType==1?'Solo':t.teamType==2?'Duo':'Squad';
+        var timeStr=tTime.toLocaleString('en-US',{weekday:'short',day:'2-digit',month:'short',hour:'numeric',minute:'2-digit',hour12:true});
+        var ri=t.roomID?'<div class="ui-item"><span class="ui-label">🔑 Room ID</span><span class="ui-val">'+t.roomID+'</span></div>':'';
+        var rp=t.roomPass?'<div class="ui-item"><span class="ui-label">🔒 Password</span><span class="ui-val">'+t.roomPass+'</span></div>':'';
+        upBlock='<div class="countdown-chip"><span class="cdot"></span>Starts in '+cd+'</div>'
+          +'<div class="upcoming-info-grid"><div class="ui-item"><span class="ui-label">📅 Time</span><span class="ui-val">'+timeStr+'</span></div>'
+          +'<div class="ui-item"><span class="ui-label">Mode</span><span class="ui-val">'+mode+'</span></div>'
+          +'<div class="ui-item"><span class="ui-label">🏆 1st</span><span class="ui-val">৳'+(t.prize1||0)+'</span></div>'+ri+rp+'</div>';
+      }
+      var prizeBlock='';
+      if(prizeData){
+        var parts=prizeData.reason?prizeData.reason.split(' - '):[];
+        var posStr=parts.length>=2?parts[parts.length-1]:(prizeData.position||'');
+        var posColor=posStr.includes('1st')?'var(--gold)':posStr.includes('2nd')?'#C0C0C0':'#CD7F32';
+        prizeBlock='<div class="winner-block"><div>'
+          +'<div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px">🏆 YOU WON</div>'
+          +'<div class="winner-pos" style="color:'+posColor+'">'+posStr+' Place</div></div>'
+          +'<div class="winner-prize">+৳'+prizeData.amount+'</div></div>';
+      }
+      var waitBlock='';
+      if(isSoloQueue&&!isGrouped&&!matchEnded){
+        try{
+          var qSnap=await getDocs(query(collection(db,'solo_queue'),where('tournament_id','==',r.tournament_id),where('grouped','==',false)));
+          var qMembers=[]; qSnap.forEach(function(d){qMembers.push(d.data());});
+          var teamSize2=t&&t.teamType?t.teamType:4;
+          if(qMembers.length>1){
+            var qHtml='<div class="teammates-block"><div class="teammates-title">👥 Players in Queue ('+qMembers.length+'/'+teamSize2+')</div>';
+            qMembers.forEach(function(mem){
+              var isSelf=r.game_uids&&r.game_uids.indexOf(mem.game_uid)>=0;
+              var dName=mem.game_name||mem.name||mem.game_uid;
+              qHtml+='<div class="teammate-row"><div class="teammate-avatar">'+dName.charAt(0).toUpperCase()+'</div>'
+                +'<span class="teammate-name">'+dName+(isSelf?' <span style="color:var(--gold);font-size:11px">(You)</span>':'')+'</span>'
+                +'<span class="teammate-uid">'+mem.game_uid+'</span></div>';
+            });
+            qHtml+='</div>';
+            waitBlock='<div class="queue-wait-msg">⏳ <b>'+qMembers.length+'/'+teamSize2+' players queued.</b> Auto-grouped when full!</div>'+qHtml;
+          } else {
+            waitBlock='<div class="queue-wait-msg">⏳ You\'re first in queue! Waiting for '+(teamSize2-1)+' more player(s)...</div>';
+          }
+        }catch(e){ waitBlock='<div class="queue-wait-msg">⏳ Waiting for more solo players...</div>'; }
+      }
+      var teammatesBlock='';
+      if(isGrouped&&r.all_group_uids&&r.all_group_uids.length>1){
+        var tmHtml='<div class="teammates-block"><div class="teammates-title">👥 Your Teammates</div>';
+        for(var ti=0;ti<r.all_group_uids.length;ti++){
+          var gUid=r.all_group_uids[ti];
+          var gName=(r.all_group_names&&r.all_group_names[ti]&&r.all_group_names[ti]!=='')?r.all_group_names[ti]:gUid;
+          var isSelf2=r.game_uids&&r.game_uids.indexOf(gUid)>=0;
+          tmHtml+='<div class="teammate-row"><div class="teammate-avatar">'+gName.charAt(0).toUpperCase()+'</div>'
+            +'<span class="teammate-name">'+gName+(isSelf2?' <span style="color:var(--gold);font-size:11px">(You)</span>':'')+'</span>'
+            +'<span class="teammate-uid">'+gUid+'</span></div>';
+        }
+        tmHtml+='</div>'; teammatesBlock=tmHtml;
+      }
+      var itemCls,badge,badgeTxt;
+      if(prizeData){itemCls='history-item won';badge='won-badge';badgeTxt='🏆 Won';}
+      else if(matchEnded){itemCls='history-item';badge='played-badge';badgeTxt='✅ Ended';}
+      else if(upcoming){itemCls='history-item upcoming';badge='upcoming-badge';badgeTxt='⏰ Upcoming';}
+      else if(isSoloQueue&&!isGrouped){itemCls='history-item queued';badge='queued-badge';badgeTxt='⏳ Queued';}
+      else{itemCls='history-item';badge='played-badge';badgeTxt='Played';}
+      list.innerHTML+='<div class="'+itemCls+'">'
+        +'<div class="hist-top"><div class="hist-name">'+(r.tournament_name||'Tournament')+'</div>'
+        +'<span class="hist-badge '+badge+'">'+badgeTxt+'</span></div>'
+        +upBlock+prizeBlock+waitBlock+teammatesBlock
+        +'<div class="hist-meta"><span>📅 '+date+'</span><span>💵 ৳'+(r.entry_paid||0)+'</span>'
+        +(r.game_uids&&r.game_uids[0]?'<span>🎮 '+r.game_uids[0]+'</span>':'')
+        +(isSoloQueue?'<span>🎲 Solo</span>':'')+'</div></div>';
+    }
+  }catch(e){ console.error(e); list.innerHTML='<div class="no-tx" style="color:var(--danger)">Could not load. Refresh.</div>'; }
+}
+
+// ── DEPOSIT ────────────────────────────────────────────────────────────────
+window.openDeposit=function(){
+  selDepMethod='';
+  ['btn-bkash','btn-nagad','btn-rocket'].forEach(function(i){el(i).classList.remove('selected');});
+  el('pay-info').classList.remove('show');
+  el('deposit-amount').value=''; el('deposit-txid').value=''; el('deposit-msg').className='m-msg';
+  el('deposit-modal').classList.add('open');
+};
+window.selectDepMethod=function(m){
+  selDepMethod=m;
+  ['btn-bkash','btn-nagad','btn-rocket'].forEach(function(i){el(i).classList.remove('selected');});
+  el('btn-'+m).classList.add('selected');
+  el('dep-method-name').textContent=m==='bkash'?'bKash':m==='nagad'?'Nagad':'Rocket';
+  var mData=paySettings[m]||{};
+  el('dep-send-type').textContent=mData.send_type||'Send Money';
+  el('dep-number').textContent=mData.number||'Not configured yet';
+  el('pay-info').classList.add('show');
+};
+window.submitDeposit=async function(){
+  var amt=parseInt(el('deposit-amount').value),txid=el('deposit-txid').value.trim();
+  if(!amt||amt<10){ showMMsg('deposit-msg','Minimum deposit 10 TK.','error'); return; }
+  if(!selDepMethod){ showMMsg('deposit-msg','Select a payment method.','error'); return; }
+  if(!txid){ showMMsg('deposit-msg','Enter Transaction ID.','error'); return; }
+  try{
+    await addDoc(collection(db,'transactions'),{uid:currentUser.uid,email:currentUser.email,name:userData.name||'',whatsapp:userData.whatsapp||'',amount:amt,method:selDepMethod,txid:txid,type:'deposit',status:'pending',created_at:serverTimestamp()});
+    showMMsg('deposit-msg','✅ Submitted! Admin will verify shortly.','success');
+    setTimeout(function(){ closeModal('deposit-modal'); loadTransactions(currentUser.uid); },1800);
+  }catch(e){ showMMsg('deposit-msg','Failed. Try again.','error'); }
+};
+
+// ── WITHDRAW ───────────────────────────────────────────────────────────────
+window.openWithdraw=function(){
+  selWdMethod='';
+  ['wbtn-bkash','wbtn-nagad','wbtn-rocket'].forEach(function(i){el(i).classList.remove('selected');});
+  el('withdraw-amount').value=''; el('withdraw-number').value=''; el('withdraw-msg').className='m-msg';
+  el('withdraw-modal').classList.add('open');
+};
+window.selectWdMethod=function(m){
+  selWdMethod=m;
+  ['wbtn-bkash','wbtn-nagad','wbtn-rocket'].forEach(function(i){el(i).classList.remove('selected');});
+  el('wbtn-'+m).classList.add('selected');
+};
+window.submitWithdraw=async function(){
+  var amt=parseInt(el('withdraw-amount').value),num=el('withdraw-number').value.trim();
+  var snap=await getDoc(doc(db,'users',currentUser.uid));
+  var bal=snap.data()&&snap.data().balance?snap.data().balance:0;
+  if(!amt||amt<50){ showMMsg('withdraw-msg','Minimum 50 TK.','error'); return; }
+  if(!selWdMethod){ showMMsg('withdraw-msg','Select a method.','error'); return; }
+  if(!num||num.replace(/\D/g,'').length<11){ showMMsg('withdraw-msg','Enter valid number.','error'); return; }
+  if(amt>bal){ showMMsg('withdraw-msg','Insufficient balance! You have ৳'+bal+'.','error'); return; }
+  try{
+    await addDoc(collection(db,'transactions'),{uid:currentUser.uid,email:currentUser.email,name:userData.name||'',whatsapp:userData.whatsapp||'',amount:amt,method:selWdMethod,number:num,type:'withdraw',status:'pending',created_at:serverTimestamp()});
+    await updateDoc(doc(db,'users',currentUser.uid),{balance:bal-amt});
+    el('wallet-balance-top').textContent=bal-amt; userBalance=bal-amt;
+    el('nav-balance-home').textContent=bal-amt; el('nav-balance-t').textContent=bal-amt;
+    showMMsg('withdraw-msg','✅ Request sent! Admin will pay shortly.','success');
+    setTimeout(function(){ closeModal('withdraw-modal'); loadTransactions(currentUser.uid); },1800);
+  }catch(e){ showMMsg('withdraw-msg','Failed. Try again.','error'); }
+};
+
+// ── SUPPORT ────────────────────────────────────────────────────────────────
+window.openSupport=function(){
+  var linksEl=el('support-links');
+  if(!supportSettings||(!supportSettings.whatsapp&&!supportSettings.telegram_link&&!supportSettings.phone)){
+    linksEl.innerHTML='<div style="text-align:center;color:var(--muted);padding:20px;font-size:13px">No support contacts configured yet.</div>';
+  } else {
+    var html='';
+    if(supportSettings.whatsapp) html+='<a class="support-link" href="https://wa.me/'+supportSettings.whatsapp.replace(/\D/g,'')+'" target="_blank"><span class="support-link-icon">💬</span><div><div class="support-link-label">WhatsApp</div><div class="support-link-val">'+supportSettings.whatsapp+'</div></div></a>';
+    if(supportSettings.telegram_link) html+='<a class="support-link" href="https://t.me/'+supportSettings.telegram_link.replace('@','')+'" target="_blank"><span class="support-link-icon">✈️</span><div><div class="support-link-label">Telegram</div><div class="support-link-val">@'+supportSettings.telegram_link.replace('@','')+'</div></div></a>';
+    if(supportSettings.phone) html+='<a class="support-link" href="tel:'+supportSettings.phone+'" target="_blank"><span class="support-link-icon">📞</span><div><div class="support-link-label">Phone</div><div class="support-link-val">'+supportSettings.phone+'</div></div></a>';
+    linksEl.innerHTML=html||'<div style="text-align:center;color:var(--muted);padding:20px;font-size:13px">No contacts set.</div>';
+  }
+  el('support-modal').classList.add('open');
+};
+
+// ── SHARED HELPERS ─────────────────────────────────────────────────────────
+window.closeModal=function(id){ el(id).classList.remove('open'); };
+window.doLogout=async function(){ try{await signOut(auth);}catch(e){} currentUser=null; userData=null; userBalance=0; goTo('login'); };
+function showDMsg(id,msg,type){ var e=el(id); e.textContent=msg; e.className='d-msg '+type; setTimeout(function(){e.className='d-msg';},4500); }
+function showMMsg(id,msg,type){ var e=el(id); e.textContent=msg; e.className='m-msg '+type; }
+</script>
+</body>
+</html>
