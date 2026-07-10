@@ -92,6 +92,11 @@
     .pay-cur-lbl{font-size:10px;color:var(--muted);letter-spacing:1px;margin-bottom:4px;text-transform:uppercase}
     .pay-cur-val{font-family:'Bebas Neue';font-size:16px;color:var(--green);letter-spacing:1px;word-break:break-all}
     .fld-label{font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;display:block;margin-bottom:6px}
+    .rules-mode-tabs{display:flex;border-radius:8px 8px 0 0;overflow:hidden;border:1px solid var(--border);border-bottom:none;margin-bottom:0}
+    .rules-mode-tab{flex:1;padding:10px 4px;text-align:center;font-family:'Bebas Neue';font-size:13px;letter-spacing:1px;color:var(--muted);cursor:pointer;background:var(--dark);border:none;border-bottom:2px solid transparent}
+    .rules-mode-tab.active{color:var(--orange);background:rgba(255,107,0,0.08);border-bottom:2px solid var(--orange)}
+    .rules-mode-panel{display:none;border:1px solid var(--border);border-radius:0 0 8px 8px;padding:14px;margin-bottom:12px}
+    .rules-mode-panel.active{display:block}
     /* PLAYER SELECTOR CARDS */
     .psel-card{background:#0A0A0F;border:2px solid var(--border);border-radius:10px;padding:11px 14px;margin-bottom:8px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:border-color .15s,background .15s}
     .psel-card:hover{border-color:var(--orange);background:rgba(255,107,0,0.05)}
@@ -354,14 +359,37 @@
   </div>
 
   <div class="card">
-    <div class="card-title"><div class="card-title-bar" style="background:var(--orange)"></div><span style="color:var(--orange)">📋 TOURNAMENT RULES</span></div>
-    <p class="field-hint">Add unlimited rules. Players see these before joining.</p>
-    <div id="rules-list" style="margin-bottom:10px"></div>
-    <div class="row" style="margin-bottom:0">
-      <input type="text" id="new-rule-input" placeholder="Type a new rule…" onkeydown="if(event.key==='Enter')addRule()">
-      <button class="btn-main" style="white-space:nowrap;padding:0 18px" onclick="addRule()">+ ADD</button>
+    <div class="card-title"><div class="card-title-bar" style="background:var(--orange)"></div><span style="color:var(--orange)">📋 TOURNAMENT RULES (PER MODE)</span></div>
+    <p class="field-hint">Set separate rules for each game mode. Players see the matching mode's rules before joining.</p>
+    <div class="rules-mode-tabs">
+      <button class="rules-mode-tab active" onclick="switchRulesTab('classic')">🗺️ Classic</button>
+      <button class="rules-mode-tab" onclick="switchRulesTab('cs')">⚔️ Clash Squad</button>
+      <button class="rules-mode-tab" onclick="switchRulesTab('lonewolf')">🐺 Lone Wolf</button>
     </div>
-    <button class="btn-blue" style="margin-top:10px" onclick="saveRules()">💾 SAVE RULES</button>
+    <div class="rules-mode-panel active" id="rules-panel-classic">
+      <div id="rules-list-classic" style="margin-bottom:10px"></div>
+      <div class="row" style="margin-bottom:0">
+        <input type="text" id="new-rule-input-classic" placeholder="Type a new Classic rule…" onkeydown="if(event.key==='Enter')addRule('classic')">
+        <button class="btn-main" style="white-space:nowrap;padding:0 18px" onclick="addRule('classic')">+ ADD</button>
+      </div>
+      <button class="btn-blue" style="margin-top:10px" onclick="saveRules('classic')">💾 SAVE CLASSIC RULES</button>
+    </div>
+    <div class="rules-mode-panel" id="rules-panel-cs">
+      <div id="rules-list-cs" style="margin-bottom:10px"></div>
+      <div class="row" style="margin-bottom:0">
+        <input type="text" id="new-rule-input-cs" placeholder="Type a new Clash Squad rule…" onkeydown="if(event.key==='Enter')addRule('cs')">
+        <button class="btn-main" style="white-space:nowrap;padding:0 18px" onclick="addRule('cs')">+ ADD</button>
+      </div>
+      <button class="btn-blue" style="margin-top:10px" onclick="saveRules('cs')">💾 SAVE CLASH SQUAD RULES</button>
+    </div>
+    <div class="rules-mode-panel" id="rules-panel-lonewolf">
+      <div id="rules-list-lonewolf" style="margin-bottom:10px"></div>
+      <div class="row" style="margin-bottom:0">
+        <input type="text" id="new-rule-input-lonewolf" placeholder="Type a new Lone Wolf rule…" onkeydown="if(event.key==='Enter')addRule('lonewolf')">
+        <button class="btn-main" style="white-space:nowrap;padding:0 18px" onclick="addRule('lonewolf')">+ ADD</button>
+      </div>
+      <button class="btn-blue" style="margin-top:10px" onclick="saveRules('lonewolf')">💾 SAVE LONE WOLF RULES</button>
+    </div>
   </div>
 </div>
 
@@ -806,14 +834,16 @@
     try{var ns=await getDoc(doc(db,'settings','notice'));if(ns.exists()&&ns.data().text){var txt=ns.data().text;el('current-notice-display').textContent=txt;el('notice-input').value=txt;}}catch(e){}
     try{var ps=await getDoc(doc(db,'settings','payment'));if(ps.exists()){var p=ps.data();['bkash','nagad','rocket'].forEach(function(m){if(p[m]){el('cur-'+m+'-number').textContent=p[m].number||'—';el('cur-'+m+'-type').textContent=p[m].send_type||'—';if(p[m].number)el('pay-'+m+'-number').value=p[m].number;if(p[m].send_type)el('pay-'+m+'-type').value=p[m].send_type;}});}}catch(e){}
     try{var ss=await getDoc(doc(db,'settings','support'));if(ss.exists()){var s=ss.data();el('cur-wa').textContent=s.whatsapp||'—';el('cur-tg').textContent=s.telegram_link||'—';el('cur-ph').textContent=s.phone||'—';if(s.whatsapp)el('support-whatsapp').value=s.whatsapp;if(s.telegram_link)el('support-telegram-link').value=s.telegram_link;if(s.telegram_number)el('support-telegram-number').value=s.telegram_number;if(s.phone)el('support-phone').value=s.phone;}}catch(e){}
-    try{var rs=await getDoc(doc(db,'settings','rules'));if(rs.exists()&&rs.data().list){window.__rulesArr=rs.data().list;renderRulesList();}}catch(e){}
+    try{var rs=await getDoc(doc(db,'settings','rules'));if(rs.exists()){var rd=rs.data(),legacy=rd.list||[];window.__rulesData.classic=rd.classic||legacy.slice();window.__rulesData.cs=rd.cs||legacy.slice();window.__rulesData.lonewolf=rd.lonewolf||legacy.slice();renderRulesList('classic');renderRulesList('cs');renderRulesList('lonewolf');}}catch(e){}
   }
-  window.__rulesArr=[];
-  function renderRulesList(){var wrap=el('rules-list');if(!wrap)return;if(!window.__rulesArr.length){wrap.innerHTML='<div class="log-meta" style="color:var(--muted)">No rules yet.</div>';return;}wrap.innerHTML=window.__rulesArr.map(function(r,i){return '<div class="log-entry" style="align-items:center;gap:8px"><span style="color:var(--orange);font-weight:700;min-width:24px">'+(i+1)+'.</span><div style="flex:1;font-size:13px">'+esc(r)+'</div><div style="display:flex;gap:6px">'+(i>0?'<button onclick="moveRule('+i+',-1)" style="padding:5px 9px;background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:5px;cursor:pointer;font-size:12px">▲</button>':'')+(i<window.__rulesArr.length-1?'<button onclick="moveRule('+i+',1)" style="padding:5px 9px;background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:5px;cursor:pointer;font-size:12px">▼</button>':'')+'<button onclick="deleteRule('+i+')" style="padding:5px 10px;background:transparent;border:1px solid var(--red);color:var(--red);border-radius:5px;cursor:pointer;font-size:12px">✕</button></div></div>';}).join('');}
-  window.addRule=function(){var inp=el('new-rule-input'),txt=(inp.value||'').trim();if(!txt){toast('Enter a rule!','error');return;}window.__rulesArr.push(txt);inp.value='';renderRulesList();};
-  window.deleteRule=function(i){window.__rulesArr.splice(i,1);renderRulesList();};
-  window.moveRule=function(i,dir){var arr=window.__rulesArr,ni=i+dir;if(ni<0||ni>=arr.length)return;var tmp=arr[i];arr[i]=arr[ni];arr[ni]=tmp;renderRulesList();};
-  window.saveRules=async function(){try{await setDoc(doc(db,'settings','rules'),{list:window.__rulesArr,updated_at:serverTimestamp()},{merge:true});toast('📋 Rules saved! ('+window.__rulesArr.length+')');}catch(e){toast('Failed: '+e.message,'error');}};
+  window.__rulesData={classic:[],cs:[],lonewolf:[]};
+  window.__rulesModeLabel={classic:'Classic',cs:'Clash Squad',lonewolf:'Lone Wolf'};
+  function renderRulesList(mode){var wrap=el('rules-list-'+mode);if(!wrap)return;var arr=window.__rulesData[mode]||[];if(!arr.length){wrap.innerHTML='<div class="log-meta" style="color:var(--muted)">No rules yet.</div>';return;}wrap.innerHTML=arr.map(function(r,i){return '<div class="log-entry" style="align-items:center;gap:8px"><span style="color:var(--orange);font-weight:700;min-width:24px">'+(i+1)+'.</span><div style="flex:1;font-size:13px">'+esc(r)+'</div><div style="display:flex;gap:6px">'+(i>0?'<button onclick="moveRule(\''+mode+'\','+i+',-1)" style="padding:5px 9px;background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:5px;cursor:pointer;font-size:12px">▲</button>':'')+(i<arr.length-1?'<button onclick="moveRule(\''+mode+'\','+i+',1)" style="padding:5px 9px;background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:5px;cursor:pointer;font-size:12px">▼</button>':'')+'<button onclick="deleteRule(\''+mode+'\','+i+')" style="padding:5px 10px;background:transparent;border:1px solid var(--red);color:var(--red);border-radius:5px;cursor:pointer;font-size:12px">✕</button></div></div>';}).join('');}
+  window.addRule=function(mode){var inp=el('new-rule-input-'+mode),txt=(inp.value||'').trim();if(!txt){toast('Enter a rule!','error');return;}window.__rulesData[mode].push(txt);inp.value='';renderRulesList(mode);};
+  window.deleteRule=function(mode,i){window.__rulesData[mode].splice(i,1);renderRulesList(mode);};
+  window.moveRule=function(mode,i,dir){var arr=window.__rulesData[mode],ni=i+dir;if(ni<0||ni>=arr.length)return;var tmp=arr[i];arr[i]=arr[ni];arr[ni]=tmp;renderRulesList(mode);};
+  window.saveRules=async function(mode){try{var u={updated_at:serverTimestamp()};u[mode]=window.__rulesData[mode];await setDoc(doc(db,'settings','rules'),u,{merge:true});toast('📋 '+window.__rulesModeLabel[mode]+' rules saved! ('+window.__rulesData[mode].length+')');}catch(e){toast('Failed: '+e.message,'error');}};
+  window.switchRulesTab=function(m){document.querySelectorAll('.rules-mode-tab').forEach(function(t){t.classList.remove('active');});document.querySelectorAll('.rules-mode-panel').forEach(function(p){p.classList.remove('active');});var idx=m==='classic'?0:m==='cs'?1:2;document.querySelectorAll('.rules-mode-tab')[idx].classList.add('active');el('rules-panel-'+m).classList.add('active');};
   window.switchPayTab=function(m){document.querySelectorAll('.pay-method-tab').forEach(function(t){t.classList.remove('active');});document.querySelectorAll('.pay-method-panel').forEach(function(p){p.classList.remove('active');});var idx=m==='bkash'?0:m==='nagad'?1:2;document.querySelectorAll('.pay-method-tab')[idx].classList.add('active');el('pay-panel-'+m).classList.add('active');};
   window.savePayMethod=async function(m){var number=el('pay-'+m+'-number').value.trim(),send_type=el('pay-'+m+'-type').value;if(!number||number.replace(/\D/g,'').length<11){toast('Enter valid 11-digit number!','error');return;}try{var u={};u[m]={number:number,send_type:send_type};await setDoc(doc(db,'settings','payment'),u,{merge:true});el('cur-'+m+'-number').textContent=number;el('cur-'+m+'-type').textContent=send_type;toast('💳 '+m.charAt(0).toUpperCase()+m.slice(1)+' saved!');}catch(e){toast('Failed','error');}};
   window.saveNotice=async function(){var text=el('notice-input').value.trim();try{await setDoc(doc(db,'settings','notice'),{text:text,updated_at:serverTimestamp()},{merge:true});if(text){el('current-notice-display').textContent=text;}else{el('current-notice-display').innerHTML='<span style="color:var(--muted);font-style:italic">No notice set</span>';}toast('📢 Notice saved!');}catch(e){toast('Failed','error');}};
